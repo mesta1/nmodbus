@@ -13,7 +13,7 @@ namespace Modbus.UnitTests.Message
 		public void CheckCreateReadCoilsRequest()
 		{
 			ReadCoilsRequest request = new ReadCoilsRequest(5, 1, 10);
-			Assert.AreEqual(Modbus.READ_COILS, request.FunctionCode);
+			Assert.AreEqual(Modbus.ReadCoils, request.FunctionCode);
 			Assert.AreEqual(5, request.SlaveAddress);
 			Assert.AreEqual(1, request.StartAddress);
 			Assert.AreEqual(10, request.NumberOfPoints);

@@ -18,7 +18,7 @@ namespace Modbus.IntegrationTests
 		public void SetUp()
 		{
 			_port = new SerialPort(PortName);
-			_port.ReadTimeout = Modbus.DEFAULT_TIMEOUT;
+			_port.ReadTimeout = Modbus.DefaultTimeout;
 			_port.Parity = Parity.None;
 			_port.Open();
 		}

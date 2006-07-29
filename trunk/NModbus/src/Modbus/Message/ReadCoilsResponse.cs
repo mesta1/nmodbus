@@ -7,7 +7,7 @@ using Modbus.Data;
 
 namespace Modbus.Message
 {
-	public class ReadCoilsResponse : ModbusMessageWithData<CoilDiscreteCollection>
+	public class ReadCoilsResponse : ModbusMessageWithData<CoilDiscreteCollection>, IModbusMessage
 	{
 		private const int MinFrameSize = 4;
 
@@ -16,7 +16,7 @@ namespace Modbus.Message
 		}
 
 		public ReadCoilsResponse(byte slaveAddress, byte byteCount, CoilDiscreteCollection data)
-			: base(slaveAddress, Modbus.READ_COILS)
+			: base(slaveAddress, Modbus.ReadCoils)
 		{
 			ByteCount = byteCount;
 			Data = data;
@@ -34,7 +34,7 @@ namespace Modbus.Message
 				throw new FormatException(String.Format("Message frame must contain at least {0} bytes of data.", MinFrameSize));
 
 			if (frame.Length < 3 + frame[2])
-				throw new FormatException("Message frame does not contain enough bytes.");
+				throw new FormatException("Message frame data segment does not contain enough bytes.");
 
 			ByteCount = frame[2];
 			Data = new CoilDiscreteCollection(CollectionUtil.Slice<byte>(frame, 3, ByteCount));

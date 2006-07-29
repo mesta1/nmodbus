@@ -12,6 +12,7 @@ namespace Modbus.Message
 	/// </summary>
 	public class ModbusMessageImpl
 	{
+		private byte _exceptionCode;
 		private byte _functionCode;
 		private byte _slaveAddress;
 		private ushort? _startAddress;
@@ -33,6 +34,12 @@ namespace Modbus.Message
 		{
 			get { return _byteCount.Value; }
 			set { _byteCount = value; }
+		}
+
+		public byte ExceptionCode
+		{
+			get { return _exceptionCode; }
+			set { _exceptionCode = value; }
 		}
 		
 		public byte FunctionCode
@@ -57,7 +64,7 @@ namespace Modbus.Message
 		{
 			get { return _startAddress.Value; }
 			set { _startAddress = value; }
-		}
+		}	
 
 		public IModbusMessageDataCollection Data
 		{
@@ -107,7 +114,7 @@ namespace Modbus.Message
 				throw new ArgumentNullException("frame", "Argument frame cannot be null.");
 
 			if (frame.Length < 2)
-				throw new FormatException("Message frame must contain at least two bytes of data.");
+				throw new FormatException("Message frame must contain at least two bytes of data.");		
 
 			SlaveAddress = frame[0];
 			FunctionCode = frame[1];

@@ -11,11 +11,7 @@ namespace Modbus.IO
 {
 	public class ModbusASCIITransport : ModbusSerialTransport, IModbusTransport
 	{
-		// defines a virtual number for the FRAME START token (COLON)
-		public const int FRAME_START = 1000;
-
-		// defines a virtual number for the FRAME_END token (CR LF)
-		public const int FRAME_END = 2000;
+		private const string FrameStart = "\r\n";
 
 		public ModbusASCIITransport(SerialPort serialPort)
 			: base(serialPort)
@@ -48,24 +44,27 @@ namespace Modbus.IO
 			return messageBody.ToArray();
 		}
 
-		// TODO check for error function code 0
 		public override T Read<T>(IModbusMessage request)
 		{
-			SerialPort.NewLine = "\r\n";
+			SerialPort.NewLine = FrameStart;
 			string frame = SerialPort.ReadLine().Substring(1);
 
 			// convert hex to bytes
 			byte[] frameBytes = ModbusUtil.HexToBytes(frame);
 
-			if (frameBytes.Length < 1)
+			if (frameBytes.Length < 3)
 				throw new IOException("Message was truncated.");
 
 			// grab received checksum and remove from frame
 			byte crc = frameBytes[frameBytes.Length - 1];
 			Array.Resize<byte>(ref frameBytes, frameBytes.Length - 1);
 
-			//// check for exception response
-			//if (
+			// check for slave exception response
+			if (frameBytes[1] > 127)
+			{
+				SlaveExceptionResponse exceptionResponse = ModbusMessageFactory.CreateModbusMessage<SlaveExceptionResponse>(frameBytes);
+			    throw new SlaveException(exceptionResponse.SlaveExceptionCode);
+			}
 
 			// create message from frame
 			T message = ModbusMessageFactory.CreateModbusMessage<T>(frameBytes);

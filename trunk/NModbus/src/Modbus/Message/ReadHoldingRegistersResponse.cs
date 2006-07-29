@@ -6,7 +6,7 @@ using Modbus.Util;
 
 namespace Modbus.Message
 {
-	public class ReadHoldingRegistersResponse : ModbusMessageWithData<HoldingRegisterCollection>
+	public class ReadHoldingRegistersResponse : ModbusMessageWithData<HoldingRegisterCollection>, IModbusMessage
 	{
 		private const int MinFrameSize = 3;
 
@@ -15,7 +15,7 @@ namespace Modbus.Message
 		}
 
 		public ReadHoldingRegistersResponse(byte slaveAddress, byte byteCount, HoldingRegisterCollection data)
-			: base(slaveAddress, Modbus.READ_HOLDING_REGISTERS)
+			: base(slaveAddress, Modbus.ReadHoldingRegisters)
 		{
 			ByteCount = byteCount;
 			Data = data;
