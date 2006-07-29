@@ -12,9 +12,9 @@ namespace Modbus.UnitTests.Message
 		[Test]
 		public void CheckModbusMessageCtorInitializesProperties()
 		{
-			ModbusMessageImpl messageImpl = new ModbusMessageImpl(5, Modbus.READ_COILS);
+			ModbusMessageImpl messageImpl = new ModbusMessageImpl(5, Modbus.ReadCoils);
 			Assert.AreEqual(5, messageImpl.SlaveAddress);
-			Assert.AreEqual(Modbus.READ_COILS, messageImpl.FunctionCode);
+			Assert.AreEqual(Modbus.ReadCoils, messageImpl.FunctionCode);
 		}
 
 		[Test]
@@ -45,16 +45,16 @@ namespace Modbus.UnitTests.Message
 		[Test]
 		public void CheckProtocolDataUnit()
 		{
-			ModbusMessageImpl messageImpl = new ModbusMessageImpl(11, Modbus.READ_COILS);
-			byte[] expectedResult = new byte[] { Modbus.READ_COILS };
+			ModbusMessageImpl messageImpl = new ModbusMessageImpl(11, Modbus.ReadCoils);
+			byte[] expectedResult = new byte[] { Modbus.ReadCoils };
 			Assert.AreEqual(expectedResult, messageImpl.ProtocolDataUnit);
 		}
 
 		[Test]
 		public void CheckChecksumBody()
 		{
-			ModbusMessageImpl messageImpl = new ModbusMessageImpl(11, Modbus.READ_HOLDING_REGISTERS);
-			byte[] expectedChecksumBody = new byte[] { 11, Modbus.READ_HOLDING_REGISTERS };
+			ModbusMessageImpl messageImpl = new ModbusMessageImpl(11, Modbus.ReadHoldingRegisters);
+			byte[] expectedChecksumBody = new byte[] { 11, Modbus.ReadHoldingRegisters };
 			Assert.AreEqual(expectedChecksumBody, messageImpl.ChecksumBody);
 		}		
 	}

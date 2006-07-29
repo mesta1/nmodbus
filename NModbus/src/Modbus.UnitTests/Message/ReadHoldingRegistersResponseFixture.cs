@@ -14,7 +14,7 @@ namespace Modbus.UnitTests.Message
 		public void CheckNewReadHoldingRegistersResponseFixture()
 		{
 			ReadHoldingRegistersResponse response = new ReadHoldingRegistersResponse(2, 3, new HoldingRegisterCollection(1, 2, 3));
-			Assert.AreEqual(Modbus.READ_HOLDING_REGISTERS, response.FunctionCode);
+			Assert.AreEqual(Modbus.ReadHoldingRegisters, response.FunctionCode);
 			Assert.AreEqual(2, response.SlaveAddress);
 			Assert.AreEqual(3, response.ByteCount);
 			// TODO refactor comparision to HoldingRegisterCollectionFixture

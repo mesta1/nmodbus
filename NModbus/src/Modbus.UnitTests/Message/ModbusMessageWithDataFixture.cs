@@ -14,7 +14,7 @@ namespace Modbus.UnitTests.Message
 		public void CheckModbusMessageWithDataFixtureCtorInitializesProperties()
 		{
 			ModbusMessageWithData<CoilDiscreteCollection> message = new ReadCoilsResponse(10, 1, new CoilDiscreteCollection(true, false, true));
-			Assert.AreEqual(Modbus.READ_COILS, message.FunctionCode);
+			Assert.AreEqual(Modbus.ReadCoils, message.FunctionCode);
 			Assert.AreEqual(10, message.SlaveAddress);
 		}
 

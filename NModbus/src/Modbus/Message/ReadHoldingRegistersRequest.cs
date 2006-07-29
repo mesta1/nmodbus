@@ -13,7 +13,7 @@ namespace Modbus.Message
 		}
 
 		public ReadHoldingRegistersRequest(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
-			: base(slaveAddress, Modbus.READ_HOLDING_REGISTERS)
+			: base(slaveAddress, Modbus.ReadHoldingRegisters)
 		{
 			StartAddress = startAddress;
 			NumberOfPoints = numberOfPoints;

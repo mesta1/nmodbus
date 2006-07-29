@@ -10,7 +10,7 @@ namespace Modbus.IO
 	public abstract class ModbusSerialTransport : IModbusTransport
 	{
 		protected static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-		private int _retries = Modbus.DEFAULT_RETRIES;
+		private int _retries = Modbus.DefaultRetries;
 		private SerialPort _serialPort;
 		
 		public ModbusSerialTransport(SerialPort serialPort)

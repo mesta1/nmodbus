@@ -15,7 +15,7 @@ namespace Modbus.UnitTests.Message
 		[Test]
 		public void CheckCreateModbusMessageReadCoilsRequest()
 		{
-			byte[] frame = new byte[] { 2, Modbus.READ_COILS, 1, 2, 0, 0, 251 };
+			byte[] frame = new byte[] { 2, Modbus.ReadCoils, 1, 2, 0, 0, 251 };
 			ReadCoilsRequest request = ModbusMessageFactory.CreateModbusMessage<ReadCoilsRequest>(frame);
 			AssertModbusMessagePropertiesAreEqual(request, new ReadCoilsRequest(2, 513, 0));
 		}
@@ -24,14 +24,14 @@ namespace Modbus.UnitTests.Message
 		[ExpectedException(typeof(FormatException))]
 		public void CheckCreateModbusMessageReadCoilsRequestWithInvalidFrameSize()
 		{
-			byte[] frame = new byte[] { 11, Modbus.READ_COILS, 4, 1, 2 };
+			byte[] frame = new byte[] { 11, Modbus.ReadCoils, 4, 1, 2 };
 			ReadCoilsRequest request = ModbusMessageFactory.CreateModbusMessage<ReadCoilsRequest>(frame);
 		}
 
 		[Test]
 		public void CheckCreateModbusMessageReadCoilsResponse()
 		{
-			byte[] frame = new byte[] { 11, Modbus.READ_COILS, 1, 1 };
+			byte[] frame = new byte[] { 11, Modbus.ReadCoils, 1, 1 };
 			ReadCoilsResponse response = ModbusMessageFactory.CreateModbusMessage<ReadCoilsResponse>(frame);
 			AssertModbusMessagePropertiesAreEqual(new ReadCoilsResponse(11, 1, new CoilDiscreteCollection(true, false, false, false)), response);
 		}
@@ -40,7 +40,7 @@ namespace Modbus.UnitTests.Message
 		[ExpectedException(typeof(FormatException))]
 		public void CheckCreateModbusMessageReadCoilsResponseWithNoByteCount()
 		{
-			byte[] frame = new byte[] { 11, Modbus.READ_COILS };
+			byte[] frame = new byte[] { 11, Modbus.ReadCoils };
 			ReadCoilsResponse response = ModbusMessageFactory.CreateModbusMessage<ReadCoilsResponse>(frame);
 		}
 
@@ -48,14 +48,14 @@ namespace Modbus.UnitTests.Message
 		[ExpectedException(typeof(FormatException))]
 		public void CheckCreateModbusMessageReadCoilsResponseWithInvalidDataSize()
 		{
-			byte[] frame = new byte[] { 11, Modbus.READ_COILS, 4, 1, 2, 3 };
+			byte[] frame = new byte[] { 11, Modbus.ReadCoils, 4, 1, 2, 3 };
 			ReadCoilsResponse response = ModbusMessageFactory.CreateModbusMessage<ReadCoilsResponse>(frame);
 		}
 
 		[Test]
 		public void CheckCreateModbusMessageReadHoldingRegistersRequest()
 		{
-			ReadHoldingRegistersRequest request = ModbusMessageFactory.CreateModbusMessage<ReadHoldingRegistersRequest>(new byte[] { 11, Modbus.READ_HOLDING_REGISTERS, 0, 0, 5, 0 });
+			ReadHoldingRegistersRequest request = ModbusMessageFactory.CreateModbusMessage<ReadHoldingRegistersRequest>(new byte[] { 11, Modbus.ReadHoldingRegisters, 0, 0, 5, 0 });
 			AssertModbusMessagePropertiesAreEqual(new ReadHoldingRegistersRequest(11, 0, 5), request);
 		}
 
@@ -63,13 +63,13 @@ namespace Modbus.UnitTests.Message
 		[ExpectedException(typeof(FormatException))]
 		public void CheckCreateModbusMessageReadHoldingRegistersRequestWithInvalidFrameSize()
 		{
-			ReadHoldingRegistersRequest request = ModbusMessageFactory.CreateModbusMessage<ReadHoldingRegistersRequest>(new byte[] { 11, Modbus.READ_HOLDING_REGISTERS, 0, 0, 5 });
+			ReadHoldingRegistersRequest request = ModbusMessageFactory.CreateModbusMessage<ReadHoldingRegistersRequest>(new byte[] { 11, Modbus.ReadHoldingRegisters, 0, 0, 5 });
 		}
 
 		[Test]
 		public void CheckCreateModbusMessageReadHoldingRegistersResponse()
 		{
-			ReadHoldingRegistersResponse response = ModbusMessageFactory.CreateModbusMessage<ReadHoldingRegistersResponse>(new byte[] { 11, Modbus.READ_HOLDING_REGISTERS, 4, 0, 3, 0, 4 });
+			ReadHoldingRegistersResponse response = ModbusMessageFactory.CreateModbusMessage<ReadHoldingRegistersResponse>(new byte[] { 11, Modbus.ReadHoldingRegisters, 4, 0, 3, 0, 4 });
 			AssertModbusMessagePropertiesAreEqual(new ReadHoldingRegistersResponse(11, 4, new HoldingRegisterCollection(3, 4)), response);
 		}
 
@@ -77,7 +77,21 @@ namespace Modbus.UnitTests.Message
 		[ExpectedException(typeof(FormatException))]
 		public void CheckCreateModbusMessageReadHoldingRegistersResponseWithInvalidFrameSize()
 		{
-			ModbusMessageFactory.CreateModbusMessage<ReadHoldingRegistersResponse>(new byte[] { 11, Modbus.READ_HOLDING_REGISTERS });
+			ModbusMessageFactory.CreateModbusMessage<ReadHoldingRegistersResponse>(new byte[] { 11, Modbus.ReadHoldingRegisters });
+		}
+
+		[Test]
+		public void CheckCreateModbusMessageSlaveExceptionResponse()
+		{
+			SlaveExceptionResponse response = ModbusMessageFactory.CreateModbusMessage<SlaveExceptionResponse>(new byte[] { 11, 129, 2 });
+			AssertModbusMessagePropertiesAreEqual(new SlaveExceptionResponse(11, Modbus.ReadCoils, 2), response);
+		}
+
+		[Test]
+		[ExpectedException(typeof(FormatException))]
+		public void CheckCreateModbusMessageSlaveExceptionResponseWithInvalidFrameSize()
+		{
+			ModbusMessageFactory.CreateModbusMessage<SlaveExceptionResponse>(new byte[] { 11, 128 });
 		}
 	}
 }

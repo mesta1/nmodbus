@@ -13,7 +13,7 @@ namespace Modbus.UnitTests.Message
 		public void CheckNewReadHoldingRegistersRequest()
 		{
 			ReadHoldingRegistersRequest request = new ReadHoldingRegistersRequest(5, 1, 10);
-			Assert.AreEqual(Modbus.READ_HOLDING_REGISTERS, request.FunctionCode);
+			Assert.AreEqual(Modbus.ReadHoldingRegisters, request.FunctionCode);
 			Assert.AreEqual(5, request.SlaveAddress);
 			Assert.AreEqual(1, request.StartAddress);
 			Assert.AreEqual(10, request.NumberOfPoints);

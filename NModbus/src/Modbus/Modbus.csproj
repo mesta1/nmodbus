@@ -64,6 +64,7 @@
     <Compile Include="IO\ModbusSerialTransport.cs" />
     <Compile Include="IO\IModbusTransport.cs" />
     <Compile Include="Data\IModbusMessageDataCollection.cs" />
+    <Compile Include="Message\SlaveExceptionResponse.cs" />
     <Compile Include="Message\IModbusMessage.cs" />
     <Compile Include="Message\ModbusMessage.cs" />
     <Compile Include="Message\ModbusMessageFactory.cs" />
@@ -73,8 +74,10 @@
     <Compile Include="Message\ReadCoilsResponse.cs" />
     <Compile Include="Message\ReadHoldingRegistersRequest.cs" />
     <Compile Include="Message\ReadHoldingRegistersResponse.cs" />
+    <Compile Include="Message\WriteSingleCoilRequest.cs" />
     <Compile Include="Modbus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SlaveException.cs" />
     <Compile Include="Util\CollectionUtil.cs" />
     <Compile Include="Util\ModbusUtil.cs" />
   </ItemGroup>

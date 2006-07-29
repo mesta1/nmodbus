@@ -14,7 +14,7 @@ namespace Modbus.Message
 		}
 
 		public ReadCoilsRequest(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
-			: base(slaveAddress, Modbus.READ_COILS)
+			: base(slaveAddress, Modbus.ReadCoils)
 		{
 			StartAddress = startAddress;
 			NumberOfPoints = numberOfPoints;

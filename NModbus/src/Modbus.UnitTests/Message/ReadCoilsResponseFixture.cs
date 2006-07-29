@@ -14,7 +14,7 @@ namespace Modbus.UnitTests.Message
 		public void CheckCreateReadCoilsResponse()
 		{
 			ReadCoilsResponse response = new ReadCoilsResponse(5, 2, new CoilDiscreteCollection(true, true, true, true, true, true, false, false, true, true, false));
-			Assert.AreEqual(Modbus.READ_COILS, response.FunctionCode);
+			Assert.AreEqual(Modbus.ReadCoils, response.FunctionCode);
 			Assert.AreEqual(5, response.SlaveAddress);
 			Assert.AreEqual(2, response.ByteCount);
 			// TODO refactor comparision to CoilDiscreteCollectionFixture
