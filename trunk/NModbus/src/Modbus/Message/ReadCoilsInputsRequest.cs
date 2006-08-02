@@ -5,16 +5,16 @@ using Modbus.Data;
 
 namespace Modbus.Message
 {
-	public class ReadCoilsRequest : ModbusMessage, IModbusMessage
+	public class ReadCoilsInputsRequest : ModbusMessage, IModbusMessage
 	{
 		private const int _minimumFrameSize = 6;
 
-		public ReadCoilsRequest()
+		public ReadCoilsInputsRequest()
 		{
 		}
 
-		public ReadCoilsRequest(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
-			: base(slaveAddress, Modbus.ReadCoils)
+		public ReadCoilsInputsRequest(byte functionCode, byte slaveAddress, ushort startAddress, ushort numberOfPoints)
+			: base(slaveAddress, functionCode)
 		{
 			StartAddress = startAddress;
 			NumberOfPoints = numberOfPoints;

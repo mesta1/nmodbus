@@ -13,7 +13,7 @@ namespace Modbus.UnitTests.Message
 		[Test]
 		public void CheckProtocolDataUnitReadCoilsRequest()
 		{
-			ModbusMessage message = new ReadCoilsRequest(1, 100, 9);
+			ModbusMessage message = new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 100, 9);
 			byte[] expectedResult = new byte[] { Modbus.ReadCoils, 0, 100, 0, 9 };
 			Assert.AreEqual(expectedResult, message.ProtocolDataUnit);
 		}
@@ -21,7 +21,7 @@ namespace Modbus.UnitTests.Message
 		[Test]
 		public void CheckChecksumBodyReadCoilsRequest()
 		{
-			ModbusMessage message = new ReadCoilsRequest(1, 2, 3);
+			ModbusMessage message = new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 2, 3);
 			byte[] expectedChecksumBody = new byte[] { 1, Modbus.ReadCoils, 0, 2, 0, 3 };
 			Assert.AreEqual(expectedChecksumBody, message.ChecksumBody);
 		}
