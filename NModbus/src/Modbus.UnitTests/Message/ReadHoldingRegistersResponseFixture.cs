@@ -17,9 +17,7 @@ namespace Modbus.UnitTests.Message
 			Assert.AreEqual(Modbus.ReadHoldingRegisters, response.FunctionCode);
 			Assert.AreEqual(2, response.SlaveAddress);
 			Assert.AreEqual(3, response.ByteCount);
-			// TODO refactor comparision to HoldingRegisterCollectionFixture
 			HoldingRegisterCollection col = new HoldingRegisterCollection(1, 2, 3);
-			Assert.AreEqual(col.Count, response.Data.Count);
 			Assert.AreEqual(col.NetworkBytes, response.Data.NetworkBytes);
 		}
 	}
