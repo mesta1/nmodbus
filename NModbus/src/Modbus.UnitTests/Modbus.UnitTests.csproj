@@ -67,10 +67,8 @@
     <Compile Include="Message\ReadHoldingRegistersRequestFixture.cs" />
     <Compile Include="Message\ReadHoldingRegistersResponseFixture.cs" />
     <Compile Include="Message\SlaveExceptionResponseFixture.cs" />
-    <Compile Include="Message\WriteSingleCoilRequestFixture.cs" />
-    <Compile Include="Message\WriteSingleCoilResponseFixture.cs" />
-    <Compile Include="Message\WriteSingleRegisterRequestFixture.cs" />
-    <Compile Include="Message\WriteSingleRegisterResponseFixture.cs" />
+    <Compile Include="Message\WriteSingleCoilRequestResponseFixture.cs" />
+    <Compile Include="Message\WriteSingleRegisterRequestResponseFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\CollectionUtilFixture.cs" />
     <Compile Include="Util\ModbusUtilFixture.cs" />

@@ -7,12 +7,12 @@ using Modbus.Message;
 namespace Modbus.UnitTests.Message
 {
 	[TestFixture]
-	public class WriteSingleCoilRequestFixture
+	public class WriteSingleCoilRequestResponseFixture
 	{
 		[Test]
-		public void NewWriteSingleCoilRequest()
+		public void NewWriteSingleCoilRequestResponse()
 		{
-			WriteSingleCoilRequest request = new WriteSingleCoilRequest(11, 5, true);
+			WriteSingleCoilRequestResponse request = new WriteSingleCoilRequestResponse(11, 5, true);
 			Assert.AreEqual(11, request.SlaveAddress);
 			Assert.AreEqual(5, request.StartAddress);
 			Assert.AreEqual(1, request.Data.Count);

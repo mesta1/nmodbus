@@ -59,12 +59,18 @@ namespace Modbus.IntegrationTests
 			Assert.AreEqual(coilValue, master.ReadCoils(SlaveAddress, 105, 1)[0]);
 		}
 
-		//[Test]
-		//public void CheckWriteSingleRegister()
-		//{
-		//    ModbusASCIIMaster master = new ModbusASCIIMaster(_port);
+		[Test]
+		public void CheckWriteSingleRegister()
+		{
+			ModbusASCIIMaster master = new ModbusASCIIMaster(_port);
+			ushort testAddress = (ushort) new Random().Next(ushort.MaxValue);
 
-		//    ushort registerValue = master.ReadHoldingRegisters(SlaveAddress, 100, 1)[0];
-		//}
+			ushort originalValue = master.ReadHoldingRegisters(SlaveAddress, testAddress, 1)[0];
+			ushort newValue = (ushort) new Random().Next(ushort.MaxValue);
+			master.WriteSingleRegister(SlaveAddress, testAddress, newValue);
+			Assert.AreEqual(newValue, master.ReadHoldingRegisters(SlaveAddress, testAddress, 1)[0]);
+			master.WriteSingleRegister(SlaveAddress, testAddress, originalValue);
+			Assert.AreEqual(originalValue, master.ReadHoldingRegisters(SlaveAddress, testAddress, 1)[0]);
+		}
 	}
 }

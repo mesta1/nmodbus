@@ -8,8 +8,6 @@ namespace Modbus.Message
 	public abstract class ModbusMessageWithData<TData> : ModbusMessage
 		where TData : IModbusMessageDataCollection
 	{
-		private TData _data;
-
 		public ModbusMessageWithData()
 		{
 		}
