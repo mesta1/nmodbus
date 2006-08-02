@@ -30,7 +30,7 @@ namespace Modbus.UnitTests.Message
 		{
 			Assert.AreEqual(obj1.FunctionCode, obj2.FunctionCode);
 			Assert.AreEqual(obj1.SlaveAddress, obj2.SlaveAddress);
-			Assert.AreEqual(obj1.ChecksumBody, obj1.ChecksumBody);
+			Assert.AreEqual(obj1.ChecksumBody, obj2.ChecksumBody);
 			Assert.AreEqual(obj1.ProtocolDataUnit, obj2.ProtocolDataUnit);
 		}
 	}

@@ -7,6 +7,6 @@ namespace Modbus.Data
 {
 	public interface IModbusMessageDataCollection	
 	{
-		byte[] Bytes { get; }
+		byte[] NetworkBytes { get; }
 	}
 }

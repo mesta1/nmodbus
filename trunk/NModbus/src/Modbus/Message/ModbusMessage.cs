@@ -46,12 +46,16 @@ namespace Modbus.Message
 			get { return _messageImpl.ChecksumBody; }
 		}
 
-		public void InitializeCommon(byte[] frame)
+		public void Initialize(byte[] frame)
 		{
+			if (frame.Length < MinimumFrameSize)
+				throw new FormatException(String.Format("Message frame must contain at least {0} bytes of data.", MinimumFrameSize));
+
 			_messageImpl.Initialize(frame);
 			InitializeUnique(frame);
 		}
 
 		protected abstract void InitializeUnique(byte[] frame);
+		public abstract int MinimumFrameSize { get; }
 	}
 }

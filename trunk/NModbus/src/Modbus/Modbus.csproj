@@ -75,6 +75,9 @@
     <Compile Include="Message\ReadHoldingRegistersRequest.cs" />
     <Compile Include="Message\ReadHoldingRegistersResponse.cs" />
     <Compile Include="Message\WriteSingleCoilRequest.cs" />
+    <Compile Include="Message\WriteSingleCoilResponse.cs" />
+    <Compile Include="Message\WriteSingleRegisterRequest.cs" />
+    <Compile Include="Message\WriteSingleRegisterResponse.cs" />
     <Compile Include="Modbus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SlaveException.cs" />

@@ -6,7 +6,7 @@ namespace Modbus.Message
 {
 	public class SlaveExceptionResponse : ModbusMessage, IModbusMessage
 	{
-		private const int MinFrameSize = 3;
+		private const int _minimumFrameSize = 3;
 
 		public SlaveExceptionResponse()
 		{
@@ -19,6 +19,11 @@ namespace Modbus.Message
 			SlaveExceptionCode = exceptionCode;
 		}
 
+		public override int MinimumFrameSize
+		{
+			get { return _minimumFrameSize; }
+		}
+
 		public byte SlaveExceptionCode
 		{
 			get { return MessageImpl.ExceptionCode; }
@@ -27,9 +32,6 @@ namespace Modbus.Message
 
 		protected override void InitializeUnique(byte[] frame)
 		{
-			if (frame.Length < MinFrameSize)
-				throw new FormatException(String.Format("Message frame must contain at least {0} bytes of data.", MinFrameSize));
-
 			SlaveExceptionCode = frame[2];	
 		}
 	}

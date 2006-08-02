@@ -11,12 +11,9 @@ namespace Modbus.Message
 		public static T CreateModbusMessage<T>(byte[] frame) where T : IModbusMessage, new()
 		{
 			IModbusMessage message = new T();
-			message.InitializeCommon(frame);
+			message.Initialize(frame);
 
 			return (T) message;
 		}
-
-		
-
 	}
 }

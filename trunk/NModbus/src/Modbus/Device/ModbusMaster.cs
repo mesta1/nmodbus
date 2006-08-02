@@ -33,5 +33,11 @@ namespace Modbus.Device
 			
 			return CollectionUtil.ToArray<ushort>(response.Data);
 		}
+
+		public void WriteSingleCoil(byte slaveAddress, ushort coilAddress, bool value)
+		{
+			WriteSingleCoilRequest request = new WriteSingleCoilRequest(slaveAddress, coilAddress, value);
+			WriteSingleCoilResponse response = Transport.UnicastMessage<WriteSingleCoilResponse>(request);
+		}
 	}
 }

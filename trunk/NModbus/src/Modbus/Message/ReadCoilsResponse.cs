@@ -9,7 +9,7 @@ namespace Modbus.Message
 {
 	public class ReadCoilsResponse : ModbusMessageWithData<CoilDiscreteCollection>, IModbusMessage
 	{
-		private const int MinFrameSize = 4;
+		private const int _minimumFrameSize = 4;
 
 		public ReadCoilsResponse()
 		{
@@ -28,11 +28,13 @@ namespace Modbus.Message
 			set { MessageImpl.ByteCount = value; }
 		}
 
+		public override int MinimumFrameSize
+		{
+			get { return _minimumFrameSize; }
+		}
+
 		protected override void InitializeUnique(byte[] frame)
 		{
-			if (frame.Length < MinFrameSize)
-				throw new FormatException(String.Format("Message frame must contain at least {0} bytes of data.", MinFrameSize));
-
 			if (frame.Length < 3 + frame[2])
 				throw new FormatException("Message frame data segment does not contain enough bytes.");
 

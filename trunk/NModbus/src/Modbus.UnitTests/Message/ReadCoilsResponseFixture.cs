@@ -20,7 +20,7 @@ namespace Modbus.UnitTests.Message
 			// TODO refactor comparision to CoilDiscreteCollectionFixture
 			CoilDiscreteCollection col = new CoilDiscreteCollection(true, true, true, true, true, true, false, false, true, true, false);
 			Assert.AreEqual(col.Count, response.Data.Count);
-			Assert.AreEqual(col.Bytes, response.Data.Bytes);
+			Assert.AreEqual(col.NetworkBytes, response.Data.NetworkBytes);
 		}
 	}
 }

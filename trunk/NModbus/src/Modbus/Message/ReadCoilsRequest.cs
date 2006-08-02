@@ -7,7 +7,7 @@ namespace Modbus.Message
 {
 	public class ReadCoilsRequest : ModbusMessage, IModbusMessage
 	{
-		private const int MinFrameSize = 6;
+		private const int _minimumFrameSize = 6;
 
 		public ReadCoilsRequest()
 		{
@@ -26,6 +26,11 @@ namespace Modbus.Message
 			set { MessageImpl.StartAddress = value; }
 		}
 
+		public override int MinimumFrameSize
+		{
+			get { return _minimumFrameSize; }
+		}
+
 		public ushort NumberOfPoints
 		{
 			get { return MessageImpl.NumberOfPoints; }
@@ -34,9 +39,6 @@ namespace Modbus.Message
 
 		protected override void InitializeUnique(byte[] frame)
 		{
-			if (frame.Length < 6)
-				throw new FormatException(String.Format("Message frame must contain at least {0} bytes of data.", MinFrameSize));
-
 			StartAddress = BitConverter.ToUInt16(frame, 2);
 			NumberOfPoints = BitConverter.ToUInt16(frame, 4);
 		}

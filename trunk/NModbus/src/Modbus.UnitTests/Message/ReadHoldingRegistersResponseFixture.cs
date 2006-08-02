@@ -20,7 +20,7 @@ namespace Modbus.UnitTests.Message
 			// TODO refactor comparision to HoldingRegisterCollectionFixture
 			HoldingRegisterCollection col = new HoldingRegisterCollection(1, 2, 3);
 			Assert.AreEqual(col.Count, response.Data.Count);
-			Assert.AreEqual(col.Bytes, response.Data.Bytes);
+			Assert.AreEqual(col.NetworkBytes, response.Data.NetworkBytes);
 		}
 	}
 }

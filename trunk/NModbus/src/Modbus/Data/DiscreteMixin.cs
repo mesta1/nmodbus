@@ -11,7 +11,7 @@ namespace Modbus.Data
 		{
 		}
 
-		public byte[] GetBytes(T that)
+		public byte[] GetNetworkBytes(T that)
 		{
 			bool[] bits = new bool[that.Count];
 			that.CopyTo(bits, 0);

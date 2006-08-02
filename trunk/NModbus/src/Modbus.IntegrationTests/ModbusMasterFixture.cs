@@ -13,6 +13,7 @@ namespace Modbus.IntegrationTests
 	{
 		private SerialPort _port;
 		private const string PortName = "COM4";
+		private const byte SlaveAddress = 2;
 
 		[SetUp]
 		public void SetUp()
@@ -34,7 +35,7 @@ namespace Modbus.IntegrationTests
 		public void CheckReadCoils()
 		{
 			ModbusASCIIMaster master = new ModbusASCIIMaster(_port);
-			bool[] coils = master.ReadCoils(2, 100, 1);
+			bool[] coils = master.ReadCoils(SlaveAddress, 100, 1);
 			Assert.AreEqual(new bool[] { true }, coils);
 		}
 
@@ -42,8 +43,28 @@ namespace Modbus.IntegrationTests
 		public void CheckReadHoldingRegisters()
 		{
 			ModbusASCIIMaster master = new ModbusASCIIMaster(_port);
-			ushort[] registers = master.ReadHoldingRegisters(2, 104, 2);
+			ushort[] registers = master.ReadHoldingRegisters(SlaveAddress, 104, 2);
 			Assert.AreEqual(new ushort[] { 104, 105 }, registers);
 		}
+
+		[Test]
+		public void CheckWriteSingleCoil()
+		{
+			ModbusASCIIMaster master = new ModbusASCIIMaster(_port);
+
+			bool coilValue = master.ReadCoils(SlaveAddress, 105, 1)[0];
+			master.WriteSingleCoil(SlaveAddress, 105, !coilValue);
+			Assert.AreEqual(!coilValue, master.ReadCoils(SlaveAddress, 105, 1)[0]);
+			master.WriteSingleCoil(SlaveAddress, 105, coilValue);
+			Assert.AreEqual(coilValue, master.ReadCoils(SlaveAddress, 105, 1)[0]);
+		}
+
+		//[Test]
+		//public void CheckWriteSingleRegister()
+		//{
+		//    ModbusASCIIMaster master = new ModbusASCIIMaster(_port);
+
+		//    ushort registerValue = master.ReadHoldingRegisters(SlaveAddress, 100, 1)[0];
+		//}
 	}
 }
