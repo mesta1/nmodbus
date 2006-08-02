@@ -64,6 +64,8 @@
     <Compile Include="IO\ModbusSerialTransport.cs" />
     <Compile Include="IO\IModbusTransport.cs" />
     <Compile Include="Data\IModbusMessageDataCollection.cs" />
+    <Compile Include="Message\ReadInputsRequest.cs" />
+    <Compile Include="Message\ReadInputsResponse.cs" />
     <Compile Include="Message\SlaveExceptionResponse.cs" />
     <Compile Include="Message\IModbusMessage.cs" />
     <Compile Include="Message\ModbusMessage.cs" />

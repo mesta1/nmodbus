@@ -26,6 +26,14 @@ namespace Modbus.Device
 			return CollectionUtil.Slice<bool>(response.Data, 0, request.NumberOfPoints);
 		}
 
+		public bool[] ReadInputs(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
+		{
+			ReadInputsRequest request = new ReadInputsRequest(slaveAddress, startAddress, numberOfPoints);
+			ReadInputsResponse response = Transport.UnicastMessage<ReadInputsResponse>(request);
+
+			return CollectionUtil.Slice<bool>(response.Data, 0, request.NumberOfPoints);
+		}
+
 		public ushort[] ReadHoldingRegisters(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
 		{
 			ReadHoldingRegistersRequest request = new ReadHoldingRegistersRequest(slaveAddress, startAddress, numberOfPoints);

@@ -40,6 +40,15 @@ namespace Modbus.IntegrationTests
 		}
 
 		[Test]
+		public void ReadInputs()
+		{
+			ModbusASCIIMaster master = new ModbusASCIIMaster(_port);
+
+			bool[] inputs = master.ReadInputs(SlaveAddress, 150, 3);
+			Assert.AreEqual(new bool[] { true, true, true }, inputs);
+		}
+
+		[Test]
 		public void CheckReadHoldingRegisters()
 		{
 			ModbusASCIIMaster master = new ModbusASCIIMaster(_port);

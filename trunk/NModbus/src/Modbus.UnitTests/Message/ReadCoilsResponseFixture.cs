@@ -11,15 +11,13 @@ namespace Modbus.UnitTests.Message
 	public class ReadCoilsResponseFixture
 	{
 		[Test]
-		public void CheckCreateReadCoilsResponse()
+		public void CreateReadCoilsResponse()
 		{
 			ReadCoilsResponse response = new ReadCoilsResponse(5, 2, new CoilDiscreteCollection(true, true, true, true, true, true, false, false, true, true, false));
 			Assert.AreEqual(Modbus.ReadCoils, response.FunctionCode);
 			Assert.AreEqual(5, response.SlaveAddress);
 			Assert.AreEqual(2, response.ByteCount);
-			// TODO refactor comparision to CoilDiscreteCollectionFixture
 			CoilDiscreteCollection col = new CoilDiscreteCollection(true, true, true, true, true, true, false, false, true, true, false);
-			Assert.AreEqual(col.Count, response.Data.Count);
 			Assert.AreEqual(col.NetworkBytes, response.Data.NetworkBytes);
 		}
 	}
