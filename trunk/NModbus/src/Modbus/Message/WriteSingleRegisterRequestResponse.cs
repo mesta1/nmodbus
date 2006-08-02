@@ -6,15 +6,15 @@ using System.Net;
 
 namespace Modbus.Message
 {
-	public class WriteSingleRegisterRequest : ModbusMessageWithData<HoldingRegisterCollection>, IModbusMessage
+	public class WriteSingleRegisterRequestResponse : ModbusMessageWithData<HoldingRegisterCollection>, IModbusMessage
 	{
 		private const int _minimumFrameSize = 6;
 
-		public WriteSingleRegisterRequest()
+		public WriteSingleRegisterRequestResponse()
 		{
 		}
 
-		public WriteSingleRegisterRequest(byte slaveAddress, byte startAddress, ushort registerValue)
+		public WriteSingleRegisterRequestResponse(byte slaveAddress, ushort startAddress, ushort registerValue)
 			: base(slaveAddress, Modbus.WriteSingleRegister)
 		{
 			StartAddress = startAddress;

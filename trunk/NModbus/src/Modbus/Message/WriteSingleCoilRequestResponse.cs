@@ -6,15 +6,15 @@ using System.Net;
 
 namespace Modbus.Message
 {
-	public class WriteSingleCoilRequest : ModbusMessageWithData<InputRegisterCollection>, IModbusMessage
+	public class WriteSingleCoilRequestResponse : ModbusMessageWithData<InputRegisterCollection>, IModbusMessage
 	{
 		private const int _minimumFrameSize = 6;
 
-		public WriteSingleCoilRequest()
+		public WriteSingleCoilRequestResponse()
 		{
 		}
 
-		public WriteSingleCoilRequest(byte slaveAddress, ushort startAddress, bool coilState)
+		public WriteSingleCoilRequestResponse(byte slaveAddress, ushort startAddress, bool coilState)
 			: base(slaveAddress, Modbus.WriteSingleCoil)
 		{
 			StartAddress = startAddress;
