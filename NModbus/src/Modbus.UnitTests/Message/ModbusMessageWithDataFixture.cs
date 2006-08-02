@@ -32,7 +32,7 @@ namespace Modbus.UnitTests.Message
 			CoilDiscreteCollection col = new CoilDiscreteCollection(false, true, false, true, false, true, false, false, false, false);
 			ModbusMessageWithData<CoilDiscreteCollection> message = new ReadCoilsResponse(11, 1, col);
 			Assert.AreEqual(col.Count, message.Data.Count);
-			Assert.AreEqual(col.Bytes, message.Data.Bytes);
+			Assert.AreEqual(col.NetworkBytes, message.Data.NetworkBytes);
 		}
 	}
 }

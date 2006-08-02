@@ -14,13 +14,13 @@ namespace Modbus.Data
 		{
 		}
 
-		public HoldingRegisterCollection(params ushort[] registers)
-			: this((IList<ushort>) registers)
+		public HoldingRegisterCollection(byte[] bytes)
+			: this((IList<ushort>) ModbusUtil.NetworkBytesToHostUInt16(bytes))
 		{
 		}
 
-		public HoldingRegisterCollection(byte[] bytes)
-			: this((IList<ushort>) ModbusUtil.NetworkBytesToHostUInt16(bytes))
+		public HoldingRegisterCollection(params ushort[] registers)
+			: this((IList<ushort>) registers)
 		{
 		}
 
@@ -29,11 +29,11 @@ namespace Modbus.Data
 		{
 		}
 		
-		public byte[] Bytes
+		public byte[] NetworkBytes
 		{
 			get
 			{
-				return _mixin.GetBytes(this);
+				return _mixin.GetNetworkBytes(this);
 			}
 		}	
 	}

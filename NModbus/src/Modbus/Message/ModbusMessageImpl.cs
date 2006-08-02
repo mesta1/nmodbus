@@ -47,7 +47,7 @@ namespace Modbus.Message
 			get { return _functionCode; }
 			set { _functionCode = value; }
 		}
-
+	
 		public ushort NumberOfPoints
 		{
 			get { return _numberOfPoints.Value; }
@@ -101,8 +101,9 @@ namespace Modbus.Message
 				if (_numberOfPoints != null)
 					pdu.AddRange(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short) _numberOfPoints.Value)));
 
+				// TODO bytes needs to be network bytes
 				if (_data != null)
-					pdu.AddRange(_data.Bytes);
+					pdu.AddRange(_data.NetworkBytes);
 
 				return pdu.ToArray();
 			}
@@ -113,8 +114,8 @@ namespace Modbus.Message
 			if (frame == null)
 				throw new ArgumentNullException("frame", "Argument frame cannot be null.");
 
-			if (frame.Length < 2)
-				throw new FormatException("Message frame must contain at least two bytes of data.");		
+			if (frame.Length < Modbus.MinimumFrameSize)
+				throw new FormatException(String.Format("Message frame must contain at least {0} bytes of data.", Modbus.MinimumFrameSize));
 
 			SlaveAddress = frame[0];
 			FunctionCode = frame[1];

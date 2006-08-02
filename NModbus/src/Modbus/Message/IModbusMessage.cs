@@ -9,7 +9,7 @@ namespace Modbus.Message
 	/// </summary>
 	public interface IModbusMessage
 	{
-		void InitializeCommon(byte[] frame);
+		void Initialize(byte[] frame);
 		byte[] ProtocolDataUnit { get; }
 		byte[] ChecksumBody { get; }
 		byte FunctionCode { get; set; }

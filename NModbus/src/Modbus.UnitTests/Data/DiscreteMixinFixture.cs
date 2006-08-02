@@ -15,7 +15,7 @@ namespace Modbus.UnitTests.Data
 		{
 			DiscreteMixin<BitArray> col = new DiscreteMixin<BitArray>();
 			BitArray bitArray = new BitArray(new byte[] { 1, 1 });
-			Assert.AreEqual(new byte[] { 1, 1 }, col.GetBytes(bitArray));
+			Assert.AreEqual(new byte[] { 1, 1 }, col.GetNetworkBytes(bitArray));
 		}		
 	}
 }

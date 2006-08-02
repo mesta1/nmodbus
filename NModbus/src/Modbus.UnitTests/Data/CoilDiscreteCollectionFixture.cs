@@ -53,10 +53,10 @@ namespace Modbus.UnitTests.Data
 		{
 			CoilDiscreteCollection col = new CoilDiscreteCollection(byte.MaxValue, byte.MaxValue);
 			Assert.AreEqual(16, col.Count);
-			byte[] originalBytes = col.Bytes;
+			byte[] originalBytes = col.NetworkBytes;
 			col.RemoveAt(3);
 			Assert.AreEqual(15, col.Count);
-			Assert.AreNotEqual(originalBytes, col.Bytes);
+			Assert.AreNotEqual(originalBytes, col.NetworkBytes);
 		}
 
 		[Test]

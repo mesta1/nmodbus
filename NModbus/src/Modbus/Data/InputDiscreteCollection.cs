@@ -26,11 +26,11 @@ namespace Modbus.Data
 		{
 		}
 
-		public byte[] Bytes
+		public byte[] NetworkBytes
 		{
 			get
 			{
-				return _mixin.GetBytes(this);
+				return _mixin.GetNetworkBytes(this);
 			}
 		}
 	}
