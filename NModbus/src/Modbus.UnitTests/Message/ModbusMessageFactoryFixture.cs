@@ -16,8 +16,8 @@ namespace Modbus.UnitTests.Message
 		public void CreateModbusMessageReadCoilsRequest()
 		{
 			byte[] frame = new byte[] { 2, Modbus.ReadCoils, 1, 2, 0, 0, 251 };
-			ReadCoilsRequest request = ModbusMessageFactory.CreateModbusMessage<ReadCoilsRequest>(frame);
-			AssertModbusMessagePropertiesAreEqual(request, new ReadCoilsRequest(2, 513, 0));
+			ReadCoilsInputsRequest request = ModbusMessageFactory.CreateModbusMessage<ReadCoilsInputsRequest>(frame);
+			AssertModbusMessagePropertiesAreEqual(request, new ReadCoilsInputsRequest(Modbus.ReadCoils, 2, 513, 0));
 		}
 
 		[Test]
@@ -25,7 +25,7 @@ namespace Modbus.UnitTests.Message
 		public void CreateModbusMessageReadCoilsRequestWithInvalidFrameSize()
 		{
 			byte[] frame = new byte[] { 11, Modbus.ReadCoils, 4, 1, 2 };
-			ReadCoilsRequest request = ModbusMessageFactory.CreateModbusMessage<ReadCoilsRequest>(frame);
+			ReadCoilsInputsRequest request = ModbusMessageFactory.CreateModbusMessage<ReadCoilsInputsRequest>(frame);
 			Assert.Fail();
 		}
 
@@ -58,15 +58,15 @@ namespace Modbus.UnitTests.Message
 		[Test]
 		public void CreateModbusMessageReadHoldingRegistersRequest()
 		{
-			ReadHoldingRegistersRequest request = ModbusMessageFactory.CreateModbusMessage<ReadHoldingRegistersRequest>(new byte[] { 11, Modbus.ReadHoldingRegisters, 0, 0, 5, 0 });
-			AssertModbusMessagePropertiesAreEqual(new ReadHoldingRegistersRequest(11, 0, 5), request);
+			ReadHoldingInputRegistersRequest request = ModbusMessageFactory.CreateModbusMessage<ReadHoldingInputRegistersRequest>(new byte[] { 11, Modbus.ReadHoldingRegisters, 0, 0, 5, 0 });
+			AssertModbusMessagePropertiesAreEqual(new ReadHoldingInputRegistersRequest(Modbus.ReadHoldingRegisters, 11, 0, 5), request);
 		}
 
 		[Test]
 		[ExpectedException(typeof(FormatException))]
 		public void CreateModbusMessageReadHoldingRegistersRequestWithInvalidFrameSize()
 		{
-			ReadHoldingRegistersRequest request = ModbusMessageFactory.CreateModbusMessage<ReadHoldingRegistersRequest>(new byte[] { 11, Modbus.ReadHoldingRegisters, 0, 0, 5 });
+			ReadHoldingInputRegistersRequest request = ModbusMessageFactory.CreateModbusMessage<ReadHoldingInputRegistersRequest>(new byte[] { 11, Modbus.ReadHoldingRegisters, 0, 0, 5 });
 		}
 
 		[Test]

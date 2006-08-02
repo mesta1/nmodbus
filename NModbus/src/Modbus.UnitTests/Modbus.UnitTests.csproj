@@ -62,11 +62,9 @@
     <Compile Include="Message\ModbusMessageFixture.cs" />
     <Compile Include="Message\ModbusMessageImplFixture.cs" />
     <Compile Include="Message\ModbusMessageWithDataFixture.cs" />
-    <Compile Include="Message\ReadCoilsRequestFixture.cs" />
+    <Compile Include="Message\ReadCoilsInputsRequestFixture.cs" />
     <Compile Include="Message\ReadCoilsResponseFixture.cs" />
-    <Compile Include="Message\ReadHoldingRegistersRequestFixture.cs" />
-    <Compile Include="Message\ReadHoldingRegistersResponseFixture.cs" />
-    <Compile Include="Message\ReadInputsRequestFixture.cs" />
+    <Compile Include="Message\ReadHoldingInputRegistersRequestFixture.cs" />
     <Compile Include="Message\ReadInputsResponseFixture.cs" />
     <Compile Include="Message\SlaveExceptionResponseFixture.cs" />
     <Compile Include="Message\WriteSingleCoilRequestResponseFixture.cs" />

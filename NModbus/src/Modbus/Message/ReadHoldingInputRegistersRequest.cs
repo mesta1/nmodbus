@@ -4,16 +4,16 @@ using System.Text;
 
 namespace Modbus.Message
 {
-	public class ReadHoldingRegistersRequest : ModbusMessage, IModbusMessage
+	public class ReadHoldingInputRegistersRequest : ModbusMessage, IModbusMessage
 	{
 		private const int _minimumFrameSize = 6;
 
-		public ReadHoldingRegistersRequest()
+		public ReadHoldingInputRegistersRequest()
 		{
 		}
 
-		public ReadHoldingRegistersRequest(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
-			: base(slaveAddress, Modbus.ReadHoldingRegisters)
+		public ReadHoldingInputRegistersRequest(byte functionCode, byte slaveAddress, ushort startAddress, ushort numberOfPoints)
+			: base(slaveAddress, functionCode)
 		{
 			StartAddress = startAddress;
 			NumberOfPoints = numberOfPoints;

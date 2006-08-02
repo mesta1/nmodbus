@@ -13,7 +13,7 @@ namespace Modbus.UnitTests.IO
 		[Test, Ignore("TODO")]
 		public void CheckCalculateChecksum()
 		{
-			ReadCoilsRequest request = new ReadCoilsRequest(1, 1, 10);
+			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 1, 10);
 			Assert.AreEqual(new byte[] { 59, 86 }, new ModbusRTUTransport(null).CalculateChecksum(request));
 		}
 	}

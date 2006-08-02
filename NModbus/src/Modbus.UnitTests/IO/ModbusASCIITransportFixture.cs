@@ -13,7 +13,7 @@ namespace Modbus.UnitTests.IO
 		[Test]
 		public void CheckCalculateRequestLRC1()
 		{
-			ReadCoilsRequest request = new ReadCoilsRequest(1, 1, 10);
+			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 1, 10);
 			Assert.AreEqual(243, new ModbusASCIITransport(null).CalculateChecksum(request)[0]);
 		}
 
@@ -21,7 +21,7 @@ namespace Modbus.UnitTests.IO
 		public void CheckCalculateRequestLRC2()
 		{
 			//: 02 01 0000 0001 FC
-			ReadCoilsRequest request = new ReadCoilsRequest(2, 0, 1);
+			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 2, 0, 1);
 			Assert.AreEqual(252, new ModbusASCIITransport(null).CalculateChecksum(request)[0]);
 		}
 
@@ -29,7 +29,7 @@ namespace Modbus.UnitTests.IO
 		public void CheckBuildASCIIMessage()
 		{
 			byte[] message = new byte[] { 58, 48, 50, 48, 49, 48, 48, 48, 48, 48, 48, 48, 49, 70, 67, 13, 10 };
-			ReadCoilsRequest request = new ReadCoilsRequest(2, 0, 1);
+			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 2, 0, 1);
 			Assert.AreEqual(message, new ModbusASCIITransport(null).BuildASCIIMessage(request));
 		}
 
