@@ -32,7 +32,7 @@ namespace Modbus.IntegrationTests
 		}
 
 		[Test]
-		public void CheckReadCoils()
+		public void ReadCoils()
 		{
 			ModbusASCIIMaster master = new ModbusASCIIMaster(_port);
 			bool[] coils = master.ReadCoils(SlaveAddress, 100, 1);
@@ -49,7 +49,7 @@ namespace Modbus.IntegrationTests
 		}
 
 		[Test]
-		public void CheckReadHoldingRegisters()
+		public void ReadHoldingRegisters()
 		{
 			ModbusASCIIMaster master = new ModbusASCIIMaster(_port);
 			ushort[] registers = master.ReadHoldingRegisters(SlaveAddress, 104, 2);
@@ -57,7 +57,7 @@ namespace Modbus.IntegrationTests
 		}
 
 		[Test]
-		public void CheckWriteSingleCoil()
+		public void WriteSingleCoil()
 		{
 			ModbusASCIIMaster master = new ModbusASCIIMaster(_port);
 
@@ -69,17 +69,30 @@ namespace Modbus.IntegrationTests
 		}
 
 		[Test]
-		public void CheckWriteSingleRegister()
+		public void WriteSingleRegister()
 		{
 			ModbusASCIIMaster master = new ModbusASCIIMaster(_port);
-			ushort testAddress = (ushort) new Random().Next(ushort.MaxValue);
+			ushort testAddress = 200;
+			ushort testValue = 350;
 
 			ushort originalValue = master.ReadHoldingRegisters(SlaveAddress, testAddress, 1)[0];
-			ushort newValue = (ushort) new Random().Next(ushort.MaxValue);
-			master.WriteSingleRegister(SlaveAddress, testAddress, newValue);
-			Assert.AreEqual(newValue, master.ReadHoldingRegisters(SlaveAddress, testAddress, 1)[0]);
+			master.WriteSingleRegister(SlaveAddress, testAddress, testValue);
+			Assert.AreEqual(testValue, master.ReadHoldingRegisters(SlaveAddress, testAddress, 1)[0]);
 			master.WriteSingleRegister(SlaveAddress, testAddress, originalValue);
 			Assert.AreEqual(originalValue, master.ReadHoldingRegisters(SlaveAddress, testAddress, 1)[0]);
+		}
+
+		[Test]
+		public void WriteMultipleRegisters()
+		{
+			ModbusASCIIMaster master = new ModbusASCIIMaster(_port);
+			ushort testAddress = 200;
+			ushort[] testValues = new ushort[] { 10, 20, 30, 40, 50 };
+		
+			ushort[] originalValues = master.ReadHoldingRegisters(SlaveAddress, testAddress, 5);
+			master.WriteMultipleRegisters(SlaveAddress, testAddress, (ushort) testValues.Length, testValues);
+			Assert.AreEqual(testValues, master.ReadHoldingRegisters(SlaveAddress, testAddress, 5));
+			master.WriteMultipleRegisters(SlaveAddress, testAddress, (ushort) originalValues.Length, originalValues);
 		}
 	}
 }
