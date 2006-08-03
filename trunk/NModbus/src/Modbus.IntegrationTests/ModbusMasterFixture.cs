@@ -89,9 +89,10 @@ namespace Modbus.IntegrationTests
 			ushort testAddress = 200;
 			ushort[] testValues = new ushort[] { 10, 20, 30, 40, 50 };
 		
-			ushort[] originalValues = master.ReadHoldingRegisters(SlaveAddress, testAddress, 5);
+			ushort[] originalValues = master.ReadHoldingRegisters(SlaveAddress, testAddress, (ushort) testValues.Length);
 			master.WriteMultipleRegisters(SlaveAddress, testAddress, (ushort) testValues.Length, testValues);
-			Assert.AreEqual(testValues, master.ReadHoldingRegisters(SlaveAddress, testAddress, 5));
+			ushort[] newValues = master.ReadHoldingRegisters(SlaveAddress, testAddress, (ushort) testValues.Length);
+			Assert.AreEqual(testValues, newValues);
 			master.WriteMultipleRegisters(SlaveAddress, testAddress, (ushort) originalValues.Length, originalValues);
 		}
 	}

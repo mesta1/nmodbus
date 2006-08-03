@@ -92,16 +92,15 @@ namespace Modbus.Message
 				
 				pdu.Add(_functionCode);
 
-				if (_byteCount != null)
-					pdu.Add(_byteCount.Value);
-
 				if (_startAddress != null)
 					pdu.AddRange(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short) _startAddress.Value)));
 
 				if (_numberOfPoints != null)
 					pdu.AddRange(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short) _numberOfPoints.Value)));
 
-				// TODO bytes needs to be network bytes
+				if (_byteCount != null)
+					pdu.Add(_byteCount.Value);
+
 				if (_data != null)
 					pdu.AddRange(_data.NetworkBytes);
 
