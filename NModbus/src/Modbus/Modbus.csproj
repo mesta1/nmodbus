@@ -75,6 +75,8 @@
     <Compile Include="Message\ModbusMessageWithData.cs" />
     <Compile Include="Message\ReadCoilsResponse.cs" />
     <Compile Include="Message\ReadHoldingRegistersResponse.cs" />
+    <Compile Include="Message\WriteMultipleRegistersRequest.cs" />
+    <Compile Include="Message\WriteMultipleRegistersResponse.cs" />
     <Compile Include="Message\WriteSingleCoilRequestResponse.cs" />
     <Compile Include="Message\WriteSingleRegisterRequestResponse.cs" />
     <Compile Include="Modbus.cs" />

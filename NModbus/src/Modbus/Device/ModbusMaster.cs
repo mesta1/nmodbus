@@ -53,5 +53,13 @@ namespace Modbus.Device
 			WriteSingleRegisterRequestResponse request = new WriteSingleRegisterRequestResponse(slaveAddress, registerAddress, value);
 			WriteSingleRegisterRequestResponse response = Transport.UnicastMessage<WriteSingleRegisterRequestResponse>(request);
 		}
+
+		// TODO refactor
+		// BROKEN
+		public void WriteMultipleRegisters(byte slaveAddress, ushort startAddress, ushort numberOfPoints, ushort[] data)
+		{
+			WriteMultipleRegistersRequest request = new WriteMultipleRegistersRequest(slaveAddress, startAddress, numberOfPoints, (byte) (data.Length * 2), new HoldingRegisterCollection(data));
+			WriteMultipleRegistersResponse response = Transport.UnicastMessage<WriteMultipleRegistersResponse>(request);
+		} 
 	}
 }

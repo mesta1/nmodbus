@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Modbus.Data;
 using System.Net;
+using Modbus.Util;
 
 namespace Modbus.Message
 {
@@ -35,7 +36,7 @@ namespace Modbus.Message
 		protected override void InitializeUnique(byte[] frame)
 		{
 			StartAddress = (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 2));
-			Data = new InputRegisterCollection((ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 4)));
+			Data = new InputRegisterCollection(CollectionUtil.Slice<byte>(frame, 4, 2));
 		}
 	}
 }
