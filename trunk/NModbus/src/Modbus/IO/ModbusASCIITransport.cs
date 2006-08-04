@@ -63,7 +63,7 @@ namespace Modbus.IO
 			if (frameBytes[1] > 127)
 			{
 				SlaveExceptionResponse exceptionResponse = ModbusMessageFactory.CreateModbusMessage<SlaveExceptionResponse>(frameBytes);
-			    throw new SlaveException(exceptionResponse.SlaveExceptionCode);
+			    throw new SlaveException(exceptionResponse);
 			}
 
 			// create message from frame

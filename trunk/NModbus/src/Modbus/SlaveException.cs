@@ -1,33 +1,45 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Modbus.Message;
+using System.Reflection;
 
 namespace Modbus
 {
 	public class SlaveException : Exception
 	{
-		private byte _slaveExceptionCode;
+		private SlaveExceptionResponse _slaveExceptionResponse;
 
-		public SlaveException(byte slaveExceptionCode) 
+		public SlaveException()
 		{
-			_slaveExceptionCode = slaveExceptionCode;
 		}
 
-		public SlaveException(byte slaveExceptionCode, string message)
+		public SlaveException(SlaveExceptionResponse slaveExceptionResponse) 
+		{
+			_slaveExceptionResponse = slaveExceptionResponse;
+		}
+
+		public SlaveException(string message, SlaveExceptionResponse slaveExceptionResponse)
 			: base(message)
 		{
-			_slaveExceptionCode = slaveExceptionCode;
+			_slaveExceptionResponse = slaveExceptionResponse;
 		}
 
-		public SlaveException(byte slaveExceptionCode, string message, Exception innerException)
+		public SlaveException(string message, Exception innerException, SlaveExceptionResponse slaveExceptionResponse)
 			: base(message, innerException)
 		{
-			_slaveExceptionCode = slaveExceptionCode;
+			_slaveExceptionResponse = slaveExceptionResponse;
 		}
 
-		public byte SlaveExceptionCode
+		public override string Message
 		{
-			get { return _slaveExceptionCode; }
-		}	
+			get
+			{
+				if (_slaveExceptionResponse == null)
+					return base.Message;
+
+				return String.Format("{0}{1}Function Code: {2}{1}Exception Code: {3}", base.Message, Environment.NewLine, _slaveExceptionResponse.FunctionCode, _slaveExceptionResponse.SlaveExceptionCode);
+			}
+		}
 	}
 }

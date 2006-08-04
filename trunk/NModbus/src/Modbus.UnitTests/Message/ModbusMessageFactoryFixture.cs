@@ -99,6 +99,13 @@ namespace Modbus.UnitTests.Message
 
 		[Test]
 		[ExpectedException(typeof(FormatException))]
+		public void CreateModbusMessageSlaveExceptionResponseWithInvalidFunctionCode()
+		{
+			SlaveExceptionResponse response = ModbusMessageFactory.CreateModbusMessage<SlaveExceptionResponse>(new byte[] { 11, 128, 2 });
+		}
+
+		[Test]
+		[ExpectedException(typeof(FormatException))]
 		public void CreateModbusMessageSlaveExceptionResponseWithInvalidFrameSize()
 		{
 			ModbusMessageFactory.CreateModbusMessage<SlaveExceptionResponse>(new byte[] { 11, 128 });

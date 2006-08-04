@@ -12,9 +12,8 @@ namespace Modbus.Message
 		{
 		}
 
-		// TODO do we want to manipulate functionCode?
 		public SlaveExceptionResponse(byte slaveAddress, byte functionCode, byte exceptionCode)
-			: base(slaveAddress, (byte) (functionCode + Modbus.ExceptionOffset))
+			: base(slaveAddress, functionCode)
 		{
 			SlaveExceptionCode = exceptionCode;
 		}
@@ -32,7 +31,11 @@ namespace Modbus.Message
 
 		protected override void InitializeUnique(byte[] frame)
 		{
-			SlaveExceptionCode = frame[2];	
+			if (FunctionCode <= Modbus.ExceptionOffset)
+				throw new FormatException("Invalid function code value for SlaveExceptionResponse.");
+
+			FunctionCode -= Modbus.ExceptionOffset;
+			SlaveExceptionCode = frame[2];
 		}
 	}
 }

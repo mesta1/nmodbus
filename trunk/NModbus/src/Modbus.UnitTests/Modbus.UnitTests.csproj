@@ -74,6 +74,7 @@
     <Compile Include="Message\WriteSingleCoilRequestResponseFixture.cs" />
     <Compile Include="Message\WriteSingleRegisterRequestResponseFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SlaveExceptionFixture.cs" />
     <Compile Include="Util\CollectionUtilFixture.cs" />
     <Compile Include="Util\ModbusUtilFixture.cs" />
   </ItemGroup>
