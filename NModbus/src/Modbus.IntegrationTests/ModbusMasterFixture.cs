@@ -15,8 +15,8 @@ namespace Modbus.IntegrationTests
 		private const string PortName = "COM4";
 		private const byte SlaveAddress = 2;
 
-		[SetUp]
-		public void SetUp()
+		[TestFixtureSetUp]
+		public void Init()
 		{
 			_port = new SerialPort(PortName);
 			_port.ReadTimeout = Modbus.DefaultTimeout;
@@ -24,8 +24,8 @@ namespace Modbus.IntegrationTests
 			_port.Open();
 		}
 
-		[TearDown]
-		public void TearDown()
+		[TestFixtureTearDown]
+		public void Dispose()
 		{
 			_port.Close();
 			_port.Dispose();
