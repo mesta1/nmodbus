@@ -15,8 +15,8 @@ namespace Modbus
 		public const byte WriteSingleRegister = 6;
 		//public const byte ReadExceptionStatus = 7;
 		//public const byte Diagnostics = 8;
+		public const byte WriteMultipleCoils = 15;
 		public const byte WriteMultipleRegisters = 16;
-		//public const byte WriteMultipleCoils = 15;
 
 		// modbus slave exception offset that is added to the function code, to flag an exception
 		public const byte ExceptionOffset = 128;
