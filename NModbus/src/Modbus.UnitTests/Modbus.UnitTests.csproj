@@ -67,6 +67,8 @@
     <Compile Include="Message\ReadHoldingInputRegistersRequestFixture.cs" />
     <Compile Include="Message\ReadInputsResponseFixture.cs" />
     <Compile Include="Message\SlaveExceptionResponseFixture.cs" />
+    <Compile Include="Message\WriteMultipleCoilsRequestFixture.cs" />
+    <Compile Include="Message\WriteMultipleCoilsResponseFixture.cs" />
     <Compile Include="Message\WriteMultipleRegistersRequestFixture.cs" />
     <Compile Include="Message\WriteMultipleRegistersResponseFixture.cs" />
     <Compile Include="Message\WriteSingleCoilRequestResponseFixture.cs" />

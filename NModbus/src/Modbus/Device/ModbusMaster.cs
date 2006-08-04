@@ -54,10 +54,16 @@ namespace Modbus.Device
 			WriteSingleRegisterRequestResponse response = Transport.UnicastMessage<WriteSingleRegisterRequestResponse>(request);
 		}
 
-		public void WriteMultipleRegisters(byte slaveAddress, ushort startAddress, ushort numberOfPoints, ushort[] data)
+		public void WriteMultipleRegisters(byte slaveAddress, ushort startAddress, ushort[] data)
 		{
-			WriteMultipleRegistersRequest request = new WriteMultipleRegistersRequest(slaveAddress, startAddress, numberOfPoints, (byte) (data.Length * 2), new HoldingRegisterCollection(data));
+			WriteMultipleRegistersRequest request = new WriteMultipleRegistersRequest(slaveAddress, startAddress, new HoldingRegisterCollection(data));
 			WriteMultipleRegistersResponse response = Transport.UnicastMessage<WriteMultipleRegistersResponse>(request);
-		} 
+		}
+
+		public void WriteMultipleCoils(byte slaveAddress, ushort startAddress, bool[] data)
+		{
+			WriteMultipleCoilsRequest request = new WriteMultipleCoilsRequest(slaveAddress, startAddress, new CoilDiscreteCollection(data));
+			WriteMultipleCoilsResponse response = Transport.UnicastMessage<WriteMultipleCoilsResponse>(request);
+		}
 	}
 }

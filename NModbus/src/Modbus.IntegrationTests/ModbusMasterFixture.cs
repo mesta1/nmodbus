@@ -90,10 +90,24 @@ namespace Modbus.IntegrationTests
 			ushort[] testValues = new ushort[] { 10, 20, 30, 40, 50 };
 		
 			ushort[] originalValues = master.ReadHoldingRegisters(SlaveAddress, testAddress, (ushort) testValues.Length);
-			master.WriteMultipleRegisters(SlaveAddress, testAddress, (ushort) testValues.Length, testValues);
+			master.WriteMultipleRegisters(SlaveAddress, testAddress, testValues);
 			ushort[] newValues = master.ReadHoldingRegisters(SlaveAddress, testAddress, (ushort) testValues.Length);
 			Assert.AreEqual(testValues, newValues);
-			master.WriteMultipleRegisters(SlaveAddress, testAddress, (ushort) originalValues.Length, originalValues);
+			master.WriteMultipleRegisters(SlaveAddress, testAddress, originalValues);
+		}
+
+		[Test]
+		public void WriteMultipleCoils()
+		{
+			ModbusASCIIMaster master = new ModbusASCIIMaster(_port);
+			ushort testAddress = 200;
+			bool[] testValues = new bool[] { true, false, true, false, false, false, true, false, true, false };
+
+			bool[] originalValues = master.ReadCoils(SlaveAddress, testAddress, (ushort) testValues.Length);
+			master.WriteMultipleCoils(SlaveAddress, testAddress, testValues);
+			bool[] newValues = master.ReadCoils(SlaveAddress, testAddress, (ushort) testValues.Length);
+			Assert.AreEqual(testValues, newValues);
+			master.WriteMultipleCoils(SlaveAddress, testAddress, originalValues);
 		}
 	}
 }
