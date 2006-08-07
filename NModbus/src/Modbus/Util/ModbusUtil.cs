@@ -82,26 +82,6 @@ namespace Modbus.Util
 			return result;
 		}
 
-		//// TODO extract conversion to delegate
-		//// TODO create unit tests
-		//public static ushort[] HostBytesToNetworkUInt16(byte[] hostBytes)
-		//{
-		//    if (hostBytes.Length % 2 != 0)
-		//        throw new FormatException("Array hostBytes must contain an even number of bytes.");
-
-		//    ushort[] result = new ushort[hostBytes.Length / 2];
-
-		//    for (int i = 0; i < result.Length; i++)
-		//        result[i] = (ushort)IPAddress.NetworkToHostOrder(BitConverter.ToInt16(hostBytes, i * 2));
-
-		//    return result;
-		//}
-
-		//public static byte[] GetASCIIBytes(ushort[] numbers)
-		//{
-		//    return Encoding.ASCII.GetBytes(String.Join("", Array.ConvertAll<ushort, string>(numbers, delegate(ushort n) { return n.ToString("X2"); })));
-		//}
-
 		public static byte[] HexToBytes(string hex)
 		{
 			if (hex == null)
