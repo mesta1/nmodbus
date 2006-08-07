@@ -13,6 +13,9 @@ namespace Modbus.Util
 		/// </summary>
 		public static T[] Slice<T>(T[] collection, int startIndex, int size)
 		{
+			if (collection == null)
+				throw new ArgumentNullException("collection");
+
 			T[] subset = new T[size];
 			Array.Copy(collection, startIndex, subset, 0, size);
 
@@ -24,6 +27,9 @@ namespace Modbus.Util
 		/// </summary>
 	    public static T[] Slice<T>(ICollection<T> collection, int startIndex, int size)
 		{
+			if (collection == null)
+				throw new ArgumentNullException("collection");
+
 			T[] collectionArray = new T[collection.Count];
 			collection.CopyTo(collectionArray, 0);
 
@@ -35,6 +41,9 @@ namespace Modbus.Util
 		/// </summary>
 		public static T[] ToArray<T>(ICollection<T> collection)
 		{
+			if (collection == null)
+				throw new ArgumentNullException("collection");
+
 			return Slice<T>(collection, 0, collection.Count);
 		}
 
@@ -44,10 +53,11 @@ namespace Modbus.Util
 		public static bool[] ToBoolArray(BitArray bitArray)	
 		{
 			if (bitArray == null)
-				throw new ArgumentNullException("bitArray", "Argument cannot be null.");
+				throw new ArgumentNullException("bitArray");
 
 			bool[] bits = new bool[bitArray.Count];
 			bitArray.CopyTo(bits, 0);
+
 			return bits;
 		}
 	}

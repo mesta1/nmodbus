@@ -109,5 +109,15 @@ namespace Modbus.IntegrationTests
 			Assert.AreEqual(testValues, newValues);
 			master.WriteMultipleCoils(SlaveAddress, testAddress, originalValues);
 		}
+
+		[Test]
+		[ExpectedException(typeof(SlaveException))]
+		public void SlaveException()
+		{
+			ModbusASCIIMaster master = new ModbusASCIIMaster(_port);
+
+			master.ReadCoils(SlaveAddress, 650, 1);
+			Assert.Fail();
+		}
 	}
 }
