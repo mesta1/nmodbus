@@ -4,6 +4,7 @@ using System.Text;
 using NUnit.Framework;
 using Modbus.IO;
 using Modbus.Message;
+using System.IO.Ports;
 
 namespace Modbus.UnitTests.IO
 {
@@ -11,31 +12,18 @@ namespace Modbus.UnitTests.IO
 	public class ModbusASCIITransportFixture
 	{
 		[Test]
-		public void CheckCalculateRequestLRC1()
-		{
-			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 1, 10);
-			Assert.AreEqual(243, new ModbusASCIITransport(null).CalculateChecksum(request)[0]);
-		}
-
-		[Test]
-		public void CheckCalculateRequestLRC2()
-		{
-			//: 02 01 0000 0001 FC
-			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 2, 0, 1);
-			Assert.AreEqual(252, new ModbusASCIITransport(null).CalculateChecksum(request)[0]);
-		}
-
-		[Test]
-		public void CheckBuildASCIIMessage()
+		public void CheckBuildMessageFrame()
 		{
 			byte[] message = new byte[] { 58, 48, 50, 48, 49, 48, 48, 48, 48, 48, 48, 48, 49, 70, 67, 13, 10 };
 			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 2, 0, 1);
-			Assert.AreEqual(message, new ModbusASCIITransport(null).BuildASCIIMessage(request));
+			Assert.AreEqual(message, new ModbusASCIITransport(new SerialPort()).BuildMessageFrame(request));
 		}
 
-		[Test, Ignore("add this later")]
-		public void CheckRead()
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]
+		public void ModbusASCIITranpsortNullSerialPort()
 		{
+			ModbusASCIITransport transport = new ModbusASCIITransport(null);
 			Assert.Fail();
 		}
 	}

@@ -16,37 +16,23 @@ namespace Modbus.IO
 		public ModbusASCIITransport(SerialPort serialPort)
 			: base(serialPort)
 		{
+			SerialPort.NewLine = FrameStart;
 		}
 
-		/// <summary>
-		/// Longitudinal Redundancy Check
-		/// </summary>
-		public override byte[] CalculateChecksum(IModbusMessage messsage)
+		public override byte[] BuildMessageFrame(IModbusMessage message)
 		{
-			return ModbusUtil.CalculateLRC(messsage.ChecksumBody);
-		}
+			List<byte> frame = new List<byte>();
+			frame.Add((byte) ':');
+			frame.AddRange(ModbusUtil.GetASCIIBytes(message.SlaveAddress));
+			frame.AddRange(ModbusUtil.GetASCIIBytes(message.ProtocolDataUnit));
+			frame.AddRange(ModbusUtil.GetASCIIBytes(ModbusUtil.CalculateLRC(message.ChecksumBody)));
+			frame.AddRange(ModbusUtil.GetASCIIBytes(FrameStart.ToCharArray()));
 
-		public override void Write(IModbusMessage message)
-		{
-			byte[] messageBody = BuildASCIIMessage(message);
-			SerialPort.Write(messageBody, 0, messageBody.Length);
-		}
-
-		public byte[] BuildASCIIMessage(IModbusMessage message)
-		{
-			List<byte> messageBody = new List<byte>();
-			messageBody.Add((byte)':');
-			messageBody.AddRange(ModbusUtil.GetASCIIBytes(message.SlaveAddress));
-			messageBody.AddRange(ModbusUtil.GetASCIIBytes(message.ProtocolDataUnit));
-			messageBody.AddRange(ModbusUtil.GetASCIIBytes(CalculateChecksum(message)));
-			messageBody.AddRange(ModbusUtil.GetASCIIBytes(new char[] { '\r', '\n' }));
-			
-			return messageBody.ToArray();
+			return frame.ToArray();
 		}
 
 		public override T Read<T>(IModbusMessage request)
 		{
-			SerialPort.NewLine = FrameStart;
 			string frame = SerialPort.ReadLine().Substring(1);
 
 			// convert hex to bytes
@@ -55,25 +41,22 @@ namespace Modbus.IO
 			if (frameBytes.Length < 3)
 				throw new IOException("Message was truncated.");
 
-			// grab received checksum and remove from frame
+			// remove checksum from frame
 			byte crc = frameBytes[frameBytes.Length - 1];
 			Array.Resize<byte>(ref frameBytes, frameBytes.Length - 1);
 
 			// check for slave exception response
 			if (frameBytes[1] > 127)
-			{
-				SlaveExceptionResponse exceptionResponse = ModbusMessageFactory.CreateModbusMessage<SlaveExceptionResponse>(frameBytes);
-			    throw new SlaveException(exceptionResponse);
-			}
+			    throw new SlaveException(ModbusMessageFactory.CreateModbusMessage<SlaveExceptionResponse>(frameBytes));
 
 			// create message from frame
-			T message = ModbusMessageFactory.CreateModbusMessage<T>(frameBytes);
+			T response = ModbusMessageFactory.CreateModbusMessage<T>(frameBytes);
 
 			// check LRC
-			if (CalculateChecksum(message)[0] != crc)
+			if (ModbusUtil.CalculateLRC(response.ChecksumBody) != crc)
 			    throw new IOException("Checksum LRC failed.");
 
-			return message;
+			return response;
 		}
 	}		
 }

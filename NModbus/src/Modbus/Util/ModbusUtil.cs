@@ -98,21 +98,27 @@ namespace Modbus.Util
 			return bytes;
 		}
 
-		public static byte[] CalculateLRC(byte[] data)
+		/// <summary>
+		/// Longitudinal Redundancy Check.
+		/// </summary>
+		public static byte CalculateLRC(byte[] data)
 		{
+			if (data == null)
+				throw new ArgumentNullException("data");
+
 			byte lrc = 0;
 			foreach (byte b in data)
 				lrc += b;
 
 			lrc = (byte)((lrc ^ 0xFF) + 1);
 
-			return new byte[] { lrc };
+			return lrc;
 		}
 
 		public static byte[] CalculateCRC(byte[] data)
 		{
 			if (data == null)
-				throw new ArgumentNullException("data", "Argument data cannot be null.");
+				throw new ArgumentNullException("data");
 
 			ushort crc = ushort.MaxValue;
 			byte tableIndex;

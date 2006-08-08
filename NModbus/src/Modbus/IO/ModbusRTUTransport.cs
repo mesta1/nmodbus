@@ -14,17 +14,15 @@ namespace Modbus.IO
 			: base (serialPort)
 		{
 		}
-	
-		// TODO common code
-		// TOOD use frame word here
-		public override void Write(IModbusMessage message)
+
+		public override byte[] BuildMessageFrame(IModbusMessage message)
 		{
 			List<byte> messageBody = new List<byte>();
 			messageBody.Add(message.SlaveAddress);
 			messageBody.AddRange(message.ProtocolDataUnit);
-			messageBody.AddRange(CalculateChecksum(message));
+			messageBody.AddRange(ModbusUtil.CalculateCRC(message.ChecksumBody));
 
-			SerialPort.Write(messageBody.ToArray(), 0, messageBody.Count);
+			return messageBody.ToArray();
 		}
 
 		public override T Read<T>(IModbusMessage request)
@@ -68,14 +66,6 @@ namespace Modbus.IO
 		public IModbusMessage ReadResponse(string message, ushort dataLength)
 		{
 			return null;
-		}
-
-		/// <summary>
-		/// Cyclic Redundancy Check
-		/// </summary>
-		public override byte[] CalculateChecksum(IModbusMessage messsage)
-		{
-			return ModbusUtil.CalculateCRC(messsage.ChecksumBody);
 		}
 	}
 }
