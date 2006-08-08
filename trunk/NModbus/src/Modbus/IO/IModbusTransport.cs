@@ -7,8 +7,6 @@ namespace Modbus.IO
 {
 	public interface IModbusTransport
 	{
-		byte[] CalculateChecksum(IModbusMessage messsage);
-
 		/// <summary>
 		/// Closes the raw input and output streams of this ModbusTransport.
 		/// </summary>

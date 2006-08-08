@@ -4,17 +4,19 @@ using System.Text;
 using Modbus.IO;
 using Modbus.Message;
 using NUnit.Framework;
+using System.IO.Ports;
 
 namespace Modbus.UnitTests.IO
 {
 	[TestFixture]
 	public class ModbusRTUTransportFixture
 	{
-		[Test, Ignore("TODO")]
-		public void CheckCalculateChecksum()
+		[Test]
+		public void CheckBuildMessageFrame()
 		{
-			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 1, 10);
-			Assert.AreEqual(new byte[] { 59, 86 }, new ModbusRTUTransport(null).CalculateChecksum(request));
+			byte[] message = new byte[] { 17, Modbus.ReadCoils, 0, 19, 0, 37, 14, 132 };
+			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 17, 19, 37);
+			Assert.AreEqual(message, new ModbusRTUTransport(new SerialPort()).BuildMessageFrame(request));
 		}
 	}
 }

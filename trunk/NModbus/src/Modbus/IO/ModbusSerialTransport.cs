@@ -15,6 +15,9 @@ namespace Modbus.IO
 		
 		public ModbusSerialTransport(SerialPort serialPort)
 		{
+			if (serialPort == null)
+				throw new ArgumentNullException("serialPort");
+
 			_serialPort = serialPort;
 		}
 
@@ -63,14 +66,19 @@ namespace Modbus.IO
 			return response;
 		}
 
+		public void Write(IModbusMessage message)
+		{
+			byte[] frame = BuildMessageFrame(message);
+			SerialPort.Write(frame, 0, frame.Length);
+		}
+
 		// TODO we may refactor this to ExecuteRequest and check function code value
 		public void BroadcastMessage(IModbusMessage request)
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		public abstract byte[] CalculateChecksum(IModbusMessage message);
+		public abstract byte[] BuildMessageFrame(IModbusMessage message);
 		public abstract T Read<T>(IModbusMessage request) where T : IModbusMessage, new();
-		public abstract void Write(IModbusMessage message);
 	}
 }
