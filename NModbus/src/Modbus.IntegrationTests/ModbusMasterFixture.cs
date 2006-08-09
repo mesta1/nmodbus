@@ -8,61 +8,58 @@ using System.IO.Ports;
 namespace Modbus.IntegrationTests
 {
 	// NOTE: this integration test requires a Modbus Slave running at the configuration below
-	[TestFixture]
 	public class ModbusMasterFixture
 	{
-		private SerialPort _port;
-		private ModbusMaster _master;
+		public SerialPort Port;
+		public ModbusMaster Master;
 
-		private const string PortName = "COM4";
+		public const string PortName = "COM4";
 		private const byte SlaveAddress = 2;
 
-		[TestFixtureSetUp]
-		public void Init()
+		public ModbusMasterFixture()
 		{
-			_port = new SerialPort(PortName);
-			_port.ReadTimeout = Modbus.DefaultTimeout;
-			_port.Parity = Parity.None;
-			_port.Open();
-			_master = new ModbusASCIIMaster(_port);
+			Port = new SerialPort(PortName);
+			Port.ReadTimeout = Modbus.DefaultTimeout;
+			Port.Parity = Parity.None;
+			Port.Open();
 		}
 
 		[TestFixtureTearDown]
 		public void Dispose()
 		{
-			_port.Close();
-			_port.Dispose();
+			Port.Close();
+			Port.Dispose();
 		}
 
 		[Test]
 		public void ReadCoils()
 		{
-			bool[] coils = _master.ReadCoils(SlaveAddress, 100, 1);
+			bool[] coils = Master.ReadCoils(SlaveAddress, 100, 1);
 			Assert.AreEqual(new bool[] { true }, coils);
 		}
 
 		[Test]
 		public void ReadInputs()
 		{
-			bool[] inputs = _master.ReadInputs(SlaveAddress, 150, 3);
+			bool[] inputs = Master.ReadInputs(SlaveAddress, 150, 3);
 			Assert.AreEqual(new bool[] { true, true, true }, inputs);
 		}
 
 		[Test]
 		public void ReadHoldingRegisters()
 		{
-			ushort[] registers = _master.ReadHoldingRegisters(SlaveAddress, 104, 2);
+			ushort[] registers = Master.ReadHoldingRegisters(SlaveAddress, 104, 2);
 			Assert.AreEqual(new ushort[] { 104, 105 }, registers);
 		}
 
 		[Test]
 		public void WriteSingleCoil()
 		{
-			bool coilValue = _master.ReadCoils(SlaveAddress, 105, 1)[0];
-			_master.WriteSingleCoil(SlaveAddress, 105, !coilValue);
-			Assert.AreEqual(!coilValue, _master.ReadCoils(SlaveAddress, 105, 1)[0]);
-			_master.WriteSingleCoil(SlaveAddress, 105, coilValue);
-			Assert.AreEqual(coilValue, _master.ReadCoils(SlaveAddress, 105, 1)[0]);
+			bool coilValue = Master.ReadCoils(SlaveAddress, 105, 1)[0];
+			Master.WriteSingleCoil(SlaveAddress, 105, !coilValue);
+			Assert.AreEqual(!coilValue, Master.ReadCoils(SlaveAddress, 105, 1)[0]);
+			Master.WriteSingleCoil(SlaveAddress, 105, coilValue);
+			Assert.AreEqual(coilValue, Master.ReadCoils(SlaveAddress, 105, 1)[0]);
 		}
 
 		[Test]
@@ -71,11 +68,11 @@ namespace Modbus.IntegrationTests
 			ushort testAddress = 200;
 			ushort testValue = 350;
 
-			ushort originalValue = _master.ReadHoldingRegisters(SlaveAddress, testAddress, 1)[0];
-			_master.WriteSingleRegister(SlaveAddress, testAddress, testValue);
-			Assert.AreEqual(testValue, _master.ReadHoldingRegisters(SlaveAddress, testAddress, 1)[0]);
-			_master.WriteSingleRegister(SlaveAddress, testAddress, originalValue);
-			Assert.AreEqual(originalValue, _master.ReadHoldingRegisters(SlaveAddress, testAddress, 1)[0]);
+			ushort originalValue = Master.ReadHoldingRegisters(SlaveAddress, testAddress, 1)[0];
+			Master.WriteSingleRegister(SlaveAddress, testAddress, testValue);
+			Assert.AreEqual(testValue, Master.ReadHoldingRegisters(SlaveAddress, testAddress, 1)[0]);
+			Master.WriteSingleRegister(SlaveAddress, testAddress, originalValue);
+			Assert.AreEqual(originalValue, Master.ReadHoldingRegisters(SlaveAddress, testAddress, 1)[0]);
 		}
 
 		[Test]
@@ -84,11 +81,11 @@ namespace Modbus.IntegrationTests
 			ushort testAddress = 200;
 			ushort[] testValues = new ushort[] { 10, 20, 30, 40, 50 };
 
-			ushort[] originalValues = _master.ReadHoldingRegisters(SlaveAddress, testAddress, (ushort)testValues.Length);
-			_master.WriteMultipleRegisters(SlaveAddress, testAddress, testValues);
-			ushort[] newValues = _master.ReadHoldingRegisters(SlaveAddress, testAddress, (ushort)testValues.Length);
+			ushort[] originalValues = Master.ReadHoldingRegisters(SlaveAddress, testAddress, (ushort)testValues.Length);
+			Master.WriteMultipleRegisters(SlaveAddress, testAddress, testValues);
+			ushort[] newValues = Master.ReadHoldingRegisters(SlaveAddress, testAddress, (ushort)testValues.Length);
 			Assert.AreEqual(testValues, newValues);
-			_master.WriteMultipleRegisters(SlaveAddress, testAddress, originalValues);
+			Master.WriteMultipleRegisters(SlaveAddress, testAddress, originalValues);
 		}
 
 		[Test]
@@ -97,18 +94,18 @@ namespace Modbus.IntegrationTests
 			ushort testAddress = 200;
 			bool[] testValues = new bool[] { true, false, true, false, false, false, true, false, true, false };
 
-			bool[] originalValues = _master.ReadCoils(SlaveAddress, testAddress, (ushort)testValues.Length);
-			_master.WriteMultipleCoils(SlaveAddress, testAddress, testValues);
-			bool[] newValues = _master.ReadCoils(SlaveAddress, testAddress, (ushort)testValues.Length);
+			bool[] originalValues = Master.ReadCoils(SlaveAddress, testAddress, (ushort)testValues.Length);
+			Master.WriteMultipleCoils(SlaveAddress, testAddress, testValues);
+			bool[] newValues = Master.ReadCoils(SlaveAddress, testAddress, (ushort)testValues.Length);
 			Assert.AreEqual(testValues, newValues);
-			_master.WriteMultipleCoils(SlaveAddress, testAddress, originalValues);
+			Master.WriteMultipleCoils(SlaveAddress, testAddress, originalValues);
 		}
 
 		[Test]
 		[ExpectedException(typeof(SlaveException))]
-		public void SlaveException()
+		public void SlaveExceptionMinimumFunctionCode()
 		{
-			_master.ReadCoils(SlaveAddress, 650, 1);
+			Master.ReadCoils(SlaveAddress, 650, 1);
 			Assert.Fail();
 		}
 	}
