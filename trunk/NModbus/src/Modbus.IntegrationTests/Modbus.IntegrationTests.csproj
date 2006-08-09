@@ -46,7 +46,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ModbusASCIIMasterFixture.cs" />
     <Compile Include="ModbusMasterFixture.cs" />
+    <Compile Include="ModbusRTUMasterFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

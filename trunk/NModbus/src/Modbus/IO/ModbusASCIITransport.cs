@@ -46,7 +46,7 @@ namespace Modbus.IO
 			Array.Resize<byte>(ref frameBytes, frameBytes.Length - 1);
 
 			// check for slave exception response
-			if (frameBytes[1] > 127)
+			if (frameBytes[1] > Modbus.ExceptionOffset)
 			    throw new SlaveException(ModbusMessageFactory.CreateModbusMessage<SlaveExceptionResponse>(frameBytes));
 
 			// create message from frame

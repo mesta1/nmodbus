@@ -27,40 +27,30 @@ namespace Modbus.IO
 
 		public override T Read<T>(IModbusMessage request)
 		{
-			throw new Exception("The method or operation is not implemented.");
-			//try
-			//{
-			//    byte unitID = (byte)SerialPort.ReadByte();
-			//    byte functionCode = (byte)SerialPort.ReadByte();
-			//    byte count = (byte)SerialPort.ReadByte();
-			//    byte[] data = new byte[count];
-			//    SerialPort.Read(data, 0, data.Length);
+			try
+			{	
+				byte[] frameBytes = new byte[2];
 
-			//    byte[] crc = new byte[2];
-			//    SerialPort.Read(crc, 0, crc.Length);
+				SerialPort.Read(frameBytes, 0, 2);
 
-			//    ModbusResponse response = new ModbusResponse(unitID, functionCode, count);
-			//    response.SetData(data, dataLength);
+				// check for slave exception response
+				if (frameBytes[1] > Modbus.ExceptionOffset)
+				{
+					//ModbusMessageFactory.CreateModbusMessage<SlaveExceptionResponse>(frameBytes)
+					throw new SlaveException();
+				}
 
-			//    // check LRC
-			//    byte[] checksum = CalculateChecksum(response);
-			//    if (checksum[0] != crc[0] || checksum[1] != crc[1])
-			//    {
-			//        _log.ErrorFormat("Checksum error - calculated value {0} {1} != received value {2} {3}", checksum[0], checksum[1], crc[0], crc[1]);
-			//        throw new IOException("Checksum LRC failed");
-			//    }
+				return default(T);
+			}
+			catch (TimeoutException te)
+			{
+				throw te;
+			}
+			catch (IOException ioe)
+			{
 
-			//    return response;
-			//}
-			//catch (TimeoutException te)
-			//{
-			//    throw te;
-			//}
-			//catch (IOException ioe)
-			//{
-
-			//    throw ioe;
-			//}
+				throw ioe;
+			}
 		}
 
 		public IModbusMessage ReadResponse(string message, ushort dataLength)
