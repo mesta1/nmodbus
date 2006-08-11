@@ -8,7 +8,7 @@ namespace Modbus.Message
 {
 	public class ReadInputsResponse : ModbusMessageWithData<InputDiscreteCollection>, IModbusMessage
 	{
-		private const int _minimumFrameSize = 4;
+		private const int _minimumFrameSize = 3;
 
 		public ReadInputsResponse()
 		{

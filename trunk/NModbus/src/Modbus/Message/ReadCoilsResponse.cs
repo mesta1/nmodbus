@@ -8,7 +8,7 @@ namespace Modbus.Message
 {
 	public class ReadCoilsResponse : ModbusMessageWithData<CoilDiscreteCollection>, IModbusMessage
 	{
-		private const int _minimumFrameSize = 4;
+		private const int _minimumFrameSize = 3;
 
 		public ReadCoilsResponse()
 		{
