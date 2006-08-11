@@ -16,7 +16,7 @@ namespace Modbus.IntegrationTests
 		public const string PortName = "COM4";
 		private const byte SlaveAddress = 2;
 
-		public ModbusMasterFixture()
+		public virtual void Init()
 		{
 			Port = new SerialPort(PortName);
 			Port.ReadTimeout = Modbus.DefaultTimeout;
@@ -32,28 +32,35 @@ namespace Modbus.IntegrationTests
 		}
 
 		[Test]
-		public void ReadCoils()
+		public virtual void ReadCoils()
 		{
 			bool[] coils = Master.ReadCoils(SlaveAddress, 100, 1);
-			Assert.AreEqual(new bool[] { true }, coils);
+			Assert.AreEqual(new bool[] { false }, coils);
 		}
 
 		[Test]
-		public void ReadInputs()
+		public virtual void Read0Coils()
+		{
+			bool[] coils = Master.ReadCoils(SlaveAddress, 100, 0);
+			Assert.AreEqual(new bool[] { }, coils);
+		}
+
+		[Test]
+		public virtual void ReadInputs()
 		{
 			bool[] inputs = Master.ReadInputs(SlaveAddress, 150, 3);
 			Assert.AreEqual(new bool[] { true, true, true }, inputs);
 		}
 
 		[Test]
-		public void ReadHoldingRegisters()
+		public virtual void ReadHoldingRegisters()
 		{
 			ushort[] registers = Master.ReadHoldingRegisters(SlaveAddress, 104, 2);
 			Assert.AreEqual(new ushort[] { 104, 105 }, registers);
 		}
 
 		[Test]
-		public void WriteSingleCoil()
+		public virtual void WriteSingleCoil()
 		{
 			bool coilValue = Master.ReadCoils(SlaveAddress, 105, 1)[0];
 			Master.WriteSingleCoil(SlaveAddress, 105, !coilValue);
@@ -63,7 +70,7 @@ namespace Modbus.IntegrationTests
 		}
 
 		[Test]
-		public void WriteSingleRegister()
+		public virtual void WriteSingleRegister()
 		{
 			ushort testAddress = 200;
 			ushort testValue = 350;
@@ -76,7 +83,7 @@ namespace Modbus.IntegrationTests
 		}
 
 		[Test]
-		public void WriteMultipleRegisters()
+		public virtual void WriteMultipleRegisters()
 		{
 			ushort testAddress = 200;
 			ushort[] testValues = new ushort[] { 10, 20, 30, 40, 50 };
@@ -89,7 +96,7 @@ namespace Modbus.IntegrationTests
 		}
 
 		[Test]
-		public void WriteMultipleCoils()
+		public virtual void WriteMultipleCoils()
 		{
 			ushort testAddress = 200;
 			bool[] testValues = new bool[] { true, false, true, false, false, false, true, false, true, false };
@@ -103,7 +110,7 @@ namespace Modbus.IntegrationTests
 
 		[Test]
 		[ExpectedException(typeof(SlaveException))]
-		public void SlaveExceptionMinimumFunctionCode()
+		public virtual void SlaveExceptionMinimumFunctionCode()
 		{
 			Master.ReadCoils(SlaveAddress, 650, 1);
 			Assert.Fail();

@@ -60,5 +60,21 @@ namespace Modbus.Util
 
 			return bits;
 		}
+
+		public static T[] Combine<T>(T[] array1, T[] array2)
+		{
+			if (array1 == null)
+				throw new ArgumentNullException("array1");
+
+			if (array2 == null)
+				throw new ArgumentNullException("array2");
+
+			T[] result = new T[array1.Length + array2.Length];
+
+			Array.Copy(array1, result, array1.Length);
+			Array.Copy(array2, 0, result, array1.Length, array2.Length);
+
+			return result;
+		}
 	}
 }

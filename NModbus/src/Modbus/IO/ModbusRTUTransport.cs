@@ -29,18 +29,22 @@ namespace Modbus.IO
 		{
 			try
 			{	
-				byte[] frameBytes = new byte[2];
+				byte[] frameStart = new byte[4];
+				SerialPort.Read(frameStart, 0, 4);
 
-				SerialPort.Read(frameBytes, 0, 2);
+				int bytesRemaining = NumberOfBytesToRead(frameStart[1], frameStart[2], frameStart[3]);
+				byte[] frameEnd = new byte[bytesRemaining];
+				SerialPort.Read(frameEnd, 0, bytesRemaining);
+
+				byte[] frame = CollectionUtil.Combine<byte>(frameStart, frameEnd);
 
 				// check for slave exception response
-				if (frameBytes[1] > Modbus.ExceptionOffset)
-				{
-					//ModbusMessageFactory.CreateModbusMessage<SlaveExceptionResponse>(frameBytes)
-					throw new SlaveException();
-				}
+				if (frameStart[1] > Modbus.ExceptionOffset)
+					throw new SlaveException(ModbusMessageFactory.CreateModbusMessage<SlaveExceptionResponse>(frame));
 
-				return default(T);
+				T response = ModbusMessageFactory.CreateModbusMessage<T>(frame);
+
+				return response;
 			}
 			catch (TimeoutException te)
 			{
@@ -51,6 +55,33 @@ namespace Modbus.IO
 
 				throw ioe;
 			}
+		}
+
+		public static int NumberOfBytesToRead(byte functionCode, byte byteCount1, byte byteCount2)
+		{
+			int numBytes;
+
+			switch(functionCode)
+			{
+				case Modbus.ReadCoils:
+				case Modbus.ReadInputs:
+				case Modbus.ReadHoldingRegisters:
+				case Modbus.ReadInputRegisters:
+					numBytes = byteCount1 - 1;
+					break;
+				case Modbus.WriteMultipleCoils:
+				case Modbus.WriteMultipleRegisters:
+					numBytes = 2;
+					break;
+				default :
+					numBytes = -1;
+					break;
+			}
+
+			// CRC
+			numBytes += 2;
+
+			return numBytes;
 		}
 
 		public IModbusMessage ReadResponse(string message, ushort dataLength)

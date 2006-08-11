@@ -11,9 +11,10 @@ namespace Modbus.IntegrationTests
 	public class ModbusASCIIMasterFixture : ModbusMasterFixture
 	{
 		[TestFixtureSetUp]
-		public void Init()
+		public override void Init()
 		{
-			Master = new ModbusASCIIMaster(Port);			
+			base.Init();
+			Master = new ModbusASCIIMaster(Port);
 		}
 	}
 }
