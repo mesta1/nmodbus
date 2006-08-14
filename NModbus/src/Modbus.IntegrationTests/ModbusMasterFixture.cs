@@ -14,7 +14,7 @@ namespace Modbus.IntegrationTests
 		public ModbusMaster Master;
 
 		public const string PortName = "COM4";
-		private const byte SlaveAddress = 2;
+		private const byte SlaveAddress = 1;
 
 		public virtual void Init()
 		{
@@ -85,7 +85,7 @@ namespace Modbus.IntegrationTests
 		[Test]
 		public virtual void WriteMultipleRegisters()
 		{
-			ushort testAddress = 200;
+			ushort testAddress = 120;
 			ushort[] testValues = new ushort[] { 10, 20, 30, 40, 50 };
 
 			ushort[] originalValues = Master.ReadHoldingRegisters(SlaveAddress, testAddress, (ushort)testValues.Length);

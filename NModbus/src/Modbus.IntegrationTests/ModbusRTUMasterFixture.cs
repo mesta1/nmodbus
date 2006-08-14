@@ -21,6 +21,7 @@ namespace Modbus.IntegrationTests
 		[Test]
 		public override void ReadCoils()
 		{
+			int test = 5;
 			base.ReadCoils();
 		}
 
@@ -28,6 +29,18 @@ namespace Modbus.IntegrationTests
 		public override void Read0Coils()
 		{
 			base.Read0Coils();
+		}
+
+		[Test]
+		public override void  ReadHoldingRegisters()
+		{
+ 			 base.ReadHoldingRegisters();
+		}
+
+		[Test]
+		public override void WriteMultipleRegisters()
+		{
+			base.WriteMultipleRegisters();
 		}
 	}
 }
