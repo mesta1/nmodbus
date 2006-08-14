@@ -28,18 +28,28 @@ namespace Modbus.IO
 		public override T Read<T>(IModbusMessage request)
 		{
 			try
-			{	
+			{
 				byte[] frameStart = new byte[4];
-				SerialPort.Read(frameStart, 0, 4);
 
-				int bytesRemaining = NumberOfBytesToRead(frameStart[1], frameStart[2], frameStart[3]);
+				int numRead = 0;
+
+				while (numRead != 4)
+					numRead += SerialPort.Read(frameStart, numRead, 4 - numRead);
+
+				byte slaveAddress = frameStart[0];
+				byte functionCode = frameStart[1];
+				byte byteCount1 = frameStart[2];
+				byte byteCount2 = frameStart[3];
+
+				int bytesRemaining = NumberOfBytesToRead(functionCode, byteCount1, byteCount2);
+
 				byte[] frameEnd = new byte[bytesRemaining];
 				SerialPort.Read(frameEnd, 0, bytesRemaining);
 
-				byte[] frame = CollectionUtil.Combine<byte>(frameStart, frameEnd);
+				byte[] frame = CollectionUtil.Combine<byte>(new byte[] { slaveAddress, functionCode, byteCount1, byteCount2 }, frameEnd);
 
 				// check for slave exception response
-				if (frameStart[1] > Modbus.ExceptionOffset)
+				if (functionCode > Modbus.ExceptionOffset)
 					throw new SlaveException(ModbusMessageFactory.CreateModbusMessage<SlaveExceptionResponse>(frame));
 
 				T response = ModbusMessageFactory.CreateModbusMessage<T>(frame);
