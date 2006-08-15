@@ -10,7 +10,7 @@ namespace Modbus.UnitTests.Message
 	public class SlaveExceptionResponseFixture
 	{
 		[Test]
-		public void CheckCreateSlaveExceptionResponse()
+		public void CreateSlaveExceptionResponse()
 		{
 			SlaveExceptionResponse response = new SlaveExceptionResponse(11, Modbus.ReadCoils, 2);
 			Assert.AreEqual(11, response.SlaveAddress);

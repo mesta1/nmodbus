@@ -15,7 +15,7 @@ namespace Modbus.IO
 		{
 		}
 
-		public override byte[] BuildMessageFrame(IModbusMessage message)
+		public override byte[] CreateMessageFrame(IModbusMessage message)
 		{
 			List<byte> messageBody = new List<byte>();
 			messageBody.Add(message.SlaveAddress);
@@ -29,24 +29,27 @@ namespace Modbus.IO
 		{
 			try
 			{
+				// read beginning of message frame
 				byte[] frameStart = new byte[4];
-
 				int numRead = 0;
-
 				while (numRead != 4)
 					numRead += SerialPort.Read(frameStart, numRead, 4 - numRead);
 
-				byte slaveAddress = frameStart[0];
 				byte functionCode = frameStart[1];
 				byte byteCount1 = frameStart[2];
 				byte byteCount2 = frameStart[3];
 
+				// calculate number of bytes remaining in message frame
 				int bytesRemaining = NumberOfBytesToRead(functionCode, byteCount1, byteCount2);
 
+				// read remaining bytes
 				byte[] frameEnd = new byte[bytesRemaining];
-				SerialPort.Read(frameEnd, 0, bytesRemaining);
+				numRead = 0;
+				while (numRead != bytesRemaining)
+					numRead += SerialPort.Read(frameEnd, numRead, bytesRemaining - numRead);
 
-				byte[] frame = CollectionUtil.Combine<byte>(new byte[] { slaveAddress, functionCode, byteCount1, byteCount2 }, frameEnd);
+				// build complete message frame
+				byte[] frame = CollectionUtil.Combine<byte>(frameStart, frameEnd);
 
 				// check for slave exception response
 				if (functionCode > Modbus.ExceptionOffset)
@@ -62,7 +65,6 @@ namespace Modbus.IO
 			}
 			catch (IOException ioe)
 			{
-
 				throw ioe;
 			}
 		}
@@ -77,26 +79,20 @@ namespace Modbus.IO
 				case Modbus.ReadInputs:
 				case Modbus.ReadHoldingRegisters:
 				case Modbus.ReadInputRegisters:
-					numBytes = byteCount1 - 1;
+					numBytes = byteCount1 + 1;
 					break;
+				case Modbus.WriteSingleCoil:
+				case Modbus.WriteSingleRegister:
 				case Modbus.WriteMultipleCoils:
 				case Modbus.WriteMultipleRegisters:
-					numBytes = 2;
+					numBytes = 4;
 					break;
 				default :
-					numBytes = -1;
+					numBytes = 1;
 					break;
 			}
 
-			// CRC
-			numBytes += 2;
-
 			return numBytes;
-		}
-
-		public IModbusMessage ReadResponse(string message, ushort dataLength)
-		{
-			return null;
 		}
 	}
 }

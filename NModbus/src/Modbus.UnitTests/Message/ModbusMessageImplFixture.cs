@@ -10,7 +10,7 @@ namespace Modbus.UnitTests.Message
 	public class ModbusMessageImplFixture
 	{
 		[Test]
-		public void CheckModbusMessageCtorInitializesProperties()
+		public void ModbusMessageCtorInitializesProperties()
 		{
 			ModbusMessageImpl messageImpl = new ModbusMessageImpl(5, Modbus.ReadCoils);
 			Assert.AreEqual(5, messageImpl.SlaveAddress);
@@ -18,7 +18,7 @@ namespace Modbus.UnitTests.Message
 		}
 
 		[Test]
-		public void CheckInitialize()
+		public void Initialize()
 		{
 			ModbusMessageImpl messageImpl = new ModbusMessageImpl();
 			messageImpl.Initialize(new byte[] { 1, 2, 9, 9, 9, 9 });
@@ -36,14 +36,14 @@ namespace Modbus.UnitTests.Message
 
 		[Test]
 		[ExpectedException(typeof(FormatException))]
-		public void CheckInitializeInvalidFrame()
+		public void InitializeInvalidFrame()
 		{
 			ModbusMessageImpl messageImpl = new ModbusMessageImpl();
 			messageImpl.Initialize(new byte[] { 1 });
 		}
 
 		[Test]
-		public void CheckProtocolDataUnit()
+		public void ProtocolDataUnit()
 		{
 			ModbusMessageImpl messageImpl = new ModbusMessageImpl(11, Modbus.ReadCoils);
 			byte[] expectedResult = new byte[] { Modbus.ReadCoils };
@@ -51,7 +51,7 @@ namespace Modbus.UnitTests.Message
 		}
 
 		[Test]
-		public void CheckChecksumBody()
+		public void ChecksumBody()
 		{
 			ModbusMessageImpl messageImpl = new ModbusMessageImpl(11, Modbus.ReadHoldingRegisters);
 			byte[] expectedChecksumBody = new byte[] { 11, Modbus.ReadHoldingRegisters };

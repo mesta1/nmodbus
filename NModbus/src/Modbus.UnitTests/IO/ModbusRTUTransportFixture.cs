@@ -13,11 +13,11 @@ namespace Modbus.UnitTests.IO
 	public class ModbusRTUTransportFixture
 	{
 		[Test]
-		public void CheckBuildMessageFrame()
+		public void CreateMessageFrame()
 		{
 			byte[] message = new byte[] { 17, Modbus.ReadCoils, 0, 19, 0, 37, 14, 132 };
 			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 17, 19, 37);
-			Assert.AreEqual(message, new ModbusRTUTransport(new SerialPort()).BuildMessageFrame(request));
+			Assert.AreEqual(message, new ModbusRTUTransport(new SerialPort()).CreateMessageFrame(request));
 		}
 
 		[Test]

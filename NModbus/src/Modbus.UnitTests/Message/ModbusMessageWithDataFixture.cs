@@ -11,7 +11,7 @@ namespace Modbus.UnitTests.Message
 	public class ModbusMessageWithDataFixture
 	{
 		[Test]
-		public void CheckModbusMessageWithDataFixtureCtorInitializesProperties()
+		public void ModbusMessageWithDataFixtureCtorInitializesProperties()
 		{
 			ModbusMessageWithData<CoilDiscreteCollection> message = new ReadCoilsResponse(10, 1, new CoilDiscreteCollection(true, false, true));
 			Assert.AreEqual(Modbus.ReadCoils, message.FunctionCode);
@@ -19,7 +19,7 @@ namespace Modbus.UnitTests.Message
 		}
 
 		[Test]
-		public void CheckProtocolDataUnitReadCoilsResponse()
+		public void ProtocolDataUnitReadCoilsResponse()
 		{
 			ModbusMessageWithData<CoilDiscreteCollection> message = new ReadCoilsResponse(1, 2, new CoilDiscreteCollection(true));
 			byte[] expectedResult = new byte[] { 1, 2, 1 };
@@ -27,7 +27,7 @@ namespace Modbus.UnitTests.Message
 		}
 
 		[Test]
-		public void CheckDataReadCoilsResponse()
+		public void DataReadCoilsResponse()
 		{
 			CoilDiscreteCollection col = new CoilDiscreteCollection(false, true, false, true, false, true, false, false, false, false);
 			ModbusMessageWithData<CoilDiscreteCollection> message = new ReadCoilsResponse(11, 1, col);

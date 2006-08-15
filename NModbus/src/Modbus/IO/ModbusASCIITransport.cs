@@ -19,7 +19,7 @@ namespace Modbus.IO
 			SerialPort.NewLine = FrameStart;
 		}
 
-		public override byte[] BuildMessageFrame(IModbusMessage message)
+		public override byte[] CreateMessageFrame(IModbusMessage message)
 		{
 			List<byte> frame = new List<byte>();
 			frame.Add((byte) ':');

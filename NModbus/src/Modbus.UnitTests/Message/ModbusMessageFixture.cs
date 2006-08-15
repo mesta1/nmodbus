@@ -11,7 +11,7 @@ namespace Modbus.UnitTests.Message
 	public class ModbusMessageFixture
 	{
 		[Test]
-		public void CheckProtocolDataUnitReadCoilsRequest()
+		public void ProtocolDataUnitReadCoilsRequest()
 		{
 			ModbusMessage message = new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 100, 9);
 			byte[] expectedResult = new byte[] { Modbus.ReadCoils, 0, 100, 0, 9 };
@@ -19,7 +19,7 @@ namespace Modbus.UnitTests.Message
 		}
 
 		[Test]
-		public void CheckChecksumBodyReadCoilsRequest()
+		public void ChecksumBodyReadCoilsRequest()
 		{
 			ModbusMessage message = new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 2, 3);
 			byte[] expectedChecksumBody = new byte[] { 1, Modbus.ReadCoils, 0, 2, 0, 3 };
