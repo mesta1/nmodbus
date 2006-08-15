@@ -49,14 +49,14 @@ namespace Modbus.IntegrationTests
 		public virtual void ReadInputs()
 		{
 			bool[] inputs = Master.ReadInputs(SlaveAddress, 150, 3);
-			Assert.AreEqual(new bool[] { true, true, true }, inputs);
+			Assert.AreEqual(new bool[] { false, false, false }, inputs);
 		}
 
 		[Test]
 		public virtual void ReadHoldingRegisters()
 		{
 			ushort[] registers = Master.ReadHoldingRegisters(SlaveAddress, 104, 2);
-			Assert.AreEqual(new ushort[] { 104, 105 }, registers);
+			Assert.AreEqual(new ushort[] { 0, 0 }, registers);
 		}
 
 		[Test]
@@ -108,12 +108,6 @@ namespace Modbus.IntegrationTests
 			Master.WriteMultipleCoils(SlaveAddress, testAddress, originalValues);
 		}
 
-		[Test]
-		[ExpectedException(typeof(SlaveException))]
-		public virtual void SlaveExceptionMinimumFunctionCode()
-		{
-			Master.ReadCoils(SlaveAddress, 650, 1);
-			Assert.Fail();
-		}
+		// TODO how can we test a slave exception?
 	}
 }

@@ -14,14 +14,12 @@ namespace Modbus.IntegrationTests
 		public override void Init()
 		{
 			base.Init();
-			Port.Parity = Parity.Odd;
 			Master = new ModbusRTUMaster(Port);
 		}
 
 		[Test]
 		public override void ReadCoils()
 		{
-			int test = 5;
 			base.ReadCoils();
 		}
 
@@ -32,9 +30,33 @@ namespace Modbus.IntegrationTests
 		}
 
 		[Test]
-		public override void  ReadHoldingRegisters()
+		public override void ReadHoldingRegisters()
 		{
- 			 base.ReadHoldingRegisters();
+			base.ReadHoldingRegisters();
+		}
+
+		[Test]
+		public override void ReadInputs()
+		{
+			base.ReadInputs();
+		}
+
+		[Test]
+		public override void WriteSingleCoil()
+		{
+			base.WriteSingleCoil();
+		}
+
+		[Test]
+		public override void WriteMultipleCoils()
+		{
+			base.WriteMultipleCoils();
+		}
+
+		[Test]
+		public override void WriteSingleRegister()
+		{
+			base.WriteSingleRegister();
 		}
 
 		[Test]

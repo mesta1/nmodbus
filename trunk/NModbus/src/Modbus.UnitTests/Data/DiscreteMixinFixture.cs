@@ -11,7 +11,7 @@ namespace Modbus.UnitTests.Data
 	public class DiscreteMixinFixture
 	{
 		[Test]
-		public void CheckGetBytes()
+		public void GetBytes()
 		{
 			DiscreteMixin<BitArray> col = new DiscreteMixin<BitArray>();
 			BitArray bitArray = new BitArray(new byte[] { 1, 1 });

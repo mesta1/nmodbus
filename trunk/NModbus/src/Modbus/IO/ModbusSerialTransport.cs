@@ -68,7 +68,7 @@ namespace Modbus.IO
 
 		public void Write(IModbusMessage message)
 		{
-			byte[] frame = BuildMessageFrame(message);
+			byte[] frame = CreateMessageFrame(message);
 			SerialPort.Write(frame, 0, frame.Length);
 		}
 
@@ -78,7 +78,7 @@ namespace Modbus.IO
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		public abstract byte[] BuildMessageFrame(IModbusMessage message);
+		public abstract byte[] CreateMessageFrame(IModbusMessage message);
 		public abstract T Read<T>(IModbusMessage request) where T : IModbusMessage, new();
 	}
 }

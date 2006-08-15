@@ -10,7 +10,7 @@ namespace Modbus.UnitTests.Message
 	public class ReadCoilsInputsRequestFixture
 	{
 		[Test]
-		public void CheckCreateReadCoilsRequest()
+		public void CreateReadCoilsRequest()
 		{
 			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 5, 1, 10);
 			Assert.AreEqual(Modbus.ReadCoils, request.FunctionCode);
@@ -20,7 +20,7 @@ namespace Modbus.UnitTests.Message
 		}
 
 		[Test]
-		public void CheckCreateReadInputsRequest()
+		public void CreateReadInputsRequest()
 		{
 			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadInputs, 5, 1, 10);
 			Assert.AreEqual(Modbus.ReadInputs, request.FunctionCode);
