@@ -9,18 +9,14 @@
 	<property name="dist.dir" value="dist" />
 	<property name="version" value="0.0" />
 	
-
-	<!-- build: Builds the assemblies. -->
 	<target name="build">
 		<loadtasks assembly="${nantcontrib}"/>
-
-		<!-- Build the Release configuration -->
+		
 		<msbuild project="src\NModbus.sln">
 			<arg value="/p:Configuration=Release"/>
 		</msbuild>
 	</target>
 	
-	 <!-- clean: removes all build artifacts -->  
 	 <target name="clean">  
 	 	<foreach item="Folder" property="foldername">  
 			<in>  
@@ -67,8 +63,9 @@
 		</zip>
 	</target>
 
-	<target name="docs">
-		<mkdir dir="${docs.dir}" />		
+	<target name="docs" depends="build">
+		<copy file="Docs.bat" todir="${docs.dir}" />
+		<exec program="cmd.exe" commandline="/c Docs.bat" workingdir="${docs.dir}" />
 	</target>
 	
 	<target name="all" depends="clean,build,run-unit-tests,docs,dist">

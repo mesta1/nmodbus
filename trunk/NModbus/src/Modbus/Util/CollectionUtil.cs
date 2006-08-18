@@ -6,6 +6,9 @@ using System.Collections;
 
 namespace Modbus.Util
 {
+	/// <summary>
+	/// Provides methods for manipulating collections.
+	/// </summary>
 	public static class CollectionUtil
 	{
 		/// <summary>
@@ -37,7 +40,7 @@ namespace Modbus.Util
 		}
 
 		/// <summary>
-		/// Returns an ICollection<>'s elements as an array.
+		/// Returns an ICollection&lt;&gt;'s elements as an array.
 		/// </summary>
 		public static T[] ToArray<T>(ICollection<T> collection)
 		{
