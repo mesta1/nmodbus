@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<project default="all">
+	
+	<!-- tools paths -->
+	<property name="nantcontrib" value="C:\Program Files\NAntContrib\bin\NAnt.Contrib.Tasks.dll" />
+	<property name="nunitconsole" value="tools/nunit/nunit-console.exe" />
+	<property name="bin.dir" value="src\Modbus\bin\Release" />
+	<property name="docs.dir" value="docs" />
+	<property name="dist.dir" value="dist" />
+	<property name="version" value="0.0" />
+	
+
+	<!-- build: Builds the assemblies. -->
+	<target name="build">
+		<loadtasks assembly="${nantcontrib}"/>
+
+		<!-- Build the Release configuration -->
+		<msbuild project="src\NModbus.sln">
+			<arg value="/p:Configuration=Release"/>
+		</msbuild>
+	</target>
+	
+	 <!-- clean: removes all build artifacts -->  
+	 <target name="clean">  
+	 	<foreach item="Folder" property="foldername">  
+			<in>  
+				<items basedir="src">  
+					<include name="*"></include>  
+					<exclude name="."></exclude>  
+				 </items>  
+			 </in>  
+			 <do>  
+				 <delete dir="${foldername}\bin" />  
+				 <delete dir="${foldername}\obj" />
+			 </do>  
+		 </foreach>
+		 <delete dir="${dist.dir}" />
+		 <delete dir="${docs.dir}" />
+	 </target>  
+	
+	<target name="run-unit-tests">
+		<foreach item="Folder" property="foldername">
+			<in>  
+				<items basedir="src">  
+					<include name="*.UnitTests"></include>  
+					<exclude name="."></exclude>  
+				 </items>  
+			 </in>  
+			 <do>			 	
+				 <exec program="${nunitconsole}" >
+					<arg value="${foldername}\bin\Release\${path::get-file-name(foldername)}.dll" />
+					<arg value="/xml:${foldername}\bin\Release\${path::get-file-name(foldername)}.xml" />
+				 </exec>
+			 </do>
+		</foreach>
+	</target>
+	
+	<target name="dist">
+		<mkdir dir="${dist.dir}" />
+		<zip zipfile="${dist.dir}\NModbus_${version}.zip">
+			<fileset basedir="${bin.dir}" prefix="bin">
+				<include name="**/*" />
+			</fileset>
+			<fileset basedir="${docs.dir}" prefix="docs">
+				<include name="**/*" />
+			</fileset>
+		</zip>
+	</target>
+
+	<target name="docs">
+		<mkdir dir="${docs.dir}" />		
+	</target>
+	
+	<target name="all" depends="clean,build,run-unit-tests,docs,dist">
+	</target>
+</project>
