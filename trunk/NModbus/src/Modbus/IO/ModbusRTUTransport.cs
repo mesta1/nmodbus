@@ -8,7 +8,7 @@ using System.IO;
 
 namespace Modbus.IO
 {
-	public class ModbusRTUTransport : ModbusSerialTransport, IModbusTransport
+	class ModbusRTUTransport : ModbusSerialTransport, IModbusTransport
 	{
 		public ModbusRTUTransport(SerialPort serialPort)
 			: base (serialPort)

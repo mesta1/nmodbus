@@ -4,6 +4,9 @@ using System.Text;
 
 namespace Modbus
 {	
+	/// <summary>
+	///  Defines constants related to the Modbus protocol.
+	/// </summary>
 	public static class Modbus
 	{			
 		// public function codes

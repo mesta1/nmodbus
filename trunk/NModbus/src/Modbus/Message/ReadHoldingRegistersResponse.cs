@@ -6,7 +6,7 @@ using Modbus.Util;
 
 namespace Modbus.Message
 {
-	public class ReadHoldingRegistersResponse : ModbusMessageWithData<HoldingRegisterCollection>, IModbusMessage
+	class ReadHoldingRegistersResponse : ModbusMessageWithData<HoldingRegisterCollection>, IModbusMessage
 	{
 		private const int _minimumFrameSize = 3;
 

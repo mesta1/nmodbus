@@ -5,7 +5,7 @@ using Modbus.Data;
 
 namespace Modbus.Message
 {
-	public abstract class ModbusMessage
+	abstract class ModbusMessage
 	{
 		private ModbusMessageImpl _messageImpl;
 
@@ -31,7 +31,7 @@ namespace Modbus.Message
 			set { _messageImpl.SlaveAddress = value; }
 		}
 
-		protected ModbusMessageImpl MessageImpl
+		public ModbusMessageImpl MessageImpl
 		{
 			get { return _messageImpl; }
 		}

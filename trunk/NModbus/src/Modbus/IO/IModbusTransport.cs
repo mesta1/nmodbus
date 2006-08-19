@@ -5,7 +5,7 @@ using Modbus.Message;
 
 namespace Modbus.IO
 {
-	public interface IModbusTransport
+	interface IModbusTransport
 	{
 		/// <summary>
 		/// Closes the raw input and output streams of this ModbusTransport.

@@ -5,7 +5,7 @@ using System.Net;
 
 namespace Modbus.Util
 {
-	public class ModbusUtil
+	public static class ModbusUtil
 	{
 		private static ushort[] crcTable = {
 			0X0000, 0XC0C1, 0XC181, 0X0140, 0XC301, 0X03C0, 0X0280, 0XC241,

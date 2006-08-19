@@ -6,7 +6,7 @@ using System.Net;
 
 namespace Modbus.Message
 {
-	public class WriteSingleRegisterRequestResponse : ModbusMessageWithData<HoldingRegisterCollection>, IModbusMessage
+	class WriteSingleRegisterRequestResponse : ModbusMessageWithData<HoldingRegisterCollection>, IModbusMessage
 	{
 		private const int _minimumFrameSize = 6;
 

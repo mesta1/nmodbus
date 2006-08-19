@@ -7,7 +7,7 @@ using Modbus.Util;
 
 namespace Modbus.Data
 {
-	public class InputDiscreteCollection : ReadOnlyCollection<bool>, IModbusMessageDataCollection, DiscreteMixin<InputDiscreteCollection>.IMixin
+	class InputDiscreteCollection : ReadOnlyCollection<bool>, IModbusMessageDataCollection, DiscreteMixin<InputDiscreteCollection>.IMixin
 	{
 		DiscreteMixin<InputDiscreteCollection> _mixin;
 

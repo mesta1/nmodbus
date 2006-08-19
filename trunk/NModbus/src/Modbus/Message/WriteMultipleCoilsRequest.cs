@@ -7,7 +7,7 @@ using Modbus.Util;
 
 namespace Modbus.Message
 {
-	public class WriteMultipleCoilsRequest : ModbusMessageWithData<CoilDiscreteCollection>, IModbusMessage
+	class WriteMultipleCoilsRequest : ModbusMessageWithData<CoilDiscreteCollection>, IModbusMessage
 	{
 		private const int _minimumFrameSize = 7;
 

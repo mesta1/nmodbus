@@ -6,7 +6,7 @@ using System.Net;
 
 namespace Modbus.Message
 {
-	public class ReadCoilsInputsRequest : ModbusMessage, IModbusMessage
+	class ReadCoilsInputsRequest : ModbusMessage, IModbusMessage
 	{
 		private const int _minimumFrameSize = 6;
 

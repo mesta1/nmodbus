@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace Modbus.IO
 {
-	public class ModbusASCIITransport : ModbusSerialTransport, IModbusTransport
+	class ModbusASCIITransport : ModbusSerialTransport, IModbusTransport
 	{
 		private const string FrameStart = "\r\n";
 

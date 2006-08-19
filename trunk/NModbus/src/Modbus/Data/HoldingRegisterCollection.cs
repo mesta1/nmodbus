@@ -6,7 +6,7 @@ using Modbus.Util;
 
 namespace Modbus.Data
 {
-	public class HoldingRegisterCollection : Collection<ushort>, RegisterMixin<HoldingRegisterCollection>.IMixin
+	class HoldingRegisterCollection : Collection<ushort>, RegisterMixin<HoldingRegisterCollection>.IMixin
 	{
 		RegisterMixin<HoldingRegisterCollection> _mixin;
 

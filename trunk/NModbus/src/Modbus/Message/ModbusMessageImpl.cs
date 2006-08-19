@@ -10,7 +10,7 @@ namespace Modbus.Message
 	/// Abstract class holding all implementation shared between two or more message types. 
 	/// Interfaces expose subsets of type specific implementations.
 	/// </summary>
-	public class ModbusMessageImpl
+	class ModbusMessageImpl
 	{
 		private byte _exceptionCode;
 		private byte _functionCode;

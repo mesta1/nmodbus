@@ -7,7 +7,7 @@ using Modbus.Util;
 
 namespace Modbus.Message
 {
-	public class WriteSingleCoilRequestResponse : ModbusMessageWithData<InputRegisterCollection>, IModbusMessage
+	class WriteSingleCoilRequestResponse : ModbusMessageWithData<InputRegisterCollection>, IModbusMessage
 	{
 		private const int _minimumFrameSize = 6;
 

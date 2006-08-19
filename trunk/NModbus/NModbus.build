@@ -4,9 +4,9 @@
 	<!-- tools paths -->
 	<property name="nantcontrib" value="C:\Program Files\NAntContrib\bin\NAnt.Contrib.Tasks.dll" />
 	<property name="nunitconsole" value="tools/nunit/nunit-console.exe" />
-	<property name="bin.dir" value="src\Modbus\bin\Release" />
-	<property name="docs.dir" value="docs" />
-	<property name="dist.dir" value="dist" />
+	<property name="path.bin" value="src\Modbus\bin\Release" />
+	<property name="path.docs" value="docs" />
+	<property name="path.dist" value="dist" />
 	<property name="version" value="0.0" />
 	
 	<target name="build">
@@ -30,8 +30,8 @@
 				 <delete dir="${foldername}\obj" />
 			 </do>  
 		 </foreach>
-		 <delete dir="${dist.dir}" />
-		 <delete dir="${docs.dir}" />
+		 <delete dir="${path.dist}" />
+		 <delete dir="${path.docs}" />
 	 </target>  
 	
 	<target name="run-unit-tests">
@@ -51,23 +51,27 @@
 		</foreach>
 	</target>
 	
-	<target name="dist">
-		<mkdir dir="${dist.dir}" />
-		<zip zipfile="${dist.dir}\NModbus_${version}.zip">
-			<fileset basedir="${bin.dir}" prefix="bin">
-				<include name="**/*" />
+	<target name="dist" depends="all,docs">
+		<mkdir dir="${path.dist}" />
+		<zip zipfile="${path.dist}\NModbus_${version}.zip">
+			<fileset basedir="${path.bin}" prefix="bin">
+				<include name="Modbus.dll" />
 			</fileset>
-			<fileset basedir="${docs.dir}" prefix="docs">
-				<include name="**/*" />
+			<fileset basedir=".">
+				<include name="README.txt" />
+			</fileset>
+			<fileset basedir="${path.docs}">
+				<include name="*.chm" />
 			</fileset>
 		</zip>
 	</target>
 
 	<target name="docs" depends="build">
-		<copy file="Docs.bat" todir="${docs.dir}" />
-		<exec program="cmd.exe" commandline="/c Docs.bat" workingdir="${docs.dir}" />
+		<copy file="Docs.bat" todir="${path.docs}" />
+		<copy file="sandcastle.config" todir="${path.docs}" />
+		<exec program="cmd.exe" commandline="/c Docs.bat" workingdir="${path.docs}" />
 	</target>
 	
-	<target name="all" depends="clean,build,run-unit-tests,docs,dist">
+	<target name="all" depends="clean,build,run-unit-tests">
 	</target>
 </project>
