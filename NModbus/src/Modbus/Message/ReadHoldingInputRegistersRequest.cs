@@ -5,7 +5,7 @@ using System.Net;
 
 namespace Modbus.Message
 {
-	public class ReadHoldingInputRegistersRequest : ModbusMessage, IModbusMessage
+	class ReadHoldingInputRegistersRequest : ModbusMessage, IModbusMessage
 	{
 		private const int _minimumFrameSize = 6;
 

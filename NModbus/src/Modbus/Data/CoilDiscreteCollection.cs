@@ -7,7 +7,7 @@ using Modbus.Util;
 
 namespace Modbus.Data
 {
-	public class CoilDiscreteCollection : Collection<bool>, DiscreteMixin<CoilDiscreteCollection>.IMixin
+	class CoilDiscreteCollection : Collection<bool>, DiscreteMixin<CoilDiscreteCollection>.IMixin
 	{
 		DiscreteMixin<CoilDiscreteCollection> _mixin;
 		

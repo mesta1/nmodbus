@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Modbus.Message
 {
-	public class SlaveExceptionResponse : ModbusMessage, IModbusMessage
+	class SlaveExceptionResponse : ModbusMessage, IModbusMessage
 	{
 		private const int _minimumFrameSize = 3;
 

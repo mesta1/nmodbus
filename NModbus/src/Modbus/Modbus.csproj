@@ -89,6 +89,7 @@
     <Compile Include="SlaveException.cs" />
     <Compile Include="Util\CollectionUtil.cs" />
     <Compile Include="Util\ModbusUtil.cs" />
+    <Compile Include="Util\StringUtil.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

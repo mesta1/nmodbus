@@ -7,7 +7,7 @@ using System;
 
 namespace Modbus.IO
 {
-	public abstract class ModbusSerialTransport : IModbusTransport
+	abstract class ModbusSerialTransport : IModbusTransport
 	{
 		protected static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 		private int _retries = Modbus.DefaultRetries;

@@ -6,7 +6,7 @@ using Modbus.Util;
 
 namespace Modbus.Data
 {
-	public class InputRegisterCollection : ReadOnlyCollection<ushort>, IModbusMessageDataCollection, RegisterMixin<InputRegisterCollection>.IMixin
+	class InputRegisterCollection : ReadOnlyCollection<ushort>, IModbusMessageDataCollection, RegisterMixin<InputRegisterCollection>.IMixin
 	{
 		RegisterMixin<InputRegisterCollection> _mixin;
 

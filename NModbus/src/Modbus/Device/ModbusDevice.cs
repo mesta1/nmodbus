@@ -12,13 +12,13 @@ namespace Modbus.Device
 		private IModbusTransport _transport;
 		protected static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-		public IModbusTransport Transport
+		internal IModbusTransport Transport
 		{
 			get { return _transport; }
 			set { _transport = value; }
 		}
 
-		public ModbusDevice(IModbusTransport transport)
+		internal ModbusDevice(IModbusTransport transport)
 		{
 			_transport = transport;
 		}

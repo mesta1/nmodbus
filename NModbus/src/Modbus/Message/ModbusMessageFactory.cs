@@ -7,7 +7,7 @@ using System.IO.Ports;
 
 namespace Modbus.Message
 {
-	public static class ModbusMessageFactory
+	static class ModbusMessageFactory
 	{	
 		public static T CreateModbusMessage<T>(byte[] frame) where T : IModbusMessage, new()
 		{

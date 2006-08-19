@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace Modbus
 {
-	public class SlaveException : Exception
+	class SlaveException : Exception
 	{
 		private SlaveExceptionResponse _slaveExceptionResponse;
 

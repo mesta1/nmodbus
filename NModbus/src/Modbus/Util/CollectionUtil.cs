@@ -78,6 +78,6 @@ namespace Modbus.Util
 			Array.Copy(array2, 0, result, array1.Length, array2.Length);
 
 			return result;
-		}
+		}	
 	}
 }

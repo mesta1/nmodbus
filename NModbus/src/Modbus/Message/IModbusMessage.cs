@@ -7,7 +7,7 @@ namespace Modbus.Message
 	/// <summary>
 	/// Common to all modbus messages.
 	/// </summary>
-	public interface IModbusMessage
+	interface IModbusMessage
 	{
 		void Initialize(byte[] frame);
 		byte[] ProtocolDataUnit { get; }

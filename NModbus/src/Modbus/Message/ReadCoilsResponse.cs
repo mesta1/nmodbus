@@ -6,7 +6,7 @@ using Modbus.Util;
 
 namespace Modbus.Message
 {
-	public class ReadCoilsResponse : ModbusMessageWithData<CoilDiscreteCollection>, IModbusMessage
+	class ReadCoilsResponse : ModbusMessageWithData<CoilDiscreteCollection>, IModbusMessage
 	{
 		private const int _minimumFrameSize = 3;
 

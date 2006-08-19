@@ -13,7 +13,7 @@ namespace Modbus.Device
 {
 	public abstract class ModbusMaster : ModbusDevice
 	{
-		public ModbusMaster(IModbusTransport transport)
+		internal ModbusMaster(IModbusTransport transport)
 			: base(transport)
 		{
 		}
