@@ -6,6 +6,9 @@ using System.IO.Ports;
 
 namespace Modbus.Device
 {
+	/// <summary>
+	/// Modbus serial RTU slave.
+	/// </summary>
 	public class ModbusRTUSlave : ModbusSlave
 	{
 		public ModbusRTUSlave(byte unitID, SerialPort serialPort)

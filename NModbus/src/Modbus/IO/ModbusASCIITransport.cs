@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace Modbus.IO
 {
-	class ModbusASCIITransport : ModbusSerialTransport, IModbusTransport
+	class ModbusASCIITransport : ModbusSerialTransport
 	{
 		private const string FrameStart = "\r\n";
 
@@ -25,7 +25,7 @@ namespace Modbus.IO
 			frame.Add((byte) ':');
 			frame.AddRange(ModbusUtil.GetASCIIBytes(message.SlaveAddress));
 			frame.AddRange(ModbusUtil.GetASCIIBytes(message.ProtocolDataUnit));
-			frame.AddRange(ModbusUtil.GetASCIIBytes(ModbusUtil.CalculateLRC(message.ChecksumBody)));
+			frame.AddRange(ModbusUtil.GetASCIIBytes(ModbusUtil.CalculateLrc(message.ChecksumBody)));
 			frame.AddRange(ModbusUtil.GetASCIIBytes(FrameStart.ToCharArray()));
 
 			return frame.ToArray();
@@ -33,27 +33,28 @@ namespace Modbus.IO
 
 		public override T Read<T>(IModbusMessage request)
 		{
-			string frame = SerialPort.ReadLine().Substring(1);
+			// read message frame, removing frame start ':'
+			string frameHex = SerialPort.ReadLine().Substring(1);
 
 			// convert hex to bytes
-			byte[] frameBytes = ModbusUtil.HexToBytes(frame);
+			byte[] frame = ModbusUtil.HexToBytes(frameHex);
 
-			if (frameBytes.Length < 3)
-				throw new IOException("Message was truncated.");
+			if (frame.Length < 3)
+				throw new IOException("Premature end of stream (Message truncated).");
 
 			// remove checksum from frame
-			byte crc = frameBytes[frameBytes.Length - 1];
-			Array.Resize<byte>(ref frameBytes, frameBytes.Length - 1);
+			byte crc = frame[frame.Length - 1];
+			Array.Resize<byte>(ref frame, frame.Length - 1);
 
 			// check for slave exception response
-			if (frameBytes[1] > Modbus.ExceptionOffset)
-			    throw new SlaveException(ModbusMessageFactory.CreateModbusMessage<SlaveExceptionResponse>(frameBytes));
+			if (frame[1] > Modbus.ExceptionOffset)
+			    throw new SlaveException(ModbusMessageFactory.CreateModbusMessage<SlaveExceptionResponse>(frame));
 
 			// create message from frame
-			T response = ModbusMessageFactory.CreateModbusMessage<T>(frameBytes);
+			T response = ModbusMessageFactory.CreateModbusMessage<T>(frame);
 
 			// check LRC
-			if (ModbusUtil.CalculateLRC(response.ChecksumBody) != crc)
+			if (ModbusUtil.CalculateLrc(response.ChecksumBody) != crc)
 			    throw new IOException("Checksum LRC failed.");
 
 			return response;

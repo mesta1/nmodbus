@@ -9,16 +9,16 @@ namespace Modbus.Device
 {
 	public abstract class ModbusDevice
 	{
-		private IModbusTransport _transport;
+		private ModbusTransport _transport;
 		protected static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-		internal IModbusTransport Transport
+		internal ModbusTransport Transport
 		{
 			get { return _transport; }
 			set { _transport = value; }
 		}
 
-		internal ModbusDevice(IModbusTransport transport)
+		internal ModbusDevice(ModbusTransport transport)
 		{
 			_transport = transport;
 		}

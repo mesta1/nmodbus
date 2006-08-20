@@ -7,13 +7,17 @@ using Modbus.Util;
 
 namespace MySample
 {
+	/// <summary>
+	/// Demonstration of NModbus.
+	/// </summary>
 	class Driver
 	{
 		static void Main(string[] args)
 		{
 			try
 			{
-				ReadHoldingRegisters();
+				ReadRegisters();
+				WriteRegisters();
 			}
 			catch (Exception e)
 			{
@@ -23,7 +27,7 @@ namespace MySample
 			Console.ReadKey();
 		}
 
-		public static void ReadHoldingRegisters()
+		public static void ReadRegisters()
 		{
 			using (SerialPort port = new SerialPort("COM4"))
 			{
@@ -32,20 +36,38 @@ namespace MySample
 				port.DataBits = 8;
 				port.Parity = Parity.None;
 				port.StopBits = StopBits.One;
-				port.Encoding = Encoding.ASCII;
-
-				// open the port
 				port.Open();
 
 				// create modbus master
 				ModbusASCIIMaster master = new ModbusASCIIMaster(port);
-				
+
 				// read five register values
 				ushort startAddress = 100;
-				ushort[] registers = master.ReadHoldingRegisters(1, startAddress, 5);
+				ushort numRegisters = 5;
+				ushort[] registers = master.ReadHoldingRegisters(1, startAddress, numRegisters);
 
-				Console.WriteLine(StringUtil.Join(Environment.NewLine, registers, 
-					delegate(ushort registerValue) { return String.Format("Register {0}={1}", startAddress++, registerValue); }));
+				for (int	i = 0; i < numRegisters; i++)
+					Console.WriteLine("Register {0}={1}", startAddress + i, registers[i]);
+			}
+		}
+
+		public static void WriteRegisters()
+		{
+			using (SerialPort port = new SerialPort("COM4"))
+			{
+				// configure serial port
+				port.BaudRate = 9600;
+				port.DataBits = 8;
+				port.Parity = Parity.None;
+				port.StopBits = StopBits.One;
+				port.Open();
+
+				// create modbus master
+				ModbusASCIIMaster master = new ModbusASCIIMaster(port);
+
+				// write five registers			
+				ushort[] registers = new ushort[] { 1, 2, 3 };
+				master.WriteMultipleRegisters(1, 100, registers);
 			}
 		}
 	}
