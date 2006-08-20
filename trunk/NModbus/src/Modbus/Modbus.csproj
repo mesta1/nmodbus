@@ -19,8 +19,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>true</UseVSHostingProcess>
-    <DocumentationFile>
-    </DocumentationFile>
+    <DocumentationFile>bin\Debug\Modbus.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -62,11 +61,14 @@
     <Compile Include="Device\ModbusRTUMaster.cs" />
     <Compile Include="Device\ModbusRTUSlave.cs" />
     <Compile Include="Device\ModbusSlave.cs" />
+    <Compile Include="Device\ModbusTCPMaster.cs" />
+    <Compile Include="Device\ModbusTCPSlave.cs" />
     <Compile Include="IO\ModbusASCIITransport.cs" />
     <Compile Include="IO\ModbusRTUTransport.cs" />
     <Compile Include="IO\ModbusSerialTransport.cs" />
-    <Compile Include="IO\IModbusTransport.cs" />
     <Compile Include="Data\IModbusMessageDataCollection.cs" />
+    <Compile Include="IO\ModbusTCPTransport.cs" />
+    <Compile Include="IO\ModbusTransport.cs" />
     <Compile Include="Message\ReadCoilsInputsRequest.cs" />
     <Compile Include="Message\ReadHoldingInputRegistersRequest.cs" />
     <Compile Include="Message\ReadInputsResponse.cs" />

@@ -82,6 +82,9 @@ namespace Modbus.Util
 			return result;
 		}
 
+		/// <summary>
+		/// Converts a string of hex to a byte array.
+		/// </summary>
 		public static byte[] HexToBytes(string hex)
 		{
 			if (hex == null)
@@ -101,7 +104,7 @@ namespace Modbus.Util
 		/// <summary>
 		/// Longitudinal Redundancy Check.
 		/// </summary>
-		public static byte CalculateLRC(byte[] data)
+		public static byte CalculateLrc(byte[] data)
 		{
 			if (data == null)
 				throw new ArgumentNullException("data");
@@ -115,7 +118,10 @@ namespace Modbus.Util
 			return lrc;
 		}
 
-		public static byte[] CalculateCRC(byte[] data)
+		/// <summary>
+		/// Cyclical Redundancy Check.
+		/// </summary>
+		public static byte[] CalculateCrc(byte[] data)
 		{
 			if (data == null)
 				throw new ArgumentNullException("data");

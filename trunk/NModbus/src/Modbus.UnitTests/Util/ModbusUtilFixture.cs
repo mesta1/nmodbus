@@ -88,60 +88,60 @@ namespace Modbus.UnitTests.Util
 		}
 
 		[Test]
-		public void CalculateCRC()
+		public void CalculateCrc()
 		{
-			byte[] result = ModbusUtil.CalculateCRC(new byte[] { 1, 1 });
+			byte[] result = ModbusUtil.CalculateCrc(new byte[] { 1, 1 });
 			Assert.AreEqual(new byte[] { 193, 224 }, result);			
 		}
 
 		[Test]
-		public void CalculateCRC2()
+		public void CalculateCrc2()
 		{
-			byte[] result = ModbusUtil.CalculateCRC(new byte[] { 2, 1, 5, 0 });
+			byte[] result = ModbusUtil.CalculateCrc(new byte[] { 2, 1, 5, 0 });
 			Assert.AreEqual(new byte[] { 83, 12 }, result);
 		}
 
 		[Test]
-		public void CalculateCRCEmpty()
+		public void CalculateCrcEmpty()
 		{
-			Assert.AreEqual(new byte[] { 255, 255 }, ModbusUtil.CalculateCRC(new byte[] { }));
+			Assert.AreEqual(new byte[] { 255, 255 }, ModbusUtil.CalculateCrc(new byte[] { }));
 		}
 
 		[Test]
 		[ExpectedException(typeof(ArgumentNullException))]
-		public void CalculateCRCNull()
+		public void CalculateCrcNull()
 		{
-			ModbusUtil.CalculateCRC(null);
+			ModbusUtil.CalculateCrc(null);
 			Assert.Fail();
 		}
 
 		[Test]
-		public void CalculateLRC()
+		public void CalculateLrc()
 		{
 			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 1, 10);
-			Assert.AreEqual(243, ModbusUtil.CalculateLRC(new byte[] { 1, 1, 0, 1, 0, 10 }));
+			Assert.AreEqual(243, ModbusUtil.CalculateLrc(new byte[] { 1, 1, 0, 1, 0, 10 }));
 		}
 
 		[Test]
-		public void CalculateLRC2()
+		public void CalculateLrc2()
 		{
 			//: 02 01 0000 0001 FC
 			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 2, 0, 1);			
-			Assert.AreEqual(252, ModbusUtil.CalculateLRC(new byte[] { 2, 1, 0, 0, 0, 1}));
+			Assert.AreEqual(252, ModbusUtil.CalculateLrc(new byte[] { 2, 1, 0, 0, 0, 1}));
 		}
 
 		[Test]
 		[ExpectedException(typeof(ArgumentNullException))]
-		public void CalculateLRCNull()
+		public void CalculateLrcNull()
 		{
-			ModbusUtil.CalculateLRC(null);
+			ModbusUtil.CalculateLrc(null);
 			Assert.Fail();
 		}
 
 		[Test]
-		public void CalculateLRCEmpty()
+		public void CalculateLrcEmpty()
 		{
-			Assert.AreEqual(0, ModbusUtil.CalculateLRC(new byte[] {}));
+			Assert.AreEqual(0, ModbusUtil.CalculateLrc(new byte[] {}));
 		}
 
 		[Test]

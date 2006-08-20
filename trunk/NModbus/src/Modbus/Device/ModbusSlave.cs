@@ -16,7 +16,7 @@ namespace Modbus.Device
 			set { _unitID = value; }
 		}
 
-		internal ModbusSlave(byte unitID, IModbusTransport transport)
+		internal ModbusSlave(byte unitID, ModbusTransport transport)
 			: base(transport)
 		{
 			_unitID = unitID;

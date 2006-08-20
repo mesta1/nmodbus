@@ -5,10 +5,11 @@ using Modbus.Message;
 using System.IO.Ports;
 using Modbus.Util;
 using System.IO;
+using Modbus.IO;
 
 namespace Modbus.IO
 {
-	class ModbusRTUTransport : ModbusSerialTransport, IModbusTransport
+	class ModbusRTUTransport : ModbusSerialTransport
 	{
 		public ModbusRTUTransport(SerialPort serialPort)
 			: base (serialPort)
@@ -20,7 +21,7 @@ namespace Modbus.IO
 			List<byte> messageBody = new List<byte>();
 			messageBody.Add(message.SlaveAddress);
 			messageBody.AddRange(message.ProtocolDataUnit);
-			messageBody.AddRange(ModbusUtil.CalculateCRC(message.ChecksumBody));
+			messageBody.AddRange(ModbusUtil.CalculateCrc(message.ChecksumBody));
 
 			return messageBody.ToArray();
 		}
@@ -54,8 +55,13 @@ namespace Modbus.IO
 				// check for slave exception response
 				if (functionCode > Modbus.ExceptionOffset)
 					throw new SlaveException(ModbusMessageFactory.CreateModbusMessage<SlaveExceptionResponse>(frame));
-
+				
+				// create message from frame
 				T response = ModbusMessageFactory.CreateModbusMessage<T>(frame);
+
+				// check crc
+				if (BitConverter.ToUInt16(frame, frame.Length - 2) == BitConverter.ToUInt16(ModbusUtil.CalculateCrc(response.ChecksumBody), 0))
+					throw new IOException("Checksum CRC failed.");
 
 				return response;
 			}

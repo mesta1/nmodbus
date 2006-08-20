@@ -6,6 +6,9 @@ using Modbus.IO;
 
 namespace Modbus.Device
 {
+	/// <summary>
+	/// Modbus serial ASCII master.
+	/// </summary>
 	public class ModbusASCIIMaster : ModbusMaster
 	{
 		public ModbusASCIIMaster(SerialPort serialPort)
