@@ -13,7 +13,7 @@ namespace Modbus.IntegrationTests
 		public SerialPort Port;
 		public ModbusMaster Master;
 
-		public const string PortName = "COM4";
+		public const string PortName = "COM5";
 		private const byte SlaveAddress = 1;
 
 		public virtual void Init()

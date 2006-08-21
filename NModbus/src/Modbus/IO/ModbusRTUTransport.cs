@@ -60,7 +60,7 @@ namespace Modbus.IO
 				T response = ModbusMessageFactory.CreateModbusMessage<T>(frame);
 
 				// check crc
-				if (BitConverter.ToUInt16(frame, frame.Length - 2) == BitConverter.ToUInt16(ModbusUtil.CalculateCrc(response.ChecksumBody), 0))
+				if (BitConverter.ToUInt16(frame, frame.Length - 2) != BitConverter.ToUInt16(ModbusUtil.CalculateCrc(response.ChecksumBody), 0))
 					throw new IOException("Checksum CRC failed.");
 
 				return response;

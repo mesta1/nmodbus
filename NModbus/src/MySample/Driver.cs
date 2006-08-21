@@ -29,7 +29,7 @@ namespace MySample
 
 		public static void ReadRegisters()
 		{
-			using (SerialPort port = new SerialPort("COM4"))
+			using (SerialPort port = new SerialPort("COM5"))
 			{
 				// configure serial port
 				port.BaudRate = 9600;
@@ -53,7 +53,7 @@ namespace MySample
 
 		public static void WriteRegisters()
 		{
-			using (SerialPort port = new SerialPort("COM4"))
+			using (SerialPort port = new SerialPort("COM5"))
 			{
 				// configure serial port
 				port.BaudRate = 9600;
