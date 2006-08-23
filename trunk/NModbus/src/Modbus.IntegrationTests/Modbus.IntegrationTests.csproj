@@ -49,6 +49,7 @@
     <Compile Include="ModbusASCIIMasterFixture.cs" />
     <Compile Include="ModbusMasterFixture.cs" />
     <Compile Include="ModbusRTUMasterFixture.cs" />
+    <Compile Include="ModbusTCPMasterFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

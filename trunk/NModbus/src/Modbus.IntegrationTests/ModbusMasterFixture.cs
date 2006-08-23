@@ -4,6 +4,7 @@ using System.Text;
 using NUnit.Framework;
 using Modbus.Device;
 using System.IO.Ports;
+using System.Net.Sockets;
 
 namespace Modbus.IntegrationTests
 {
@@ -11,6 +12,7 @@ namespace Modbus.IntegrationTests
 	public class ModbusMasterFixture
 	{
 		public SerialPort Port;
+		public Socket Sock;
 		public ModbusMaster Master;
 
 		public const string PortName = "COM5";
@@ -27,8 +29,14 @@ namespace Modbus.IntegrationTests
 		[TestFixtureTearDown]
 		public void Dispose()
 		{
-			Port.Close();
-			Port.Dispose();
+			if (Port != null && Port.IsOpen)
+			{
+				Port.Close();
+				Port.Dispose();
+			}
+
+			if (Sock != null && Sock.Connected)
+				Sock.Close();
 		}
 
 		[Test]
