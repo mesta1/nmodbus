@@ -32,9 +32,9 @@ namespace Modbus.IO
 			{
 				// read beginning of message frame
 				byte[] frameStart = new byte[4];
-				int numRead = 0;
-				while (numRead != 4)
-					numRead += SerialPort.Read(frameStart, numRead, 4 - numRead);
+				int numBytesRead = 0;
+				while (numBytesRead != 4)
+					numBytesRead += SerialPort.Read(frameStart, numBytesRead, 4 - numBytesRead);
 
 				byte functionCode = frameStart[1];
 				byte byteCount1 = frameStart[2];
@@ -45,9 +45,9 @@ namespace Modbus.IO
 
 				// read remaining bytes
 				byte[] frameEnd = new byte[bytesRemaining];
-				numRead = 0;
-				while (numRead != bytesRemaining)
-					numRead += SerialPort.Read(frameEnd, numRead, bytesRemaining - numRead);
+				numBytesRead = 0;
+				while (numBytesRead != bytesRemaining)
+					numBytesRead += SerialPort.Read(frameEnd, numBytesRead, bytesRemaining - numBytesRead);
 
 				// build complete message frame
 				byte[] frame = CollectionUtil.Combine<byte>(frameStart, frameEnd);

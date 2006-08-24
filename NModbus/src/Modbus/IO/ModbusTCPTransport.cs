@@ -4,6 +4,7 @@ using System.Text;
 using Modbus.Message;
 using System.Net.Sockets;
 using Modbus.Util;
+using System.Net;
 
 namespace Modbus.IO
 {
@@ -15,8 +16,10 @@ namespace Modbus.IO
 		{
 			if (socket == null)
 				throw new ArgumentNullException("socket");
-
+			
 			_socket = socket;
+			_socket.SendTimeout = Modbus.DefaultTimeout;
+			_socket.ReceiveTimeout = Modbus.DefaultTimeout;
 		}
 
 		public Socket Socket
@@ -33,13 +36,18 @@ namespace Modbus.IO
 		public override T Read<T>(IModbusMessage request)
 		{
 			// read header
-			byte[] MbapHeader = new byte[6];
-			Socket.Receive(MbapHeader);
-			ushort frameLength = BitConverter.ToUInt16(MbapHeader, 4);
+			byte[] MbapHeader = new byte[6];			
+			int numBytesRead = 0;
+			while (numBytesRead != 6)
+				numBytesRead += Socket.Receive(MbapHeader, numBytesRead, 6 - numBytesRead, SocketFlags.None);
+
+			ushort frameLength = (ushort) IPAddress.HostToNetworkOrder(BitConverter.ToInt16(MbapHeader, 4));
 
 			// read message
 			byte[] frame = new byte[frameLength];
-			Socket.Receive(frame);
+			numBytesRead = 0;
+			while (numBytesRead != frameLength)
+				numBytesRead += Socket.Receive(frame, numBytesRead, frameLength - numBytesRead, SocketFlags.None);
 
 			// check for slave exception response
 			if (frame[1] > Modbus.ExceptionOffset)
@@ -48,16 +56,15 @@ namespace Modbus.IO
 			// create message from frame
 			T response = ModbusMessageFactory.CreateModbusMessage<T>(frame);
 
-			// TODO CRC?
-
 			return response;
 		}
 
 		public override void Write(IModbusMessage message)
 		{
+			byte[] mbapHeader = new byte[] { 0, 0, 0, 0, 0, (byte) (message.ProtocolDataUnit.Length + 1), Byte.MaxValue };
+
 			List<byte> messageBody = new List<byte>();
-			messageBody.AddRange(new byte[] { 0, 0, 0, 0, 0, 0 });
-			messageBody.Add(message.SlaveAddress);
+			messageBody.AddRange(mbapHeader);
 			messageBody.AddRange(message.ProtocolDataUnit);
 
 			byte[] frame = messageBody.ToArray();

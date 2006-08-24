@@ -42,8 +42,8 @@ namespace Modbus.IntegrationTests
 		[Test]
 		public virtual void ReadCoils()
 		{
-			bool[] coils = Master.ReadCoils(SlaveAddress, 100, 1);
-			Assert.AreEqual(new bool[] { false }, coils);
+			bool[] coils = Master.ReadCoils(SlaveAddress, 0, 8);
+			Assert.AreEqual(new bool[] { false, false, false, false, false, false, false, false }, coils);
 		}
 
 		[Test]
@@ -70,11 +70,11 @@ namespace Modbus.IntegrationTests
 		[Test]
 		public virtual void WriteSingleCoil()
 		{
-			bool coilValue = Master.ReadCoils(SlaveAddress, 105, 1)[0];
-			Master.WriteSingleCoil(SlaveAddress, 105, !coilValue);
-			Assert.AreEqual(!coilValue, Master.ReadCoils(SlaveAddress, 105, 1)[0]);
-			Master.WriteSingleCoil(SlaveAddress, 105, coilValue);
-			Assert.AreEqual(coilValue, Master.ReadCoils(SlaveAddress, 105, 1)[0]);
+			bool coilValue = Master.ReadCoils(SlaveAddress, 10, 1)[0];
+			Master.WriteSingleCoil(SlaveAddress, 10, !coilValue);
+			Assert.AreEqual(!coilValue, Master.ReadCoils(SlaveAddress, 10, 1)[0]);
+			Master.WriteSingleCoil(SlaveAddress, 10, coilValue);
+			Assert.AreEqual(coilValue, Master.ReadCoils(SlaveAddress, 10, 1)[0]);
 		}
 
 		[Test]
