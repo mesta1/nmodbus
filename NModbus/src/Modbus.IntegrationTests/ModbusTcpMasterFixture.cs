@@ -3,18 +3,19 @@ using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
 using Modbus.Device;
-using System.IO.Ports;
+using System.Net.Sockets;
 
 namespace Modbus.IntegrationTests
 {
 	[TestFixture]
-	public class ModbusRTUMasterFixture1 : ModbusMasterFixture
+	public class ModbusTcpMasterFixture : ModbusMasterFixture
 	{
 		[TestFixtureSetUp]
 		public override void Init()
 		{
-			base.Init();
-			Master = ModbusSerialMaster.CreateRtu(Port);
+			Sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			Sock.Connect("127.0.0.1", 502);
+			Master = ModbusTcpMaster.CreateTcp(Sock);
 		}
 
 		[Test]
@@ -56,6 +57,7 @@ namespace Modbus.IntegrationTests
 		[Test]
 		public override void WriteSingleRegister()
 		{
+			// test fails, bug in slave device MOD_RSsim version 7.5?
 			base.WriteSingleRegister();
 		}
 

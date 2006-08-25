@@ -46,10 +46,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ModbusASCIIMasterFixture1.cs" />
+    <Compile Include="ModbusAsciiMasterFixture.cs" />
     <Compile Include="ModbusMasterFixture.cs" />
-    <Compile Include="ModbusRTUMasterFixture1.cs" />
-    <Compile Include="ModbusTCPMasterFixture1.cs" />
+    <Compile Include="ModbusRtuMasterFixture.cs" />
+    <Compile Include="ModbusTcpMasterFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
