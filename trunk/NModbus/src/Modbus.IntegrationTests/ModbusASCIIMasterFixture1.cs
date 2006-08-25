@@ -8,7 +8,7 @@ using Modbus.Device;
 namespace Modbus.IntegrationTests
 {
 	[TestFixture]
-	public class ModbusASCIIMasterFixture : ModbusMasterFixture
+	public class ModbusASCIIMasterFixture1 : ModbusMasterFixture
 	{
 		[TestFixtureSetUp]
 		public override void Init()

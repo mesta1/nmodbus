@@ -8,14 +8,14 @@ using System.Net.Sockets;
 namespace Modbus.IntegrationTests
 {
 	[TestFixture]
-	public class ModbusTCPMasterFixture : ModbusMasterFixture
+	public class ModbusTCPMasterFixture1 : ModbusMasterFixture
 	{
 		[TestFixtureSetUp]
 		public override void Init()
 		{
 			Sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 			Sock.Connect("127.0.0.1", 502);
-			Master = ModbusTCPMaster.CreateTcp(Sock);
+			Master = ModbusTCPMaster1.CreateTcp(Sock);
 		}
 
 		[Test]

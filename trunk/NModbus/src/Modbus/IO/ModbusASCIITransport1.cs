@@ -9,15 +9,15 @@ using System.Threading;
 
 namespace Modbus.IO
 {
-	class ModbusASCIITransport : ModbusSerialTransport
+	class ModbusASCIITransport1 : ModbusSerialTransport
 	{
 		private const string FrameStart = "\r\n";
 
-		public ModbusASCIITransport()
+		public ModbusASCIITransport1()
 		{
 		}
 
-		public ModbusASCIITransport(SerialPort serialPort)
+		public ModbusASCIITransport1(SerialPort serialPort)
 			: base(serialPort)
 		{
 			SerialPort.NewLine = FrameStart;

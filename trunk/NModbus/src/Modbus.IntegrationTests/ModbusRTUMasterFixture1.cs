@@ -8,7 +8,7 @@ using System.IO.Ports;
 namespace Modbus.IntegrationTests
 {
 	[TestFixture]
-	public class ModbusRTUMasterFixture : ModbusMasterFixture
+	public class ModbusRTUMasterFixture1 : ModbusMasterFixture
 	{
 		[TestFixtureSetUp]
 		public override void Init()

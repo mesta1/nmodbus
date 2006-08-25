@@ -9,18 +9,18 @@ namespace Modbus.Device
 	/// <summary>
 	/// Modbus IP based TCP master.
 	/// </summary>
-	public class ModbusTCPMaster : IModbusTcpMaster, IModbusSerialMaster
+	public class ModbusTCPMaster1 : IModbusTcpMaster, IModbusSerialMaster
 	{
 		private ModbusMaster _modbusMasterImpl;
 
-		private ModbusTCPMaster(ModbusTCPTransport transport)
+		private ModbusTCPMaster1(ModbusTCPTransport1 transport)
 		{
 			_modbusMasterImpl = new ModbusMaster(transport);
 		}
 
-		public static ModbusTCPMaster CreateTcp(Socket socket)
+		public static ModbusTCPMaster1 CreateTcp(Socket socket)
 		{
-			return new ModbusTCPMaster(new ModbusTCPTransport(socket));
+			return new ModbusTCPMaster1(new ModbusTCPTransport1(socket));
 		}
 
 		public bool[] ReadCoils(ushort startAddress, ushort numberOfPoints)
