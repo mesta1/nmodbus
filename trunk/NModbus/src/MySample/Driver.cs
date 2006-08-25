@@ -4,6 +4,7 @@ using System.Text;
 using System.IO.Ports;
 using Modbus.Device;
 using Modbus.Util;
+using System.Net.Sockets;
 
 namespace MySample
 {
@@ -16,8 +17,10 @@ namespace MySample
 		{
 			try
 			{
-				ReadRegisters();
-				WriteRegisters();
+				//ModbusAsciiMasterReadRegisters();
+				//ModbusAsciiMasterWriteRegisters();
+				ModbusTcpMasterReadRegisters();
+
 			}
 			catch (Exception e)
 			{
@@ -27,7 +30,7 @@ namespace MySample
 			Console.ReadKey();
 		}
 
-		public static void ReadRegisters()
+		public static void ModbusAsciiMasterReadRegisters()
 		{
 			using (SerialPort port = new SerialPort("COM5"))
 			{
@@ -51,7 +54,7 @@ namespace MySample
 			}
 		}
 
-		public static void WriteRegisters()
+		public static void ModbusAsciiMasterWriteRegisters()
 		{
 			using (SerialPort port = new SerialPort("COM5"))
 			{
@@ -68,6 +71,24 @@ namespace MySample
 				// write five registers			
 				ushort[] registers = new ushort[] { 1, 2, 3 };
 				master.WriteMultipleRegisters(1, 100, registers);
+			}
+		}
+
+		public static void ModbusTcpMasterReadRegisters()
+		{
+			using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))                       
+			{
+				socket.Connect("127.0.0.1", 502);
+
+				ModbusTCPMaster master = new ModbusTCPMaster(socket);
+
+				// read five register values
+				ushort startAddress = 100;
+				ushort numRegisters = 5;
+				ushort[] registers = master.ReadHoldingRegisters(1, startAddress, numRegisters);
+
+				for (int i = 0; i < numRegisters; i++)
+					Console.WriteLine("Register {0}={1}", startAddress + i, registers[i]);
 			}
 		}
 	}

@@ -58,7 +58,7 @@ namespace Modbus.IntegrationTests
 		public override void WriteSingleRegister()
 		{
 			// test fails, bug in slave device MOD_RSsim version 7.5?
-			//base.WriteSingleRegister();
+			base.WriteSingleRegister();
 		}
 
 		[Test]

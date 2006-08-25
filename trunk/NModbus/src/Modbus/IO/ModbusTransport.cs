@@ -48,6 +48,7 @@ namespace Modbus.IO
 			return response;
 		}
 
+		public abstract byte[] BuildMessageFrame(IModbusMessage message);
 		public abstract void Close();
 		public abstract T Read<T>(IModbusMessage request) where T : IModbusMessage, new();
 		public abstract void Write(IModbusMessage message);		

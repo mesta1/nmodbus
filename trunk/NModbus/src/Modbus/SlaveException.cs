@@ -31,6 +31,8 @@ namespace Modbus
 			_slaveExceptionResponse = slaveExceptionResponse;
 		}
 
+		// TODO serializable
+
 		public override string Message
 		{
 			get

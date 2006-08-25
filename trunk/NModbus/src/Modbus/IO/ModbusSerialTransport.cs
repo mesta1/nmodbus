@@ -12,7 +12,11 @@ namespace Modbus.IO
 		protected static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 		private SerialPort _serialPort;
-		
+
+		public ModbusSerialTransport()
+		{
+		}
+
 		public ModbusSerialTransport(SerialPort serialPort)
 		{
 			if (serialPort == null)
@@ -34,11 +38,10 @@ namespace Modbus.IO
 		
 		public override void Write(IModbusMessage message)
 		{
-			byte[] frame = CreateMessageFrame(message);
+			byte[] frame = BuildMessageFrame(message);
 			SerialPort.Write(frame, 0, frame.Length);
 		}
-
-		public abstract byte[] CreateMessageFrame(IModbusMessage message);
+	
 		public override abstract T Read<T>(IModbusMessage request);
 	}
 }
