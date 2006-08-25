@@ -19,7 +19,7 @@ namespace MySample
 			{
 				//ModbusAsciiMasterReadRegisters();
 				//ModbusAsciiMasterWriteRegisters();
-				ModbusTcpMasterReadRegisters();
+				//ModbusTcpMasterReadRegisters();
 
 			}
 			catch (Exception e)
@@ -42,14 +42,14 @@ namespace MySample
 				port.Open();
 
 				// create modbus master
-				ModbusASCIIMaster master = new ModbusASCIIMaster(port);
+				ModbusSerialMaster master = ModbusSerialMaster.CreateAscii(port);
 
 				// read five register values
 				ushort startAddress = 100;
 				ushort numRegisters = 5;
 				ushort[] registers = master.ReadHoldingRegisters(1, startAddress, numRegisters);
 
-				for (int	i = 0; i < numRegisters; i++)
+				for (int i = 0; i < numRegisters; i++)
 					Console.WriteLine("Register {0}={1}", startAddress + i, registers[i]);
 			}
 		}
@@ -66,7 +66,7 @@ namespace MySample
 				port.Open();
 
 				// create modbus master
-				ModbusASCIIMaster master = new ModbusASCIIMaster(port);
+				ModbusSerialMaster master = ModbusSerialMaster.CreateAscii(port);
 
 				// write five registers			
 				ushort[] registers = new ushort[] { 1, 2, 3 };
@@ -76,16 +76,16 @@ namespace MySample
 
 		public static void ModbusTcpMasterReadRegisters()
 		{
-			using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))                       
+			using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
 			{
 				socket.Connect("127.0.0.1", 502);
 
-				ModbusTCPMaster master = new ModbusTCPMaster(socket);
+				ModbusTCPMaster master = ModbusTCPMaster.CreateTcp(socket);
 
 				// read five register values
 				ushort startAddress = 100;
 				ushort numRegisters = 5;
-				ushort[] registers = master.ReadHoldingRegisters(1, startAddress, numRegisters);
+				ushort[] registers = master.ReadHoldingRegisters(startAddress, numRegisters);
 
 				for (int i = 0; i < numRegisters; i++)
 					Console.WriteLine("Register {0}={1}", startAddress + i, registers[i]);

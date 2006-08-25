@@ -15,7 +15,7 @@ namespace Modbus.IntegrationTests
 		{
 			Sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 			Sock.Connect("127.0.0.1", 502);
-			Master = new ModbusTCPMaster(Sock);
+			Master = ModbusTCPMaster.CreateTcp(Sock);
 		}
 
 		[Test]
