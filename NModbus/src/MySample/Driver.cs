@@ -80,7 +80,7 @@ namespace MySample
 			{
 				socket.Connect("127.0.0.1", 502);
 
-				ModbusTCPMaster master = ModbusTCPMaster.CreateTcp(socket);
+				ModbusTCPMaster1 master = ModbusTCPMaster1.CreateTcp(socket);
 
 				// read five register values
 				ushort startAddress = 100;

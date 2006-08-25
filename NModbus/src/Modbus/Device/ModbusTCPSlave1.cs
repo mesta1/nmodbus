@@ -9,10 +9,10 @@ namespace Modbus.Device
 	/// <summary>
 	/// Modbus IP based TCP slave.	
 	/// </summary>
-	public class ModbusTCPSlave : ModbusSlave		
+	public class ModbusTCPSlave1 : ModbusSlave		
 	{
-		public ModbusTCPSlave(byte unitID, Socket socket)
-			: base(unitID, new ModbusTCPTransport(socket))
+		public ModbusTCPSlave1(byte unitID, Socket socket)
+			: base(unitID, new ModbusTCPTransport1(socket))
 		{
 		}
 	}

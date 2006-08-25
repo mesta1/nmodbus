@@ -9,13 +9,13 @@ using Modbus.IO;
 
 namespace Modbus.IO
 {
-	class ModbusRTUTransport : ModbusSerialTransport
+	class ModbusRTUTransport1 : ModbusSerialTransport
 	{
-		public ModbusRTUTransport()
+		public ModbusRTUTransport1()
 		{
 		}
 
-		public ModbusRTUTransport(SerialPort serialPort)
+		public ModbusRTUTransport1(SerialPort serialPort)
 			: base (serialPort)
 		{
 		}

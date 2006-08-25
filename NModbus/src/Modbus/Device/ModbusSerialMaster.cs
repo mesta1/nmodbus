@@ -20,12 +20,12 @@ namespace Modbus.Device
 
 		public static ModbusSerialMaster CreateAscii(SerialPort serialPort)
 		{
-			return new ModbusSerialMaster(new ModbusASCIITransport(serialPort));
+			return new ModbusSerialMaster(new ModbusASCIITransport1(serialPort));
 		}
 
 		public static ModbusSerialMaster CreateRtu(SerialPort serialPort)
 		{
-			return new ModbusSerialMaster(new ModbusRTUTransport(serialPort));
+			return new ModbusSerialMaster(new ModbusRTUTransport1(serialPort));
 		}
 
 		public bool[] ReadCoils(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
