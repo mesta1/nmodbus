@@ -13,13 +13,17 @@ namespace Modbus.IO
 	{
 		private const string FrameStart = "\r\n";
 
+		public ModbusASCIITransport()
+		{
+		}
+
 		public ModbusASCIITransport(SerialPort serialPort)
 			: base(serialPort)
 		{
 			SerialPort.NewLine = FrameStart;
 		}
 
-		public override byte[] CreateMessageFrame(IModbusMessage message)
+		public override byte[] BuildMessageFrame(IModbusMessage message)
 		{
 			List<byte> frame = new List<byte>();
 			frame.Add((byte) ':');

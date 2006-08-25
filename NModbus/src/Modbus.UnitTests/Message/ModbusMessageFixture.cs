@@ -26,14 +26,12 @@ namespace Modbus.UnitTests.Message
 			Assert.AreEqual(expectedChecksumBody, message.ChecksumBody);
 		}
 
-		// TODO put back
-		//public void AssertModbusMessagePropertiesAreEqual(ModbusMessage obj1, ModbusMessage obj2)
-		public void AssertModbusMessagePropertiesAreEqual(object obj1, object obj2)
+		internal void AssertModbusMessagePropertiesAreEqual(ModbusMessage obj1, ModbusMessage obj2)
 		{
-			//Assert.AreEqual(obj1.FunctionCode, obj2.FunctionCode);
-			//Assert.AreEqual(obj1.SlaveAddress, obj2.SlaveAddress);
-			//Assert.AreEqual(obj1.ChecksumBody, obj2.ChecksumBody);
-			//Assert.AreEqual(obj1.ProtocolDataUnit, obj2.ProtocolDataUnit);
+			Assert.AreEqual(obj1.FunctionCode, obj2.FunctionCode);
+			Assert.AreEqual(obj1.SlaveAddress, obj2.SlaveAddress);
+			Assert.AreEqual(obj1.ChecksumBody, obj2.ChecksumBody);
+			Assert.AreEqual(obj1.ProtocolDataUnit, obj2.ProtocolDataUnit);
 		}
 	}
 }

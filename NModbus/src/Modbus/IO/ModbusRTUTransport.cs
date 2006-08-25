@@ -11,12 +11,16 @@ namespace Modbus.IO
 {
 	class ModbusRTUTransport : ModbusSerialTransport
 	{
+		public ModbusRTUTransport()
+		{
+		}
+
 		public ModbusRTUTransport(SerialPort serialPort)
 			: base (serialPort)
 		{
 		}
 
-		public override byte[] CreateMessageFrame(IModbusMessage message)
+		public override byte[] BuildMessageFrame(IModbusMessage message)
 		{
 			List<byte> messageBody = new List<byte>();
 			messageBody.Add(message.SlaveAddress);
@@ -75,7 +79,7 @@ namespace Modbus.IO
 			}
 		}
 
-		public static int NumberOfBytesToRead(byte functionCode, byte byteCount1, byte byteCount2)
+		internal static int NumberOfBytesToRead(byte functionCode, byte byteCount1, byte byteCount2)
 		{
 			int numBytes;
 

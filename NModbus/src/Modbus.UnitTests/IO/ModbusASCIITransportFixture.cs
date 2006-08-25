@@ -4,7 +4,6 @@ using System.Text;
 using NUnit.Framework;
 using Modbus.IO;
 using Modbus.Message;
-using System.IO.Ports;
 
 namespace Modbus.UnitTests.IO
 {
@@ -12,11 +11,11 @@ namespace Modbus.UnitTests.IO
 	public class ModbusASCIITransportFixture
 	{
 		[Test]
-		public void CreateMessageFrame()
+		public void BuildMessageFrame()
 		{
 			byte[] message = new byte[] { 58, 48, 50, 48, 49, 48, 48, 48, 48, 48, 48, 48, 49, 70, 67, 13, 10 };
 			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 2, 0, 1);
-			Assert.AreEqual(message, new ModbusASCIITransport(new SerialPort()).CreateMessageFrame(request));
+			Assert.AreEqual(message, new ModbusASCIITransport().BuildMessageFrame(request));
 		}
 
 		[Test]

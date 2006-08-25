@@ -12,6 +12,10 @@ namespace Modbus.IO
 	{
 		private Socket _socket;
 
+		public ModbusTCPTransport()
+		{
+		}
+
 		public ModbusTCPTransport(Socket socket)
 		{
 			if (socket == null)
@@ -60,15 +64,20 @@ namespace Modbus.IO
 		}
 
 		public override void Write(IModbusMessage message)
+		{			
+			Socket.Send(BuildMessageFrame(message));
+		}
+
+		public override byte[] BuildMessageFrame(IModbusMessage message)
 		{
 			byte[] mbapHeader = new byte[] { 0, 0, 0, 0, 0, (byte) (message.ProtocolDataUnit.Length + 1), Byte.MaxValue };
 
 			List<byte> messageBody = new List<byte>();
 			messageBody.AddRange(mbapHeader);
 			messageBody.AddRange(message.ProtocolDataUnit);
-
+			
 			byte[] frame = messageBody.ToArray();
-			Socket.Send(frame);
+			return frame;
 		}
 	}
 }
