@@ -8,15 +8,15 @@ using System.Net;
 
 namespace Modbus.IO
 {
-	class ModbusTCPTransport1 : ModbusTransport
+	class ModbusTcpTransport : ModbusTransport
 	{
 		private Socket _socket;
 
-		public ModbusTCPTransport1()
+		public ModbusTcpTransport()
 		{
 		}
 
-		public ModbusTCPTransport1(Socket socket)
+		public ModbusTcpTransport(Socket socket)
 		{
 			if (socket == null)
 				throw new ArgumentNullException("socket");

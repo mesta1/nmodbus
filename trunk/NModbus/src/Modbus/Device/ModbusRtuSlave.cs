@@ -9,10 +9,10 @@ namespace Modbus.Device
 	/// <summary>
 	/// Modbus serial RTU slave.
 	/// </summary>
-	public class ModbusRTUSlave1 : ModbusSlave
+	public class ModbusRtuSlave : ModbusSlave
 	{
-		public ModbusRTUSlave1(byte unitID, SerialPort serialPort)
-			: base(unitID, new ModbusRTUTransport1(serialPort))
+		public ModbusRtuSlave(byte unitID, SerialPort serialPort)
+			: base(unitID, new ModbusRtuTransport(serialPort))
 		{
 		}
 	}
