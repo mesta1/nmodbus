@@ -14,7 +14,7 @@ namespace Modbus.IntegrationTests
 		public override void Init()
 		{
 			base.Init();
-			Master = new ModbusRTUMaster(Port);
+			Master = ModbusSerialMaster.CreateRtu(Port);
 		}
 
 		[Test]

@@ -54,11 +54,12 @@
     <Compile Include="Data\InputDiscreteCollection.cs" />
     <Compile Include="Data\InputRegisterCollection.cs" />
     <Compile Include="Data\RegisterMixin.cs" />
-    <Compile Include="Device\ModbusASCIIMaster.cs" />
+    <Compile Include="Device\IModbusSerialMaster.cs" />
+    <Compile Include="Device\IModbusTcpMaster.cs" />
+    <Compile Include="Device\ModbusSerialMaster.cs" />
     <Compile Include="Device\ModbusASCIISlave.cs" />
     <Compile Include="Device\ModbusDevice.cs" />
     <Compile Include="Device\ModbusMaster.cs" />
-    <Compile Include="Device\ModbusRTUMaster.cs" />
     <Compile Include="Device\ModbusRTUSlave.cs" />
     <Compile Include="Device\ModbusSlave.cs" />
     <Compile Include="Device\ModbusTCPMaster.cs" />

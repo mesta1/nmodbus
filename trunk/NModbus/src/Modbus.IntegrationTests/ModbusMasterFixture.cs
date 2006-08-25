@@ -13,7 +13,7 @@ namespace Modbus.IntegrationTests
 	{
 		public SerialPort Port;
 		public Socket Sock;
-		public ModbusMaster Master;
+		public IModbusSerialMaster Master;
 
 		public const string PortName = "COM5";
 		private const byte SlaveAddress = 1;
@@ -96,9 +96,9 @@ namespace Modbus.IntegrationTests
 			ushort testAddress = 120;
 			ushort[] testValues = new ushort[] { 10, 20, 30, 40, 50 };
 
-			ushort[] originalValues = Master.ReadHoldingRegisters(SlaveAddress, testAddress, (ushort)testValues.Length);
+			ushort[] originalValues = Master.ReadHoldingRegisters(SlaveAddress, testAddress, (ushort) testValues.Length);
 			Master.WriteMultipleRegisters(SlaveAddress, testAddress, testValues);
-			ushort[] newValues = Master.ReadHoldingRegisters(SlaveAddress, testAddress, (ushort)testValues.Length);
+			ushort[] newValues = Master.ReadHoldingRegisters(SlaveAddress, testAddress, (ushort) testValues.Length);
 			Assert.AreEqual(testValues, newValues);
 			Master.WriteMultipleRegisters(SlaveAddress, testAddress, originalValues);
 		}
@@ -109,9 +109,9 @@ namespace Modbus.IntegrationTests
 			ushort testAddress = 200;
 			bool[] testValues = new bool[] { true, false, true, false, false, false, true, false, true, false };
 
-			bool[] originalValues = Master.ReadCoils(SlaveAddress, testAddress, (ushort)testValues.Length);
+			bool[] originalValues = Master.ReadCoils(SlaveAddress, testAddress, (ushort) testValues.Length);
 			Master.WriteMultipleCoils(SlaveAddress, testAddress, testValues);
-			bool[] newValues = Master.ReadCoils(SlaveAddress, testAddress, (ushort)testValues.Length);
+			bool[] newValues = Master.ReadCoils(SlaveAddress, testAddress, (ushort) testValues.Length);
 			Assert.AreEqual(testValues, newValues);
 			Master.WriteMultipleCoils(SlaveAddress, testAddress, originalValues);
 		}

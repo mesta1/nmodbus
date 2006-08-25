@@ -9,11 +9,92 @@ namespace Modbus.Device
 	/// <summary>
 	/// Modbus IP based TCP master.
 	/// </summary>
-	public class ModbusTCPMaster : ModbusMaster
+	public class ModbusTCPMaster : IModbusTcpMaster, IModbusSerialMaster
 	{
-		public ModbusTCPMaster(Socket socket)
-			: base(new ModbusTCPTransport(socket))
+		private ModbusMaster _modbusMasterImpl;
+
+		private ModbusTCPMaster(ModbusTCPTransport transport)
 		{
+			_modbusMasterImpl = new ModbusMaster(transport);
 		}
+
+		public static ModbusTCPMaster CreateTcp(Socket socket)
+		{
+			return new ModbusTCPMaster(new ModbusTCPTransport(socket));
+		}
+
+		public bool[] ReadCoils(ushort startAddress, ushort numberOfPoints)
+		{
+			return _modbusMasterImpl.ReadCoils(0, startAddress, numberOfPoints);
+		}
+
+		public bool[] ReadInputs(ushort startAddress, ushort numberOfPoints)
+		{
+			return _modbusMasterImpl.ReadInputs(0, startAddress, numberOfPoints);
+		}
+
+		public ushort[] ReadHoldingRegisters(ushort startAddress, ushort numberOfPoints)
+		{
+			return _modbusMasterImpl.ReadHoldingRegisters(0, startAddress, numberOfPoints);
+		}
+
+		public void WriteSingleCoil(ushort coilAddress, bool value)
+		{
+			_modbusMasterImpl.WriteSingleCoil(0, coilAddress, value);
+		}
+
+		public void WriteSingleRegister(ushort registerAddress, ushort value)
+		{
+			_modbusMasterImpl.WriteSingleRegister(0, registerAddress, value);
+		}
+
+		public void WriteMultipleRegisters(ushort startAddress, ushort[] data)
+		{
+			_modbusMasterImpl.WriteMultipleRegisters(0, startAddress, data);
+		}
+
+		public void WriteMultipleCoils(ushort startAddress, bool[] data)
+		{
+			_modbusMasterImpl.WriteMultipleCoils(0, startAddress, data);
+		}
+
+		#region IModbusSerialMaster Members
+
+		bool[] IModbusSerialMaster.ReadCoils(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
+		{
+			return ReadCoils(startAddress, numberOfPoints);
+		}
+
+		bool[] IModbusSerialMaster.ReadInputs(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
+		{
+			return ReadInputs(startAddress, numberOfPoints);
+		}
+
+		ushort[] IModbusSerialMaster.ReadHoldingRegisters(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
+		{
+			return ReadHoldingRegisters(startAddress, numberOfPoints);
+		}
+
+		void IModbusSerialMaster.WriteSingleCoil(byte slaveAddress, ushort coilAddress, bool value)
+		{
+			WriteSingleCoil(coilAddress, value);
+		}
+
+		void IModbusSerialMaster.WriteSingleRegister(byte slaveAddress, ushort registerAddress, ushort value)
+		{
+			WriteSingleRegister(registerAddress, value);
+		}
+
+		void IModbusSerialMaster.WriteMultipleRegisters(byte slaveAddress, ushort startAddress, ushort[] data)
+		{
+			WriteMultipleRegisters(startAddress, data);
+		}
+
+		void IModbusSerialMaster.WriteMultipleCoils(byte slaveAddress, ushort startAddress, bool[] data)
+		{
+			WriteMultipleCoils(startAddress, data);
+		}
+
+		#endregion
 	}
 }

@@ -11,9 +11,9 @@ using Modbus.Data;
 
 namespace Modbus.Device
 {
-	public abstract class ModbusMaster : ModbusDevice
+	internal class ModbusMaster : ModbusDevice
 	{
-		internal ModbusMaster(ModbusTransport transport)
+		public ModbusMaster(ModbusTransport transport)
 			: base(transport)
 		{
 		}

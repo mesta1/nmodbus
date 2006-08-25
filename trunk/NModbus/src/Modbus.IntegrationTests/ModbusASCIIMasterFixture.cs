@@ -14,7 +14,7 @@ namespace Modbus.IntegrationTests
 		public override void Init()
 		{
 			base.Init();
-			Master = new ModbusASCIIMaster(Port);
+			Master = ModbusSerialMaster.CreateAscii(Port);
 		}
 	}
 }
