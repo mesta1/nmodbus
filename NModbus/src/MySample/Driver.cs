@@ -17,8 +17,8 @@ namespace MySample
 		{
 			try
 			{
-				//ModbusAsciiMasterReadRegisters();
-				//ModbusAsciiMasterWriteRegisters();
+				ModbusAsciiMasterReadRegisters();
+				ModbusRtuMasterWriteRegisters();
 				//ModbusTcpMasterReadRegisters();
 
 			}
@@ -54,7 +54,7 @@ namespace MySample
 			}
 		}
 
-		public static void ModbusAsciiMasterWriteRegisters()
+		public static void ModbusRtuMasterWriteRegisters()
 		{
 			using (SerialPort port = new SerialPort("COM5"))
 			{
@@ -66,7 +66,7 @@ namespace MySample
 				port.Open();
 
 				// create modbus master
-				ModbusSerialMaster master = ModbusSerialMaster.CreateAscii(port);
+				ModbusSerialMaster master = ModbusSerialMaster.CreateRtu(port);
 
 				// write five registers			
 				ushort[] registers = new ushort[] { 1, 2, 3 };
