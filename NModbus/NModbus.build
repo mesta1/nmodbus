@@ -7,7 +7,7 @@
 	<property name="path.bin" value="src\Modbus\bin\Release" />
 	<property name="path.docs" value="docs" />
 	<property name="path.dist" value="dist" />
-	<property name="version" value="0.0" />
+	<property name="version" value="0.0.1" />
 	
 	<target name="build">
 		<loadtasks assembly="${nantcontrib}"/>
