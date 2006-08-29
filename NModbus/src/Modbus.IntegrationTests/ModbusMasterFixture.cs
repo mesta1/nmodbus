@@ -13,7 +13,7 @@ namespace Modbus.IntegrationTests
 	{
 		public SerialPort Port;
 		public Socket Sock;
-		public IModbusSerialMaster Master;
+		public IModbusMaster Master;
 
 		public const string PortName = "COM5";
 		private const byte SlaveAddress = 1;
