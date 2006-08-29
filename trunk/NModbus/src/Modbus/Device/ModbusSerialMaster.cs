@@ -9,7 +9,7 @@ namespace Modbus.Device
 	/// <summary>
 	/// Modbus serial ASCII master.
 	/// </summary>
-	public class ModbusSerialMaster : IModbusSerialMaster
+	public class ModbusSerialMaster : IModbusMaster
 	{
 		private ModbusMaster _modbusMasterImpl;
 

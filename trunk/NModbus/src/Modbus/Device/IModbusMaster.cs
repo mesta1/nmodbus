@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Modbus.Device
 {
-	public interface IModbusSerialMaster
+	public interface IModbusMaster
 	{
 		bool[] ReadCoils(byte slaveAddress, ushort startAddress, ushort numberOfPoints);
 		bool[] ReadInputs(byte slaveAddress, ushort startAddress, ushort numberOfPoints);

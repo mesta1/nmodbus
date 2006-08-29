@@ -54,7 +54,7 @@
     <Compile Include="Data\InputDiscreteCollection.cs" />
     <Compile Include="Data\InputRegisterCollection.cs" />
     <Compile Include="Data\RegisterMixin.cs" />
-    <Compile Include="Device\IModbusSerialMaster.cs" />
+    <Compile Include="Device\IModbusMaster.cs" />
     <Compile Include="Device\IModbusTcpMaster.cs" />
     <Compile Include="Device\ModbusSerialMaster.cs" />
     <Compile Include="Device\ModbusAsciiSlave.cs" />
