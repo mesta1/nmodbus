@@ -72,17 +72,17 @@ namespace Modbus.Message
 			set { _data = value; }
 		}
 
-		public byte[] ChecksumBody
+		public byte[] MessageFrame
 		{
 			get
 			{
-				List<byte> errorCheckBody = new List<byte>();
-				errorCheckBody.Add(_slaveAddress);
-				errorCheckBody.AddRange(ProtocolDataUnit);
+				List<byte> frame = new List<byte>();
+				frame.Add(SlaveAddress);
+				frame.AddRange(ProtocolDataUnit);
 
-				return errorCheckBody.ToArray();
+				return frame.ToArray();
 			}
-		}
+		}	
 
 		public byte[] ProtocolDataUnit
 		{

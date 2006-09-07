@@ -29,7 +29,7 @@ namespace Modbus.IO
 			frame.Add((byte) ':');
 			frame.AddRange(ModbusUtil.GetASCIIBytes(message.SlaveAddress));
 			frame.AddRange(ModbusUtil.GetASCIIBytes(message.ProtocolDataUnit));
-			frame.AddRange(ModbusUtil.GetASCIIBytes(ModbusUtil.CalculateLrc(message.ChecksumBody)));
+			frame.AddRange(ModbusUtil.GetASCIIBytes(ModbusUtil.CalculateLrc(message.MessageFrame)));
 			frame.AddRange(ModbusUtil.GetASCIIBytes(FrameStart.ToCharArray()));
 
 			return frame.ToArray();
@@ -58,10 +58,24 @@ namespace Modbus.IO
 			T response = ModbusMessageFactory.CreateModbusMessage<T>(frame);
 
 			// check LRC
-			if (ModbusUtil.CalculateLrc(response.ChecksumBody) != crc)
+			if (ModbusUtil.CalculateLrc(response.MessageFrame) != crc)
 			    throw new IOException("Checksum LRC failed.");
 
 			return response;
+		}
+
+		public override byte[] GetMessageFrame()
+		{
+			// read message frame, removing frame start ':'
+			string frameHex = SerialPort.ReadLine().Substring(1);
+
+			// convert hex to bytes
+			byte[] frame = ModbusUtil.HexToBytes(frameHex);
+
+			if (frame.Length < 3)
+				throw new IOException("Premature end of stream (Message truncated).");
+
+			return frame;
 		}
 	}		
 }

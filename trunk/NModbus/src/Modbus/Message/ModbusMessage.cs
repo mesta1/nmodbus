@@ -36,14 +36,14 @@ namespace Modbus.Message
 			get { return _messageImpl; }
 		}
 
+		public byte[] MessageFrame
+		{
+			get { return _messageImpl.MessageFrame; }
+		}
+
 		public byte[] ProtocolDataUnit
 		{
 			get { return _messageImpl.ProtocolDataUnit; }
-		}
-
-		public byte[] ChecksumBody
-		{
-			get { return _messageImpl.ChecksumBody; }
 		}
 
 		public void Initialize(byte[] frame)

@@ -10,8 +10,8 @@ namespace Modbus.Message
 	interface IModbusMessage
 	{
 		void Initialize(byte[] frame);
+		byte[] MessageFrame { get; }
 		byte[] ProtocolDataUnit { get; }
-		byte[] ChecksumBody { get; }
 		byte FunctionCode { get; set; }
 		byte SlaveAddress { get; set; }
 	}

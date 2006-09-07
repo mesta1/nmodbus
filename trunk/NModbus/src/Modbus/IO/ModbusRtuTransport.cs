@@ -25,7 +25,7 @@ namespace Modbus.IO
 			List<byte> messageBody = new List<byte>();
 			messageBody.Add(message.SlaveAddress);
 			messageBody.AddRange(message.ProtocolDataUnit);
-			messageBody.AddRange(ModbusUtil.CalculateCrc(message.ChecksumBody));
+			messageBody.AddRange(ModbusUtil.CalculateCrc(message.MessageFrame));
 
 			return messageBody.ToArray();
 		}
@@ -64,7 +64,7 @@ namespace Modbus.IO
 				T response = ModbusMessageFactory.CreateModbusMessage<T>(frame);
 
 				// check crc
-				if (BitConverter.ToUInt16(frame, frame.Length - 2) != BitConverter.ToUInt16(ModbusUtil.CalculateCrc(response.ChecksumBody), 0))
+				if (BitConverter.ToUInt16(frame, frame.Length - 2) != BitConverter.ToUInt16(ModbusUtil.CalculateCrc(response.MessageFrame), 0))
 					throw new IOException("Checksum CRC failed.");
 
 				return response;
@@ -103,6 +103,11 @@ namespace Modbus.IO
 			}
 
 			return numBytes;
+		}
+
+		public override byte[] GetMessageFrame()
+		{
+			throw new Exception("The method or operation is not implemented.");
 		}
 	}
 }

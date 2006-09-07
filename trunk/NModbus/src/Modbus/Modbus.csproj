@@ -57,13 +57,10 @@
     <Compile Include="Device\IModbusMaster.cs" />
     <Compile Include="Device\IModbusTcpMaster.cs" />
     <Compile Include="Device\ModbusSerialMaster.cs" />
-    <Compile Include="Device\ModbusAsciiSlave.cs" />
     <Compile Include="Device\ModbusDevice.cs" />
     <Compile Include="Device\ModbusMaster.cs" />
-    <Compile Include="Device\ModbusRtuSlave.cs" />
     <Compile Include="Device\ModbusSlave.cs" />
     <Compile Include="Device\ModbusTcpMaster.cs" />
-    <Compile Include="Device\ModbusTcpSlave.cs" />
     <Compile Include="IO\ModbusAsciiTransport.cs" />
     <Compile Include="IO\ModbusRtuTransport.cs" />
     <Compile Include="IO\ModbusSerialTransport.cs" />
