@@ -51,11 +51,11 @@ namespace Modbus.UnitTests.Message
 		}
 
 		[Test]
-		public void ChecksumBody()
+		public void MessageFrame()
 		{
 			ModbusMessageImpl messageImpl = new ModbusMessageImpl(11, Modbus.ReadHoldingRegisters);
-			byte[] expectedChecksumBody = new byte[] { 11, Modbus.ReadHoldingRegisters };
-			Assert.AreEqual(expectedChecksumBody, messageImpl.ChecksumBody);
+			byte[] expectedMessageFrame = new byte[] { 11, Modbus.ReadHoldingRegisters };
+			Assert.AreEqual(expectedMessageFrame, messageImpl.MessageFrame);
 		}		
 	}
 }

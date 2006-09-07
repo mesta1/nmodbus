@@ -38,8 +38,6 @@ namespace Modbus.IO
 
 				catch (Exception ioe)
 				{
-					//_log.ErrorFormat("Exception occurred executing unicast request - attempt {0}\n{1}", attempt, ioe.Message);
-
 					if (attempt++ >= _retries)
 						throw ioe;
 				}
@@ -50,6 +48,7 @@ namespace Modbus.IO
 
 		public abstract byte[] BuildMessageFrame(IModbusMessage message);
 		public abstract void Close();
+		public abstract byte[] GetMessageFrame();
 		public abstract T Read<T>(IModbusMessage request) where T : IModbusMessage, new();
 		public abstract void Write(IModbusMessage message);		
 	}

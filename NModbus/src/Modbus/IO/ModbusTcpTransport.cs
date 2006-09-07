@@ -79,5 +79,10 @@ namespace Modbus.IO
 			byte[] frame = messageBody.ToArray();
 			return frame;
 		}
+
+		public override byte[] GetMessageFrame()
+		{
+			throw new Exception("The method or operation is not implemented.");
+		}
 	}
 }

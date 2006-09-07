@@ -4,6 +4,8 @@ using System.Text;
 using NUnit.Framework;
 using Modbus.IO;
 using Modbus.Message;
+using Rhino.Mocks;
+using System.IO.Ports;
 
 namespace Modbus.UnitTests.IO
 {
@@ -25,5 +27,17 @@ namespace Modbus.UnitTests.IO
 			ModbusAsciiTransport transport = new ModbusAsciiTransport(null);
 			Assert.Fail();
 		}
+
+		// TODO need to use derived Stream class for testability
+		//[Test]
+		//public void GetMessageFrame()
+		//{
+		//    MockRepository mocks = new MockRepository();
+		//    SerialPort port = mocks.CreateMock<SerialPort>();
+		//    Expect.Call(port.IsOpen).Return(false);
+		//    mocks.ReplayAll();
+		//    Assert.IsFalse(port.IsOpen);
+		//    mocks.VerifyAll();
+		//}
 	}
 }

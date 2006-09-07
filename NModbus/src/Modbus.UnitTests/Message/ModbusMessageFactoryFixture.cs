@@ -215,5 +215,27 @@ namespace Modbus.UnitTests.Message
 			WriteMultipleCoilsResponse request = ModbusMessageFactory.CreateModbusMessage<WriteMultipleCoilsResponse>(new byte[] { 17, Modbus.WriteMultipleCoils, 0, 19, 0 });
 			Assert.Fail();
 		}
+
+		[Test, ExpectedException(typeof(FormatException))]
+		public void CreateModbusRequestWithInvalidMessageFrame()
+		{
+			ModbusMessageFactory.CreateModbusRequest(new byte[] { 0, 1 });
+			Assert.Fail();
+		}
+
+		[Test, ExpectedException(typeof(ArgumentException))]
+		public void CreateModbusRequestWithInvalidFunctionCode()
+		{
+			ModbusMessageFactory.CreateModbusRequest(new byte[] { 1, 99, 0, 0, 0, 1, 23 });
+			Assert.Fail();
+		}
+
+		[Test]
+		public void CreateModbusRequestForReadCoils()
+		{
+			ReadCoilsInputsRequest req = new ReadCoilsInputsRequest(1, 2, 1, 10);
+			IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(req.MessageFrame);
+			Assert.AreEqual(typeof(ReadCoilsInputsRequest), request.GetType());
+		}
 	}
 }
