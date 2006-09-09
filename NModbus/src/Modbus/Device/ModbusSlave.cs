@@ -27,7 +27,7 @@ namespace Modbus.Device
 			while (true)
 			{
 				// use transport to retrieve raw message frame from stream
-				byte[] frame = Transport.GetMessageFrame();
+				byte[] frame = Transport.Read();
 
 				// build request from frame
 				IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(frame);

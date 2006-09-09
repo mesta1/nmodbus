@@ -11,7 +11,7 @@ namespace Modbus.IO
 {
 	class ModbusRtuTransport : ModbusSerialTransport
 	{
-		public ModbusRtuTransport()
+		public ModbusRtuTransport ()
 		{
 		}
 
@@ -30,60 +30,43 @@ namespace Modbus.IO
 			return messageBody.ToArray();
 		}
 
-		public override T Read<T>(IModbusMessage request)
+		public override bool ChecksumsMatch(IModbusMessage message, byte[] messageFrame)
 		{
-			try
-			{
-				// read beginning of message frame
-				byte[] frameStart = new byte[4];
-				int numBytesRead = 0;
-				while (numBytesRead != 4)
-					numBytesRead += SerialPort.Read(frameStart, numBytesRead, 4 - numBytesRead);
+			return BitConverter.ToUInt16(messageFrame, messageFrame.Length - 2) == BitConverter.ToUInt16(ModbusUtil.CalculateCrc(message.MessageFrame), 0);
+		}
 
-				byte functionCode = frameStart[1];
-				byte byteCount1 = frameStart[2];
-				byte byteCount2 = frameStart[3];
+		public override byte[] Read()
+		{
+			// read beginning of message frame
+			byte[] frameStart = new byte[4];
+			int numBytesRead = 0;
+			while (numBytesRead != 4)
+				numBytesRead += SerialPort.Read(frameStart, numBytesRead, 4 - numBytesRead);
 
-				// calculate number of bytes remaining in message frame
-				int bytesRemaining = NumberOfBytesToRead(functionCode, byteCount1, byteCount2);
+			byte functionCode = frameStart[1];
+			byte byteCount1 = frameStart[2];
+			byte byteCount2 = frameStart[3];
 
-				// read remaining bytes
-				byte[] frameEnd = new byte[bytesRemaining];
-				numBytesRead = 0;
-				while (numBytesRead != bytesRemaining)
-					numBytesRead += SerialPort.Read(frameEnd, numBytesRead, bytesRemaining - numBytesRead);
+			// calculate number of bytes remaining in message frame
+			int bytesRemaining = NumberOfBytesToRead(functionCode, byteCount1, byteCount2);
 
-				// build complete message frame
-				byte[] frame = CollectionUtil.Combine<byte>(frameStart, frameEnd);
+			// read remaining bytes
+			byte[] frameEnd = new byte[bytesRemaining];
+			numBytesRead = 0;
+			while (numBytesRead != bytesRemaining)
+				numBytesRead += SerialPort.Read(frameEnd, numBytesRead, bytesRemaining - numBytesRead);
 
-				// check for slave exception response
-				if (functionCode > Modbus.ExceptionOffset)
-					throw new SlaveException(ModbusMessageFactory.CreateModbusMessage<SlaveExceptionResponse>(frame));
-				
-				// create message from frame
-				T response = ModbusMessageFactory.CreateModbusMessage<T>(frame);
+			// build complete message frame
+			byte[] frame = CollectionUtil.Combine<byte>(frameStart, frameEnd);
 
-				// check crc
-				if (BitConverter.ToUInt16(frame, frame.Length - 2) != BitConverter.ToUInt16(ModbusUtil.CalculateCrc(response.MessageFrame), 0))
-					throw new IOException("Checksum CRC failed.");
-
-				return response;
-			}
-			catch (TimeoutException te)
-			{
-				throw te;
-			}
-			catch (IOException ioe)
-			{
-				throw ioe;
-			}
+			return frame;
 		}
 
 		internal static int NumberOfBytesToRead(byte functionCode, byte byteCount1, byte byteCount2)
 		{
 			int numBytes;
 
-			switch(functionCode)
+			switch (functionCode)
 			{
 				case Modbus.ReadCoils:
 				case Modbus.ReadInputs:
@@ -97,17 +80,12 @@ namespace Modbus.IO
 				case Modbus.WriteMultipleRegisters:
 					numBytes = 4;
 					break;
-				default :
+				default:
 					numBytes = 1;
 					break;
 			}
 
 			return numBytes;
-		}
-
-		public override byte[] GetMessageFrame()
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
+		}		
 	}
 }

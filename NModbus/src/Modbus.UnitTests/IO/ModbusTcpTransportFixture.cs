@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using System.Text;
-using NUnit.Framework;
 using Modbus.IO;
 using Modbus.Message;
+using NUnit.Framework;
+using Rhino.Mocks;
+
 
 namespace Modbus.UnitTests.IO
 {
@@ -24,5 +27,21 @@ namespace Modbus.UnitTests.IO
 			ModbusTcpTransport transport = new ModbusTcpTransport(null);
 			Assert.Fail();
 		}
+
+		//[Test]
+		//public void GetMessageFrame()
+		//{
+		//    using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
+		//    {
+		//        socket.Connect("127.0.0.1", 502);
+
+		//        MockRepository mocks = new MockRepository();
+		//        NetworkStream stream = mocks.CreateMock<NetworkStream>(socket);
+		//        Expect.Call(stream.CanRead).Return(false);
+		//        mocks.ReplayAll();
+		//        Assert.IsFalse(stream.CanRead);
+		//        mocks.VerifyAll();
+		//    }
+		//}
 	}
 }

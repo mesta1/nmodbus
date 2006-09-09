@@ -32,7 +32,7 @@ namespace Modbus.IO
 				try
 				{
 					Write(request);
-					response = Read<T>(request);
+					response = CreateResponse<T>(Read());
 					success = true;
 				}
 
@@ -46,10 +46,10 @@ namespace Modbus.IO
 			return response;
 		}
 
+		public abstract T CreateResponse<T>(byte[] frame) where T : IModbusMessage, new();
 		public abstract byte[] BuildMessageFrame(IModbusMessage message);
+		public abstract byte[] Read();
+		public abstract void Write(IModbusMessage message);
 		public abstract void Close();
-		public abstract byte[] GetMessageFrame();
-		public abstract T Read<T>(IModbusMessage request) where T : IModbusMessage, new();
-		public abstract void Write(IModbusMessage message);		
 	}
 }
