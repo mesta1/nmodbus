@@ -58,6 +58,7 @@
     <Compile Include="Data\InputRegisterCollectionFixture.cs" />
     <Compile Include="IO\ModbusAsciiTransportFixture.cs" />
     <Compile Include="IO\ModbusRtuTransportFixture.cs" />
+    <Compile Include="IO\ModbusSerialTransportFixture.cs" />
     <Compile Include="IO\ModbusTcpTransportFixture.cs" />
     <Compile Include="Message\ModbusMessageFactoryFixture.cs" />
     <Compile Include="Message\ModbusMessageFixture.cs" />

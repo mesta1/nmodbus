@@ -6,11 +6,15 @@ using Modbus.IO;
 using Modbus.Message;
 using Rhino.Mocks;
 using System.IO.Ports;
+using System.IO;
+using Modbus.Data;
+using Modbus.UnitTests.Message;
+using Modbus.Util;
 
 namespace Modbus.UnitTests.IO
 {
 	[TestFixture]
-	public class ModbusAsciiTransportFixture
+	public class ModbusAsciiTransportFixture : ModbusMessageFixture
 	{
 		[Test]
 		public void BuildMessageFrame()
@@ -26,18 +30,51 @@ namespace Modbus.UnitTests.IO
 		{
 			ModbusAsciiTransport transport = new ModbusAsciiTransport(null);
 			Assert.Fail();
+		}		
+
+		// TODO refactor, this pattern does not work for rtu b/c there is not a stringreader.read(byte[] method
+		[Test, ExpectedException(typeof(IOException))]
+		public void ReadNotEnoughBytes()
+		{
+			MockRepository mocks = new MockRepository();
+			TextReader reader = mocks.CreateMock<StringReader>("");
+			ModbusAsciiTransport transport = new ModbusAsciiTransport();
+			transport.Reader = reader;
+			Expect.Call(reader.ReadLine()).Return(":10");
+			mocks.ReplayAll();
+			transport.Read();
+			mocks.VerifyAll();
 		}
 
-		// TODO need to use derived Stream class for testability
-		//[Test]
-		//public void GetMessageFrame()
-		//{
-		//    MockRepository mocks = new MockRepository();
-		//    SerialPort port = mocks.CreateMock<SerialPort>();
-		//    Expect.Call(port.IsOpen).Return(false);
-		//    mocks.ReplayAll();
-		//    Assert.IsFalse(port.IsOpen);
-		//    mocks.VerifyAll();
-		//}
+		[Test]
+		public void Read()
+		{
+			MockRepository mocks = new MockRepository();			
+			TextReader reader = mocks.CreateMock<StringReader>("");
+			ModbusAsciiTransport transport = new ModbusAsciiTransport();
+			transport.Reader = reader;
+			Expect.Call(reader.ReadLine()).Return(":110100130025B6");
+			mocks.ReplayAll();
+			transport.Read();
+			mocks.VerifyAll();
+		}
+
+		[Test]
+		public void ChecksumsMatchSucceed()
+		{
+			ModbusAsciiTransport transport = new ModbusAsciiTransport();
+			ReadCoilsInputsRequest message = new ReadCoilsInputsRequest(Modbus.ReadCoils, 17, 19, 37);
+			byte[] frame = new byte[] { 17, Modbus.ReadCoils, 0, 19, 0, 37, 182 };
+			Assert.IsTrue(transport.ChecksumsMatch(message, frame));
+		}
+
+		[Test]
+		public void ChecksumsMatchFail()
+		{
+			ModbusAsciiTransport transport = new ModbusAsciiTransport();
+			ReadCoilsInputsRequest message = new ReadCoilsInputsRequest(Modbus.ReadCoils, 17, 19, 37);
+			byte[] frame = new byte[] { 17, Modbus.ReadCoils, 0, 19, 0, 37, 181 };
+			Assert.IsFalse(transport.ChecksumsMatch(message, frame));
+		}
 	}
 }

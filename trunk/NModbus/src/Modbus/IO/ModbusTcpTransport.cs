@@ -37,24 +37,13 @@ namespace Modbus.IO
 			_socket.Close();
 		}
 
-		public override T Read<T>(IModbusMessage request)
+		// TODO duplicate code
+		public override T CreateResponse<T>(byte[] frame)
 		{
-			// read header
-			byte[] MbapHeader = new byte[6];			
-			int numBytesRead = 0;
-			while (numBytesRead != 6)
-				numBytesRead += Socket.Receive(MbapHeader, numBytesRead, 6 - numBytesRead, SocketFlags.None);
-
-			ushort frameLength = (ushort) IPAddress.HostToNetworkOrder(BitConverter.ToInt16(MbapHeader, 4));
-
-			// read message
-			byte[] frame = new byte[frameLength];
-			numBytesRead = 0;
-			while (numBytesRead != frameLength)
-				numBytesRead += Socket.Receive(frame, numBytesRead, frameLength - numBytesRead, SocketFlags.None);
+			byte functionCode = frame[1];
 
 			// check for slave exception response
-			if (frame[1] > Modbus.ExceptionOffset)
+			if (functionCode > Modbus.ExceptionOffset)
 				throw new SlaveException(ModbusMessageFactory.CreateModbusMessage<SlaveExceptionResponse>(frame));
 
 			// create message from frame
@@ -80,9 +69,23 @@ namespace Modbus.IO
 			return frame;
 		}
 
-		public override byte[] GetMessageFrame()
+		public override byte[] Read()
 		{
-			throw new Exception("The method or operation is not implemented.");
+			// read header
+			byte[] MbapHeader = new byte[6];
+			int numBytesRead = 0;
+			while (numBytesRead != 6)
+				numBytesRead += Socket.Receive(MbapHeader, numBytesRead, 6 - numBytesRead, SocketFlags.None);
+
+			ushort frameLength = (ushort) IPAddress.HostToNetworkOrder(BitConverter.ToInt16(MbapHeader, 4));
+
+			// read message
+			byte[] frame = new byte[frameLength];
+			numBytesRead = 0;
+			while (numBytesRead != frameLength)
+				numBytesRead += Socket.Receive(frame, numBytesRead, frameLength - numBytesRead, SocketFlags.None);
+
+			return frame;
 		}
 	}
 }

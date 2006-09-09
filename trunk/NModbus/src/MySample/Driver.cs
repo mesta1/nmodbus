@@ -5,6 +5,7 @@ using System.IO.Ports;
 using Modbus.Device;
 using Modbus.Util;
 using System.Net.Sockets;
+using Modbus.IO;
 
 namespace MySample
 {

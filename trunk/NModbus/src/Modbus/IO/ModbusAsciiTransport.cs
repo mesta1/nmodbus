@@ -11,7 +11,7 @@ namespace Modbus.IO
 {
 	class ModbusAsciiTransport : ModbusSerialTransport
 	{
-		private const string FrameStart = "\r\n";
+		private const string FrameEnd = "\r\n";
 
 		public ModbusAsciiTransport()
 		{
@@ -20,7 +20,7 @@ namespace Modbus.IO
 		public ModbusAsciiTransport(SerialPort serialPort)
 			: base(serialPort)
 		{
-			SerialPort.NewLine = FrameStart;
+			SerialPort.NewLine = FrameEnd;
 		}
 
 		public override byte[] BuildMessageFrame(IModbusMessage message)
@@ -30,50 +30,26 @@ namespace Modbus.IO
 			frame.AddRange(ModbusUtil.GetASCIIBytes(message.SlaveAddress));
 			frame.AddRange(ModbusUtil.GetASCIIBytes(message.ProtocolDataUnit));
 			frame.AddRange(ModbusUtil.GetASCIIBytes(ModbusUtil.CalculateLrc(message.MessageFrame)));
-			frame.AddRange(ModbusUtil.GetASCIIBytes(FrameStart.ToCharArray()));
+			frame.AddRange(ModbusUtil.GetASCIIBytes(FrameEnd.ToCharArray()));
 
 			return frame.ToArray();
 		}
 
-		public override T Read<T>(IModbusMessage request)
+		public override bool ChecksumsMatch(IModbusMessage message, byte[] messageFrame)
 		{
-			// read message frame, removing frame start ':'
-			string frameHex = SerialPort.ReadLine().Substring(1);
-
-			// convert hex to bytes
-			byte[] frame = ModbusUtil.HexToBytes(frameHex);
-
-			if (frame.Length < 3)
-				throw new IOException("Premature end of stream (Message truncated).");
-
-			// remove checksum from frame
-			byte crc = frame[frame.Length - 1];
-			Array.Resize<byte>(ref frame, frame.Length - 1);
-
-			// check for slave exception response
-			if (frame[1] > Modbus.ExceptionOffset)
-			    throw new SlaveException(ModbusMessageFactory.CreateModbusMessage<SlaveExceptionResponse>(frame));
-
-			// create message from frame
-			T response = ModbusMessageFactory.CreateModbusMessage<T>(frame);
-
-			// check LRC
-			if (ModbusUtil.CalculateLrc(response.MessageFrame) != crc)
-			    throw new IOException("Checksum LRC failed.");
-
-			return response;
+			return ModbusUtil.CalculateLrc(message.MessageFrame) == messageFrame[messageFrame.Length - 1];
 		}
 
-		public override byte[] GetMessageFrame()
+		public override byte[] Read()
 		{
 			// read message frame, removing frame start ':'
-			string frameHex = SerialPort.ReadLine().Substring(1);
+			string frameHex = Reader.ReadLine().Substring(1);
 
 			// convert hex to bytes
 			byte[] frame = ModbusUtil.HexToBytes(frameHex);
 
 			if (frame.Length < 3)
-				throw new IOException("Premature end of stream (Message truncated).");
+				throw new IOException("Premature end of stream, message truncated.");
 
 			return frame;
 		}
