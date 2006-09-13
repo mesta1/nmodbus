@@ -37,21 +37,6 @@ namespace Modbus.IO
 			_socket.Close();
 		}
 
-		// TODO duplicate code
-		public override T CreateResponse<T>(byte[] frame)
-		{
-			byte functionCode = frame[1];
-
-			// check for slave exception response
-			if (functionCode > Modbus.ExceptionOffset)
-				throw new SlaveException(ModbusMessageFactory.CreateModbusMessage<SlaveExceptionResponse>(frame));
-
-			// create message from frame
-			T response = ModbusMessageFactory.CreateModbusMessage<T>(frame);
-
-			return response;
-		}
-
 		public override void Write(IModbusMessage message)
 		{			
 			Socket.Send(BuildMessageFrame(message));

@@ -48,25 +48,17 @@ namespace Modbus.IO
 			byte[] frame = BuildMessageFrame(message);
 			SerialPort.Write(frame, 0, frame.Length);
 		}
-	
+
 		public override T CreateResponse<T>(byte[] frame)
 		{
-			byte functionCode = frame[1];
-
-			// check for slave exception response
-			if (functionCode > Modbus.ExceptionOffset)
-				throw new SlaveException(ModbusMessageFactory.CreateModbusMessage<SlaveExceptionResponse>(frame));
-
-			// create message from frame
-			T response = ModbusMessageFactory.CreateModbusMessage<T>(frame);
+			T response = base.CreateResponse<T>(frame);
 
 			// compare checksum
 			if (!ChecksumsMatch(response, frame))
 				throw new IOException("Checksum failed.");
 
 			return response;
-		}
-
+		}
 		public abstract bool ChecksumsMatch(IModbusMessage message, byte[] messageFrame);
 	}
 }

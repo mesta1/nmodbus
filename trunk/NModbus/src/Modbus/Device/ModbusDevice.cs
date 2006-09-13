@@ -10,7 +10,6 @@ namespace Modbus.Device
 	public abstract class ModbusDevice
 	{
 		private ModbusTransport _transport;
-		protected static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 		internal ModbusTransport Transport
 		{
