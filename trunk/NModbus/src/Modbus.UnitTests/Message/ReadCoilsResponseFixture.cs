@@ -13,11 +13,11 @@ namespace Modbus.UnitTests.Message
 		[Test]
 		public void CreateReadCoilsResponse()
 		{
-			ReadCoilsResponse response = new ReadCoilsResponse(5, 2, new CoilDiscreteCollection(true, true, true, true, true, true, false, false, true, true, false));
+			ReadCoilsResponse response = new ReadCoilsResponse(5, 2, new DiscreteCollection(true, true, true, true, true, true, false, false, true, true, false));
 			Assert.AreEqual(Modbus.ReadCoils, response.FunctionCode);
 			Assert.AreEqual(5, response.SlaveAddress);
 			Assert.AreEqual(2, response.ByteCount);
-			CoilDiscreteCollection col = new CoilDiscreteCollection(true, true, true, true, true, true, false, false, true, true, false);
+			DiscreteCollection col = new DiscreteCollection(true, true, true, true, true, true, false, false, true, true, false);
 			Assert.AreEqual(col.NetworkBytes, response.Data.NetworkBytes);
 		}
 	}

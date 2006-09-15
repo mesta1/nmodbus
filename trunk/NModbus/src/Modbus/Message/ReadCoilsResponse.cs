@@ -6,7 +6,7 @@ using Modbus.Util;
 
 namespace Modbus.Message
 {
-	class ReadCoilsResponse : ModbusMessageWithData<CoilDiscreteCollection>, IModbusMessage
+	class ReadCoilsResponse : ModbusMessageWithData<DiscreteCollection>, IModbusMessage
 	{
 		private const int _minimumFrameSize = 3;
 
@@ -14,7 +14,7 @@ namespace Modbus.Message
 		{
 		}
 
-		public ReadCoilsResponse(byte slaveAddress, byte byteCount, CoilDiscreteCollection data)
+		public ReadCoilsResponse(byte slaveAddress, byte byteCount, DiscreteCollection data)
 			: base(slaveAddress, Modbus.ReadCoils)
 		{
 			ByteCount = byteCount;
@@ -38,7 +38,7 @@ namespace Modbus.Message
 				throw new FormatException("Message frame data segment does not contain enough bytes.");
 
 			ByteCount = frame[2];
-			Data = new CoilDiscreteCollection(CollectionUtil.Slice<byte>(frame, 3, ByteCount));
+			Data = new DiscreteCollection(CollectionUtil.Slice<byte>(frame, 3, ByteCount));
 		}
 	}
 }

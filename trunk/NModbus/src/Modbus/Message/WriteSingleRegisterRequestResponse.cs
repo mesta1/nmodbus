@@ -6,7 +6,7 @@ using System.Net;
 
 namespace Modbus.Message
 {
-	class WriteSingleRegisterRequestResponse : ModbusMessageWithData<HoldingRegisterCollection>, IModbusMessage
+	class WriteSingleRegisterRequestResponse : ModbusMessageWithData<RegisterCollection>, IModbusMessage
 	{
 		private const int _minimumFrameSize = 6;
 
@@ -18,7 +18,7 @@ namespace Modbus.Message
 			: base(slaveAddress, Modbus.WriteSingleRegister)
 		{
 			StartAddress = startAddress;
-			Data = new HoldingRegisterCollection(registerValue);
+			Data = new RegisterCollection(registerValue);
 		}
 
 		public override int MinimumFrameSize
@@ -35,7 +35,7 @@ namespace Modbus.Message
 		protected override void InitializeUnique(byte[] frame)
 		{
 			StartAddress = (ushort)IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 2));
-			Data = new HoldingRegisterCollection((ushort)IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 4)));
+			Data = new RegisterCollection((ushort)IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 4)));
 		}
 	}
 }

@@ -33,7 +33,7 @@ namespace Modbus.UnitTests.IO
 		public void CreateResponse()
 		{
 			ModbusAsciiTransport transport = new ModbusAsciiTransport();
-			ReadCoilsResponse expectedResponse = new ReadCoilsResponse(2, 1, new CoilDiscreteCollection(true, false, false, false, false, false, false, true));
+			ReadCoilsResponse expectedResponse = new ReadCoilsResponse(2, 1, new DiscreteCollection(true, false, false, false, false, false, false, true));
 			byte lrc = ModbusUtil.CalculateLrc(expectedResponse.MessageFrame);
 			ReadCoilsResponse response = transport.CreateResponse<ReadCoilsResponse>(new byte[] { 2, Modbus.ReadCoils, 1, 129, lrc });
 			AssertModbusMessagePropertiesAreEqual(expectedResponse, response);

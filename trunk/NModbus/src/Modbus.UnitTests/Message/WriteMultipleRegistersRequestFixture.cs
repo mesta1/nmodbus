@@ -13,7 +13,7 @@ namespace Modbus.UnitTests.Message
 		[Test]
 		public void CreateWriteMultipleRegistersRequestFixture()
 		{
-			HoldingRegisterCollection col = new HoldingRegisterCollection(10, 20, 30, 40, 50);
+			RegisterCollection col = new RegisterCollection(10, 20, 30, 40, 50);
 			WriteMultipleRegistersRequest request = new WriteMultipleRegistersRequest(11, 34, col);
 			Assert.AreEqual(Modbus.WriteMultipleRegisters, request.FunctionCode);
 			Assert.AreEqual(11, request.SlaveAddress);
