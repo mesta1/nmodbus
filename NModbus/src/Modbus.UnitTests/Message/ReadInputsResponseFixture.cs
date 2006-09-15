@@ -13,11 +13,11 @@ namespace Modbus.UnitTests.Message
 		[Test]
 		public void CreateReadInputsResponse()
 		{
-			ReadInputsResponse response = new ReadInputsResponse(5, 2, new InputDiscreteCollection(true, true, true, true, true, true, false, false, true, true, false));
+			ReadInputsResponse response = new ReadInputsResponse(5, 2, new DiscreteCollection(true, true, true, true, true, true, false, false, true, true, false));
 			Assert.AreEqual(Modbus.ReadInputs, response.FunctionCode);
 			Assert.AreEqual(5, response.SlaveAddress);
 			Assert.AreEqual(2, response.ByteCount);
-			InputDiscreteCollection col = new InputDiscreteCollection(true, true, true, true, true, true, false, false, true, true, false);
+			DiscreteCollection col = new DiscreteCollection(true, true, true, true, true, true, false, false, true, true, false);
 			Assert.AreEqual(col.NetworkBytes, response.Data.NetworkBytes);
 		}
 	}

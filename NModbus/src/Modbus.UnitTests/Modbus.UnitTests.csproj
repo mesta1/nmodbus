@@ -51,11 +51,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\CoilDiscreteCollectionFixture.cs" />
-    <Compile Include="Data\DiscreteMixinFixture.cs" />
-    <Compile Include="Data\HoldingRegisterCollectionFixture.cs" />
-    <Compile Include="Data\InputDiscreteCollectionFixture.cs" />
-    <Compile Include="Data\InputRegisterCollectionFixture.cs" />
+    <Compile Include="Data\DiscreteCollectionFixture.cs" />
+    <Compile Include="Data\RegisterCollectionFixture.cs" />
+    <Compile Include="Device\ModbusSlaveFixture.cs" />
     <Compile Include="IO\ModbusAsciiTransportFixture.cs" />
     <Compile Include="IO\ModbusRtuTransportFixture.cs" />
     <Compile Include="IO\ModbusSerialTransportFixture.cs" />

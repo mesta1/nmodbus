@@ -13,7 +13,7 @@ namespace Modbus.UnitTests.Message
 		[Test]
 		public void CreateWriteMultipleCoilsRequest()
 		{
-			CoilDiscreteCollection col = new CoilDiscreteCollection(true, false, true, false, true, true, true, false, false);
+			DiscreteCollection col = new DiscreteCollection(true, false, true, false, true, true, true, false, false);
 			WriteMultipleCoilsRequest request = new WriteMultipleCoilsRequest(34, 45, col);
 			Assert.AreEqual(Modbus.WriteMultipleCoils, request.FunctionCode);
 			Assert.AreEqual(34, request.SlaveAddress);

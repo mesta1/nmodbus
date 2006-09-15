@@ -7,7 +7,7 @@ using Modbus.Util;
 
 namespace Modbus.Message
 {
-	class WriteSingleCoilRequestResponse : ModbusMessageWithData<InputRegisterCollection>, IModbusMessage
+	class WriteSingleCoilRequestResponse : ModbusMessageWithData<RegisterCollection>, IModbusMessage
 	{
 		private const int _minimumFrameSize = 6;
 
@@ -19,7 +19,7 @@ namespace Modbus.Message
 			: base(slaveAddress, Modbus.WriteSingleCoil)
 		{
 			StartAddress = startAddress;
-			Data = new InputRegisterCollection(coilState ? Modbus.CoilOn : Modbus.CoilOff);
+			Data = new RegisterCollection(coilState ? Modbus.CoilOn : Modbus.CoilOff);
 		}
 
 		public override int MinimumFrameSize
@@ -36,7 +36,7 @@ namespace Modbus.Message
 		protected override void InitializeUnique(byte[] frame)
 		{
 			StartAddress = (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 2));
-			Data = new InputRegisterCollection(CollectionUtil.Slice<byte>(frame, 4, 2));
+			Data = new RegisterCollection(CollectionUtil.Slice<byte>(frame, 4, 2));
 		}
 	}
 }

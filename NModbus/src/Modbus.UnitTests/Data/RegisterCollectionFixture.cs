@@ -1,28 +1,27 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using NUnit.Framework;
 using Modbus.Data;
-using System.Net;
+using NUnit.Framework;
 
 namespace Modbus.UnitTests.Data
 {
 	[TestFixture]
-	public class HoldingRegisterCollectionFixture
+	public class RegisterCollectionFixture
 	{
 		[Test]
-		public void NewHoldingRegisterCollection()
+		public void NewRegisterCollection()
 		{
-			HoldingRegisterCollection col = new HoldingRegisterCollection(5, 3, 4, 6);
+			RegisterCollection col = new RegisterCollection(5, 3, 4, 6);
 			Assert.IsNotNull(col);
 			Assert.AreEqual(4, col.Count);
 			Assert.AreEqual(5, col[0]);
 		}
 
 		[Test]
-		public void NewHoldingRegisterCollectionFromBytes()
+		public void NewRegisterCollectionFromBytes()
 		{
-			HoldingRegisterCollection col = new HoldingRegisterCollection(new byte[] { 0, 1, 0, 2, 0, 3 });
+			RegisterCollection col = new RegisterCollection(new byte[] { 0, 1, 0, 2, 0, 3 });
 			Assert.IsNotNull(col);
 			Assert.AreEqual(3, col.Count);
 			Assert.AreEqual(1, col[0]);
@@ -31,9 +30,9 @@ namespace Modbus.UnitTests.Data
 		}
 
 		[Test]
-		public void HoldingRegisterCollectionNetworkBytes()
+		public void RegisterCollectionNetworkBytes()
 		{
-			HoldingRegisterCollection col = new HoldingRegisterCollection(5, 3, 4, 6);
+			RegisterCollection col = new RegisterCollection(5, 3, 4, 6);
 			byte[] bytes = col.NetworkBytes;
 			Assert.IsNotNull(bytes);
 			Assert.AreEqual(8, bytes.Length);
@@ -41,24 +40,24 @@ namespace Modbus.UnitTests.Data
 		}
 
 		[Test]
-		public void HoldingRegisterCollectionEmpty()
+		public void RegisterCollectionEmpty()
 		{
-			HoldingRegisterCollection col = new HoldingRegisterCollection();
+			RegisterCollection col = new RegisterCollection();
 			Assert.IsNotNull(col);
-			Assert.AreEqual(0, col.NetworkBytes.Length);			
+			Assert.AreEqual(0, col.NetworkBytes.Length);
 		}
 
 		[Test]
 		public void ModifyRegister()
 		{
-			HoldingRegisterCollection col = new HoldingRegisterCollection(1, 2, 3, 4);
+			RegisterCollection col = new RegisterCollection(1, 2, 3, 4);
 			col[0] = 5;
 		}
 
 		[Test]
 		public void AddRegister()
 		{
-			HoldingRegisterCollection col = new HoldingRegisterCollection();
+			RegisterCollection col = new RegisterCollection();
 			Assert.AreEqual(0, col.Count);
 			col.Add(45);
 			Assert.AreEqual(1, col.Count);
@@ -67,7 +66,7 @@ namespace Modbus.UnitTests.Data
 		[Test]
 		public void RemoveRegister()
 		{
-			HoldingRegisterCollection col = new HoldingRegisterCollection(3, 4, 5);
+			RegisterCollection col = new RegisterCollection(3, 4, 5);
 			Assert.AreEqual(3, col.Count);
 			col.RemoveAt(2);
 			Assert.AreEqual(2, col.Count);

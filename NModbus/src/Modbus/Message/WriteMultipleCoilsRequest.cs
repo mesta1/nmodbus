@@ -7,7 +7,7 @@ using Modbus.Util;
 
 namespace Modbus.Message
 {
-	class WriteMultipleCoilsRequest : ModbusMessageWithData<CoilDiscreteCollection>, IModbusMessage
+	class WriteMultipleCoilsRequest : ModbusMessageWithData<DiscreteCollection>, IModbusMessage
 	{
 		private const int _minimumFrameSize = 7;
 
@@ -15,7 +15,7 @@ namespace Modbus.Message
 		{
 		}
 
-		public WriteMultipleCoilsRequest(byte slaveAddress, ushort startAddress, CoilDiscreteCollection data)
+		public WriteMultipleCoilsRequest(byte slaveAddress, ushort startAddress, DiscreteCollection data)
 			: base(slaveAddress, Modbus.WriteMultipleCoils)
 		{
 			StartAddress = startAddress;
@@ -55,7 +55,7 @@ namespace Modbus.Message
 			StartAddress = (ushort)IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 2));
 			NumberOfPoints = (ushort)IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 4));
 			ByteCount = frame[6];
-			Data = new CoilDiscreteCollection(CollectionUtil.Slice<byte>(frame, 7, ByteCount));
+			Data = new DiscreteCollection(CollectionUtil.Slice<byte>(frame, 7, ByteCount));
 		}
 	}
 }

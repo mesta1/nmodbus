@@ -6,7 +6,7 @@ using Modbus.Util;
 
 namespace Modbus.Message
 {
-	class ReadInputsResponse : ModbusMessageWithData<InputDiscreteCollection>, IModbusMessage
+	class ReadInputsResponse : ModbusMessageWithData<DiscreteCollection>, IModbusMessage
 	{
 		private const int _minimumFrameSize = 3;
 
@@ -14,7 +14,7 @@ namespace Modbus.Message
 		{
 		}
 
-		public ReadInputsResponse(byte slaveAddress, byte byteCount, InputDiscreteCollection data)
+		public ReadInputsResponse(byte slaveAddress, byte byteCount, DiscreteCollection data)
 			: base(slaveAddress, Modbus.ReadInputs)
 		{
 			ByteCount = byteCount;
@@ -38,7 +38,7 @@ namespace Modbus.Message
 				throw new FormatException("Message frame data segment does not contain enough bytes.");
 
 			ByteCount = frame[2];
-			Data = new InputDiscreteCollection(CollectionUtil.Slice<byte>(frame, 3, ByteCount));
+			Data = new DiscreteCollection(CollectionUtil.Slice<byte>(frame, 3, ByteCount));
 		}
 	}
 }

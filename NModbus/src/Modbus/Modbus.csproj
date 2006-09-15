@@ -48,12 +48,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\CoilDiscreteCollection.cs" />
-    <Compile Include="Data\DiscreteMixin.cs" />
-    <Compile Include="Data\HoldingRegisterCollection.cs" />
-    <Compile Include="Data\InputDiscreteCollection.cs" />
-    <Compile Include="Data\InputRegisterCollection.cs" />
-    <Compile Include="Data\RegisterMixin.cs" />
+    <Compile Include="Data\DataStore.cs" />
+    <Compile Include="Data\DataStoreFactory.cs" />
+    <Compile Include="Data\DiscreteCollection.cs" />
+    <Compile Include="Data\RegisterCollection.cs" />
     <Compile Include="Device\IModbusMaster.cs" />
     <Compile Include="Device\IModbusTcpMaster.cs" />
     <Compile Include="Device\ModbusSerialMaster.cs" />
