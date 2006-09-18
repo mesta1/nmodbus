@@ -27,10 +27,10 @@ namespace Modbus.IO
 		{
 			List<byte> frame = new List<byte>();
 			frame.Add((byte) ':');
-			frame.AddRange(ModbusUtil.GetASCIIBytes(message.SlaveAddress));
-			frame.AddRange(ModbusUtil.GetASCIIBytes(message.ProtocolDataUnit));
-			frame.AddRange(ModbusUtil.GetASCIIBytes(ModbusUtil.CalculateLrc(message.MessageFrame)));
-			frame.AddRange(ModbusUtil.GetASCIIBytes(FrameEnd.ToCharArray()));
+			frame.AddRange(ModbusUtil.GetAsciiBytes(message.SlaveAddress));
+			frame.AddRange(ModbusUtil.GetAsciiBytes(message.ProtocolDataUnit));
+			frame.AddRange(ModbusUtil.GetAsciiBytes(ModbusUtil.CalculateLrc(message.MessageFrame)));
+			frame.AddRange(ModbusUtil.GetAsciiBytes(FrameEnd.ToCharArray()));
 
 			return frame.ToArray();
 		}

@@ -44,22 +44,22 @@ namespace Modbus.Util
 
 		// converts to string of hex characters w/ appropriate padding
 		// converts each char to decimal value		
-		public static byte[] GetASCIIBytes(byte[] numbers)
+		public static byte[] GetAsciiBytes(byte[] numbers)
 		{			
 			return Encoding.ASCII.GetBytes(String.Join("", Array.ConvertAll<byte, string>(numbers, delegate(byte n) { return n.ToString("X2"); })));
 		}
 
-		public static byte[] GetASCIIBytes(byte number)
+		public static byte[] GetAsciiBytes(byte number)
 		{
 			return Encoding.ASCII.GetBytes(number.ToString("X2"));
 		}
 
-		public static byte[] GetASCIIBytes(int[] numbers)
+		public static byte[] GetAsciiBytes(int[] numbers)
 		{
 			return Encoding.ASCII.GetBytes(String.Join("", Array.ConvertAll<int, string>(numbers, delegate(int n) { return n.ToString("X4"); })));
 		}
 
-		public static byte[] GetASCIIBytes(char[] characters)
+		public static byte[] GetAsciiBytes(char[] characters)
 		{
 			return Encoding.ASCII.GetBytes(characters);
 		}
@@ -71,6 +71,9 @@ namespace Modbus.Util
 
 		public static ushort[] NetworkBytesToHostUInt16(byte[] networkBytes)
 		{
+			if (networkBytes == null)
+				throw new ArgumentNullException("networkBytes");
+
 			if (networkBytes.Length % 2 != 0)
 				throw new FormatException("Array networkBytes must contain an even number of bytes.");
 

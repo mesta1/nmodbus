@@ -21,25 +21,21 @@ namespace Modbus.Data
 		public DiscreteCollection CoilDiscretes
 		{
 			get { return _coilDiscretes; }
-			set { _coilDiscretes = value; }
 		}
 
 		public DiscreteCollection InputDiscretes
 		{
 			get { return _inputDiscetes; }
-			set { _inputDiscetes = value; }
 		}
 
 		public RegisterCollection HoldingRegisters
 		{
 			get { return _holdingRegisters; }
-			set { _holdingRegisters = value; }
 		}
 
 		public RegisterCollection InputRegisters
 		{
 			get { return _inputRegisters; }
-			set { _inputRegisters = value; }
 		}
 
 		/// <summary>
@@ -57,7 +53,7 @@ namespace Modbus.Data
 			if (dataSource.Count < startIndex + count)
 				throw new ArgumentOutOfRangeException("Read is outside valid range.");
 
-			U[] dataToRetrieve = CollectionUtil.Slice<U>(dataSource, startIndex, count);
+			U[] dataToRetrieve = CollectionUtil.Slice(dataSource, startIndex, count);
 			T result = new T();
 
 			for (int i = 0; i < count; i++)
