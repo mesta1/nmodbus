@@ -10,6 +10,13 @@ namespace Modbus.UnitTests.Data
 	public class RegisterCollectionFixture
 	{
 		[Test]
+		public void ByteCount()
+		{
+			RegisterCollection col = new RegisterCollection(1, 2, 3);
+			Assert.AreEqual(6, col.ByteCount);
+		}
+
+		[Test]
 		public void NewRegisterCollection()
 		{
 			RegisterCollection col = new RegisterCollection(5, 3, 4, 6);

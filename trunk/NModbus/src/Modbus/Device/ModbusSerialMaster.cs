@@ -43,6 +43,11 @@ namespace Modbus.Device
 			return _modbusMasterImpl.ReadHoldingRegisters(slaveAddress, startAddress, numberOfPoints);
 		}
 
+		public ushort[] ReadInputRegisters(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
+		{
+			return _modbusMasterImpl.ReadInputRegisters(slaveAddress, startAddress, numberOfPoints);
+		}
+
 		public void WriteSingleCoil(byte slaveAddress, ushort coilAddress, bool value)
 		{
 			_modbusMasterImpl.WriteSingleCoil(slaveAddress, coilAddress, value);

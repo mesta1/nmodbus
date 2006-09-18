@@ -20,24 +20,36 @@ namespace Modbus.Device
 
 		public bool[] ReadCoils(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
 		{
-			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, slaveAddress, startAddress, numberOfPoints);
-			ReadCoilsResponse response = Transport.UnicastMessage<ReadCoilsResponse>(request);
-
-			return CollectionUtil.Slice<bool>(response.Data, 0, request.NumberOfPoints);
+			return ReadDiscretes(slaveAddress, startAddress, numberOfPoints);
 		}
 
 		public bool[] ReadInputs(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
 		{
-			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadInputs, slaveAddress, startAddress, numberOfPoints);
-			ReadInputsResponse response = Transport.UnicastMessage<ReadInputsResponse>(request);
+			return ReadDiscretes(slaveAddress, startAddress, numberOfPoints);
+		}
+
+		internal bool[] ReadDiscretes(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
+		{
+			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, slaveAddress, startAddress, numberOfPoints);
+			ReadCoilsInputsResponse response = Transport.UnicastMessage<ReadCoilsInputsResponse>(request);
 
 			return CollectionUtil.Slice<bool>(response.Data, 0, request.NumberOfPoints);
 		}
 
 		public ushort[] ReadHoldingRegisters(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
 		{
+			return ReadRegisters(slaveAddress, startAddress, numberOfPoints);
+		}
+
+		public ushort[] ReadInputRegisters(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
+		{
+			return ReadRegisters(slaveAddress, startAddress, numberOfPoints);
+		}
+
+		internal ushort[] ReadRegisters(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
+		{
 			ReadHoldingInputRegistersRequest request = new ReadHoldingInputRegistersRequest(Modbus.ReadHoldingRegisters, slaveAddress, startAddress, numberOfPoints);
-			ReadHoldingRegistersResponse response = Transport.UnicastMessage<ReadHoldingRegistersResponse>(request);
+			ReadHoldingInputRegistersResponse response = Transport.UnicastMessage<ReadHoldingInputRegistersResponse>(request);
 			
 			return CollectionUtil.ToArray<ushort>(response.Data);
 		}

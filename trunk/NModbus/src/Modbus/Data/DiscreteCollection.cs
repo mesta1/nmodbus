@@ -53,5 +53,13 @@ namespace Modbus.Data
 				return bytes;
 			}
 		}
+
+		public byte ByteCount
+		{
+			get
+			{
+				return (byte) (Count / 8 + (Count % 8 > 0 ? 1 : 0));
+			}
+		}
 	}
 }

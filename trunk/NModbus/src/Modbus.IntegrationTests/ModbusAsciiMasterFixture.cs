@@ -16,5 +16,11 @@ namespace Modbus.IntegrationTests
 			base.Init();
 			Master = ModbusSerialMaster.CreateAscii(Port);
 		}
+
+		[Test]
+		public override void WriteSingleCoil()
+		{
+			base.WriteSingleCoil();
+		}
 	}
 }

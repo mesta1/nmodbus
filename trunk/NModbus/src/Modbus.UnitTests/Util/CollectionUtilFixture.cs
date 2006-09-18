@@ -97,5 +97,30 @@ namespace Modbus.UnitTests.Util
 		{
 			CollectionUtil.Combine(new byte[] { 1, 2 }, null);
 		}
+
+		[Test]
+		public void Update()
+		{
+			List<int> newItems = new List<int>(new int[] { 4, 5, 6 });
+			List<int> destination = new List<int>(new int[] { 1, 2, 3, 7, 8, 9 });
+			CollectionUtil.Update<int>(newItems, destination, 3);
+			Assert.AreEqual(new int[] { 1, 2, 3, 4, 5, 6 }, destination.ToArray());
+		}
+
+		[Test, ExpectedException(typeof(ArgumentOutOfRangeException))]
+		public void UpdateItemsTooLarge()
+		{
+			List<int> newItems = new List<int>(new int[] { 1, 2, 3, 7, 8, 9 });
+			List<int> destination = new List<int>(new int[] { 4, 5, 6 });			
+			CollectionUtil.Update<int>(newItems, destination, 3);
+		}
+
+		[Test, ExpectedException(typeof(ArgumentOutOfRangeException))]
+		public void UpdateNegativeIndex()
+		{	
+			List<int> newItems = new List<int>(new int[] { 1, 2, 3, 7, 8, 9 });
+			List<int> destination = new List<int>(new int[] { 4, 5, 6 });
+			CollectionUtil.Update<int>(newItems, destination, -1);
+		}
 	}
 }

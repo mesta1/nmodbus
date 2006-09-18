@@ -78,6 +78,15 @@ namespace Modbus.Util
 			Array.Copy(array2, 0, result, array1.Length, array2.Length);
 
 			return result;
-		}	
+		}
+
+		public static void Update<T>(IList<T> items, IList<T> destination, int startIndex)
+		{
+			if (startIndex < 0 || destination.Count < startIndex + items.Count)
+				throw new ArgumentOutOfRangeException("Index was out of range. Must be non-negative and less than the size of the collection.");
+
+			for (int i = 0; i < items.Count; i++)
+				destination[i + startIndex] = items[i];
+		}
 	}
 }

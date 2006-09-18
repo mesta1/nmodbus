@@ -58,7 +58,8 @@ namespace Modbus.IO
 				throw new IOException("Checksum failed.");
 
 			return response;
-		}
+		}
+
 		public abstract bool ChecksumsMatch(IModbusMessage message, byte[] messageFrame);
 	}
 }

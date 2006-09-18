@@ -6,16 +6,16 @@ using Modbus.Util;
 
 namespace Modbus.Message
 {
-	class ReadCoilsResponse : ModbusMessageWithData<DiscreteCollection>, IModbusMessage
+	class ReadHoldingInputRegistersResponse : ModbusMessageWithData<RegisterCollection>, IModbusMessage
 	{
 		private const int _minimumFrameSize = 3;
 
-		public ReadCoilsResponse()
+		public ReadHoldingInputRegistersResponse()
 		{
 		}
 
-		public ReadCoilsResponse(byte slaveAddress, byte byteCount, DiscreteCollection data)
-			: base(slaveAddress, Modbus.ReadCoils)
+		public ReadHoldingInputRegistersResponse(byte slaveAddress, byte byteCount, RegisterCollection data)
+			: base(slaveAddress, Modbus.ReadHoldingRegisters)
 		{
 			ByteCount = byteCount;
 			Data = data;
@@ -35,10 +35,10 @@ namespace Modbus.Message
 		protected override void InitializeUnique(byte[] frame)
 		{
 			if (frame.Length < 3 + frame[2])
-				throw new FormatException("Message frame data segment does not contain enough bytes.");
+				throw new FormatException("Message frame does not contain enough bytes.");
 
 			ByteCount = frame[2];
-			Data = new DiscreteCollection(CollectionUtil.Slice<byte>(frame, 3, ByteCount));
+			Data = new RegisterCollection(CollectionUtil.Slice<byte>(frame, 3, ByteCount));
 		}
 	}
 }

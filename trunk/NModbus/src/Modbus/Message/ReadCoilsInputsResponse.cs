@@ -5,17 +5,17 @@ using Modbus.Data;
 using Modbus.Util;
 
 namespace Modbus.Message
-{
-	class ReadInputsResponse : ModbusMessageWithData<DiscreteCollection>, IModbusMessage
+{	
+	class ReadCoilsInputsResponse : ModbusMessageWithData<DiscreteCollection>, IModbusMessage
 	{
 		private const int _minimumFrameSize = 3;
 
-		public ReadInputsResponse()
+		public ReadCoilsInputsResponse()
 		{
 		}
 
-		public ReadInputsResponse(byte slaveAddress, byte byteCount, DiscreteCollection data)
-			: base(slaveAddress, Modbus.ReadInputs)
+		public ReadCoilsInputsResponse(byte slaveAddress, byte byteCount, DiscreteCollection data)
+			: base(slaveAddress, Modbus.ReadCoils)
 		{
 			ByteCount = byteCount;
 			Data = data;
