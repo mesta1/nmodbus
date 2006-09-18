@@ -44,11 +44,10 @@ namespace Modbus.IO
 				numBytesRead += SerialPort.Read(frameStart, numBytesRead, 4 - numBytesRead);
 
 			byte functionCode = frameStart[1];
-			byte byteCount1 = frameStart[2];
-			byte byteCount2 = frameStart[3];
+			byte byteCount = frameStart[2];
 
 			// calculate number of bytes remaining in message frame
-			int bytesRemaining = NumberOfBytesToRead(functionCode, byteCount1, byteCount2);
+			int bytesRemaining = NumberOfBytesToRead(functionCode, byteCount);
 
 			// read remaining bytes
 			byte[] frameEnd = new byte[bytesRemaining];
@@ -62,7 +61,7 @@ namespace Modbus.IO
 			return frame;
 		}
 
-		internal static int NumberOfBytesToRead(byte functionCode, byte byteCount1, byte byteCount2)
+		internal static int NumberOfBytesToRead(byte functionCode, byte byteCount)
 		{
 			int numBytes;
 
@@ -72,7 +71,7 @@ namespace Modbus.IO
 				case Modbus.ReadInputs:
 				case Modbus.ReadHoldingRegisters:
 				case Modbus.ReadInputRegisters:
-					numBytes = byteCount1 + 1;
+					numBytes = byteCount + 1;
 					break;
 				case Modbus.WriteSingleCoil:
 				case Modbus.WriteSingleRegister:

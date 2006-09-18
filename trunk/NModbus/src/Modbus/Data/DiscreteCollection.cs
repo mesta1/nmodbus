@@ -32,9 +32,9 @@ namespace Modbus.Data
 		/// <summary>
 		/// Creates DiscreteCollection of specified size initialized to default value.
 		/// </summary>
-		public DiscreteCollection(bool defaultValue, int size)
+		public DiscreteCollection(int length, bool defaultValue)
 		{
-			for (int i = 0; i < size; i++)
+			for (int i = 0; i < length; i++)
 				Add(defaultValue);
 		}
 
@@ -46,6 +46,7 @@ namespace Modbus.Data
 				CopyTo(bits, 0);
 
 				BitArray bitArray = new BitArray(bits);
+
 
 				byte[] bytes = new byte[Count / 8 + (Count % 8 > 0 ? 1 : 0)];
 				bitArray.CopyTo(bytes, 0);

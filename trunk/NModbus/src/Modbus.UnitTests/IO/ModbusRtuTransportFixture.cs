@@ -26,7 +26,7 @@ namespace Modbus.UnitTests.IO
 		public void NumberOfBytesToReadReadCoils()
 		{
 			byte[] frame = new byte[] { 0x11, 0x01, 0x05, 0xCD, 0x6B, 0xB2, 0x0E, 0x1B };
-			Assert.AreEqual(6, ModbusRtuTransport.NumberOfBytesToRead(frame[1], frame[2], frame[3]));
+			Assert.AreEqual(6, ModbusRtuTransport.NumberOfBytesToRead(frame[1], frame[2]));
 
 		}
 
@@ -34,14 +34,14 @@ namespace Modbus.UnitTests.IO
 		public void NumberOfBytesToReadReadCoilsNoData()
 		{
 			byte[] frame = new byte[] { 0x11, 0x01, 0x00, 0, 0 };
-			Assert.AreEqual(1, ModbusRtuTransport.NumberOfBytesToRead(frame[1], frame[2], frame[3]));
+			Assert.AreEqual(1, ModbusRtuTransport.NumberOfBytesToRead(frame[1], frame[2]));
 		}
 
 		[Test]
 		public void NumberOfBytesToReadWriteCoilsResponse()
 		{
 			byte[] frame = new byte[] { 0x11, 0x0F, 0x00, 0x13, 0x00, 0x0A, 0, 0 };
-			Assert.AreEqual(4, ModbusRtuTransport.NumberOfBytesToRead(frame[1], frame[2], frame[3]));
+			Assert.AreEqual(4, ModbusRtuTransport.NumberOfBytesToRead(frame[1], frame[2]));
 		}
 
 		[Test]

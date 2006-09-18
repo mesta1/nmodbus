@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Modbus.Util
 {
-	public class StringUtil
+	public static class StringUtil
 	{
 		public static string Join<T>(string separator, ICollection<T> collection)
 		{
