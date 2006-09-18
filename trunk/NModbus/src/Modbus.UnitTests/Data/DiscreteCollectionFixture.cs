@@ -34,7 +34,7 @@ namespace Modbus.UnitTests.Data
 		[Test]
 		public void CreateNewDiscreteCollectionInitialize()
 		{
-			DiscreteCollection col = new DiscreteCollection(3, true);
+			DiscreteCollection col = new DiscreteCollection(true, true, true);
 			Assert.AreEqual(3, col.Count);
 			Assert.IsFalse(col.Contains(false));
 		}
