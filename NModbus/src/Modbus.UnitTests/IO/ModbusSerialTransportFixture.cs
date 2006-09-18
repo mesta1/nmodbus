@@ -18,14 +18,14 @@ namespace Modbus.UnitTests.IO
 		public void CreateResponseSlaveException()
 		{
 			ModbusSerialTransport transport = new ModbusAsciiTransport();
-			transport.CreateResponse<ReadCoilsResponse>(new byte[] { 10, 129, 2, 115 });
+			transport.CreateResponse<ReadCoilsInputsResponse>(new byte[] { 10, 129, 2, 115 });
 		}
 
 		[Test, ExpectedException(typeof(IOException))]
 		public void CreateResponseErroneousLrc()
 		{
 			ModbusAsciiTransport transport = new ModbusAsciiTransport();
-			transport.CreateResponse<ReadCoilsResponse>(new byte[] { 19, Modbus.ReadCoils, 0, 0, 0, 2, 115 });
+			transport.CreateResponse<ReadCoilsInputsResponse>(new byte[] { 19, Modbus.ReadCoils, 0, 0, 0, 2, 115 });
 			Assert.Fail();
 		}
 
@@ -33,9 +33,9 @@ namespace Modbus.UnitTests.IO
 		public void CreateResponse()
 		{
 			ModbusAsciiTransport transport = new ModbusAsciiTransport();
-			ReadCoilsResponse expectedResponse = new ReadCoilsResponse(2, 1, new DiscreteCollection(true, false, false, false, false, false, false, true));
+			ReadCoilsInputsResponse expectedResponse = new ReadCoilsInputsResponse(2, 1, new DiscreteCollection(true, false, false, false, false, false, false, true));
 			byte lrc = ModbusUtil.CalculateLrc(expectedResponse.MessageFrame);
-			ReadCoilsResponse response = transport.CreateResponse<ReadCoilsResponse>(new byte[] { 2, Modbus.ReadCoils, 1, 129, lrc });
+			ReadCoilsInputsResponse response = transport.CreateResponse<ReadCoilsInputsResponse>(new byte[] { 2, Modbus.ReadCoils, 1, 129, lrc });
 			AssertModbusMessagePropertiesAreEqual(expectedResponse, response);
 		}
 	}

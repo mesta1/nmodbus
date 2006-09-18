@@ -38,6 +38,11 @@ namespace Modbus.Device
 			return _modbusMasterImpl.ReadHoldingRegisters(0, startAddress, numberOfPoints);
 		}
 
+		public ushort[] ReadInputRegisters(ushort startAddress, ushort numberOfPoints)
+		{
+			return _modbusMasterImpl.ReadHoldingRegisters(0, startAddress, numberOfPoints);
+		}
+
 		public void WriteSingleCoil(ushort coilAddress, bool value)
 		{
 			_modbusMasterImpl.WriteSingleCoil(0, coilAddress, value);
@@ -71,6 +76,11 @@ namespace Modbus.Device
 		}
 
 		ushort[] IModbusMaster.ReadHoldingRegisters(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
+		{
+			return ReadHoldingRegisters(startAddress, numberOfPoints);
+		}
+
+		ushort[] IModbusMaster.ReadInputRegisters(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
 		{
 			return ReadHoldingRegisters(startAddress, numberOfPoints);
 		}

@@ -5,8 +5,10 @@ using System.Collections;
 
 namespace Modbus.Data
 {
-	interface IModbusMessageDataCollection	
+	public interface IModbusMessageDataCollection	
 	{
 		byte[] NetworkBytes { get; }
+		byte ByteCount { get; }
 	}
 }
+	

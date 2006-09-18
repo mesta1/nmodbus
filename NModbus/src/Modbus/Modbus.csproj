@@ -67,15 +67,14 @@
     <Compile Include="IO\ModbusTransport.cs" />
     <Compile Include="Message\ReadCoilsInputsRequest.cs" />
     <Compile Include="Message\ReadHoldingInputRegistersRequest.cs" />
-    <Compile Include="Message\ReadInputsResponse.cs" />
     <Compile Include="Message\SlaveExceptionResponse.cs" />
     <Compile Include="Message\IModbusMessage.cs" />
     <Compile Include="Message\ModbusMessage.cs" />
     <Compile Include="Message\ModbusMessageFactory.cs" />
     <Compile Include="Message\ModbusMessageImpl.cs" />
     <Compile Include="Message\ModbusMessageWithData.cs" />
-    <Compile Include="Message\ReadCoilsResponse.cs" />
-    <Compile Include="Message\ReadHoldingRegistersResponse.cs" />
+    <Compile Include="Message\ReadCoilsInputsResponse.cs" />
+    <Compile Include="Message\ReadHoldingInputRegistersResponse.cs" />
     <Compile Include="Message\WriteMultipleCoilsRequest.cs" />
     <Compile Include="Message\WriteMultipleCoilsResponse.cs" />
     <Compile Include="Message\WriteMultipleRegistersRequest.cs" />

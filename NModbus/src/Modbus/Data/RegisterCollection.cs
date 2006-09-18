@@ -40,5 +40,13 @@ namespace Modbus.Data
 				return bytes.ToArray();
 			}
 		}
+
+		public byte ByteCount
+		{
+			get 
+			{ 
+				return (byte) (Count * 2); 
+			}
+		}
 	}
 }

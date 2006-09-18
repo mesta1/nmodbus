@@ -68,6 +68,13 @@ namespace Modbus.IntegrationTests
 		}
 
 		[Test]
+		public virtual void ReadInputRegisters()
+		{
+			ushort[] registers = Master.ReadInputRegisters(SlaveAddress, 104, 2);
+			Assert.AreEqual(new ushort[] { 0, 0 }, registers);
+		}
+
+		[Test]
 		public virtual void WriteSingleCoil()
 		{
 			bool coilValue = Master.ReadCoils(SlaveAddress, 10, 1)[0];

@@ -11,6 +11,20 @@ namespace Modbus.UnitTests.Data
 	public class DiscreteCollectionFixture
 	{
 		[Test]
+		public void ByteCount()
+		{
+			DiscreteCollection col = new DiscreteCollection(true, true, false, false, false, false, false, false, false);
+			Assert.AreEqual(2, col.ByteCount);
+		}
+
+		[Test]
+		public void ByteCountEven()
+		{
+			DiscreteCollection col = new DiscreteCollection(true, true, false, false, false, false, false, false);
+			Assert.AreEqual(1, col.ByteCount);
+		}
+
+		[Test]
 		public void NetworkBytes()
 		{
 			DiscreteCollection col = new DiscreteCollection(true, true);

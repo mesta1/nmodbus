@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\DataStoreFixture.cs" />
     <Compile Include="Data\DiscreteCollectionFixture.cs" />
     <Compile Include="Data\RegisterCollectionFixture.cs" />
     <Compile Include="Device\ModbusSlaveFixture.cs" />
@@ -65,7 +66,6 @@
     <Compile Include="Message\ReadCoilsInputsRequestFixture.cs" />
     <Compile Include="Message\ReadCoilsResponseFixture.cs" />
     <Compile Include="Message\ReadHoldingInputRegistersRequestFixture.cs" />
-    <Compile Include="Message\ReadInputsResponseFixture.cs" />
     <Compile Include="Message\SlaveExceptionResponseFixture.cs" />
     <Compile Include="Message\WriteMultipleCoilsRequestFixture.cs" />
     <Compile Include="Message\WriteMultipleCoilsResponseFixture.cs" />

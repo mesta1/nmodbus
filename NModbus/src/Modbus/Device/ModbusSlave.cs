@@ -42,36 +42,45 @@ namespace Modbus.Device
 				// build request from frame
 				IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(frame);
 
+				// check unit id
+
 				// perform action
 				IModbusMessage response = ApplyRequest(request);
 
 				// write response
-				Transport.Write(response);				
+				Transport.Write(response);	
 			}
 		}
 
-		public static ReadCoilsResponse ReadCoils(IModbusMessage message, byte unitID, DataStore dataStore)
+		public static ReadCoilsInputsResponse ReadDiscretes(ReadCoilsInputsRequest request, byte unitID, DiscreteCollection dataSource)
 		{
-			ReadCoilsInputsRequest request = message as ReadCoilsInputsRequest;
-
-			if (request == null)
-				throw new ArgumentException("Invalid type.", "message");
-
-			// get the data and build the response
-			DiscreteCollection data = new DiscreteCollection(CollectionUtil.Slice<bool>(dataStore.CoilDiscretes, request.StartAddress, request.NumberOfPoints));
-			ReadCoilsResponse response = new ReadCoilsResponse(unitID, 1, data);
+			DiscreteCollection data = DataStore.ReadData<DiscreteCollection, bool>(dataSource, request.StartAddress, request.NumberOfPoints);
+			ReadCoilsInputsResponse response = new ReadCoilsInputsResponse(unitID, data.ByteCount, data);
 
 			return response;
 		}
 
-		public IModbusMessage ReadInputs(IModbusMessage message, byte unitID, DataStore dataStore)
+		public static ReadHoldingInputRegistersResponse ReadRegisters(ReadHoldingInputRegistersRequest request, byte unitID, RegisterCollection dataSource)
 		{
-			ReadHoldingInputRegistersRequest request = message as ReadHoldingInputRegistersRequest;
+			RegisterCollection data = DataStore.ReadData<RegisterCollection, ushort>(dataSource, request.StartAddress, request.NumberOfPoints);
+			ReadHoldingInputRegistersResponse response = new ReadHoldingInputRegistersResponse(unitID, data.ByteCount, data);
 
-			if (request == null)
-				throw new ArgumentException("Invalid type.", "message");
+			return response;
+		}
 
-			return null;
+		public static WriteSingleCoilRequestResponse WriteSingleCoil(WriteSingleCoilRequestResponse request, byte unitID, DiscreteCollection dataSource)
+		{
+			DataStore.WriteData<DiscreteCollection, bool>(new DiscreteCollection(request.Data[0] == Modbus.CoilOn), dataSource, request.StartAddress);
+		
+			return request;
+		}
+
+		public static WriteMultipleCoilsResponse WriteMultipleCoils(WriteMultipleCoilsRequest request, byte unitID, DiscreteCollection dataSource)
+		{
+			DataStore.WriteData<DiscreteCollection, bool>(request.Data, dataSource, request.StartAddress);
+			WriteMultipleCoilsResponse response = new WriteMultipleCoilsResponse(unitID, request.StartAddress, request.NumberOfPoints);
+
+			return response;
 		}
 
 		public IModbusMessage ApplyRequest(IModbusMessage request)
@@ -81,21 +90,25 @@ namespace Modbus.Device
 			switch (request.FunctionCode)
 			{
 				case Modbus.ReadCoils:
-					response = ReadCoils(request, UnitID, DataStore);
+					response = ReadDiscretes((ReadCoilsInputsRequest) request, UnitID, DataStore.CoilDiscretes);
 					break;
 				case Modbus.ReadInputs:
-					response = ReadInputs(request, UnitID, DataStore);
+					response = ReadDiscretes((ReadCoilsInputsRequest) request, UnitID, DataStore.InputDiscretes);
 					break;
-				//case Modbus.ReadHoldingRegisters:
-				//    break;
-				//case Modbus.ReadInputRegisters:
-				//    break;
-				//case Modbus.WriteSingleCoil:
-				//    break;
+				case Modbus.ReadHoldingRegisters:
+					response = ReadRegisters((ReadHoldingInputRegistersRequest) request, UnitID, DataStore.HoldingRegisters);
+					break;
+				case Modbus.ReadInputRegisters:
+					response = ReadRegisters((ReadHoldingInputRegistersRequest) request, UnitID, DataStore.InputRegisters);
+					break;
+				case Modbus.WriteSingleCoil:
+					response = WriteSingleCoil((WriteSingleCoilRequestResponse) request, UnitID, DataStore.CoilDiscretes);
+					break;
 				//case Modbus.WriteSingleRegister:
 				//    break;
-				//case Modbus.WriteMultipleCoils:
-				//    break;
+				case Modbus.WriteMultipleCoils:
+					response = WriteMultipleCoils((WriteMultipleCoilsRequest) request, UnitID, DataStore.CoilDiscretes);
+					break;
 				//case Modbus.WriteMultipleRegisters:
 				//    break;
 				default:
