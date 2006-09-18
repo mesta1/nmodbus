@@ -5,18 +5,29 @@ using Modbus.IO;
 using Modbus.Message;
 using Modbus.Data;
 using Modbus.Util;
+using System.IO.Ports;
 
 namespace Modbus.Device
 {
-	internal class ModbusSlave : ModbusDevice
+	public class ModbusSlave : ModbusDevice
 	{
 		private byte _unitID;
 		private DataStore _dataStore;
 
-		public ModbusSlave(byte unitID, ModbusTransport transport, DataStore dataStore)
+		public static ModbusSlave CreateAscii(byte unitID, SerialPort serialPort)
+		{
+			return new ModbusSlave(unitID, new ModbusAsciiTransport(serialPort));
+		}
+
+		public static ModbusSlave CreateRtu(byte unitID, SerialPort serialPort)
+		{
+			return new ModbusSlave(unitID, new ModbusRtuTransport(serialPort));
+		}
+		
+		private ModbusSlave(byte unitID, ModbusTransport transport)
 			: base(transport)
 		{
-			_dataStore = dataStore;
+			_dataStore = DataStoreFactory.CreateDefaultDataStore();
 			_unitID = unitID;
 		}
 
@@ -31,18 +42,20 @@ namespace Modbus.Device
 			get { return _unitID; }
 			set { _unitID = value; }
 		}
-	
+
 		public void Listen()
 		{
 			while (true)
 			{
 				// use transport to retrieve raw message frame from stream
-				byte[] frame = Transport.Read();
-
+				byte[] frame = Transport.Read();				
+				
 				// build request from frame
 				IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(frame);
 
-				// check unit id
+				// only service requests addressed to this particular slave
+				if (request.SlaveAddress != UnitID)
+					continue;
 
 				// perform action
 				IModbusMessage response = ApplyRequest(request);
@@ -52,7 +65,7 @@ namespace Modbus.Device
 			}
 		}
 
-		public static ReadCoilsInputsResponse ReadDiscretes(ReadCoilsInputsRequest request, DiscreteCollection dataSource)
+		internal static ReadCoilsInputsResponse ReadDiscretes(ReadCoilsInputsRequest request, DiscreteCollection dataSource)
 		{
 			DiscreteCollection data = DataStore.ReadData<DiscreteCollection, bool>(dataSource, request.StartAddress, request.NumberOfPoints);
 			ReadCoilsInputsResponse response = new ReadCoilsInputsResponse(request.SlaveAddress, data.ByteCount, data);
@@ -60,7 +73,7 @@ namespace Modbus.Device
 			return response;
 		}
 
-		public static ReadHoldingInputRegistersResponse ReadRegisters(ReadHoldingInputRegistersRequest request, RegisterCollection dataSource)
+		internal static ReadHoldingInputRegistersResponse ReadRegisters(ReadHoldingInputRegistersRequest request, RegisterCollection dataSource)
 		{
 			RegisterCollection data = DataStore.ReadData<RegisterCollection, ushort>(dataSource, request.StartAddress, request.NumberOfPoints);
 			ReadHoldingInputRegistersResponse response = new ReadHoldingInputRegistersResponse(request.SlaveAddress, data.ByteCount, data);
@@ -68,14 +81,14 @@ namespace Modbus.Device
 			return response;
 		}
 
-		public static WriteSingleCoilRequestResponse WriteSingleCoil(WriteSingleCoilRequestResponse request, DiscreteCollection dataSource)
+		internal static WriteSingleCoilRequestResponse WriteSingleCoil(WriteSingleCoilRequestResponse request, DiscreteCollection dataSource)
 		{
 			DataStore.WriteData<DiscreteCollection, bool>(new DiscreteCollection(request.Data[0] == Modbus.CoilOn), dataSource, request.StartAddress);
 		
 			return request;
 		}
 
-		public static WriteMultipleCoilsResponse WriteMultipleCoils(WriteMultipleCoilsRequest request, DiscreteCollection dataSource)
+		internal static WriteMultipleCoilsResponse WriteMultipleCoils(WriteMultipleCoilsRequest request, DiscreteCollection dataSource)
 		{
 			DataStore.WriteData<DiscreteCollection, bool>(request.Data, dataSource, request.StartAddress);
 			WriteMultipleCoilsResponse response = new WriteMultipleCoilsResponse(request.SlaveAddress, request.StartAddress, request.NumberOfPoints);
@@ -83,7 +96,7 @@ namespace Modbus.Device
 			return response;
 		}
 
-		public IModbusMessage ApplyRequest(IModbusMessage request)
+		internal IModbusMessage ApplyRequest(IModbusMessage request)
 		{
 			IModbusMessage response;
 

@@ -21,21 +21,25 @@ namespace Modbus.Data
 		public DiscreteCollection CoilDiscretes
 		{
 			get { return _coilDiscretes; }
+			set { _coilDiscretes = value; }
 		}
 
 		public DiscreteCollection InputDiscretes
 		{
 			get { return _inputDiscetes; }
+			set { _inputDiscetes = value; }
 		}
 
 		public RegisterCollection HoldingRegisters
 		{
 			get { return _holdingRegisters; }
+			set { _holdingRegisters = value; }
 		}
 
 		public RegisterCollection InputRegisters
 		{
 			get { return _inputRegisters; }
+			set { _inputRegisters = value; }
 		}
 
 		/// <summary>

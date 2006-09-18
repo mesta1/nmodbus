@@ -28,16 +28,7 @@ namespace Modbus.Data
 		    : base(bits.IsReadOnly ? new List<bool>(bits) : bits)
 		{
 		}
-
-		/// <summary>
-		/// Creates DiscreteCollection of specified size initialized to default value.
-		/// </summary>
-		public DiscreteCollection(int length, bool defaultValue)
-		{
-			for (int i = 0; i < length; i++)
-				Add(defaultValue);
-		}
-
+		
 		public byte[] NetworkBytes
 		{
 			get

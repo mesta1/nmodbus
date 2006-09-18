@@ -75,7 +75,7 @@ namespace Modbus.UnitTests.Device
 			ushort numberOfPoints = 10;
 			bool val = !_testDataStore.CoilDiscretes[startAddress - 1];
 			WriteMultipleCoilsResponse expectedResponse = new WriteMultipleCoilsResponse(1, startAddress, numberOfPoints);
-			WriteMultipleCoilsResponse response = ModbusSlave.WriteMultipleCoils(new WriteMultipleCoilsRequest(1, startAddress, new DiscreteCollection(numberOfPoints, val)), _testDataStore.CoilDiscretes);
+			WriteMultipleCoilsResponse response = ModbusSlave.WriteMultipleCoils(new WriteMultipleCoilsRequest(1, startAddress, new DiscreteCollection(val, val, val, val, val, val, val, val, val, val)), _testDataStore.CoilDiscretes);
 			AssertModbusMessagePropertiesAreEqual(expectedResponse, response);
 			Assert.AreEqual(new bool[] { val, val, val, val, val, val, val, val, val, val }, CollectionUtil.Slice<bool>(_testDataStore.CoilDiscretes, startAddress - 1, numberOfPoints));
 		}
