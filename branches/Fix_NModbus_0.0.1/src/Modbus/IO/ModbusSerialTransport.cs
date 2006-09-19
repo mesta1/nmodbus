@@ -1,7 +1,6 @@
-	using System.IO;
+using System.IO;
 using System.IO.Ports;
 using System.Reflection;
-using log4net;
 using Modbus.Message;
 using System;
 
@@ -9,8 +8,6 @@ namespace Modbus.IO
 {
 	abstract class ModbusSerialTransport : ModbusTransport
 	{
-		protected static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
 		private SerialPort _serialPort;
 
 		public ModbusSerialTransport()

@@ -4,7 +4,6 @@ using System.Text;
 using Modbus.IO;
 using Modbus.Message;
 using System.Collections;
-using log4net;
 using System.IO;
 using Modbus.Util;
 using Modbus.Data;
