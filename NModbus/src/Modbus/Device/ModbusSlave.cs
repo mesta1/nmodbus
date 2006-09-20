@@ -1,18 +1,27 @@
 using System;
 using System.Collections.Generic;
+using System.IO.Ports;
 using System.Text;
+using log4net;
 using Modbus.IO;
 using Modbus.Message;
 using Modbus.Data;
 using Modbus.Util;
-using System.IO.Ports;
 
 namespace Modbus.Device
 {
 	public class ModbusSlave : ModbusDevice
 	{
+		private static readonly ILog log = LogManager.GetLogger(typeof(ModbusSlave));
 		private byte _unitID;
 		private DataStore _dataStore;
+		
+		private ModbusSlave(byte unitID, ModbusTransport transport)
+			: base(transport)
+		{
+			_dataStore = DataStoreFactory.CreateDefaultDataStore();
+			_unitID = unitID;
+		}
 
 		public static ModbusSlave CreateAscii(byte unitID, SerialPort serialPort)
 		{
@@ -22,13 +31,6 @@ namespace Modbus.Device
 		public static ModbusSlave CreateRtu(byte unitID, SerialPort serialPort)
 		{
 			return new ModbusSlave(unitID, new ModbusRtuTransport(serialPort));
-		}
-		
-		private ModbusSlave(byte unitID, ModbusTransport transport)
-			: base(transport)
-		{
-			_dataStore = DataStoreFactory.CreateDefaultDataStore();
-			_unitID = unitID;
 		}
 
 		public DataStore DataStore
@@ -47,21 +49,31 @@ namespace Modbus.Device
 		{
 			while (true)
 			{
-				// use transport to retrieve raw message frame from stream
-				byte[] frame = Transport.Read();				
-				
-				// build request from frame
-				IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(frame);
+				try
+				{
+					// use transport to retrieve raw message frame from stream
+					byte[] frame = Transport.Read();
+					log.DebugFormat("RX: {0}", StringUtil.Join(", ", frame));
 
-				// only service requests addressed to this particular slave
-				if (request.SlaveAddress != UnitID)
-					continue;
+					// build request from frame
+					IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(frame);
 
-				// perform action
-				IModbusMessage response = ApplyRequest(request);
+					// only service requests addressed to this particular slave
+					if (request.SlaveAddress != UnitID)
+						continue;
 
-				// write response
-				Transport.Write(response);	
+					// perform action
+					IModbusMessage response = ApplyRequest(request);
+
+					// write response
+					log.DebugFormat("TX: {0}", StringUtil.Join(", ", Transport.BuildMessageFrame(response)));
+					Transport.Write(response);	
+
+				}
+				catch (Exception e)
+				{
+					log.ErrorFormat("Exception encountered while listening for requests - {0}", e.Message);
+				}
 			}
 		}
 

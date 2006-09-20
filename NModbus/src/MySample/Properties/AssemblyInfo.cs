@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("MySample")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Logos")]
+[assembly: AssemblyCompany("NModbus.com")]
 [assembly: AssemblyProduct("MySample")]
-[assembly: AssemblyCopyright("Copyright © Logos 2006")]
+[assembly: AssemblyCopyright("Copyright © NModbus.com 2006")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

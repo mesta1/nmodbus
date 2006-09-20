@@ -30,6 +30,12 @@ namespace Modbus.UnitTests.Data
 			DataStore.ReadData<DiscreteCollection, bool>(new DiscreteCollection(true, false, true, true), 1, 5);
 		}
 
+		[Test, ExpectedException(typeof(ArgumentOutOfRangeException))]
+		public void ReadDataNegativeStartAddress()
+		{
+			DataStore.ReadData<DiscreteCollection, bool>(new DiscreteCollection(true, false, true, true), 0, 5);
+		}
+
 		[Test]
 		public void WriteDataSingle()
 		{

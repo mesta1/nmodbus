@@ -1,38 +1,51 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
-using Modbus.Device;
 using System.IO.Ports;
 using System.Net.Sockets;
+using System.Text;
+using log4net;
+using Modbus.Device;
+using NUnit.Framework;
 
 namespace Modbus.IntegrationTests
 {
-	// NOTE: this integration test requires a Modbus Slave running at the configuration below
 	public class ModbusMasterFixture
 	{
-		public SerialPort Port;
+		public const string MasterPortName = "COM5";
+		public const string SlavePortName = "COM1";
+		public const byte SlaveAddress = 1;
+
+		public SerialPort MasterPort;
+		public SerialPort SlavePort;
 		public Socket Sock;
 		public IModbusMaster Master;
-
-		public const string PortName = "COM5";
-		private const byte SlaveAddress = 1;
-
+		public ModbusSlave Slave;
+		
 		public virtual void Init()
 		{
-			Port = new SerialPort(PortName);
-			Port.ReadTimeout = Modbus.DefaultTimeout;
-			Port.Parity = Parity.None;
-			Port.Open();
+			log4net.Config.XmlConfigurator.Configure();
+
+			MasterPort = new SerialPort(MasterPortName);
+			SlavePort = new SerialPort(SlavePortName);
+			MasterPort.ReadTimeout = SlavePort.ReadTimeout = Modbus.DefaultTimeout;
+			MasterPort.Parity = SlavePort.Parity = Parity.None;
+			MasterPort.Open();
+			SlavePort.Open();
 		}
 
 		[TestFixtureTearDown]
 		public void Dispose()
 		{
-			if (Port != null && Port.IsOpen)
+			if (MasterPort != null && MasterPort.IsOpen)
 			{
-				Port.Close();
-				Port.Dispose();
+				MasterPort.Close();
+				MasterPort.Dispose();		
+			}
+
+			if (SlavePort != null && SlavePort.IsOpen)
+			{
+				SlavePort.Close();
+				SlavePort.Dispose();
 			}
 
 			if (Sock != null && Sock.Connected)
@@ -42,7 +55,7 @@ namespace Modbus.IntegrationTests
 		[Test]
 		public virtual void ReadCoils()
 		{
-			bool[] coils = Master.ReadCoils(SlaveAddress, 0, 8);
+			bool[] coils = Master.ReadCoils(SlaveAddress, 1, 8);
 			Assert.AreEqual(new bool[] { false, false, false, false, false, false, false, false }, coils);
 		}
 

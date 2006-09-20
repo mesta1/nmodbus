@@ -51,7 +51,7 @@ namespace Modbus.Data
 		{
 			int startIndex = startAddress - 1;
 
-			if (startIndex >= dataSource.Count)
+			if (startIndex < 0 || startIndex >= dataSource.Count)
 				throw new ArgumentOutOfRangeException("Start address was out of range. Must be non-negative and <= the size of the collection.");
 
 			if (dataSource.Count < startIndex + count)

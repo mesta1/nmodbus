@@ -1,7 +1,6 @@
 using System.IO;
 using System.IO.Ports;
 using System.Reflection;
-using log4net;
 using Modbus.Message;
 using System;
 
