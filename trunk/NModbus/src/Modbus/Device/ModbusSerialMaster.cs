@@ -9,13 +9,14 @@ namespace Modbus.Device
 	/// <summary>
 	/// Modbus serial ASCII master.
 	/// </summary>
-	public class ModbusSerialMaster : IModbusMaster
+	public class ModbusSerialMaster : ModbusDevice, IModbusMaster
 	{
 		private ModbusMaster _modbusMasterImpl;
 
 		private ModbusSerialMaster(ModbusTransport transport)
+			: base(transport)
 		{
-			_modbusMasterImpl = new ModbusMaster(transport);
+			_modbusMasterImpl = new ModbusMaster(Transport);
 		}
 
 		public static ModbusSerialMaster CreateAscii(SerialPort serialPort)

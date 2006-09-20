@@ -6,7 +6,7 @@ using System;
 
 namespace Modbus.IO
 {
-	abstract class ModbusSerialTransport : ModbusTransport
+	public abstract class ModbusSerialTransport : ModbusTransport
 	{
 		private SerialPort _serialPort;
 		private TextReader _reader;
@@ -22,33 +22,27 @@ namespace Modbus.IO
 
 			_serialPort = serialPort;
 			_reader = new StreamReader(_serialPort.BaseStream);
-		}	
+		}
 
-		public SerialPort SerialPort
+		internal SerialPort SerialPort
 		{
 			get { return _serialPort;}
 			set { _serialPort = value;}
 		}
 
-		public TextReader Reader
+		internal TextReader Reader
 		{
 			get { return _reader; }
 			set { _reader = value; }
 		}
 
-		public override void Close()
-		{
-			if (_serialPort.IsOpen)
-				_serialPort.Close();
-		}
-		
-		public override void Write(IModbusMessage message)
+		internal override void Write(IModbusMessage message)
 		{
 			byte[] frame = BuildMessageFrame(message);
 			SerialPort.Write(frame, 0, frame.Length);
 		}
 
-		public override T CreateResponse<T>(byte[] frame)
+		internal override T CreateResponse<T>(byte[] frame)
 		{
 			T response = base.CreateResponse<T>(frame);
 
@@ -59,6 +53,6 @@ namespace Modbus.IO
 			return response;
 		}
 
-		public abstract bool ChecksumsMatch(IModbusMessage message, byte[] messageFrame);
+		internal abstract bool ChecksumsMatch(IModbusMessage message, byte[] messageFrame);
 	}
 }

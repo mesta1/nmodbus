@@ -9,21 +9,21 @@ using System.Threading;
 
 namespace Modbus.IO
 {
-	class ModbusAsciiTransport : ModbusSerialTransport
+	public class ModbusAsciiTransport : ModbusSerialTransport
 	{
 		private const string FrameEnd = "\r\n";
 
-		public ModbusAsciiTransport()
+		internal ModbusAsciiTransport()
 		{
 		}
 
-		public ModbusAsciiTransport(SerialPort serialPort)
+		internal ModbusAsciiTransport(SerialPort serialPort)
 			: base(serialPort)
 		{
 			SerialPort.NewLine = FrameEnd;
 		}
 
-		public override byte[] BuildMessageFrame(IModbusMessage message)
+		internal override byte[] BuildMessageFrame(IModbusMessage message)
 		{
 			List<byte> frame = new List<byte>();
 			frame.Add((byte) ':');
@@ -35,12 +35,12 @@ namespace Modbus.IO
 			return frame.ToArray();
 		}
 
-		public override bool ChecksumsMatch(IModbusMessage message, byte[] messageFrame)
+		internal override bool ChecksumsMatch(IModbusMessage message, byte[] messageFrame)
 		{
 			return ModbusUtil.CalculateLrc(message.MessageFrame) == messageFrame[messageFrame.Length - 1];
 		}
 
-		public override byte[] Read()
+		internal override byte[] Read()
 		{
 			// read message frame, removing frame start ':'
 			string frameHex = Reader.ReadLine().Substring(1);

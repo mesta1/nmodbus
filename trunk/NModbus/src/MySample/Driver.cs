@@ -71,6 +71,8 @@ namespace MySample
 				// create modbus master
 				ModbusSerialMaster master = ModbusSerialMaster.CreateAscii(masterPort);
 
+				master.Transport.Retries = 5;
+				
 				// read five register values
 				ushort startAddress = 100;
 				ushort numRegisters = 5;
