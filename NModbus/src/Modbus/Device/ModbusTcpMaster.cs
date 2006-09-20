@@ -9,13 +9,14 @@ namespace Modbus.Device
 	/// <summary>
 	/// Modbus IP based TCP master.
 	/// </summary>
-	public class ModbusTcpMaster : IModbusTcpMaster, IModbusMaster
+	public class ModbusTcpMaster : ModbusDevice, IModbusTcpMaster, IModbusMaster
 	{
 		private ModbusMaster _modbusMasterImpl;
 
 		private ModbusTcpMaster(ModbusTcpTransport transport)
+			: base(transport)
 		{
-			_modbusMasterImpl = new ModbusMaster(transport);
+			_modbusMasterImpl = new ModbusMaster(Transport);
 		}
 
 		public static ModbusTcpMaster CreateTcp(Socket socket)

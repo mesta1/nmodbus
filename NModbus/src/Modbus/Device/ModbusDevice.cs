@@ -10,10 +10,9 @@ namespace Modbus.Device
 	{
 		private ModbusTransport _transport;
 
-		internal ModbusTransport Transport
+		public ModbusTransport Transport
 		{
 			get { return _transport; }
-			set { _transport = value; }
 		}
 
 		internal ModbusDevice(ModbusTransport transport)

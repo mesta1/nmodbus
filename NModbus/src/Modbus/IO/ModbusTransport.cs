@@ -5,7 +5,7 @@ using Modbus.Message;
 
 namespace Modbus.IO
 {
-	abstract class ModbusTransport
+	public abstract class ModbusTransport
 	{
 		private int _retries = Modbus.DefaultRetries;
 
@@ -15,12 +15,12 @@ namespace Modbus.IO
 			set { _retries = value; }
 		}
 
-		public void BroadcastMessage(IModbusMessage request)
+		internal void BroadcastMessage(IModbusMessage request)
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		public T UnicastMessage<T>(IModbusMessage message) where T : IModbusMessage, new()
+		internal T UnicastMessage<T>(IModbusMessage message) where T : IModbusMessage, new()
 		{
 			T response = default(T);
 			int attempt = 1;
@@ -44,7 +44,7 @@ namespace Modbus.IO
 			return response;
 		}
 
-		public virtual T CreateResponse<T>(byte[] frame) where T : IModbusMessage, new()
+		internal virtual T CreateResponse<T>(byte[] frame) where T : IModbusMessage, new()
 		{
 			byte functionCode = frame[1];
 
@@ -58,9 +58,8 @@ namespace Modbus.IO
 			return response;
 		}
 
-		public abstract byte[] BuildMessageFrame(IModbusMessage message);
-		public abstract byte[] Read();
-		public abstract void Write(IModbusMessage message);
-		public abstract void Close();
+		internal abstract byte[] BuildMessageFrame(IModbusMessage message);
+		internal abstract byte[] Read();
+		internal abstract void Write(IModbusMessage message);
 	}
 }

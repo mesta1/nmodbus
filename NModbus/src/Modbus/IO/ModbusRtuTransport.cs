@@ -20,7 +20,7 @@ namespace Modbus.IO
 		{
 		}
 
-		public override byte[] BuildMessageFrame(IModbusMessage message)
+		internal override byte[] BuildMessageFrame(IModbusMessage message)
 		{
 			List<byte> messageBody = new List<byte>();
 			messageBody.Add(message.SlaveAddress);
@@ -30,12 +30,12 @@ namespace Modbus.IO
 			return messageBody.ToArray();
 		}
 
-		public override bool ChecksumsMatch(IModbusMessage message, byte[] messageFrame)
+		internal override bool ChecksumsMatch(IModbusMessage message, byte[] messageFrame)
 		{
 			return BitConverter.ToUInt16(messageFrame, messageFrame.Length - 2) == BitConverter.ToUInt16(ModbusUtil.CalculateCrc(message.MessageFrame), 0);
 		}
 
-		public override byte[] Read()
+		internal override byte[] Read()
 		{
 			// read beginning of message frame
 			byte[] frameStart = new byte[4];
@@ -85,6 +85,6 @@ namespace Modbus.IO
 			}
 
 			return numBytes;
-		}		
+		}
 	}
 }

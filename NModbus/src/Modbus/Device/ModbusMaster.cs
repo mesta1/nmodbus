@@ -10,11 +10,13 @@ using Modbus.Data;
 
 namespace Modbus.Device
 {
-	internal class ModbusMaster : ModbusDevice
+	internal class ModbusMaster
 	{
-		public ModbusMaster(ModbusTransport transport)
-			: base(transport)
+		private ModbusTransport _transport;
+
+		internal ModbusMaster(ModbusTransport transport)			
 		{
+			_transport = transport;
 		}
 
 		public bool[] ReadCoils(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
@@ -30,7 +32,7 @@ namespace Modbus.Device
 		internal bool[] ReadDiscretes(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
 		{
 			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, slaveAddress, startAddress, numberOfPoints);
-			ReadCoilsInputsResponse response = Transport.UnicastMessage<ReadCoilsInputsResponse>(request);
+			ReadCoilsInputsResponse response = _transport.UnicastMessage<ReadCoilsInputsResponse>(request);
 
 			return CollectionUtil.Slice<bool>(response.Data, 0, request.NumberOfPoints);
 		}
@@ -48,7 +50,7 @@ namespace Modbus.Device
 		internal ushort[] ReadRegisters(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
 		{
 			ReadHoldingInputRegistersRequest request = new ReadHoldingInputRegistersRequest(Modbus.ReadHoldingRegisters, slaveAddress, startAddress, numberOfPoints);
-			ReadHoldingInputRegistersResponse response = Transport.UnicastMessage<ReadHoldingInputRegistersResponse>(request);
+			ReadHoldingInputRegistersResponse response = _transport.UnicastMessage<ReadHoldingInputRegistersResponse>(request);
 			
 			return CollectionUtil.ToArray<ushort>(response.Data);
 		}
@@ -56,25 +58,25 @@ namespace Modbus.Device
 		public void WriteSingleCoil(byte slaveAddress, ushort coilAddress, bool value)
 		{
 			WriteSingleCoilRequestResponse request = new WriteSingleCoilRequestResponse(slaveAddress, coilAddress, value);
-			Transport.UnicastMessage<WriteSingleCoilRequestResponse>(request);
+			_transport.UnicastMessage<WriteSingleCoilRequestResponse>(request);
 		}
 
 		public void WriteSingleRegister(byte slaveAddress, ushort registerAddress, ushort value)
 		{
 			WriteSingleRegisterRequestResponse request = new WriteSingleRegisterRequestResponse(slaveAddress, registerAddress, value);
-			Transport.UnicastMessage<WriteSingleRegisterRequestResponse>(request);
+			_transport.UnicastMessage<WriteSingleRegisterRequestResponse>(request);
 		}
 
 		public void WriteMultipleRegisters(byte slaveAddress, ushort startAddress, ushort[] data)
 		{
 			WriteMultipleRegistersRequest request = new WriteMultipleRegistersRequest(slaveAddress, startAddress, new RegisterCollection(data));
-			Transport.UnicastMessage<WriteMultipleRegistersResponse>(request);
+			_transport.UnicastMessage<WriteMultipleRegistersResponse>(request);
 		}
 
 		public void WriteMultipleCoils(byte slaveAddress, ushort startAddress, bool[] data)
 		{
 			WriteMultipleCoilsRequest request = new WriteMultipleCoilsRequest(slaveAddress, startAddress, new DiscreteCollection(data));
-			Transport.UnicastMessage<WriteMultipleCoilsResponse>(request);
+			_transport.UnicastMessage<WriteMultipleCoilsResponse>(request);
 		}
 	}
 }

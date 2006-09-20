@@ -8,15 +8,15 @@ using System.Net;
 
 namespace Modbus.IO
 {
-	class ModbusTcpTransport : ModbusTransport
+	public class ModbusTcpTransport : ModbusTransport
 	{
 		private Socket _socket;
 
-		public ModbusTcpTransport()
+		internal ModbusTcpTransport()
 		{
 		}
 
-		public ModbusTcpTransport(Socket socket)
+		internal ModbusTcpTransport(Socket socket)
 		{
 			if (socket == null)
 				throw new ArgumentNullException("socket");
@@ -32,17 +32,12 @@ namespace Modbus.IO
 			set { _socket = value; }
 		}
 
-		public override void Close()
-		{
-			_socket.Close();
-		}
-
-		public override void Write(IModbusMessage message)
+		internal override void Write(IModbusMessage message)
 		{			
 			Socket.Send(BuildMessageFrame(message));
 		}
 
-		public override byte[] BuildMessageFrame(IModbusMessage message)
+		internal override byte[] BuildMessageFrame(IModbusMessage message)
 		{
 			byte[] mbapHeader = new byte[] { 0, 0, 0, 0, 0, (byte) (message.ProtocolDataUnit.Length + 1), Byte.MaxValue };
 
@@ -54,7 +49,7 @@ namespace Modbus.IO
 			return frame;
 		}
 
-		public override byte[] Read()
+		internal override byte[] Read()
 		{
 			// read header
 			byte[] MbapHeader = new byte[6];
