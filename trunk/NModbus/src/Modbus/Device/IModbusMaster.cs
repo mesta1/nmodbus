@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Modbus.IO;
 
 namespace Modbus.Device
 {
 	public interface IModbusMaster
 	{
+		ModbusTransport Transport { get; }
 		bool[] ReadCoils(byte slaveAddress, ushort startAddress, ushort numberOfPoints);
 		bool[] ReadInputs(byte slaveAddress, ushort startAddress, ushort numberOfPoints);
 		ushort[] ReadHoldingRegisters(byte slaveAddress, ushort startAddress, ushort numberOfPoints);

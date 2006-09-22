@@ -28,7 +28,7 @@ namespace Modbus
 		public const int DefaultRetries = 3;
 
 		// default setting for IO timeouts in milliseconds
-		public const int DefaultTimeout = 3000;
+		public const int DefaultTimeout = 1000;
 
 		// smallest supported message frame size (sans checksum)
 		public const int MinimumFrameSize = 2;

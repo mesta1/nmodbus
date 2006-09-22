@@ -16,22 +16,25 @@ namespace Modbus.IntegrationTests
 		{
 			base.Init();
 			Master = ModbusSerialMaster.CreateAscii(MasterPort);
-			Slave = ModbusSlave.CreateAscii(SlaveAddress, SlavePort);
+			MasterPort.ReadTimeout = 1000;
+			Master.Transport.Retries = 10;
+			//Slave = ModbusSlave.CreateAscii(SlaveAddress, SlavePort);
 
-			Thread thread = new Thread(new ThreadStart(Slave.Listen));
-			thread.Start();
+			//Thread thread = new Thread(new ThreadStart(Slave.Listen));
+			//thread.Start();
 		}
 
 		[Test]
 		public override void ReadCoils()
-		{
+		{ 
 			base.ReadCoils();
+			string leftInBuffer =  MasterPort.ReadLine();
 		}
 
 		[Test]
 		public override void Read0Coils()
 		{
-			base.Read0Coils();
+			base.Read0Coils();			
 		}
 
 		[Test]

@@ -22,8 +22,6 @@ namespace Modbus.IO
 				throw new ArgumentNullException("socket");
 			
 			_socket = socket;
-			_socket.SendTimeout = Modbus.DefaultTimeout;
-			_socket.ReceiveTimeout = Modbus.DefaultTimeout;
 		}
 
 		public Socket Socket

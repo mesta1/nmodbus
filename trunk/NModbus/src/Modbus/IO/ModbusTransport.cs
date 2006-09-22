@@ -1,12 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using log4net;
 using Modbus.Message;
+using Modbus.Util;
 
 namespace Modbus.IO
 {
 	public abstract class ModbusTransport
 	{
+		private static readonly ILog log = LogManager.GetLogger(typeof(ModbusTransport));
 		private int _retries = Modbus.DefaultRetries;
 
 		public int Retries
@@ -30,14 +33,18 @@ namespace Modbus.IO
 			{
 				try
 				{
+					log.DebugFormat("TX: {0}", StringUtil.Join(", ", message.MessageFrame));
 					Write(message);
 					response = CreateResponse<T>(Read());
+					log.DebugFormat("RX: {0}", StringUtil.Join(", ", response.MessageFrame));
 					success = true;
 				}
-				catch (Exception ioe)
+				catch (Exception e)	
 				{
+					log.DebugFormat("Failure {0}, {1} attempts remaining. {2}", attempt, _retries - attempt, e.Message);
+
 					if (attempt++ >= _retries)
-						throw ioe;
+						throw e;
 				}
 			} while (!success);
 
