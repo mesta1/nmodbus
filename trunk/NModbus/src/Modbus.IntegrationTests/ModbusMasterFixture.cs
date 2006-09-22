@@ -6,6 +6,7 @@ using System.Text;
 using log4net;
 using Modbus.Device;
 using NUnit.Framework;
+using System.Threading;
 
 namespace Modbus.IntegrationTests
 {
@@ -14,12 +15,11 @@ namespace Modbus.IntegrationTests
 		public const string MasterPortName = "COM5";
 		public const string SlavePortName = "COM1";
 		public const byte SlaveAddress = 1;
-
-		public SerialPort MasterPort;
-		public SerialPort SlavePort;
-		public Socket Sock;
 		public IModbusMaster Master;
 		public ModbusSlave Slave;
+		public SerialPort MasterPort;
+		public SerialPort SlavePort;
+		public Socket Sock;		
 		
 		public virtual void Init()
 		{
@@ -27,10 +27,9 @@ namespace Modbus.IntegrationTests
 
 			MasterPort = new SerialPort(MasterPortName);
 			SlavePort = new SerialPort(SlavePortName);
-			MasterPort.ReadTimeout = SlavePort.ReadTimeout = Modbus.DefaultTimeout;
+			MasterPort.ReadTimeout = SlavePort.ReadTimeout = 5000;
 			MasterPort.Parity = SlavePort.Parity = Parity.None;
-			MasterPort.Open();
-			//SlavePort.Open();
+			MasterPort.Open();					
 		}
 
 		[TestFixtureTearDown]
@@ -39,7 +38,7 @@ namespace Modbus.IntegrationTests
 			if (MasterPort != null && MasterPort.IsOpen)
 			{
 				MasterPort.Close();
-				MasterPort.Dispose();		
+				MasterPort.Dispose();
 			}
 
 			if (SlavePort != null && SlavePort.IsOpen)

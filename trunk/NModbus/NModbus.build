@@ -7,7 +7,7 @@
 	<property name="path.bin" value="src\Modbus\bin\Release" />
 	<property name="path.docs" value="docs" />
 	<property name="path.dist" value="dist" />
-	<property name="version" value="0.0.1" />
+	<property name="version" value="0.0.2" />
 	
 	<target name="build">
 		<loadtasks assembly="${nantcontrib}"/>
@@ -55,7 +55,7 @@
 		<mkdir dir="${path.dist}" />
 		<zip zipfile="${path.dist}\NModbus_${version}.zip">
 			<fileset basedir="${path.bin}" prefix="bin">
-				<include name="Modbus.dll" />
+				<include name="*.dll" />
 			</fileset>
 			<fileset basedir=".">
 				<include name="README.txt" />

@@ -4,6 +4,7 @@ using System.Text;
 using log4net;
 using Modbus.Message;
 using Modbus.Util;
+using System.IO;
 
 namespace Modbus.IO
 {
@@ -11,6 +12,10 @@ namespace Modbus.IO
 	{
 		private static readonly ILog log = LogManager.GetLogger(typeof(ModbusTransport));
 		private int _retries = Modbus.DefaultRetries;
+
+		public ModbusTransport()
+		{
+		}
 
 		public int Retries
 		{
@@ -23,7 +28,7 @@ namespace Modbus.IO
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		internal T UnicastMessage<T>(IModbusMessage message) where T : IModbusMessage, new()
+		internal virtual T UnicastMessage<T>(IModbusMessage message) where T : IModbusMessage, new()
 		{
 			T response = default(T);
 			int attempt = 1;
@@ -33,19 +38,32 @@ namespace Modbus.IO
 			{
 				try
 				{
+					// write message
 					log.DebugFormat("TX: {0}", StringUtil.Join(", ", message.MessageFrame));
 					Write(message);
+
+					// read response
 					response = CreateResponse<T>(Read());
 					log.DebugFormat("RX: {0}", StringUtil.Join(", ", response.MessageFrame));
+
+					// ensure response is of appropriate function code
+					if (message.FunctionCode != response.FunctionCode)
+						throw new IOException(String.Format(ModbusResources.InvalidResponseExceptionMessage, message.FunctionCode, response.FunctionCode));
+
 					success = true;
 				}
-				catch (Exception e)	
+				catch (TimeoutException te)
 				{
-					log.DebugFormat("Failure {0}, {1} attempts remaining. {2}", attempt, _retries - attempt, e.Message);
-
-					if (attempt++ >= _retries)
-						throw e;
+					log.ErrorFormat(te.Message);
+					throw te;
 				}
+				catch (Exception e)
+				{
+					log.ErrorFormat("Failure {0}, {1} retries remaining. {2}", attempt, _retries + 1 - attempt, e.Message);
+
+					if (attempt++ > _retries)
+						throw e;
+				}				
 			} while (!success);
 
 			return response;

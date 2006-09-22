@@ -8,7 +8,7 @@ using System.Net.Sockets;
 namespace Modbus.IntegrationTests
 {
 	[TestFixture]
-	public class ModbusTcpMasterFixture : ModbusMasterFixture
+	public class ModbusTcpFixture : ModbusMasterFixture
 	{
 		[TestFixtureSetUp]
 		public override void Init()
