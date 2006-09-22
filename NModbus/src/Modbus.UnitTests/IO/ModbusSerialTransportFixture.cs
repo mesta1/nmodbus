@@ -13,14 +13,7 @@ namespace Modbus.UnitTests.IO
 {
 	[TestFixture]
 	public class ModbusSerialTransportFixture : ModbusMessageFixture
-	{
-		[Test, ExpectedException(typeof(SlaveException))]
-		public void CreateResponseSlaveException()
-		{
-			ModbusSerialTransport transport = new ModbusAsciiTransport();
-			transport.CreateResponse<ReadCoilsInputsResponse>(new byte[] { 10, 129, 2, 115 });
-		}
-
+	{		
 		[Test, ExpectedException(typeof(IOException))]
 		public void CreateResponseErroneousLrc()
 		{

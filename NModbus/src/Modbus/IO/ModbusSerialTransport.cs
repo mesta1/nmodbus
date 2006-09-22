@@ -42,6 +42,14 @@ namespace Modbus.IO
 			SerialPort.Write(frame, 0, frame.Length);
 		}
 
+		internal override T UnicastMessage<T>(IModbusMessage message)
+		{
+			// clear any old messages from input buffer
+			_serialPort.DiscardInBuffer();
+
+			return base.UnicastMessage<T>(message);
+		}
+
 		internal override T CreateResponse<T>(byte[] frame)
 		{
 			T response = base.CreateResponse<T>(frame);

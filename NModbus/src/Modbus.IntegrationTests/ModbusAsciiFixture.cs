@@ -9,26 +9,24 @@ using System.Threading;
 namespace Modbus.IntegrationTests
 {
 	[TestFixture]
-	public class ModbusAsciiMasterFixture : ModbusMasterFixture
+	public class ModbusAsciiFixture : ModbusMasterFixture
 	{
 		[TestFixtureSetUp]
 		public override void Init()
 		{
 			base.Init();
-			Master = ModbusSerialMaster.CreateAscii(MasterPort);
-			MasterPort.ReadTimeout = 1000;
-			Master.Transport.Retries = 10;
-			//Slave = ModbusSlave.CreateAscii(SlaveAddress, SlavePort);
 
-			//Thread thread = new Thread(new ThreadStart(Slave.Listen));
-			//thread.Start();
+			SlavePort.Open();
+			Master = ModbusSerialMaster.CreateAscii(MasterPort);
+			Slave = ModbusSlave.CreateAscii(SlaveAddress, SlavePort);
+			Thread slaveThread = new Thread(new ThreadStart(Slave.Listen));
+			slaveThread.Start();
 		}
 
 		[Test]
 		public override void ReadCoils()
 		{ 
 			base.ReadCoils();
-			string leftInBuffer =  MasterPort.ReadLine();
 		}
 
 		[Test]

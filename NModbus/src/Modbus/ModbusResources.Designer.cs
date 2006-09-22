@@ -61,6 +61,15 @@ namespace Modbus {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Received response of invalid type. Expected {0}, received {1}..
+        /// </summary>
+        internal static string InvalidResponseExceptionMessage {
+            get {
+                return ResourceManager.GetString("InvalidResponseExceptionMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exception encountered while listening for requests - {0}.
         /// </summary>
         internal static string ModbusSlaveListenerException {

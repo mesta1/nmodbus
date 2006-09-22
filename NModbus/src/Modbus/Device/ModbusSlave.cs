@@ -28,10 +28,10 @@ namespace Modbus.Device
 			return new ModbusSlave(unitID, new ModbusAsciiTransport(serialPort));
 		}
 
-		public static ModbusSlave CreateRtu(byte unitID, SerialPort serialPort)
-		{
-			return new ModbusSlave(unitID, new ModbusRtuTransport(serialPort));
-		}
+		//public static ModbusSlave CreateRtu(byte unitID, SerialPort serialPort)
+		//{
+		//    return new ModbusSlave(unitID, new ModbusRtuTransport(serialPort));
+		//}
 
 		public DataStore DataStore
 		{
@@ -52,11 +52,11 @@ namespace Modbus.Device
 				try
 				{
 					// use transport to retrieve raw message frame from stream
-					byte[] frame = Transport.Read();
-					log.DebugFormat("RX: {0}", StringUtil.Join(", ", frame));
+					byte[] frame = Transport.Read();					
 
 					// build request from frame
 					IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(frame);
+					log.DebugFormat("RX: {0}", StringUtil.Join(", ", request.MessageFrame));
 
 					// only service requests addressed to this particular slave
 					if (request.SlaveAddress != UnitID)
@@ -66,7 +66,7 @@ namespace Modbus.Device
 					IModbusMessage response = ApplyRequest(request);
 
 					// write response
-					log.DebugFormat("TX: {0}", StringUtil.Join(", ", Transport.BuildMessageFrame(response)));
+					log.DebugFormat("TX: {0}", StringUtil.Join(", ", response.MessageFrame));
 					Transport.Write(response);	
 
 				}
@@ -109,6 +109,21 @@ namespace Modbus.Device
 			return response;
 		}
 
+		internal static WriteSingleRegisterRequestResponse WriteSingleRegister(WriteSingleRegisterRequestResponse request, RegisterCollection dataSource)
+		{
+			DataStore.WriteData<RegisterCollection, ushort>(request.Data, dataSource, request.StartAddress);
+			
+			return request;
+		}
+
+		internal static WriteMultipleRegistersResponse WriteMultipleRegisters(WriteMultipleRegistersRequest request, RegisterCollection dataSource)
+		{
+			DataStore.WriteData<RegisterCollection, ushort>(request.Data, dataSource, request.StartAddress);
+			WriteMultipleRegistersResponse response = new WriteMultipleRegistersResponse(request.SlaveAddress, request.StartAddress, request.NumberOfPoints);
+
+			return response;
+		}
+
 		internal IModbusMessage ApplyRequest(IModbusMessage request)
 		{
 			IModbusMessage response;
@@ -130,18 +145,20 @@ namespace Modbus.Device
 				case Modbus.WriteSingleCoil:
 					response = WriteSingleCoil((WriteSingleCoilRequestResponse) request, DataStore.CoilDiscretes);
 					break;
-				//case Modbus.WriteSingleRegister:
-				//    break;
+				case Modbus.WriteSingleRegister:
+					response = WriteSingleRegister((WriteSingleRegisterRequestResponse) request, DataStore.HoldingRegisters);
+					break;
 				case Modbus.WriteMultipleCoils:
 					response = WriteMultipleCoils((WriteMultipleCoilsRequest) request, DataStore.CoilDiscretes);
 					break;
-				//case Modbus.WriteMultipleRegisters:
-				//    break;
+				case Modbus.WriteMultipleRegisters:
+					response = WriteMultipleRegisters((WriteMultipleRegistersRequest) request, DataStore.HoldingRegisters);
+					break;
 				default:
 					throw new ArgumentException(String.Format("Unsupported function code {0}", request.FunctionCode), "request");
 			}
 
 			return response;
-		}
+		}		
 	}
 }

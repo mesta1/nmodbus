@@ -79,5 +79,27 @@ namespace Modbus.UnitTests.Device
 			AssertModbusMessagePropertiesAreEqual(expectedResponse, response);
 			Assert.AreEqual(new bool[] { val, val, val, val, val, val, val, val, val, val }, CollectionUtil.Slice<bool>(_testDataStore.CoilDiscretes, startAddress - 1, numberOfPoints));
 		}
+
+		[Test]
+		public void WriteSingleRegister()
+		{
+			ushort startAddress = 35;
+			ushort value = 45;
+			Assert.AreNotEqual(value, _testDataStore.HoldingRegisters[startAddress - 1]);
+			WriteSingleRegisterRequestResponse expectedResponse = new WriteSingleRegisterRequestResponse(1, startAddress, value);
+			WriteSingleRegisterRequestResponse response = ModbusSlave.WriteSingleRegister(new WriteSingleRegisterRequestResponse(1, startAddress, value), _testDataStore.HoldingRegisters);
+			AssertModbusMessagePropertiesAreEqual(expectedResponse, response);
+		}
+
+		[Test]
+		public void WriteMultipleRegisters()
+		{
+			ushort startAddress = 35;
+			ushort[] valuesToWrite = new ushort[] { 1, 2, 3, 4, 5 };
+			Assert.AreNotEqual(valuesToWrite, CollectionUtil.Slice<ushort>(_testDataStore.HoldingRegisters, startAddress - 1, valuesToWrite.Length));
+			WriteMultipleRegistersResponse expectedResponse = new WriteMultipleRegistersResponse (1, startAddress, (ushort) valuesToWrite.Length);
+			WriteMultipleRegistersResponse response = ModbusSlave.WriteMultipleRegisters(new WriteMultipleRegistersRequest(1, startAddress, new RegisterCollection(valuesToWrite)), _testDataStore.HoldingRegisters);
+			AssertModbusMessagePropertiesAreEqual(expectedResponse, response);
+		}
 	}
 }
