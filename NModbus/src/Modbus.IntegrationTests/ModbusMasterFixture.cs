@@ -30,7 +30,7 @@ namespace Modbus.IntegrationTests
 			MasterPort.ReadTimeout = SlavePort.ReadTimeout = Modbus.DefaultTimeout;
 			MasterPort.Parity = SlavePort.Parity = Parity.None;
 			MasterPort.Open();
-			SlavePort.Open();
+			//SlavePort.Open();
 		}
 
 		[TestFixtureTearDown]
