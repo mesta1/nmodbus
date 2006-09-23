@@ -29,7 +29,7 @@ namespace Modbus.IntegrationTests
 			SlavePort = new SerialPort(SlavePortName);
 			MasterPort.ReadTimeout = SlavePort.ReadTimeout = 5000;
 			MasterPort.Parity = SlavePort.Parity = Parity.None;
-			MasterPort.Open();					
+			MasterPort.Open();
 		}
 
 		[TestFixtureTearDown]
