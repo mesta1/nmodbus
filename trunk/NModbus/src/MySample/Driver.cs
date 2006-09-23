@@ -6,6 +6,7 @@ using Modbus.Device;
 using Modbus.Util;
 using System.Net.Sockets;
 using Modbus.IO;
+using System.Threading;
 
 namespace MySample
 {
@@ -18,11 +19,11 @@ namespace MySample
 		{
 			try
 			{
-				StartModbusAsciiSlave();
+				ModbusAsciiMasterReadRegistersFromModbusSlave();
+				//StartModbusAsciiSlave();
 				//ModbusAsciiMasterReadRegisters();
 				//ModbusRtuMasterWriteRegisters();
 				//ModbusTcpMasterReadRegisters();
-
 			}
 			catch (Exception e)
 			{
@@ -52,6 +53,8 @@ namespace MySample
 
 		public static void ModbusAsciiMasterReadRegistersFromModbusSlave()
 		{
+			Thread slaveThread;
+
 			using (SerialPort masterPort = new SerialPort("COM1"))
 			using (SerialPort slavePort = new SerialPort("COM5"))
 			{
@@ -63,10 +66,11 @@ namespace MySample
 				masterPort.Open();
 				slavePort.Open();
 				
-				// create modbus slave
+				// create modbus slave on seperate thread
 				byte slaveID = 1;
 				ModbusSlave slave = ModbusSlave.CreateAscii(slaveID, slavePort);
-				slave.Listen();
+				slaveThread = new Thread(new ThreadStart(slave.Listen));
+				slaveThread.Start();
 
 				// create modbus master
 				ModbusSerialMaster master = ModbusSerialMaster.CreateAscii(masterPort);
@@ -81,6 +85,8 @@ namespace MySample
 				for (int i = 0; i < numRegisters; i++)
 					Console.WriteLine("Register {0}={1}", startAddress + i, registers[i]);
 			}
+
+			slaveThread.Abort();
 		}
 
 		public static void ModbusAsciiMasterReadRegisters()
