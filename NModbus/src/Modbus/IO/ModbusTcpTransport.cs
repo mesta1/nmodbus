@@ -47,7 +47,7 @@ namespace Modbus.IO
 			return frame;
 		}
 
-		internal override byte[] Read()
+		internal override byte[] ReadResponse()
 		{
 			// read header
 			byte[] MbapHeader = new byte[6];
@@ -64,6 +64,11 @@ namespace Modbus.IO
 				numBytesRead += Socket.Receive(frame, numBytesRead, frameLength - numBytesRead, SocketFlags.None);
 
 			return frame;
+		}
+
+		internal override byte[] ReadRequest()
+		{
+			throw new Exception("The method or operation is not implemented.");
 		}
 	}
 }

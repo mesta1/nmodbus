@@ -11,6 +11,9 @@ namespace Modbus.IO
 {
 	class ModbusRtuTransport : ModbusSerialTransport
 	{
+		private const int RequestFrameStartLength = 7;
+		private const int ResponseFrameStartLength = 4;
+
 		public ModbusRtuTransport ()
 		{
 		}
@@ -33,36 +36,67 @@ namespace Modbus.IO
 		internal override bool ChecksumsMatch(IModbusMessage message, byte[] messageFrame)
 		{
 			return BitConverter.ToUInt16(messageFrame, messageFrame.Length - 2) == BitConverter.ToUInt16(ModbusUtil.CalculateCrc(message.MessageFrame), 0);
-		}
-
-		internal override byte[] Read()
+		}		
+		
+		internal override byte[] ReadResponse()
 		{
-			// read beginning of message frame
-			byte[] frameStart = new byte[4];
-			int numBytesRead = 0;
-			while (numBytesRead != 4)
-				numBytesRead += SerialPort.Read(frameStart, numBytesRead, 4 - numBytesRead);
-
-			byte functionCode = frameStart[1];
-			byte byteCount = frameStart[2];
-
-			// calculate number of bytes remaining in message frame
-			int bytesRemaining = NumberOfBytesToRead(functionCode, byteCount);
-
-			// read remaining bytes
-			byte[] frameEnd = new byte[bytesRemaining];
-			numBytesRead = 0;
-			while (numBytesRead != bytesRemaining)
-				numBytesRead += SerialPort.Read(frameEnd, numBytesRead, bytesRemaining - numBytesRead);
-
-			// build complete message frame
+			byte[] frameStart = Read(ResponseFrameStartLength);
+			byte[] frameEnd = Read(ResponseBytesToRead(frameStart));
 			byte[] frame = CollectionUtil.Combine<byte>(frameStart, frameEnd);
 
 			return frame;
 		}
 
-		internal static int NumberOfBytesToRead(byte functionCode, byte byteCount)
+		internal override byte[] ReadRequest()
 		{
+			byte[] frameStart = Read(RequestFrameStartLength);
+			byte[] frameEnd = Read(RequestBytesToRead(frameStart));
+			byte[] frame = CollectionUtil.Combine<byte>(frameStart, frameEnd);
+
+			return frame;
+		}
+
+		internal byte[] Read(int count)
+		{
+			byte[] frameBytes = new byte[count];
+			int numBytesRead = 0;
+			while (numBytesRead != count)
+				numBytesRead += SerialPort.Read(frameBytes, numBytesRead, count - numBytesRead);
+
+			return frameBytes;
+		}
+
+		internal static int RequestBytesToRead(byte[] frameStart)
+		{
+			byte functionCode = frameStart[1];
+			int numBytes;
+
+			switch (functionCode)
+			{
+				case Modbus.ReadCoils:
+				case Modbus.ReadInputs:
+				case Modbus.ReadHoldingRegisters:
+				case Modbus.ReadInputRegisters:
+				case Modbus.WriteSingleCoil:
+				case Modbus.WriteSingleRegister:
+					numBytes = 1;
+					break;
+				case Modbus.WriteMultipleCoils:
+				case Modbus.WriteMultipleRegisters:
+					byte byteCount = frameStart[6];
+					numBytes = byteCount + 2;
+					break;
+				default:
+					throw new NotImplementedException(String.Format("Function code {0} not supported.", functionCode));
+			}
+
+			return numBytes;
+		}
+
+		internal static int ResponseBytesToRead(byte[] frameStart)
+		{
+			byte functionCode = frameStart[1];
+			byte byteCount = frameStart[2];
 			int numBytes;
 
 			switch (functionCode)
@@ -85,6 +119,6 @@ namespace Modbus.IO
 			}
 
 			return numBytes;
-		}
+		}		
 	}
 }

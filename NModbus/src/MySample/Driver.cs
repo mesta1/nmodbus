@@ -19,11 +19,11 @@ namespace MySample
 		{
 			try
 			{
-				ModbusAsciiMasterReadRegistersFromModbusSlave();
+				//ModbusAsciiMasterReadRegistersFromModbusSlave();
 				//StartModbusAsciiSlave();
 				//ModbusAsciiMasterReadRegisters();
 				//ModbusRtuMasterWriteRegisters();
-				//ModbusTcpMasterReadRegisters();
+				ModbusTcpMasterSample();
 			}
 			catch (Exception e)
 			{
@@ -133,7 +133,7 @@ namespace MySample
 			}
 		}
 
-		public static void ModbusTcpMasterReadRegisters()
+		public static void ModbusTcpMasterSample()
 		{
 			using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
 			{
