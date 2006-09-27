@@ -40,7 +40,17 @@ namespace Modbus.IO
 			return ModbusUtil.CalculateLrc(message.MessageFrame) == messageFrame[messageFrame.Length - 1];
 		}
 
-		internal override byte[] Read()
+		internal override byte[] ReadResponse()
+		{
+			return ReadRequestResponse();
+		}
+
+		internal override byte[] ReadRequest()
+		{
+			return ReadRequestResponse();
+		}
+
+		internal byte[] ReadRequestResponse()
 		{
 			// read message frame, removing frame start ':'
 			string frameHex = Reader.ReadLine().Substring(1);

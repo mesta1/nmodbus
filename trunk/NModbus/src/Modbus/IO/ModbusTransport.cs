@@ -43,7 +43,7 @@ namespace Modbus.IO
 					Write(message);
 
 					// read response
-					response = CreateResponse<T>(Read());
+					response = CreateResponse<T>(ReadResponse());
 					log.DebugFormat("RX: {0}", StringUtil.Join(", ", response.MessageFrame));
 
 					// ensure response is of appropriate function code
@@ -84,7 +84,8 @@ namespace Modbus.IO
 		}
 
 		internal abstract byte[] BuildMessageFrame(IModbusMessage message);
-		internal abstract byte[] Read();
+		internal abstract byte[] ReadResponse();
+		internal abstract byte[] ReadRequest();
 		internal abstract void Write(IModbusMessage message);
 	}
 }

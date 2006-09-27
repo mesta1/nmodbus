@@ -28,10 +28,10 @@ namespace Modbus.Device
 			return new ModbusSlave(unitID, new ModbusAsciiTransport(serialPort));
 		}
 
-		//public static ModbusSlave CreateRtu(byte unitID, SerialPort serialPort)
-		//{
-		//    return new ModbusSlave(unitID, new ModbusRtuTransport(serialPort));
-		//}
+		public static ModbusSlave CreateRtu(byte unitID, SerialPort serialPort)
+		{
+			return new ModbusSlave(unitID, new ModbusRtuTransport(serialPort));
+		}
 
 		public DataStore DataStore
 		{
@@ -52,7 +52,7 @@ namespace Modbus.Device
 				try
 				{
 					// use transport to retrieve raw message frame from stream
-					byte[] frame = Transport.Read();					
+					byte[] frame = Transport.ReadRequest();
 
 					// build request from frame
 					IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(frame);

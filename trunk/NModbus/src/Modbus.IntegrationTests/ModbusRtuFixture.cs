@@ -4,6 +4,7 @@ using System.Text;
 using NUnit.Framework;
 using Modbus.Device;
 using System.IO.Ports;
+using System.Threading;
 
 namespace Modbus.IntegrationTests
 {
@@ -14,7 +15,12 @@ namespace Modbus.IntegrationTests
 		public override void Init()
 		{
 			base.Init();
+
+			SlavePort.Open();
 			Master = ModbusSerialMaster.CreateRtu(MasterPort);
+			Slave = ModbusSlave.CreateRtu(SlaveAddress, SlavePort);
+			Thread slaveThread = new Thread(new ThreadStart(Slave.Listen));
+			slaveThread.Start();
 		}
 
 		[Test]

@@ -30,7 +30,7 @@ namespace Modbus.UnitTests.IO
 		{
 			ModbusAsciiTransport transport = new ModbusAsciiTransport(null);
 			Assert.Fail();
-		}		
+		}
 
 		// TODO refactor, this pattern does not work for rtu b/c there is not a stringreader.read(byte[] method
 		[Test, ExpectedException(typeof(IOException))]
@@ -42,20 +42,20 @@ namespace Modbus.UnitTests.IO
 			transport.Reader = reader;
 			Expect.Call(reader.ReadLine()).Return(":10");
 			mocks.ReplayAll();
-			transport.Read();
+			transport.ReadResponse();
 			mocks.VerifyAll();
 		}
 
 		[Test]
 		public void Read()
 		{
-			MockRepository mocks = new MockRepository();			
+			MockRepository mocks = new MockRepository();
 			TextReader reader = mocks.CreateMock<StringReader>("");
 			ModbusAsciiTransport transport = new ModbusAsciiTransport();
 			transport.Reader = reader;
 			Expect.Call(reader.ReadLine()).Return(":110100130025B6");
 			mocks.ReplayAll();
-			transport.Read();
+			transport.ReadResponse();
 			mocks.VerifyAll();
 		}
 
