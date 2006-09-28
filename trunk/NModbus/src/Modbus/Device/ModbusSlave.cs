@@ -11,32 +11,16 @@ using System.Net.Sockets;
 
 namespace Modbus.Device
 {
-	public class ModbusSlave : ModbusDevice
+	public abstract class ModbusSlave
 	{
-		private static readonly ILog log = LogManager.GetLogger(typeof(ModbusSlave));
+		protected static readonly ILog log = LogManager.GetLogger(typeof(ModbusSlave));
 		private byte _unitID;
 		private DataStore _dataStore;
 		
-		private ModbusSlave(byte unitID, ModbusTransport transport)
-			: base(transport)
+		public ModbusSlave(byte unitID)
 		{
 			_dataStore = DataStoreFactory.CreateDefaultDataStore();
 			_unitID = unitID;
-		}
-
-		public static ModbusSlave CreateAscii(byte unitID, SerialPort serialPort)
-		{
-			return new ModbusSlave(unitID, new ModbusAsciiTransport(serialPort));
-		}
-
-		public static ModbusSlave CreateRtu(byte unitID, SerialPort serialPort)
-		{
-			return new ModbusSlave(unitID, new ModbusRtuTransport(serialPort));
-		}
-
-		public static ModbusSlave CreateTcp(byte unitID, Socket sock)
-		{
-			return new ModbusSlave(unitID, new ModbusTcpTransport(sock));
 		}
 
 		public DataStore DataStore
@@ -49,40 +33,7 @@ namespace Modbus.Device
 		{
 			get { return _unitID; }
 			set { _unitID = value; }
-		}
-
-		public void Listen()
-		{
-			while (true)
-			{
-				try
-				{
-					// use transport to retrieve raw message frame from stream
-					byte[] frame = Transport.ReadRequest();
-
-					// build request from frame
-					IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(frame);
-					log.DebugFormat("RX: {0}", StringUtil.Join(", ", request.MessageFrame));
-
-					// only service requests addressed to this particular slave
-					if (request.SlaveAddress != UnitID)
-						continue;
-
-					// perform action
-					IModbusMessage response = ApplyRequest(request);
-
-					// write response
-					log.DebugFormat("TX: {0}", StringUtil.Join(", ", response.MessageFrame));
-					Transport.Write(response);	
-
-				}
-				catch (Exception e)
-				{
-					// TODO explicitly catch timeout exception
-					log.ErrorFormat(ModbusResources.ModbusSlaveListenerException, e.Message);
-				}
-			}
-		}
+		}		
 
 		internal static ReadCoilsInputsResponse ReadDiscretes(ReadCoilsInputsRequest request, DiscreteCollection dataSource)
 		{
@@ -165,6 +116,8 @@ namespace Modbus.Device
 			}
 
 			return response;
-		}		
+		}
+
+		public abstract void Listen();
 	}
 }

@@ -60,12 +60,12 @@ namespace Modbus.IO
 		public byte[] ReadRequestResponse()
 		{
 			// read header
-			byte[] MbapHeader = new byte[6];
+			byte[] mbapHeader = new byte[6];
 			int numBytesRead = 0;
 			while (numBytesRead != 6)
-				numBytesRead += Socket.Receive(MbapHeader, numBytesRead, 6 - numBytesRead, SocketFlags.None);
+				numBytesRead += Socket.Receive(mbapHeader, numBytesRead, 6 - numBytesRead, SocketFlags.None);
 
-			ushort frameLength = (ushort) IPAddress.HostToNetworkOrder(BitConverter.ToInt16(MbapHeader, 4));
+			ushort frameLength = (ushort) IPAddress.HostToNetworkOrder(BitConverter.ToInt16(mbapHeader, 4));
 
 			// read message
 			byte[] frame = new byte[frameLength];

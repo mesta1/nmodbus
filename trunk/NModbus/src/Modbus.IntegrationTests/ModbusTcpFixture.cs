@@ -4,6 +4,7 @@ using System.Text;
 using NUnit.Framework;
 using Modbus.Device;
 using System.Net.Sockets;
+using System.Net;
 
 namespace Modbus.IntegrationTests
 {
@@ -18,13 +19,13 @@ namespace Modbus.IntegrationTests
 		[TestFixtureSetUp]
 		public override void Init()
 		{
-			Socket SlaveSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-			SlaveSocket.Connect(SocketHost, SocketPort);
-			Slave = ModbusSlave.CreateTcp(SlaveAddress, SlaveSocket);
+			//Socket SlaveSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			
+			//Slave = ModbusSlave.CreateTcp(SlaveAddress, SlaveSocket);
 
-			Socket MasterSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-			MasterSocket.Connect(SocketHost, SocketPort);
-			Master = ModbusTcpMaster.CreateTcp(MasterSocket);
+			//Socket MasterSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			//MasterSocket.Connect(SocketHost, SocketPort);
+			//Master = ModbusTcpMaster.CreateTcp(MasterSocket);
 		}
 
 		[TestFixtureTearDown]
