@@ -12,43 +12,44 @@ namespace Modbus.IntegrationTests
 {
 	public class ModbusMasterFixture
 	{
-		public const string MasterPortName = "COM5";
-		public const string SlavePortName = "COM1";
-		public const byte SlaveAddress = 1;
 		public IModbusMaster Master;
+		public SerialPort MasterSerialPort;
+		public const string MasterSerialPortName = "COM5";
+
 		public ModbusSlave Slave;
-		public SerialPort MasterPort;
-		public SerialPort SlavePort;
-		public Socket Sock;		
+		public SerialPort SlaveSerialPort;
+		public const string SlaveSerialPortName = "COM1";
+		public const byte SlaveAddress = 1;		
 		
 		public virtual void Init()
+		{			
+			MasterSerialPort = new SerialPort(MasterSerialPortName);
+			SlaveSerialPort = new SerialPort(SlaveSerialPortName);
+			MasterSerialPort.ReadTimeout = SlaveSerialPort.ReadTimeout = 5000;
+			MasterSerialPort.Parity = SlaveSerialPort.Parity = Parity.None;
+			MasterSerialPort.Open();
+		}
+
+		[TestFixtureSetUp]
+		public void TestFixtureSetup()
 		{
 			log4net.Config.XmlConfigurator.Configure();
-
-			MasterPort = new SerialPort(MasterPortName);
-			SlavePort = new SerialPort(SlavePortName);
-			MasterPort.ReadTimeout = SlavePort.ReadTimeout = 5000;
-			MasterPort.Parity = SlavePort.Parity = Parity.None;
-			MasterPort.Open();
 		}
 
 		[TestFixtureTearDown]
 		public void Dispose()
 		{
-			if (MasterPort != null && MasterPort.IsOpen)
+			if (MasterSerialPort != null && MasterSerialPort.IsOpen)
 			{
-				MasterPort.Close();
-				MasterPort.Dispose();
+				MasterSerialPort.Close();
+				MasterSerialPort.Dispose();
 			}
 
-			if (SlavePort != null && SlavePort.IsOpen)
+			if (SlaveSerialPort != null && SlaveSerialPort.IsOpen)
 			{
-				SlavePort.Close();
-				SlavePort.Dispose();
+				SlaveSerialPort.Close();
+				SlaveSerialPort.Dispose();
 			}
-
-			if (Sock != null && Sock.Connected)
-				Sock.Close();
 		}
 
 		[Test]

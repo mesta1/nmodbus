@@ -7,6 +7,7 @@ using Modbus.IO;
 using Modbus.Message;
 using Modbus.Data;
 using Modbus.Util;
+using System.Net.Sockets;
 
 namespace Modbus.Device
 {
@@ -31,6 +32,11 @@ namespace Modbus.Device
 		public static ModbusSlave CreateRtu(byte unitID, SerialPort serialPort)
 		{
 			return new ModbusSlave(unitID, new ModbusRtuTransport(serialPort));
+		}
+
+		public static ModbusSlave CreateTcp(byte unitID, Socket sock)
+		{
+			return new ModbusSlave(unitID, new ModbusTcpTransport(sock));
 		}
 
 		public DataStore DataStore

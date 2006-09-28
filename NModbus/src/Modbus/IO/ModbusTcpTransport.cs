@@ -8,7 +8,7 @@ using System.Net;
 
 namespace Modbus.IO
 {
-	public class ModbusTcpTransport : ModbusTransport
+	class ModbusTcpTransport : ModbusTransport
 	{
 		private Socket _socket;
 
@@ -49,6 +49,16 @@ namespace Modbus.IO
 
 		internal override byte[] ReadResponse()
 		{
+			return ReadRequestResponse();
+		}
+
+		internal override byte[] ReadRequest()
+		{
+			return ReadRequestResponse();
+		}
+
+		public byte[] ReadRequestResponse()
+		{
 			// read header
 			byte[] MbapHeader = new byte[6];
 			int numBytesRead = 0;
@@ -64,11 +74,6 @@ namespace Modbus.IO
 				numBytesRead += Socket.Receive(frame, numBytesRead, frameLength - numBytesRead, SocketFlags.None);
 
 			return frame;
-		}
-
-		internal override byte[] ReadRequest()
-		{
-			throw new Exception("The method or operation is not implemented.");
 		}
 	}
 }

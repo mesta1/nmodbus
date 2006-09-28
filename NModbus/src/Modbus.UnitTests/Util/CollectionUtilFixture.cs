@@ -46,6 +46,26 @@ namespace Modbus.UnitTests.Util
 			Assert.AreEqual(new bool[] { false, false, true }, CollectionUtil.Slice<bool>(col, 2, 3));
 		}
 
+		[Test, ExpectedException(typeof(ArgumentNullException))]
+		public void SliceNullICollection()
+		{
+			ICollection<bool> col = null;
+			CollectionUtil.Slice<bool>(col, 1, 1);
+		}
+
+		[Test, ExpectedException(typeof(ArgumentNullException))]
+		public void SliceNullArray()
+		{
+			bool[] array = null;
+			CollectionUtil.Slice<bool>(array, 1, 1);
+		}
+
+		[Test, ExpectedException(typeof(ArgumentNullException))]
+		public void ToArrayNull()
+		{
+			CollectionUtil.ToArray<bool>(null);
+		}
+
 		[Test]
 		public void ToArray()
 		{

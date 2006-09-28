@@ -11,8 +11,8 @@ namespace Modbus.IO
 {
 	class ModbusRtuTransport : ModbusSerialTransport
 	{
-		private const int RequestFrameStartLength = 7;
-		private const int ResponseFrameStartLength = 4;
+		public const int RequestFrameStartLength = 7;
+		public const int ResponseFrameStartLength = 4;
 
 		public ModbusRtuTransport ()
 		{
@@ -56,7 +56,7 @@ namespace Modbus.IO
 			return frame;
 		}
 
-		internal byte[] Read(int count)
+		public byte[] Read(int count)
 		{
 			byte[] frameBytes = new byte[count];
 			int numBytesRead = 0;
@@ -66,7 +66,7 @@ namespace Modbus.IO
 			return frameBytes;
 		}
 
-		internal static int RequestBytesToRead(byte[] frameStart)
+		public static int RequestBytesToRead(byte[] frameStart)
 		{
 			byte functionCode = frameStart[1];
 			int numBytes;
@@ -93,7 +93,7 @@ namespace Modbus.IO
 			return numBytes;
 		}
 
-		internal static int ResponseBytesToRead(byte[] frameStart)
+		public static int ResponseBytesToRead(byte[] frameStart)
 		{
 			byte functionCode = frameStart[1];
 			byte byteCount = frameStart[2];

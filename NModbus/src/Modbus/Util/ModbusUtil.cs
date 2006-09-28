@@ -64,11 +64,6 @@ namespace Modbus.Util
 			return Encoding.ASCII.GetBytes(characters);
 		}
 
-		public static byte[] GetBytes(char[] characters)
-		{
-			return Array.ConvertAll<char, byte>(characters, delegate(char c) { return (byte)c; });
-		}
-
 		public static ushort[] NetworkBytesToHostUInt16(byte[] networkBytes)
 		{
 			if (networkBytes == null)

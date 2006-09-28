@@ -6,7 +6,7 @@ using System;
 
 namespace Modbus.IO
 {
-	public abstract class ModbusSerialTransport : ModbusTransport
+	abstract class ModbusSerialTransport : ModbusTransport
 	{
 		private SerialPort _serialPort;
 		private TextReader _reader;

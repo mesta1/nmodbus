@@ -70,6 +70,7 @@ namespace Modbus.UnitTests.IO
 		{
 			byte[] frame = new byte[] { 0x11, 0xFF, 0x00, 0x01, 0x00, 0x02, 0x04 };
 			ModbusRtuTransport.RequestBytesToRead(frame);
+			Assert.Fail();
 		}
 
 		[Test]
@@ -88,6 +89,6 @@ namespace Modbus.UnitTests.IO
 		    ReadCoilsInputsRequest message = new ReadCoilsInputsRequest(Modbus.ReadCoils, 17, 19, 38);
 		    byte[] frame = new byte[] { 17, Modbus.ReadCoils, 0, 19, 0, 37, 14, 132 };
 		    Assert.IsFalse(transport.ChecksumsMatch(message, frame));
-		}		
+		}
 	}
 }
