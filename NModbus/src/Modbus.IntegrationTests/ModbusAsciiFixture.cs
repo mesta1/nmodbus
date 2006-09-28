@@ -18,7 +18,7 @@ namespace Modbus.IntegrationTests
 
 			SlaveSerialPort.Open();
 			Master = ModbusSerialMaster.CreateAscii(MasterSerialPort);
-			Slave = ModbusSlave.CreateAscii(SlaveAddress, SlaveSerialPort);
+			Slave = ModbusSerialSlave.CreateAscii(SlaveAddress, SlaveSerialPort);
 			Thread slaveThread = new Thread(new ThreadStart(Slave.Listen));
 			slaveThread.Start();
 		}

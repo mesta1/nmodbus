@@ -35,58 +35,58 @@ namespace MySample
 
 		public static void StartModbusAsciiSlave()
 		{
-			using (SerialPort slavePort = new SerialPort("COM1"))
-			{
-				// configure serial port
-				slavePort.BaudRate = 9600;
-				slavePort.DataBits = 8;
-				slavePort.Parity = Parity.None;
-				slavePort.StopBits = StopBits.One;
-				slavePort.Open();
+			//using (SerialPort slavePort = new SerialPort("COM1"))
+			//{
+			//    // configure serial port
+			//    slavePort.BaudRate = 9600;
+			//    slavePort.DataBits = 8;
+			//    slavePort.Parity = Parity.None;
+			//    slavePort.StopBits = StopBits.One;
+			//    slavePort.Open();
 
-				// create modbus slave
-				byte slaveID = 1;
-				ModbusSlave slave = ModbusSlave.CreateAscii(slaveID, slavePort);
-				slave.Listen();
-			}
+			//    // create modbus slave
+			//    byte slaveID = 1;
+			//    ModbusSlave slave = ModbusSlave.CreateAscii(slaveID, slavePort);
+			//    slave.Listen();
+			//}
 		}
 
 		public static void ModbusAsciiMasterReadRegistersFromModbusSlave()
 		{
-			Thread slaveThread;
+			//Thread slaveThread;
 
-			using (SerialPort masterPort = new SerialPort("COM1"))
-			using (SerialPort slavePort = new SerialPort("COM5"))
-			{
-				// configure serial ports
-				masterPort.BaudRate = slavePort.BaudRate = 9600;
-				masterPort.DataBits = slavePort.DataBits = 8;
-				masterPort.Parity = slavePort.Parity = Parity.None;
-				masterPort.StopBits = slavePort.StopBits = StopBits.One;				
-				masterPort.Open();
-				slavePort.Open();
+			//using (SerialPort masterPort = new SerialPort("COM1"))
+			//using (SerialPort slavePort = new SerialPort("COM5"))
+			//{
+			//    // configure serial ports
+			//    masterPort.BaudRate = slavePort.BaudRate = 9600;
+			//    masterPort.DataBits = slavePort.DataBits = 8;
+			//    masterPort.Parity = slavePort.Parity = Parity.None;
+			//    masterPort.StopBits = slavePort.StopBits = StopBits.One;				
+			//    masterPort.Open();
+			//    slavePort.Open();
 				
-				// create modbus slave on seperate thread
-				byte slaveID = 1;
-				ModbusSlave slave = ModbusSlave.CreateAscii(slaveID, slavePort);
-				slaveThread = new Thread(new ThreadStart(slave.Listen));
-				slaveThread.Start();
+			//    // create modbus slave on seperate thread
+			//    byte slaveID = 1;
+			//    ModbusSlave slave = ModbusSlave.CreateAscii(slaveID, slavePort);
+			//    slaveThread = new Thread(new ThreadStart(slave.Listen));
+			//    slaveThread.Start();
 
-				// create modbus master
-				ModbusSerialMaster master = ModbusSerialMaster.CreateAscii(masterPort);
+			//    // create modbus master
+			//    ModbusSerialMaster master = ModbusSerialMaster.CreateAscii(masterPort);
 
-				master.Transport.Retries = 5;
+			//    master.Transport.Retries = 5;
 				
-				// read five register values
-				ushort startAddress = 100;
-				ushort numRegisters = 5;
-				ushort[] registers = master.ReadHoldingRegisters(slaveID, startAddress, numRegisters);
+			//    // read five register values
+			//    ushort startAddress = 100;
+			//    ushort numRegisters = 5;
+			//    ushort[] registers = master.ReadHoldingRegisters(slaveID, startAddress, numRegisters);
 
-				for (int i = 0; i < numRegisters; i++)
-					Console.WriteLine("Register {0}={1}", startAddress + i, registers[i]);
-			}
+			//    for (int i = 0; i < numRegisters; i++)
+			//        Console.WriteLine("Register {0}={1}", startAddress + i, registers[i]);
+			//}
 
-			slaveThread.Abort();
+			//slaveThread.Abort();
 		}
 
 		public static void ModbusAsciiMasterReadRegisters()

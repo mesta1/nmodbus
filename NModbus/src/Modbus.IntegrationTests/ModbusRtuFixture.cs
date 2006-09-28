@@ -16,11 +16,11 @@ namespace Modbus.IntegrationTests
 		{
 			base.Init();
 
-			SlaveSerialPort.Open();
-			Master = ModbusSerialMaster.CreateRtu(MasterSerialPort);
-			Slave = ModbusSlave.CreateRtu(SlaveAddress, SlaveSerialPort);
-			Thread slaveThread = new Thread(new ThreadStart(Slave.Listen));
-			slaveThread.Start();
+			//SlaveSerialPort.Open();
+			//Master = ModbusSerialMaster.CreateRtu(MasterSerialPort);
+			//Slave = ModbusSlave.CreateRtu(SlaveAddress, SlaveSerialPort);
+			//Thread slaveThread = new Thread(new ThreadStart(Slave.Listen));
+			//slaveThread.Start();
 		}
 
 		[Test]
