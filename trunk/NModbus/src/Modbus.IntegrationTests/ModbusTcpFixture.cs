@@ -10,12 +10,28 @@ namespace Modbus.IntegrationTests
 	[TestFixture]
 	public class ModbusTcpFixture : ModbusMasterFixture
 	{
+		public const string SocketHost = "127.0.0.1";
+		public const int SocketPort = 502;
+		public Socket SlaveSocket;
+		public Socket MasterSocket;
+
 		[TestFixtureSetUp]
 		public override void Init()
 		{
-			Sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-			Sock.Connect("127.0.0.1", 502);
-			Master = ModbusTcpMaster.CreateTcp(Sock);
+			Socket SlaveSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			SlaveSocket.Connect(SocketHost, SocketPort);
+			Slave = ModbusSlave.CreateTcp(SlaveAddress, SlaveSocket);
+
+			Socket MasterSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			MasterSocket.Connect(SocketHost, SocketPort);
+			Master = ModbusTcpMaster.CreateTcp(MasterSocket);
+		}
+
+		[TestFixtureTearDown]
+		public void TestFixtureTearDown()
+		{
+			MasterSocket.Close();
+			SlaveSocket.Close();
 		}
 
 		[Test]

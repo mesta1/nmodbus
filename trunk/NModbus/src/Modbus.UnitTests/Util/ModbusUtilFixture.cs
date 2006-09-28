@@ -150,16 +150,22 @@ namespace Modbus.UnitTests.Util
 			Assert.AreEqual(new ushort[] { 1, 2 }, ModbusUtil.NetworkBytesToHostUInt16(new byte[] { 0, 1, 0, 2 }));
 		}
 
-		[Test]
-		[ExpectedException(typeof(FormatException))]
-		public void ByteArrayToUInt16ArrayOddNumberOfBytes()
+		[Test, ExpectedException(typeof(ArgumentNullException))]
+		public void NetworkBytesToHostUInt16Null()
+		{
+			ModbusUtil.NetworkBytesToHostUInt16(null);
+			Assert.Fail();
+		}
+
+		[Test, ExpectedException(typeof(FormatException))]
+		public void NetworkBytesToHostUInt16OddNumberOfBytes()
 		{
 			ModbusUtil.NetworkBytesToHostUInt16(new byte[] { 1 });
 			Assert.Fail();
 		}
 
 		[Test]
-		public void ByteArrayToUInt16ArrayEmptyBytes()
+		public void NetworkBytesToHostUInt16EmptyBytes()
 		{
 			Assert.AreEqual(new ushort[] { }, ModbusUtil.NetworkBytesToHostUInt16(new byte[] { }));
 		}

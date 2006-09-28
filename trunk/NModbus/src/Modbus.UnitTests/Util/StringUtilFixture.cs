@@ -17,11 +17,18 @@ namespace Modbus.UnitTests.Util
 			Assert.AreEqual("1, 2, 3", StringUtil.Join(", ", registers));
 		}
 
-		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
+		[Test, ExpectedException(typeof(ArgumentNullException))]
 		public void JoinArrayNull()
 		{
-			StringUtil.Join<ushort>(", ", null);
+			bool[] array = null;
+			StringUtil.Join(", ", array);
+			Assert.Fail();
+		}
+
+		[Test, ExpectedException(typeof(ArgumentNullException))]
+		public void JoinArrayConverterNull()
+		{
+			StringUtil.Join(", ", new bool[] { true, false }, null);
 			Assert.Fail();
 		}
 
@@ -32,11 +39,18 @@ namespace Modbus.UnitTests.Util
 			Assert.AreEqual("1, 2, 3", StringUtil.Join(", ", registers));
 		}
 
-		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
+		[Test, ExpectedException(typeof(ArgumentNullException))]
 		public void JoinCollectionNull()
 		{
-			StringUtil.Join<ushort>(", ", null);
+			ICollection<bool> col = null;
+			StringUtil.Join(", ", col);
+			Assert.Fail();
+		}
+
+		[Test, ExpectedException(typeof(ArgumentNullException))]
+		public void JoinCollectionConverterNull()
+		{
+			StringUtil.Join(", ", new Collection<ushort>(new ushort[] { 1 }), null);
 			Assert.Fail();
 		}
 

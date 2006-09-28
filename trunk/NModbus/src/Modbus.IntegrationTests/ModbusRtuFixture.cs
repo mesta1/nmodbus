@@ -16,9 +16,9 @@ namespace Modbus.IntegrationTests
 		{
 			base.Init();
 
-			SlavePort.Open();
-			Master = ModbusSerialMaster.CreateRtu(MasterPort);
-			Slave = ModbusSlave.CreateRtu(SlaveAddress, SlavePort);
+			SlaveSerialPort.Open();
+			Master = ModbusSerialMaster.CreateRtu(MasterSerialPort);
+			Slave = ModbusSlave.CreateRtu(SlaveAddress, SlaveSerialPort);
 			Thread slaveThread = new Thread(new ThreadStart(Slave.Listen));
 			slaveThread.Start();
 		}
