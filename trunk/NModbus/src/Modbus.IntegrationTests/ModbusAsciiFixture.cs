@@ -14,9 +14,13 @@ namespace Modbus.IntegrationTests
 		[TestFixtureSetUp]
 		public override void Init()
 		{
+			base.Init();
+
 			SetupSerialPorts();
 			Master = ModbusSerialMaster.CreateAscii(MasterSerialPort);
 			Slave = ModbusSerialSlave.CreateAscii(SlaveAddress, SlaveSerialPort);
+
+			StartSlave();
 		}
 
 		[Test]

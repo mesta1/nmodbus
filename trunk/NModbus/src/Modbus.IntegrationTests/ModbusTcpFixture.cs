@@ -11,27 +11,30 @@ namespace Modbus.IntegrationTests
 	[TestFixture]
 	public class ModbusTcpFixture : ModbusMasterFixture
 	{
-		public const string TcpClientHost = "127.0.0.1";
-		public const int TcpClientPort = 502;
+		public IPAddress TcpHost = new IPAddress(new byte[] { 127, 0, 0, 1 });
+		public const int TcpPort = 502;
 		public TcpClient MasterTcp;
 		public TcpListener SlaveTcp;
 
-		
 		[TestFixtureSetUp]
 		public override void Init()
 		{
-			SlaveTcp = new TcpListener(new IPAddress(new byte[] { 127, 0, 0, 1 }), TcpClientPort);
+			base.Init();
+
+			SlaveTcp = new TcpListener(TcpHost, TcpPort);
+			SlaveTcp.Start();
 			Slave = ModbusTcpSlave.CreateTcp(SlaveAddress, SlaveTcp);
-			MasterTcp = new TcpClient(TcpClientHost, TcpClientPort);
+			MasterTcp = new TcpClient(TcpHost.ToString(), TcpPort);
 			Master = ModbusTcpMaster.CreateTcp(MasterTcp);
+
+			StartSlave();
 		}
 
 		[TestFixtureTearDown]
 		public void TestFixtureTearDown()
 		{
-			// TODO expose close...
-			//MasterSocket.Close();
-			//SlaveSocket.Close();
+			MasterTcp.Close();
+			SlaveTcp.Stop();
 		}
 
 		[Test]
@@ -73,7 +76,6 @@ namespace Modbus.IntegrationTests
 		[Test]
 		public override void WriteSingleRegister()
 		{
-			// test fails, bug in slave device MOD_RSsim version 7.5?
 			base.WriteSingleRegister();
 		}
 

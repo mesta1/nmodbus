@@ -19,9 +19,12 @@ namespace Modbus.IntegrationTests
 		public ModbusSlave Slave;
 		public SerialPort SlaveSerialPort;
 		public const string SlaveSerialPortName = "COM1";
-		public const byte SlaveAddress = 1;		
-		
-		public abstract void Init();
+		public const byte SlaveAddress = 1;
+
+		public virtual void Init()
+		{
+			log4net.Config.XmlConfigurator.Configure();
+		}
 
 		public void SetupSerialPorts()
 		{
@@ -33,20 +36,15 @@ namespace Modbus.IntegrationTests
 			SlaveSerialPort.Open();
 		}
 
-		[TestFixtureSetUp]
-		public void TestFixtureSetup()
+		public void StartSlave()
 		{
-			log4net.Config.XmlConfigurator.Configure();
-			
-			Init();
-
 			Thread slaveThread = new Thread(new ThreadStart(Slave.Listen));
 			slaveThread.Start();
 		}
 
 		[TestFixtureTearDown]
 		public void Dispose()
-		{
+		{			
 			if (MasterSerialPort != null && MasterSerialPort.IsOpen)
 			{
 				MasterSerialPort.Close();
