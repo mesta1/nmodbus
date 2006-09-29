@@ -10,29 +10,33 @@ namespace Modbus.IO
 {
 	class ModbusTcpTransport : ModbusTransport
 	{
-		private Socket _socket;
+		private NetworkStream _networkStream;
 
-		internal ModbusTcpTransport()
+		public ModbusTcpTransport()
 		{
 		}
 
-		internal ModbusTcpTransport(Socket socket)
+		public ModbusTcpTransport(TcpClient tcpClient)
 		{
-			if (socket == null)
-				throw new ArgumentNullException("socket");
 			
-			_socket = socket;
+			_networkStream = tcpClient.GetStream();
 		}
 
-		public Socket Socket
+		//public ModbusTcpTransport(TcpListener tcpListenter)
+		//{
+		//    _networkStream = tcpListenter.GetStrea;
+		//}
+
+		public NetworkStream NetworkStream
 		{
-			get { return _socket; }
-			set { _socket = value; }
+			get { return _networkStream; }
+			set { _networkStream = value; }
 		}
 
 		internal override void Write(IModbusMessage message)
 		{			
-			Socket.Send(BuildMessageFrame(message));
+			byte[] frame = BuildMessageFrame(message);
+			NetworkStream.Write(frame, 0, frame.Length);
 		}
 
 		internal override byte[] BuildMessageFrame(IModbusMessage message)
@@ -63,7 +67,7 @@ namespace Modbus.IO
 			byte[] mbapHeader = new byte[6];
 			int numBytesRead = 0;
 			while (numBytesRead != 6)
-				numBytesRead += Socket.Receive(mbapHeader, numBytesRead, 6 - numBytesRead, SocketFlags.None);
+				numBytesRead += NetworkStream.Read(mbapHeader, numBytesRead, 6 - numBytesRead);
 
 			ushort frameLength = (ushort) IPAddress.HostToNetworkOrder(BitConverter.ToInt16(mbapHeader, 4));
 
@@ -71,7 +75,7 @@ namespace Modbus.IO
 			byte[] frame = new byte[frameLength];
 			numBytesRead = 0;
 			while (numBytesRead != frameLength)
-				numBytesRead += Socket.Receive(frame, numBytesRead, frameLength - numBytesRead, SocketFlags.None);
+				numBytesRead += NetworkStream.Read(frame, numBytesRead, frameLength - numBytesRead);
 
 			return frame;
 		}

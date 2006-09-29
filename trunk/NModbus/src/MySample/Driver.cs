@@ -135,20 +135,20 @@ namespace MySample
 
 		public static void ModbusTcpMasterSample()
 		{
-			using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
-			{
-				socket.Connect("127.0.0.1", 502);
+			//using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
+			//{
+			//    socket.Connect("127.0.0.1", 502);
 
-				ModbusTcpMaster master = ModbusTcpMaster.CreateTcp(socket);
+			//    ModbusTcpMaster master = ModbusTcpMaster.CreateTcp(socket);
 
-				// read five register values
-				ushort startAddress = 100;
-				ushort numRegisters = 5;
-				ushort[] registers = master.ReadHoldingRegisters(startAddress, numRegisters);
+			//    // read five register values
+			//    ushort startAddress = 100;
+			//    ushort numRegisters = 5;
+			//    ushort[] registers = master.ReadHoldingRegisters(startAddress, numRegisters);
 
-				for (int i = 0; i < numRegisters; i++)
-					Console.WriteLine("Register {0}={1}", startAddress + i, registers[i]);
-			}
+			//    for (int i = 0; i < numRegisters; i++)
+			//        Console.WriteLine("Register {0}={1}", startAddress + i, registers[i]);
+			//}
 		}
 	}
 }

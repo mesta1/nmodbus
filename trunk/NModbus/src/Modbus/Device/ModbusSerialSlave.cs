@@ -10,12 +10,10 @@ namespace Modbus.Device
 {
 	public class ModbusSerialSlave : ModbusSlave
 	{
-		ModbusTransport _transport;
 
 		private ModbusSerialSlave(byte unitID, ModbusTransport transport)
-			: base(unitID)
+			: base(unitID, transport)
 		{
-			_transport = transport;
 		}
 
 		public static ModbusSerialSlave CreateAscii(byte unitID, SerialPort serialPort)
@@ -27,13 +25,7 @@ namespace Modbus.Device
 		{
 			return new ModbusSerialSlave(unitID, new ModbusRtuTransport(serialPort));
 		}
-
-		public ModbusTransport Transport
-		{
-			get { return _transport; }
-			set { _transport = value; }
-		}
-
+		
 		public override void Listen()
 		{
 			while (true)

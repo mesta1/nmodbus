@@ -19,9 +19,9 @@ namespace Modbus.Device
 			_modbusMasterImpl = new ModbusMaster(Transport);
 		}
 
-		public static ModbusTcpMaster CreateTcp(Socket socket)
+		public static ModbusTcpMaster CreateTcp(TcpClient tcpClient)
 		{
-			return new ModbusTcpMaster(new ModbusTcpTransport(socket));
+			return new ModbusTcpMaster(new ModbusTcpTransport(tcpClient));
 		}
 
 		public bool[] ReadCoils(ushort startAddress, ushort numberOfPoints)
