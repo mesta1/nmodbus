@@ -10,7 +10,6 @@ namespace Modbus.IO
 {
 	class ModbusTcpTransport : ModbusTransport
 	{
-		public const int MbapHeaderLength = 7;
 		private NetworkStream _networkStream;
 
 		public ModbusTcpTransport()
@@ -36,11 +35,10 @@ namespace Modbus.IO
 
 		internal override byte[] BuildMessageFrame(IModbusMessage message)
 		{
-			byte[] mbapHeader = new byte[] { 0, 0, 0, 0, 0, (byte) (message.ProtocolDataUnit.Length + 1), Byte.MaxValue };
+			byte[] mbapHeader = new byte[] { 0, 0, 0, 0, 0, (byte) (message.ProtocolDataUnit.Length), message.SlaveAddress };
 
 			List<byte> messageBody = new List<byte>();
 			messageBody.AddRange(mbapHeader);
-			messageBody.Add(message.SlaveAddress);
 			messageBody.AddRange(message.ProtocolDataUnit);
 			
 			byte[] frame = messageBody.ToArray();
@@ -60,12 +58,12 @@ namespace Modbus.IO
 		public byte[] ReadRequestResponse()
 		{
 			// read header
-			byte[] mbapHeader = new byte[MbapHeaderLength];
+			byte[] mbapHeader = new byte[6];
 			int numBytesRead = 0;
-			while (numBytesRead != MbapHeaderLength)
-				numBytesRead += NetworkStream.Read(mbapHeader, numBytesRead, MbapHeaderLength - numBytesRead);
+			while (numBytesRead != 6)
+				numBytesRead += NetworkStream.Read(mbapHeader, numBytesRead, 6 - numBytesRead);
 
-			ushort frameLength = (ushort) IPAddress.HostToNetworkOrder(BitConverter.ToInt16(mbapHeader, 4));
+			ushort frameLength = (ushort) (IPAddress.HostToNetworkOrder(BitConverter.ToInt16(mbapHeader, 4)) + 1);
 
 			// read message
 			byte[] frame = new byte[frameLength];

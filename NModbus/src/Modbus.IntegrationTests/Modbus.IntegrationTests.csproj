@@ -52,9 +52,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ModbusAsciiFixture.cs" />
+    <Compile Include="ModbusAsciiJamodSlaveFixture.cs" />
     <Compile Include="ModbusMasterFixture.cs" />
     <Compile Include="ModbusRtuFixture.cs" />
     <Compile Include="ModbusTcpFixture.cs" />
+    <Compile Include="ModbusTcpJamodSlaveFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
