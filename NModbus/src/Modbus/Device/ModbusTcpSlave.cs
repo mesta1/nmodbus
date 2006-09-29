@@ -14,8 +14,8 @@ namespace Modbus.Device
 		private TcpListener _tcpListener;
 
 		private ModbusTcpSlave(byte unitID, TcpListener tcpListener)
-			: base(unitID, new ModbusTcpTransport(null))
-		{
+			: base(unitID, new ModbusTcpTransport())
+		{			
 			_tcpListener = tcpListener;
 		}
 
@@ -27,40 +27,45 @@ namespace Modbus.Device
 		public override void  Listen()
 		{
 			_tcpListener.Start();
-
+			
+			// TODO spawn thread for each master communication exchange
+			TcpClient master = _tcpListener.AcceptTcpClient();
+			NetworkStream masterStream = master.GetStream();
+			
 			while (true)
 			{
-				TcpClient master = _tcpListener.AcceptTcpClient();
-				NetworkStream masterStream = master.GetStream();
+				try
+				{
+					// use transport to retrieve raw message frame from stream
+					byte[] frame = ReadRequestResponse(masterStream);
 
-				// use transport to retrieve raw message frame from stream
-				byte[] frame = ReadRequestResponse(masterStream);
+					// build request from frame
+					IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(frame);
+					log.DebugFormat("RX: {0}", StringUtil.Join(", ", request.MessageFrame));
 
-				// build request from frame
-				IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(frame);
-				log.DebugFormat("RX: {0}", StringUtil.Join(", ", request.MessageFrame));
+					// perform action
+					IModbusMessage response = ApplyRequest(request);
 
-				// only service requests addressed to this particular slave
-				if (request.SlaveAddress != UnitID)
-					continue;
-
-				// perform action
-				IModbusMessage response = ApplyRequest(request);
-
-				// write response
-				log.DebugFormat("TX: {0}", StringUtil.Join(", ", response.MessageFrame));
-				byte[] responseFrame = response.MessageFrame;
-				masterStream.Write(responseFrame, 0, responseFrame.Length);
+					// write response				
+					byte[] responseFrame = new ModbusTcpTransport().BuildMessageFrame(response);
+					log.DebugFormat("TX: {0}", StringUtil.Join(", ", responseFrame));
+					masterStream.Write(responseFrame, 0, responseFrame.Length);
+				}
+				catch (Exception e)
+				{
+					// TODO explicitly catch timeout exception	
+					log.ErrorFormat(ModbusResources.ModbusSlaveListenerException, e.Message);
+				}
 			}
 		}
 
 		public byte[] ReadRequestResponse(NetworkStream stream)
 		{
 			// read header
-			byte[] mbapHeader = new byte[6];
+			byte[] mbapHeader = new byte[ModbusTcpTransport.MbapHeaderLength];
 			int numBytesRead = 0;
-			while (numBytesRead != 6)
-				numBytesRead += stream.Read(mbapHeader, numBytesRead, 6 - numBytesRead);
+			while (numBytesRead != ModbusTcpTransport.MbapHeaderLength)
+				numBytesRead += stream.Read(mbapHeader, numBytesRead, ModbusTcpTransport.MbapHeaderLength - numBytesRead);
 
 			ushort frameLength = (ushort) IPAddress.HostToNetworkOrder(BitConverter.ToInt16(mbapHeader, 4));
 

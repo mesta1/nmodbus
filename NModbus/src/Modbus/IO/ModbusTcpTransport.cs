@@ -10,6 +10,7 @@ namespace Modbus.IO
 {
 	class ModbusTcpTransport : ModbusTransport
 	{
+		public const int MbapHeaderLength = 7;
 		private NetworkStream _networkStream;
 
 		public ModbusTcpTransport()
@@ -18,14 +19,8 @@ namespace Modbus.IO
 
 		public ModbusTcpTransport(TcpClient tcpClient)
 		{
-			
 			_networkStream = tcpClient.GetStream();
 		}
-
-		//public ModbusTcpTransport(TcpListener tcpListenter)
-		//{
-		//    _networkStream = tcpListenter.GetStrea;
-		//}
 
 		public NetworkStream NetworkStream
 		{
@@ -45,6 +40,7 @@ namespace Modbus.IO
 
 			List<byte> messageBody = new List<byte>();
 			messageBody.AddRange(mbapHeader);
+			messageBody.Add(message.SlaveAddress);
 			messageBody.AddRange(message.ProtocolDataUnit);
 			
 			byte[] frame = messageBody.ToArray();
@@ -64,10 +60,10 @@ namespace Modbus.IO
 		public byte[] ReadRequestResponse()
 		{
 			// read header
-			byte[] mbapHeader = new byte[6];
+			byte[] mbapHeader = new byte[MbapHeaderLength];
 			int numBytesRead = 0;
-			while (numBytesRead != 6)
-				numBytesRead += NetworkStream.Read(mbapHeader, numBytesRead, 6 - numBytesRead);
+			while (numBytesRead != MbapHeaderLength)
+				numBytesRead += NetworkStream.Read(mbapHeader, numBytesRead, MbapHeaderLength - numBytesRead);
 
 			ushort frameLength = (ushort) IPAddress.HostToNetworkOrder(BitConverter.ToInt16(mbapHeader, 4));
 
