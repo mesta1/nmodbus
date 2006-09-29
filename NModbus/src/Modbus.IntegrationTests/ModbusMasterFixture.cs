@@ -10,7 +10,7 @@ using System.Threading;
 
 namespace Modbus.IntegrationTests
 {
-	public class ModbusMasterFixture
+	public abstract class ModbusMasterFixture
 	{
 		public IModbusMaster Master;
 		public SerialPort MasterSerialPort;
@@ -21,19 +21,27 @@ namespace Modbus.IntegrationTests
 		public const string SlaveSerialPortName = "COM1";
 		public const byte SlaveAddress = 1;		
 		
-		public virtual void Init()
-		{			
+		public abstract void Init();
+
+		public void SetupSerialPorts()
+		{
 			MasterSerialPort = new SerialPort(MasterSerialPortName);
 			SlaveSerialPort = new SerialPort(SlaveSerialPortName);
 			MasterSerialPort.ReadTimeout = SlaveSerialPort.ReadTimeout = 5000;
 			MasterSerialPort.Parity = SlaveSerialPort.Parity = Parity.None;
 			MasterSerialPort.Open();
+			SlaveSerialPort.Open();
 		}
 
 		[TestFixtureSetUp]
 		public void TestFixtureSetup()
 		{
 			log4net.Config.XmlConfigurator.Configure();
+			
+			Init();
+
+			Thread slaveThread = new Thread(new ThreadStart(Slave.Listen));
+			slaveThread.Start();
 		}
 
 		[TestFixtureTearDown]

@@ -11,13 +11,14 @@ using System.Net.Sockets;
 
 namespace Modbus.Device
 {
-	public abstract class ModbusSlave
+	public abstract class ModbusSlave : ModbusDevice
 	{
 		protected static readonly ILog log = LogManager.GetLogger(typeof(ModbusSlave));
 		private byte _unitID;
 		private DataStore _dataStore;
 		
-		public ModbusSlave(byte unitID)
+		public ModbusSlave(byte unitID, ModbusTransport transport)
+			: base(transport)
 		{
 			_dataStore = DataStoreFactory.CreateDefaultDataStore();
 			_unitID = unitID;

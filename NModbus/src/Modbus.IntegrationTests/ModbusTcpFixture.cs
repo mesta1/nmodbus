@@ -11,28 +11,27 @@ namespace Modbus.IntegrationTests
 	[TestFixture]
 	public class ModbusTcpFixture : ModbusMasterFixture
 	{
-		public const string SocketHost = "127.0.0.1";
-		public const int SocketPort = 502;
-		public Socket SlaveSocket;
-		public Socket MasterSocket;
+		public const string TcpClientHost = "127.0.0.1";
+		public const int TcpClientPort = 502;
+		public TcpClient MasterTcp;
+		public TcpListener SlaveTcp;
 
+		
 		[TestFixtureSetUp]
 		public override void Init()
 		{
-			//Socket SlaveSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-			
-			//Slave = ModbusSlave.CreateTcp(SlaveAddress, SlaveSocket);
-
-			//Socket MasterSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-			//MasterSocket.Connect(SocketHost, SocketPort);
-			//Master = ModbusTcpMaster.CreateTcp(MasterSocket);
+			SlaveTcp = new TcpListener(new IPAddress(new byte[] { 127, 0, 0, 1 }), TcpClientPort);
+			Slave = ModbusTcpSlave.CreateTcp(SlaveAddress, SlaveTcp);
+			MasterTcp = new TcpClient(TcpClientHost, TcpClientPort);
+			Master = ModbusTcpMaster.CreateTcp(MasterTcp);
 		}
 
 		[TestFixtureTearDown]
 		public void TestFixtureTearDown()
 		{
-			MasterSocket.Close();
-			SlaveSocket.Close();
+			// TODO expose close...
+			//MasterSocket.Close();
+			//SlaveSocket.Close();
 		}
 
 		[Test]
