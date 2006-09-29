@@ -10,12 +10,7 @@ namespace Modbus.IntegrationTests
 {
 	[TestFixture]
 	public class ModbusTcpFixture : ModbusMasterFixture
-	{
-		public IPAddress TcpHost = new IPAddress(new byte[] { 127, 0, 0, 1 });
-		public const int TcpPort = 502;
-		public TcpClient MasterTcp;
-		public TcpListener SlaveTcp;
-
+	{				
 		[TestFixtureSetUp]
 		public override void Init()
 		{

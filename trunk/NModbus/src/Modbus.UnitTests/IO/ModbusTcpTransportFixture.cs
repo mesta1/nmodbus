@@ -17,7 +17,7 @@ namespace Modbus.UnitTests.IO
 		public void BuildMessageFrame()
 		{
 			ReadCoilsInputsRequest message = new ReadCoilsInputsRequest(Modbus.ReadCoils, 2, 10, 5);
-			Assert.AreEqual(new byte[] { 0, 0, 0, 0, 0, 6, Byte.MaxValue, 2, 1, 0, 10, 0, 5 }, new ModbusTcpTransport().BuildMessageFrame(message));
+			Assert.AreEqual(new byte[] { 0, 0, 0, 0, 0, 5, 2, 1, 0, 10, 0, 5 }, new ModbusTcpTransport().BuildMessageFrame(message));
 		}
 
 		//[Test]

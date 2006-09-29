@@ -7,11 +7,15 @@ using log4net;
 using Modbus.Device;
 using NUnit.Framework;
 using System.Threading;
+using System.Diagnostics;
+using System.IO;
+using System.Net;
 
 namespace Modbus.IntegrationTests
 {
 	public abstract class ModbusMasterFixture
 	{
+		public Process Jamod;
 		public IModbusMaster Master;
 		public SerialPort MasterSerialPort;
 		public const string MasterSerialPortName = "COM5";
@@ -21,25 +25,51 @@ namespace Modbus.IntegrationTests
 		public const string SlaveSerialPortName = "COM1";
 		public const byte SlaveAddress = 1;
 
+		public IPAddress TcpHost = new IPAddress(new byte[] { 127, 0, 0, 1 });
+		public const int TcpPort = 502;
+		public TcpClient MasterTcp;
+		public TcpListener SlaveTcp;
+
 		public virtual void Init()
 		{
 			log4net.Config.XmlConfigurator.Configure();
 		}
 
-		public void SetupSerialPorts()
+		public void SetupSlaveSerialPort()
+		{
+			SlaveSerialPort = new SerialPort(SlaveSerialPortName);
+			SlaveSerialPort.ReadTimeout = Modbus.DefaultTimeout;
+			SlaveSerialPort.Parity = Parity.None;
+			SlaveSerialPort.Open();
+		}
+
+		public void SetupMasterSerialPort()
 		{
 			MasterSerialPort = new SerialPort(MasterSerialPortName);
-			SlaveSerialPort = new SerialPort(SlaveSerialPortName);
-			MasterSerialPort.ReadTimeout = SlaveSerialPort.ReadTimeout = 5000;
-			MasterSerialPort.Parity = SlaveSerialPort.Parity = Parity.None;
+			MasterSerialPort.ReadTimeout = Modbus.DefaultTimeout;
+			MasterSerialPort.Parity = Parity.None;
 			MasterSerialPort.Open();
-			SlaveSerialPort.Open();
 		}
 
 		public void StartSlave()
 		{
 			Thread slaveThread = new Thread(new ThreadStart(Slave.Listen));
 			slaveThread.Start();
+		}
+
+		public void StartJamodSlave(string program)
+		{
+			string pathToJamod = Path.Combine(Environment.CurrentDirectory, "../../../../tools/jamod");
+			string classpath = String.Format(@"-classpath ""{0};{1};{2}""", Path.Combine(pathToJamod, "jamod.jar"), Path.Combine(pathToJamod, "comm.jar"), Path.Combine(pathToJamod, "."));
+			ProcessStartInfo startInfo = new ProcessStartInfo("java", String.Format("{0} {1}", classpath, program));
+			Jamod = Process.Start(startInfo);
+
+			//string error = Jamod.StandardError.ReadToEnd();
+
+
+			
+			// wait for slave to start up
+			Thread.Sleep(2000);
 		}
 
 		[TestFixtureTearDown]

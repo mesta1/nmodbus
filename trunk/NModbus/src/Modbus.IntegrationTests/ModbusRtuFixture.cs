@@ -16,8 +16,9 @@ namespace Modbus.IntegrationTests
 		{
 			base.Init();
 
-			SetupSerialPorts();
+			SetupMasterSerialPort();			
 			Master = ModbusSerialMaster.CreateRtu(MasterSerialPort);
+			SetupSlaveSerialPort();
 			Slave = ModbusSerialSlave.CreateRtu(SlaveAddress, SlaveSerialPort);
 
 			StartSlave();
