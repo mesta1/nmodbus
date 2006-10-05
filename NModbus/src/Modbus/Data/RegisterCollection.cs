@@ -28,6 +28,19 @@ namespace Modbus.Data
 		{
 		}
 
+		public static RegisterCollection CreateRegisterCollection(ushort defaultValue, int size)
+		{
+			if (size < 0)
+				throw new ArgumentException("RegisterCollection size cannot be less than 0.");
+
+			RegisterCollection col = new RegisterCollection();
+
+			for (int i = 0; i < size; i++)
+				col.Add(defaultValue);
+
+			return col;
+		}
+
 		public byte[] NetworkBytes
 		{
 			get
@@ -45,7 +58,7 @@ namespace Modbus.Data
 		{
 			get 
 			{ 
-				return (byte) (Count * 2); 
+				return (byte) (Count * 2);
 			}
 		}
 	}

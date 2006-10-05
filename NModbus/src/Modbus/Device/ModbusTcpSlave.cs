@@ -52,7 +52,7 @@ namespace Modbus.Device
 			while (true)
 			{
 				// use transport to retrieve raw message frame from stream
-				byte[] frame = ReadRequestResponse(masterStream);
+				byte[] frame = ModbusTcpTransport.ReadRequestResponse(masterStream);
 
 				// build request from frame
 				IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(frame);
@@ -66,25 +66,6 @@ namespace Modbus.Device
 				log.DebugFormat("TX: {0}", StringUtil.Join(", ", responseFrame));
 				masterStream.Write(responseFrame, 0, responseFrame.Length);
 			}
-		}
-
-		public byte[] ReadRequestResponse(NetworkStream stream)
-		{
-			// read header
-			byte[] mbapHeader = new byte[6];
-			int numBytesRead = 0;
-			while (numBytesRead != 6)
-				numBytesRead += stream.Read(mbapHeader, numBytesRead, 6 - numBytesRead);
-
-			ushort frameLength = (ushort) (IPAddress.HostToNetworkOrder(BitConverter.ToInt16(mbapHeader, 4)) + 1);
-
-			// read message
-			byte[] frame = new byte[frameLength];
-			numBytesRead = 0;
-			while (numBytesRead != frameLength)
-				numBytesRead += stream.Read(frame, numBytesRead, frameLength - numBytesRead);
-
-			return frame;
 		}
 	}
 }
