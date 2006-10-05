@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Modbus.Data;
 using NUnit.Framework;
+using Modbus.Util;
 
 namespace Modbus.UnitTests.Data
 {
@@ -14,6 +15,20 @@ namespace Modbus.UnitTests.Data
 		{
 			RegisterCollection col = new RegisterCollection(1, 2, 3);
 			Assert.AreEqual(6, col.ByteCount);
+		}
+
+		[Test, ExpectedException(typeof(ArgumentException))]
+		public void CreateRegisterCollectionSizeLessThanZero()
+		{
+			RegisterCollection.CreateRegisterCollection(0, -1);
+		}
+
+		[Test]
+		public void CreateRegisterCollection()
+		{
+			RegisterCollection col = RegisterCollection.CreateRegisterCollection(2, 3);
+			Assert.AreEqual(3, col.Count);
+			Assert.AreEqual(new ushort[] { 2, 2, 2 }, CollectionUtil.ToArray(col));
 		}
 
 		[Test]
