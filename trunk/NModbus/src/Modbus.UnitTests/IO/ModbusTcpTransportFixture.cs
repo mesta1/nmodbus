@@ -2,12 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
+using Modbus.Data;
 using Modbus.IO;
 using Modbus.Message;
 using NUnit.Framework;
-using Rhino.Mocks;
-using Modbus.Data;
-
 
 namespace Modbus.UnitTests.IO
 {
