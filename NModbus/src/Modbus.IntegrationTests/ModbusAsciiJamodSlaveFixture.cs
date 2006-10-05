@@ -28,9 +28,9 @@ namespace Modbus.IntegrationTests
 		[TestFixtureTearDown]
 		public void TestFixtureTearDown()
 		{
+			Jamod.Kill();
 			Jamod.CloseMainWindow();
-			Jamod.Close();
-			Jamod.Dispose();
+			Jamod.Close();			
 		}
 		
 		[Test]
