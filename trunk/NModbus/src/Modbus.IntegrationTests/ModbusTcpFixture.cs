@@ -16,21 +16,32 @@ namespace Modbus.IntegrationTests
 		{
 			base.Init();
 
-			SlaveTcp = new TcpListener(TcpHost, TcpPort);
-			SlaveTcp.Start();
-			Slave = ModbusTcpSlave.CreateTcp(SlaveAddress, SlaveTcp);
-			MasterTcp = new TcpClient(TcpHost.ToString(), TcpPort);
-			MasterTcp.ReceiveTimeout = Modbus.DefaultTimeout;
-			Master = ModbusTcpMaster.CreateTcp(MasterTcp);
+			try
+			{
+				SlaveTcp = new TcpListener(TcpHost, TcpPort);
+				SlaveTcp.Start();
+				Slave = ModbusTcpSlave.CreateTcp(SlaveAddress, SlaveTcp);
+				StartSlave();
 
-			StartSlave();
+				MasterTcp = new TcpClient(TcpHost.ToString(), TcpPort);
+				MasterTcp.ReceiveTimeout = Modbus.DefaultTimeout;
+				Master = ModbusTcpMaster.CreateTcp(MasterTcp);
+			}
+			catch (Exception e)
+			{
+				string message = e.Message;
+				throw e;
+			}
 		}
 
 		[TestFixtureTearDown]
 		public void TestFixtureTearDown()
 		{
+			Console.WriteLine("ModbusTcpF ixtu re test fixture tear down");
 			MasterTcp.Close();
 			SlaveTcp.Stop();
+
+			CleanUp();
 		}
 
 		[Test]

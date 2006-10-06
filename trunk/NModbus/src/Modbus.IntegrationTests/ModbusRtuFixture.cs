@@ -9,19 +9,20 @@ using System.Threading;
 namespace Modbus.IntegrationTests
 {
 	[TestFixture]
-	public class ModbusRtuMasterFixture : ModbusMasterFixture
+	public class ModbusRtuFixture : ModbusMasterFixture
 	{
 		[TestFixtureSetUp]
 		public override void Init()
 		{
+			Console.WriteLine("modbus rtu fixture init");
 			base.Init();
 
-			SetupMasterSerialPort();			
-			Master = ModbusSerialMaster.CreateRtu(MasterSerialPort);
 			SetupSlaveSerialPort();
 			Slave = ModbusSerialSlave.CreateRtu(SlaveAddress, SlaveSerialPort);
-
 			StartSlave();
+			
+			SetupMasterSerialPort();
+			Master = ModbusSerialMaster.CreateRtu(MasterSerialPort);
 		}
 
 		[Test]
