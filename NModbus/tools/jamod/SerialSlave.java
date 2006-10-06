@@ -52,7 +52,6 @@ public class SerialSlave
 
 		try
 		{
-
 			//1. Prepare a process image
 			spi = new SimpleProcessImage();
 

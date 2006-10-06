@@ -21,6 +21,7 @@ namespace Modbus.IntegrationTests
 		public const string MasterSerialPortName = "COM5";
 
 		public ModbusSlave Slave;
+		public Thread SlaveThread;
 		public SerialPort SlaveSerialPort;
 		public const string SlaveSerialPortName = "COM1";
 		public const byte SlaveAddress = 1;
@@ -37,6 +38,7 @@ namespace Modbus.IntegrationTests
 
 		public void SetupSlaveSerialPort()
 		{
+			Console.WriteLine("Set up slave serial port");
 			SlaveSerialPort = new SerialPort(SlaveSerialPortName);
 			SlaveSerialPort.ReadTimeout = Modbus.DefaultTimeout;
 			SlaveSerialPort.Parity = Parity.None;
@@ -45,16 +47,20 @@ namespace Modbus.IntegrationTests
 
 		public void SetupMasterSerialPort()
 		{
+			Console.WriteLine("Set up master serial port");
 			MasterSerialPort = new SerialPort(MasterSerialPortName);
 			MasterSerialPort.ReadTimeout = Modbus.DefaultTimeout;
 			MasterSerialPort.Parity = Parity.None;
+			Console.WriteLine("about to open master serial port, current status {0}", MasterSerialPort.IsOpen);
 			MasterSerialPort.Open();
+			Console.WriteLine("master port should be open, current status {0}", MasterSerialPort.IsOpen);
 		}
 
 		public void StartSlave()
 		{
-			Thread slaveThread = new Thread(new ThreadStart(Slave.Listen));
-			slaveThread.Start();
+			Console.WriteLine("Start NModbus slave");
+			SlaveThread = new Thread(Slave.Listen);
+			SlaveThread.Start();
 		}
 
 		public void StartJamodSlave(string program)
@@ -64,19 +70,19 @@ namespace Modbus.IntegrationTests
 			ProcessStartInfo startInfo = new ProcessStartInfo("java", String.Format("{0} {1}", classpath, program));
 			Jamod = Process.Start(startInfo);
 
-			//string error = Jamod.StandardError.ReadToEnd();
-
-
-			
-			// wait for slave to start up
 			Thread.Sleep(2000);
+			Assert.IsFalse(Jamod.HasExited, "Jamod Serial Ascii Slave did not start correctly.");
+			
+			// TODO test whether the slave has opened the serial port
 		}
 
 		[TestFixtureTearDown]
-		public void Dispose()
-		{			
+		public void CleanUp()
+		{
+			Console.WriteLine("DISPOSE!!");
 			if (MasterSerialPort != null && MasterSerialPort.IsOpen)
 			{
+				Console.WriteLine("Close Master");
 				MasterSerialPort.Close();
 				MasterSerialPort.Dispose();
 			}
@@ -84,8 +90,22 @@ namespace Modbus.IntegrationTests
 			if (SlaveSerialPort != null && SlaveSerialPort.IsOpen)
 			{
 				SlaveSerialPort.Close();
-				SlaveSerialPort.Dispose();
+				SlaveSerialPort.Dispose();			
 			}
+
+			if (SlaveThread != null && SlaveThread.IsAlive)
+			{
+				Console.WriteLine("Abort slave thread");
+				SlaveThread.Abort();
+			}
+
+			if (Jamod != null)
+			{
+				Jamod.CloseMainWindow();
+				Jamod.Close();
+			}
+
+			Thread.Sleep(1000);
 		}
 
 		[Test]

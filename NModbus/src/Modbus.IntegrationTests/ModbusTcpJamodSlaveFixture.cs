@@ -23,14 +23,6 @@ namespace Modbus.IntegrationTests
 			Master = ModbusTcpMaster.CreateTcp(MasterTcp);
 		}
 
-		[TestFixtureTearDown]
-		public void TestFixtureTearDown()
-		{
-			Jamod.CloseMainWindow();
-			Jamod.Close();
-			Jamod.Dispose();
-		}
-
 		[Test]
 		public override void ReadCoils()
 		{

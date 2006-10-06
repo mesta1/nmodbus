@@ -18,25 +18,11 @@ namespace Modbus.IntegrationTests
 		public override void Init()
 		{
 			base.Init();
+			
+			StartJamodSlave(program);
 
 			SetupMasterSerialPort();
 			Master = ModbusSerialMaster.CreateAscii(MasterSerialPort);
-
-			StartJamodSlave(program);			
-		}
-
-		[TestFixtureTearDown]
-		public void TestFixtureTearDown()
-		{
-			Jamod.Kill();
-			Jamod.CloseMainWindow();
-			Jamod.Close();			
-		}
-		
-		[Test]
-		public override void ReadCoils()
-		{
-			base.ReadCoils();
-		}
+		}		
 	}
 }
