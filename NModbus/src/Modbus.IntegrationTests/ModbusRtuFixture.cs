@@ -14,7 +14,6 @@ namespace Modbus.IntegrationTests
 		[TestFixtureSetUp]
 		public override void Init()
 		{
-			Console.WriteLine("modbus rtu fixture init");
 			base.Init();
 
 			SetupSlaveSerialPort();

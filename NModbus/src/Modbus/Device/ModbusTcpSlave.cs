@@ -7,6 +7,7 @@ using Modbus.Message;
 using Modbus.Util;
 using Modbus.IO;
 using System.Threading;
+using System.IO;
 
 namespace Modbus.Device
 {
@@ -27,45 +28,52 @@ namespace Modbus.Device
 
 		public override void Listen()
 		{
+			log.Debug("Start Modbus Tcp Server.");
 			_tcpListener.Start();
-					
-			while (true)
+			
+			log.Debug("Block for pending client connection.");
+			TcpClient master = _tcpListener.AcceptTcpClient();
+			log.Debug("Connected to client.");
+			NetworkStream stream = master.GetStream();
+
+			try
 			{
-				try
+				while (true)
 				{
-					// TODO spawn thread for each master communication exchange
-					TcpClient master = _tcpListener.AcceptTcpClient();
-					Thread workerThread = new Thread(TcpConnectionHandler);
-					workerThread.Start(master);
+					// use transport to retrieve raw message frame from stream
+					byte[] frame = ModbusTcpTransport.ReadRequestResponse(stream);
+
+					// build request from frame
+					IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(frame);
+					log.DebugFormat("RX: {0}", StringUtil.Join(", ", request.MessageFrame));
+
+					// perform action
+					IModbusMessage response = ApplyRequest(request);
+
+					// write response				
+					byte[] responseFrame = new ModbusTcpTransport().BuildMessageFrame(response);
+					log.DebugFormat("TX: {0}", StringUtil.Join(", ", responseFrame));
+					stream.Write(responseFrame, 0, responseFrame.Length);
 				}
-				catch (Exception)
-				{
-					
-				}				
 			}
-		}
-
-		public void TcpConnectionHandler(object master)
-		{
-			NetworkStream masterStream = ((TcpClient) master).GetStream();
-
-			while (true)
+			catch (SocketException se)
 			{
-				// use transport to retrieve raw message frame from stream
-				byte[] frame = ModbusTcpTransport.ReadRequestResponse(masterStream);
-
-				// build request from frame
-				IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(frame);
-				log.DebugFormat("RX: {0}", StringUtil.Join(", ", request.MessageFrame));
-
-				// perform action
-				IModbusMessage response = ApplyRequest(request);
-
-				// write response				
-				byte[] responseFrame = new ModbusTcpTransport().BuildMessageFrame(response);
-				log.DebugFormat("TX: {0}", StringUtil.Join(", ", responseFrame));
-				masterStream.Write(responseFrame, 0, responseFrame.Length);
+				log.ErrorFormat("Terminating Modbus Tcp server - {0}, ", se.Message);
+				return;
 			}
+			catch (Exception e)
+			{
+				log.ErrorFormat("Unexpected exception - {0}", e.Message);
+				return;
+			}
+			finally
+			{
+				if (stream != null)
+					stream.Close();
+
+				if (master != null)
+					master.Close();
+			}				
 		}
 	}
 }

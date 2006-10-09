@@ -31,6 +31,8 @@ namespace Modbus.IntegrationTests
 		public TcpClient MasterTcp;
 		public TcpListener SlaveTcp;
 
+		protected static readonly ILog log = LogManager.GetLogger(typeof(ModbusMasterFixture));
+
 		public virtual void Init()
 		{
 			log4net.Config.XmlConfigurator.Configure();
@@ -38,7 +40,7 @@ namespace Modbus.IntegrationTests
 
 		public void SetupSlaveSerialPort()
 		{
-			Console.WriteLine("Set up slave serial port");
+			log.DebugFormat("Configure and open slave serial port {0}.", SlaveSerialPortName);
 			SlaveSerialPort = new SerialPort(SlaveSerialPortName);
 			SlaveSerialPort.ReadTimeout = Modbus.DefaultTimeout;
 			SlaveSerialPort.Parity = Parity.None;
@@ -47,18 +49,16 @@ namespace Modbus.IntegrationTests
 
 		public void SetupMasterSerialPort()
 		{
-			Console.WriteLine("Set up master serial port");
+			log.DebugFormat("Configure and open master serial port {0}.", MasterSerialPortName);
 			MasterSerialPort = new SerialPort(MasterSerialPortName);
 			MasterSerialPort.ReadTimeout = Modbus.DefaultTimeout;
 			MasterSerialPort.Parity = Parity.None;
-			Console.WriteLine("about to open master serial port, current status {0}", MasterSerialPort.IsOpen);
 			MasterSerialPort.Open();
-			Console.WriteLine("master port should be open, current status {0}", MasterSerialPort.IsOpen);
 		}
 
 		public void StartSlave()
 		{
-			Console.WriteLine("Start NModbus slave");
+			log.Debug("Start NModbus slave.");
 			SlaveThread = new Thread(Slave.Listen);
 			SlaveThread.Start();
 		}
@@ -79,10 +79,10 @@ namespace Modbus.IntegrationTests
 		[TestFixtureTearDown]
 		public void CleanUp()
 		{
-			Console.WriteLine("DISPOSE!!");
+			log.Debug("Clean up after tests.");
+
 			if (MasterSerialPort != null && MasterSerialPort.IsOpen)
 			{
-				Console.WriteLine("Close Master");
 				MasterSerialPort.Close();
 				MasterSerialPort.Dispose();
 			}
@@ -94,10 +94,7 @@ namespace Modbus.IntegrationTests
 			}
 
 			if (SlaveThread != null && SlaveThread.IsAlive)
-			{
-				Console.WriteLine("Abort slave thread");
 				SlaveThread.Abort();
-			}
 
 			if (Jamod != null)
 			{
