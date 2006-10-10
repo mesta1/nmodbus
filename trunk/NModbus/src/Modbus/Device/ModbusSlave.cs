@@ -1,19 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.IO.Ports;
+using System.Net.Sockets;
+using System.Reflection;
 using System.Text;
 using log4net;
+using Modbus.Data;
 using Modbus.IO;
 using Modbus.Message;
-using Modbus.Data;
 using Modbus.Util;
-using System.Net.Sockets;
 
 namespace Modbus.Device
 {
 	public abstract class ModbusSlave : ModbusDevice
 	{
-		protected static readonly ILog log = LogManager.GetLogger(typeof(ModbusSlave));
+		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusSlave));
 		private byte _unitID;
 		private DataStore _dataStore;
 		
@@ -85,6 +86,7 @@ namespace Modbus.Device
 		internal IModbusMessage ApplyRequest(IModbusMessage request)
 		{
 			IModbusMessage response;
+			_log.Info(request.ToString());
 
 			switch (request.FunctionCode)
 			{
@@ -113,7 +115,9 @@ namespace Modbus.Device
 					response = WriteMultipleRegisters((WriteMultipleRegistersRequest) request, DataStore.HoldingRegisters);
 					break;
 				default:
-					throw new ArgumentException(String.Format("Unsupported function code {0}", request.FunctionCode), "request");
+					string errorMessage = String.Format("Unsupported function code {0}", request.FunctionCode);
+					_log.Error(errorMessage);
+					throw new ArgumentException(errorMessage, "request");
 			}
 
 			return response;

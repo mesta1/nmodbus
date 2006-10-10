@@ -8,11 +8,13 @@ using Modbus.Util;
 using Modbus.IO;
 using System.Threading;
 using System.IO;
+using log4net;
 
 namespace Modbus.Device
 {
 	public class ModbusTcpSlave : ModbusSlave
 	{
+		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusTcpSlave));
 		private TcpListener _tcpListener;
 
 		private ModbusTcpSlave(byte unitID, TcpListener tcpListener)
@@ -28,12 +30,12 @@ namespace Modbus.Device
 
 		public override void Listen()
 		{
-			log.Debug("Start Modbus Tcp Server.");
+			_log.Debug("Start Modbus Tcp Server.");
 			_tcpListener.Start();
 			
-			log.Debug("Block for pending client connection.");
+			_log.Debug("Block for pending client connection.");
 			TcpClient master = _tcpListener.AcceptTcpClient();
-			log.Debug("Connected to client.");
+			_log.Debug("Connected to client.");
 			NetworkStream stream = master.GetStream();
 
 			try
@@ -45,26 +47,24 @@ namespace Modbus.Device
 
 					// build request from frame
 					IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(frame);
-					log.DebugFormat("RX: {0}", StringUtil.Join(", ", request.MessageFrame));
+					_log.DebugFormat("RX: {0}", StringUtil.Join(", ", request.MessageFrame));
 
 					// perform action
 					IModbusMessage response = ApplyRequest(request);
 
 					// write response				
 					byte[] responseFrame = new ModbusTcpTransport().BuildMessageFrame(response);
-					log.DebugFormat("TX: {0}", StringUtil.Join(", ", responseFrame));
+					_log.DebugFormat("TX: {0}", StringUtil.Join(", ", responseFrame));
 					stream.Write(responseFrame, 0, responseFrame.Length);
 				}
 			}
 			catch (SocketException se)
 			{
-				log.ErrorFormat("Terminating Modbus Tcp server - {0}, ", se.Message);
-				return;
+				_log.ErrorFormat("Terminating Modbus Tcp server - {0}, ", se.Message);
 			}
 			catch (Exception e)
 			{
-				log.ErrorFormat("Unexpected exception - {0}", e.Message);
-				return;
+				_log.ErrorFormat("Unexpected exception - {0}", e.Message);
 			}
 			finally
 			{

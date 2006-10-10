@@ -6,11 +6,13 @@ using Modbus.Util;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using log4net;
 
 namespace Modbus.IO
 {
 	class ModbusAsciiTransport : ModbusSerialTransport
 	{
+		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusAsciiTransport));
 		private const string FrameEnd = "\r\n";
 
 		internal ModbusAsciiTransport()
@@ -57,6 +59,7 @@ namespace Modbus.IO
 
 			// convert hex to bytes
 			byte[] frame = ModbusUtil.HexToBytes(frameHex);
+			_log.DebugFormat("Read message frame {0}", StringUtil.Join(", ", frame));
 
 			if (frame.Length < 3)
 				throw new IOException("Premature end of stream, message truncated.");

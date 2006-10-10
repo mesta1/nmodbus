@@ -58,7 +58,6 @@
     <Compile Include="ModbusTcpFixture.cs" />
     <Compile Include="ModbusTcpJamodSlaveFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestTcpClass.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Modbus\Modbus.csproj">

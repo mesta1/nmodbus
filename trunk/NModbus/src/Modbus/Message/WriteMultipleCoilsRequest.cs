@@ -47,6 +47,11 @@ namespace Modbus.Message
 			get { return _minimumFrameSize; }
 		}
 
+		public override string ToString()
+		{
+			return String.Format("Write {0} Coils beginning at address {1}.", NumberOfPoints, StartAddress);
+		}
+
 		protected override void InitializeUnique(byte[] frame)
 		{
 			if (frame.Length < _minimumFrameSize + frame[6])

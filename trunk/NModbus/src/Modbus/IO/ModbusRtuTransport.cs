@@ -6,13 +6,16 @@ using System.IO.Ports;
 using Modbus.Util;
 using System.IO;
 using Modbus.IO;
+using log4net;
 
 namespace Modbus.IO
 {
 	class ModbusRtuTransport : ModbusSerialTransport
-	{
+	{		
 		public const int RequestFrameStartLength = 7;
 		public const int ResponseFrameStartLength = 4;
+
+		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusRtuTransport));
 
 		public ModbusRtuTransport ()
 		{
@@ -41,27 +44,33 @@ namespace Modbus.IO
 		internal override byte[] ReadResponse()
 		{
 			byte[] frameStart = Read(ResponseFrameStartLength);
-			byte[] frameEnd = Read(ResponseBytesToRead(frameStart));
-			byte[] frame = CollectionUtil.Combine<byte>(frameStart, frameEnd);
+			_log.DebugFormat("Frame start {0}.", StringUtil.Join(", ", frameStart));	
 
-			return frame;
+			byte[] frameEnd = Read(ResponseBytesToRead(frameStart));
+			_log.DebugFormat("Frame end {0}.", StringUtil.Join(", ", frameEnd));
+
+			return CollectionUtil.Combine<byte>(frameStart, frameEnd);
 		}
 
 		internal override byte[] ReadRequest()
-		{
+		{			
 			byte[] frameStart = Read(RequestFrameStartLength);
+			_log.DebugFormat("Frame start {0}.", StringUtil.Join(", ", frameStart));			
+			
 			byte[] frameEnd = Read(RequestBytesToRead(frameStart));
-			byte[] frame = CollectionUtil.Combine<byte>(frameStart, frameEnd);
+			_log.DebugFormat("Frame end {0}.", StringUtil.Join(", ", frameEnd));
 
-			return frame;
+			return CollectionUtil.Combine<byte>(frameStart, frameEnd);
 		}
 
 		public byte[] Read(int count)
 		{
+			_log.DebugFormat("Read {0} bytes.", count);
 			byte[] frameBytes = new byte[count];
-			int numBytesRead = 0;
+			int numBytesRead = 0;			
+
 			while (numBytesRead != count)
-				numBytesRead += SerialPort.Read(frameBytes, numBytesRead, count - numBytesRead);
+				numBytesRead += SerialPort.Read(frameBytes, numBytesRead, count - numBytesRead);			
 
 			return frameBytes;
 		}
@@ -87,7 +96,9 @@ namespace Modbus.IO
 					numBytes = byteCount + 2;
 					break;
 				default:
-					throw new NotImplementedException(String.Format("Function code {0} not supported.", functionCode));
+					string errorMessage = String.Format("Function code {0} not supported.", functionCode);
+					_log.Error(errorMessage);
+					throw new NotImplementedException(errorMessage);
 			}
 
 			return numBytes;

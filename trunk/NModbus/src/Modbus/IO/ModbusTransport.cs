@@ -10,7 +10,7 @@ namespace Modbus.IO
 {
 	public abstract class ModbusTransport
 	{
-		private static readonly ILog log = LogManager.GetLogger(typeof(ModbusTransport));
+		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusTransport));
 		private int _retries = Modbus.DefaultRetries;
 
 		public ModbusTransport()
@@ -21,11 +21,6 @@ namespace Modbus.IO
 		{
 			get { return _retries; }
 			set { _retries = value; }
-		}
-
-		internal void BroadcastMessage(IModbusMessage request)
-		{
-			throw new Exception("The method or operation is not implemented.");
 		}
 
 		internal virtual T UnicastMessage<T>(IModbusMessage message) where T : IModbusMessage, new()
@@ -39,27 +34,31 @@ namespace Modbus.IO
 				try
 				{
 					// write message
-					log.DebugFormat("TX: {0}", StringUtil.Join(", ", message.MessageFrame));
+					_log.InfoFormat("TX: {0}", StringUtil.Join(", ", message.MessageFrame));
 					Write(message);
 
 					// read response
 					response = CreateResponse<T>(ReadResponse());
-					log.DebugFormat("RX: {0}", StringUtil.Join(", ", response.MessageFrame));
+					_log.InfoFormat("RX: {0}", StringUtil.Join(", ", response.MessageFrame));
 
 					// ensure response is of appropriate function code
 					if (message.FunctionCode != response.FunctionCode)
-						throw new IOException(String.Format(ModbusResources.InvalidResponseExceptionMessage, message.FunctionCode, response.FunctionCode));
+					{
+						string errorMessage = String.Format(ModbusResources.InvalidResponseExceptionMessage, message.FunctionCode, response.FunctionCode);
+						_log.ErrorFormat(errorMessage);
+						throw new IOException(errorMessage);
+					}
 
 					success = true;
 				}
 				catch (TimeoutException te)
 				{
-					log.ErrorFormat(te.Message);
+					_log.ErrorFormat(te.Message);
 					throw te;
 				}
 				catch (Exception e)
 				{
-					log.ErrorFormat("Failure {0}, {1} retries remaining. {2}", attempt, _retries + 1 - attempt, e.Message);
+					_log.ErrorFormat("Failure {0}, {1} retries remaining. {2}", attempt, _retries + 1 - attempt, e.Message);
 
 					if (attempt++ > _retries)
 						throw e;
@@ -83,9 +82,9 @@ namespace Modbus.IO
 			return response;
 		}
 
-		internal abstract byte[] BuildMessageFrame(IModbusMessage message);
-		internal abstract byte[] ReadResponse();
 		internal abstract byte[] ReadRequest();
+		internal abstract byte[] ReadResponse();
+		internal abstract byte[] BuildMessageFrame(IModbusMessage message);		
 		internal abstract void Write(IModbusMessage message);
 	}
 }
