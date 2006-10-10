@@ -4,14 +4,14 @@ What is it?
 -----------
 NModbus is a C# 2.0 implementation of the Modbus protocol.
   
-More information at the NModbus project web site http://nmodbus.org/
+More information at the NModbus project web site http://nmodbus.com/
 
 
 The Latest Version
 ------------------
-The latest binary distribution can be found on the NModbus project web site http://nmodbus.org/
+The latest binary distribution can be found on the NModbus project web site http://nmodbus.com/
 
-Source for the proeject can be found at the NModbus project's google code page http://code.google.com/p/nmodbus/
+The latest source for the project can be found at the NModbus project's google code page http://code.google.com/p/nmodbus/
 
 
 Documentation
