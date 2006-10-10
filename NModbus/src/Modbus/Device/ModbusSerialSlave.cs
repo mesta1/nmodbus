@@ -5,11 +5,13 @@ using System.IO.Ports;
 using Modbus.IO;
 using Modbus.Message;
 using Modbus.Util;
+using log4net;
 
 namespace Modbus.Device
 {
 	public class ModbusSerialSlave : ModbusSlave
 	{
+		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusSerialSlave));
 
 		private ModbusSerialSlave(byte unitID, ModbusTransport transport)
 			: base(unitID, transport)
@@ -37,24 +39,27 @@ namespace Modbus.Device
 
 					// build request from frame
 					IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(frame);
-					log.DebugFormat("RX: {0}", StringUtil.Join(", ", request.MessageFrame));
+					_log.InfoFormat("RX: {0}", StringUtil.Join(", ", request.MessageFrame));
 
 					// only service requests addressed to this particular slave
 					if (request.SlaveAddress != UnitID)
+					{
+						_log.DebugFormat("NModbus Slave {0} ignoring request intended for NModbus Slave {1}", UnitID, request.SlaveAddress);
 						continue;
+					}
 
 					// perform action
 					IModbusMessage response = ApplyRequest(request);
 
 					// write response
-					log.DebugFormat("TX: {0}", StringUtil.Join(", ", response.MessageFrame));
+					_log.InfoFormat("TX: {0}", StringUtil.Join(", ", response.MessageFrame));
 					Transport.Write(response);
 
 				}
 				catch (Exception e)
 				{
 					// TODO explicitly catch timeout exception
-					log.ErrorFormat(ModbusResources.ModbusSlaveListenerException, e.Message);
+					_log.ErrorFormat(ModbusResources.ModbusSlaveListenerException, e.Message);
 				}
 			}
 		}

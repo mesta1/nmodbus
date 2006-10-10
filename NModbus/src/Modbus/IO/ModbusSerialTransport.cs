@@ -3,11 +3,14 @@ using System.IO.Ports;
 using System.Reflection;
 using Modbus.Message;
 using System;
+using log4net;
+using Modbus.Util;
 
 namespace Modbus.IO
 {
 	abstract class ModbusSerialTransport : ModbusTransport
 	{
+		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusTransport));
 		private SerialPort _serialPort;
 		private TextReader _reader;
 
@@ -56,7 +59,11 @@ namespace Modbus.IO
 
 			// compare checksum
 			if (!ChecksumsMatch(response, frame))
-				throw new IOException("Checksum failed.");
+			{
+				string errorMessage = String.Format("Checksums failed to match {0} <> {1}", StringUtil.Join(", ", response.MessageFrame), StringUtil.Join(", ", frame));
+				_log.Error(errorMessage);
+				throw new IOException(errorMessage);
+			}
 
 			return response;
 		}

@@ -5,11 +5,13 @@ using Modbus.Message;
 using System.Net.Sockets;
 using Modbus.Util;
 using System.Net;
+using log4net;
 
 namespace Modbus.IO
 {
 	class ModbusTcpTransport : ModbusTransport
 	{
+		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusTcpTransport));
 		private NetworkStream _networkStream;
 
 		public ModbusTcpTransport()
@@ -72,13 +74,18 @@ namespace Modbus.IO
 			while (numBytesRead != 6)
 				numBytesRead += stream.Read(mbapHeader, numBytesRead, 6 - numBytesRead);
 
+			_log.DebugFormat("MBAP header: {0}", StringUtil.Join(", ", mbapHeader));
+			
 			ushort frameLength = (ushort) (IPAddress.HostToNetworkOrder(BitConverter.ToInt16(mbapHeader, 4)));
+			_log.DebugFormat("{0} bytes remaining to read.", StringUtil.Join(", ", mbapHeader));
 
 			// read message
 			byte[] frame = new byte[frameLength];
 			numBytesRead = 0;
 			while (numBytesRead != frameLength)
 				numBytesRead += stream.Read(frame, numBytesRead, frameLength - numBytesRead);
+
+			_log.DebugFormat("PDU: {0}", StringUtil.Join(", ", frame));
 
 			return frame;
 		}

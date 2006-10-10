@@ -38,6 +38,11 @@ namespace Modbus.Message
 			set { MessageImpl.NumberOfPoints = value; }
 		}
 
+		public override string ToString()
+		{
+			return String.Format("Read {0} {1} beginning at address {2}.", NumberOfPoints, FunctionCode == Modbus.ReadCoils ? "Coils" : "Inputs", StartAddress);
+		}
+
 		protected override void InitializeUnique(byte[] frame)
 		{
 			StartAddress = (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 2));
