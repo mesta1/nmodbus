@@ -8,12 +8,13 @@ using Modbus.Data;
 using Modbus.UnitTests.Message;
 using Modbus.Util;
 using System.IO;
+using System.IO.Ports;
 
 namespace Modbus.UnitTests.IO
 {
 	[TestFixture]
 	public class ModbusSerialTransportFixture : ModbusMessageFixture
-	{		
+	{
 		[Test, ExpectedException(typeof(IOException))]
 		public void CreateResponseErroneousLrc()
 		{

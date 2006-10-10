@@ -42,7 +42,6 @@ namespace Modbus.IntegrationTests
 		{
 			log.DebugFormat("Configure and open slave serial port {0}.", SlaveSerialPortName);
 			SlaveSerialPort = new SerialPort(SlaveSerialPortName);
-			SlaveSerialPort.ReadTimeout = Modbus.DefaultTimeout;
 			SlaveSerialPort.Parity = Parity.None;
 			SlaveSerialPort.Open();
 		}
@@ -51,7 +50,6 @@ namespace Modbus.IntegrationTests
 		{
 			log.DebugFormat("Configure and open master serial port {0}.", MasterSerialPortName);
 			MasterSerialPort = new SerialPort(MasterSerialPortName);
-			MasterSerialPort.ReadTimeout = Modbus.DefaultTimeout;
 			MasterSerialPort.Parity = Parity.None;
 			MasterSerialPort.Open();
 		}

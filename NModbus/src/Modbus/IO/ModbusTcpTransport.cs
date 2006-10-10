@@ -20,7 +20,7 @@ namespace Modbus.IO
 
 		public ModbusTcpTransport(TcpClient tcpClient)
 		{
-			_networkStream = tcpClient.GetStream();
+			_networkStream = tcpClient.GetStream();	
 		}
 
 		public NetworkStream NetworkStream
@@ -77,7 +77,7 @@ namespace Modbus.IO
 			_log.DebugFormat("MBAP header: {0}", StringUtil.Join(", ", mbapHeader));
 			
 			ushort frameLength = (ushort) (IPAddress.HostToNetworkOrder(BitConverter.ToInt16(mbapHeader, 4)));
-			_log.DebugFormat("{0} bytes remaining to read.", StringUtil.Join(", ", mbapHeader));
+			_log.DebugFormat("{0} bytes in PDU.", frameLength);
 
 			// read message
 			byte[] frame = new byte[frameLength];

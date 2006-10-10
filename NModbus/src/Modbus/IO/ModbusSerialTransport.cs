@@ -23,14 +23,17 @@ namespace Modbus.IO
 			if (serialPort == null)
 				throw new ArgumentNullException("serialPort");
 
+			serialPort.WriteTimeout = serialPort.WriteTimeout == SerialPort.InfiniteTimeout ? Modbus.DefaultTimeout : serialPort.WriteTimeout;
+			serialPort.ReadTimeout = serialPort.ReadTimeout == SerialPort.InfiniteTimeout ? Modbus.DefaultTimeout : serialPort.ReadTimeout;
+
 			_serialPort = serialPort;
 			_reader = new StreamReader(_serialPort.BaseStream);
 		}
 
 		internal SerialPort SerialPort
 		{
-			get { return _serialPort;}
-			set { _serialPort = value;}
+			get { return _serialPort; }
+			set { _serialPort = value; }
 		}
 
 		internal TextReader Reader

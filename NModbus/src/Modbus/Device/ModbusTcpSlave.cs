@@ -58,9 +58,9 @@ namespace Modbus.Device
 					stream.Write(responseFrame, 0, responseFrame.Length);
 				}
 			}
-			catch (SocketException se)
+			catch (ThreadAbortException)
 			{
-				_log.ErrorFormat("Terminating Modbus Tcp server - {0}, ", se.Message);
+				_log.Info("NModbus slave thread aborted.");
 			}
 			catch (Exception e)
 			{
