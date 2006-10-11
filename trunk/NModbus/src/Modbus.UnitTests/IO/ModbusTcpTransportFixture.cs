@@ -6,6 +6,7 @@ using Modbus.Data;
 using Modbus.IO;
 using Modbus.Message;
 using NUnit.Framework;
+using Modbus.Util;
 
 namespace Modbus.UnitTests.IO
 {
@@ -22,20 +23,9 @@ namespace Modbus.UnitTests.IO
 		[Test]
 		public void GetMbapHeader()
 		{
-			WriteMultipleRegistersRequest message = new WriteMultipleRegistersRequest(3, 1, RegisterCollection.CreateRegisterCollection(0, 255));
+			WriteMultipleRegistersRequest message = new WriteMultipleRegistersRequest(3, 1, CollectionUtil.CreateDefaultCollection<RegisterCollection, ushort>(0, 120));
 			byte[] header = ModbusTcpTransport.GetMbapHeader(message);
-			Assert.AreEqual(new byte[] { 0, 0, 0, 0, 2, 5, 3}, header);
+			Assert.AreEqual(new byte[] { 0, 0, 0, 0, 0, 247, 3}, header);
 		}
-
-		//[Test]
-		//[ExpectedException(typeof(ArgumentNullException))]
-		//public void ModbusTCPTranpsortNullSocket()
-		//{
-		//    Socket sock = null;
-		//    ModbusTcpTransport transport = new ModbusTcpTransport(sock);
-		//    Assert.Fail();
-		//}
-
-		// TODO test read success
 	}
 }

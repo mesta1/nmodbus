@@ -32,8 +32,17 @@ namespace Modbus.Message
 
 		public ushort NumberOfPoints
 		{
-			get { return MessageImpl.NumberOfPoints; }
-			set { MessageImpl.NumberOfPoints = value; }
+			get 
+			{ 
+				return MessageImpl.NumberOfPoints; 
+			}
+			set 
+			{
+				if (value > Modbus.MaximumDiscreteRequestResponseSize)
+					throw new ArgumentOutOfRangeException("NumberOfPoints", String.Format("Maximum amount of data {0} coils.", Modbus.MaximumDiscreteRequestResponseSize));
+
+				MessageImpl.NumberOfPoints = value; 
+			}
 		}
 
 		public ushort StartAddress

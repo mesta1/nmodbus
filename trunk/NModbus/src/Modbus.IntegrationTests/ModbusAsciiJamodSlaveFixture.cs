@@ -23,6 +23,6 @@ namespace Modbus.IntegrationTests
 
 			SetupMasterSerialPort();
 			Master = ModbusSerialMaster.CreateAscii(MasterSerialPort);
-		}		
+		}
 	}
 }

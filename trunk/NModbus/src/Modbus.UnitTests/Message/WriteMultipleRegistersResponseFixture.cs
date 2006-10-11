@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
 using Modbus.Message;
+using Modbus.Data;
+using Modbus.Util;
 
 namespace Modbus.UnitTests.Message
 {
@@ -17,6 +19,19 @@ namespace Modbus.UnitTests.Message
 			Assert.AreEqual(12, response.SlaveAddress);
 			Assert.AreEqual(39, response.StartAddress);
 			Assert.AreEqual(2, response.NumberOfPoints);
+		}
+
+		[Test, ExpectedException(typeof(ArgumentOutOfRangeException))]
+		public void CreateWriteMultipleRegistersResponseTooMuchData()
+		{
+			new WriteMultipleRegistersResponse(1, 2, Modbus.MaximumRegisterRequestResponseSize + 1);
+		}
+
+		[Test]
+		public void CreateWriteMultipleRegistersResponseMaxSize()
+		{
+			WriteMultipleRegistersResponse response = new WriteMultipleRegistersResponse(1, 2, Modbus.MaximumRegisterRequestResponseSize);
+			Assert.AreEqual(Modbus.MaximumRegisterRequestResponseSize, response.NumberOfPoints);
 		}
 	}
 }

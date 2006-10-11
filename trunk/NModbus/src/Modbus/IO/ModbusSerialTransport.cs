@@ -63,7 +63,7 @@ namespace Modbus.IO
 			// compare checksum
 			if (!ChecksumsMatch(response, frame))
 			{
-				string errorMessage = String.Format("Checksums failed to match {0} <> {1}", StringUtil.Join(", ", response.MessageFrame), StringUtil.Join(", ", frame));
+				string errorMessage = String.Format("Checksums failed to match {0} != {1}", StringUtil.Join(", ", response.MessageFrame), StringUtil.Join(", ", frame));
 				_log.Error(errorMessage);
 				throw new IOException(errorMessage);
 			}

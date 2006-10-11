@@ -5,6 +5,7 @@ using NUnit.Framework;
 using Modbus.Util;
 using System.Collections.ObjectModel;
 using System.Collections;
+using Modbus.Data;
 
 namespace Modbus.UnitTests.Util
 {
@@ -141,6 +142,20 @@ namespace Modbus.UnitTests.Util
 			List<int> newItems = new List<int>(new int[] { 1, 2, 3, 7, 8, 9 });
 			List<int> destination = new List<int>(new int[] { 4, 5, 6 });
 			CollectionUtil.Update<int>(newItems, destination, -1);
+		}
+
+		[Test, ExpectedException(typeof(ArgumentOutOfRangeException))]
+		public void CreateDefaultCollectionNegativeSize()
+		{
+			CollectionUtil.CreateDefaultCollection<RegisterCollection, ushort>(0, -1);
+		}
+
+		[Test]
+		public void CreateDefaultCollection()
+		{
+			RegisterCollection col = CollectionUtil.CreateDefaultCollection<RegisterCollection, ushort>(3, 5);
+			Assert.AreEqual(5, col.Count);
+			Assert.AreEqual(new ushort[] { 3, 3, 3, 3, 3 }, CollectionUtil.ToArray(col));
 		}
 	}
 }

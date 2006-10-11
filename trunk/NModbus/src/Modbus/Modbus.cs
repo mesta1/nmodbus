@@ -9,17 +9,18 @@ namespace Modbus
 	/// </summary>
 	public static class Modbus
 	{			
-		// public function codes
+		// supported function codes
 		public const byte ReadCoils = 1;
 		public const byte ReadInputs = 2;
 		public const byte ReadHoldingRegisters = 3;
 		public const byte ReadInputRegisters = 4;
 		public const byte WriteSingleCoil = 5;
 		public const byte WriteSingleRegister = 6;
-		//public const byte ReadExceptionStatus = 7;
-		//public const byte Diagnostics = 8;
 		public const byte WriteMultipleCoils = 15;
 		public const byte WriteMultipleRegisters = 16;
+
+		public const int MaximumDiscreteRequestResponseSize = 2040;
+		public const int MaximumRegisterRequestResponseSize = 127; 
 
 		// modbus slave exception offset that is added to the function code, to flag an exception
 		public const byte ExceptionOffset = 128;
@@ -36,7 +37,7 @@ namespace Modbus
 		public const ushort CoilOn = 0xFF00;
 		public const ushort CoilOff = 0x0000;
 
-		// Tcp slaves should be addressed by IP
+		// TCP slaves should be addressed by IP
 		public const byte DefaultTcpSlaveUnitID = 0;
 	}
 }
