@@ -28,5 +28,18 @@ namespace Modbus.UnitTests.Message
 			Assert.AreEqual(1, request.StartAddress);
 			Assert.AreEqual(10, request.NumberOfPoints);
 		}
+
+		[Test, ExpectedException(typeof(ArgumentOutOfRangeException))]
+		public void CreateReadCoilsInputsRequestTooMuchData()
+		{
+			new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 2, Modbus.MaximumDiscreteRequestResponseSize + 1);
+		}
+
+		[Test]
+		public void CreateReadCoilsInputsRequestMaxSize()
+		{
+			ReadCoilsInputsRequest response = new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 2, Modbus.MaximumDiscreteRequestResponseSize);
+			Assert.AreEqual(Modbus.MaximumDiscreteRequestResponseSize, response.NumberOfPoints);
+		}
 	}
 }

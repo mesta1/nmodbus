@@ -17,20 +17,6 @@ namespace Modbus.UnitTests.Data
 			Assert.AreEqual(6, col.ByteCount);
 		}
 
-		[Test, ExpectedException(typeof(ArgumentException))]
-		public void CreateRegisterCollectionSizeLessThanZero()
-		{
-			RegisterCollection.CreateRegisterCollection(0, -1);
-		}
-
-		[Test]
-		public void CreateRegisterCollection()
-		{
-			RegisterCollection col = RegisterCollection.CreateRegisterCollection(2, 3);
-			Assert.AreEqual(3, col.Count);
-			Assert.AreEqual(new ushort[] { 2, 2, 2 }, CollectionUtil.ToArray(col));
-		}
-
 		[Test]
 		public void NewRegisterCollection()
 		{

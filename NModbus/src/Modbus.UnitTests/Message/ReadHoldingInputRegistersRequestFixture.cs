@@ -28,5 +28,18 @@ namespace Modbus.UnitTests.Message
 			Assert.AreEqual(1, request.StartAddress);
 			Assert.AreEqual(10, request.NumberOfPoints);
 		}
+
+		[Test, ExpectedException(typeof(ArgumentOutOfRangeException))]
+		public void CreateReadHoldingInputRegistersRequestTooMuchData()
+		{
+			new ReadHoldingInputRegistersRequest(Modbus.ReadHoldingRegisters, 1, 2, Modbus.MaximumRegisterRequestResponseSize + 1);
+		}
+
+		[Test]
+		public void CreateReadHoldingInputRegistersRequestMaxSize()
+		{
+			ReadHoldingInputRegistersRequest response = new ReadHoldingInputRegistersRequest(Modbus.ReadHoldingRegisters, 1, 2, Modbus.MaximumRegisterRequestResponseSize);
+			Assert.AreEqual(Modbus.MaximumRegisterRequestResponseSize, response.NumberOfPoints);
+		}
 	}
 }

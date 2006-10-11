@@ -18,5 +18,18 @@ namespace Modbus.UnitTests.Message
 			Assert.AreEqual(19, response.StartAddress);
 			Assert.AreEqual(45, response.NumberOfPoints);
 		}
+
+		[Test, ExpectedException(typeof(ArgumentOutOfRangeException))]
+		public void CreateWriteMultipleCoilsResponseTooMuchData()
+		{
+			new WriteMultipleCoilsResponse(1, 2, Modbus.MaximumDiscreteRequestResponseSize + 1);
+		}
+
+		[Test]
+		public void CreateWriteMultipleCoilsResponseMaxSize()
+		{
+			WriteMultipleCoilsResponse response = new WriteMultipleCoilsResponse(1, 2, Modbus.MaximumDiscreteRequestResponseSize);
+			Assert.AreEqual(Modbus.MaximumDiscreteRequestResponseSize, response.NumberOfPoints);
+		}
 	}
 }
