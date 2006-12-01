@@ -8,7 +8,7 @@
 	<property name="path.src" value="src" />
 	<property name="path.docs" value="docs" />
 	<property name="path.dist" value="dist" />
-	<property name="version" value="0.0.3" />
+	<property name="version" value="0.0.3a" />
 
 	<target name="build">
 		<loadtasks assembly="${nantcontrib}"/>
