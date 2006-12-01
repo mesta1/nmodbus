@@ -19,38 +19,22 @@ namespace Modbus.Device
 
 		public bool[] ReadCoils(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
 		{
-			return ReadDiscretes(slaveAddress, startAddress, numberOfPoints);
+			return ReadDiscretes(Modbus.ReadCoils, slaveAddress, startAddress, numberOfPoints);
 		}
 
 		public bool[] ReadInputs(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
 		{
-			return ReadDiscretes(slaveAddress, startAddress, numberOfPoints);
-		}
-
-		internal bool[] ReadDiscretes(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
-		{
-			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, slaveAddress, startAddress, numberOfPoints);
-			ReadCoilsInputsResponse response = Transport.UnicastMessage<ReadCoilsInputsResponse>(request);
-
-			return CollectionUtil.Slice<bool>(response.Data, 0, request.NumberOfPoints);
-		}
+			return ReadDiscretes(Modbus.ReadInputs, slaveAddress, startAddress, numberOfPoints);
+		}		
 
 		public ushort[] ReadHoldingRegisters(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
 		{
-			return ReadRegisters(slaveAddress, startAddress, numberOfPoints);
+			return ReadRegisters(Modbus.ReadHoldingRegisters, slaveAddress, startAddress, numberOfPoints);
 		}
 
 		public ushort[] ReadInputRegisters(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
 		{
-			return ReadRegisters(slaveAddress, startAddress, numberOfPoints);
-		}
-
-		internal ushort[] ReadRegisters(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
-		{
-			ReadHoldingInputRegistersRequest request = new ReadHoldingInputRegistersRequest(Modbus.ReadHoldingRegisters, slaveAddress, startAddress, numberOfPoints);
-			ReadHoldingInputRegistersResponse response = Transport.UnicastMessage<ReadHoldingInputRegistersResponse>(request);
-			
-			return CollectionUtil.ToArray<ushort>(response.Data);
+			return ReadRegisters(Modbus.ReadInputRegisters, slaveAddress, startAddress, numberOfPoints);
 		}
 
 		public void WriteSingleCoil(byte slaveAddress, ushort coilAddress, bool value)
@@ -75,6 +59,22 @@ namespace Modbus.Device
 		{
 			WriteMultipleCoilsRequest request = new WriteMultipleCoilsRequest(slaveAddress, startAddress, new DiscreteCollection(data));
 			Transport.UnicastMessage<WriteMultipleCoilsResponse>(request);
+		}
+
+		internal ushort[] ReadRegisters(byte functionCode, byte slaveAddress, ushort startAddress, ushort numberOfPoints)
+		{
+			ReadHoldingInputRegistersRequest request = new ReadHoldingInputRegistersRequest(functionCode, slaveAddress, startAddress, numberOfPoints);
+			ReadHoldingInputRegistersResponse response = Transport.UnicastMessage<ReadHoldingInputRegistersResponse>(request);
+
+			return CollectionUtil.ToArray<ushort>(response.Data);
+		}
+
+		internal bool[] ReadDiscretes(byte functionCode, byte slaveAddress, ushort startAddress, ushort numberOfPoints)
+		{
+			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(functionCode, slaveAddress, startAddress, numberOfPoints);
+			ReadCoilsInputsResponse response = Transport.UnicastMessage<ReadCoilsInputsResponse>(request);
+
+			return CollectionUtil.Slice<bool>(response.Data, 0, request.NumberOfPoints);
 		}
 	}
 }

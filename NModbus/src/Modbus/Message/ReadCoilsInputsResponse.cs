@@ -14,8 +14,8 @@ namespace Modbus.Message
 		{
 		}
 
-		public ReadCoilsInputsResponse(byte slaveAddress, byte byteCount, DiscreteCollection data)
-			: base(slaveAddress, Modbus.ReadCoils)
+		public ReadCoilsInputsResponse(byte functionCode, byte slaveAddress, byte byteCount, DiscreteCollection data)
+			: base(slaveAddress, functionCode)
 		{
 			ByteCount = byteCount;
 			Data = data;

@@ -24,7 +24,7 @@ namespace Modbus.UnitTests.Device
 		[Test]
 		public void ReadDiscretesCoils()
 		{
-			ReadCoilsInputsResponse expectedResponse = new ReadCoilsInputsResponse(1, 2, new DiscreteCollection(false, true, false, true, false, true, false, true, false));
+			ReadCoilsInputsResponse expectedResponse = new ReadCoilsInputsResponse(Modbus.ReadCoils, 1, 2, new DiscreteCollection(false, true, false, true, false, true, false, true, false));
 			ReadCoilsInputsResponse response = ModbusSlave.ReadDiscretes(new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 1, 9), _testDataStore.CoilDiscretes);
 			AssertModbusMessagePropertiesAreEqual(expectedResponse, response);
 			Assert.AreEqual(expectedResponse.ByteCount, response.ByteCount);
@@ -32,8 +32,8 @@ namespace Modbus.UnitTests.Device
 
 		[Test]
 		public void ReadDiscretesInputs()
-		{ 
-			ReadCoilsInputsResponse expectedResponse = new ReadCoilsInputsResponse(1, 2, new DiscreteCollection(true, false, true, false, true, false, true, false, true));
+		{
+			ReadCoilsInputsResponse expectedResponse = new ReadCoilsInputsResponse(Modbus.ReadInputs, 1, 2, new DiscreteCollection(true, false, true, false, true, false, true, false, true));
 			ReadCoilsInputsResponse response = ModbusSlave.ReadDiscretes(new ReadCoilsInputsRequest(Modbus.ReadInputs, 1, 1, 9), _testDataStore.InputDiscretes);
 			AssertModbusMessagePropertiesAreEqual(expectedResponse, response);
 			Assert.AreEqual(expectedResponse.ByteCount, response.ByteCount);
@@ -42,7 +42,7 @@ namespace Modbus.UnitTests.Device
 		[Test]
 		public void ReadRegistersHoldingRegisters()
 		{
-			ReadHoldingInputRegistersResponse expectedResponse = new ReadHoldingInputRegistersResponse(1, 12, new RegisterCollection(1, 2, 3, 4, 5, 6));
+			ReadHoldingInputRegistersResponse expectedResponse = new ReadHoldingInputRegistersResponse(Modbus.ReadHoldingRegisters, 1, 12, new RegisterCollection(1, 2, 3, 4, 5, 6));
 			ReadHoldingInputRegistersResponse response = ModbusSlave.ReadRegisters(new ReadHoldingInputRegistersRequest(Modbus.ReadHoldingRegisters, 1, 1, 6), _testDataStore.HoldingRegisters);
 			AssertModbusMessagePropertiesAreEqual(expectedResponse, response);
 			Assert.AreEqual(expectedResponse.ByteCount, response.ByteCount);
@@ -51,7 +51,7 @@ namespace Modbus.UnitTests.Device
 		[Test]
 		public void ReadRegistersInputRegisters()
 		{
-			ReadHoldingInputRegistersResponse expectedResponse = new ReadHoldingInputRegistersResponse(1, 12, new RegisterCollection(10, 20, 30, 40, 50, 60));
+			ReadHoldingInputRegistersResponse expectedResponse = new ReadHoldingInputRegistersResponse(Modbus.ReadInputRegisters, 1, 12, new RegisterCollection(10, 20, 30, 40, 50, 60));
 			ReadHoldingInputRegistersResponse response = ModbusSlave.ReadRegisters(new ReadHoldingInputRegistersRequest(Modbus.ReadInputRegisters, 1, 1, 6), _testDataStore.InputRegisters);
 			AssertModbusMessagePropertiesAreEqual(expectedResponse, response);
 			Assert.AreEqual(expectedResponse.ByteCount, response.ByteCount);

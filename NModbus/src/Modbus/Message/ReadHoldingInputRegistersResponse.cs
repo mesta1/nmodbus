@@ -14,8 +14,8 @@ namespace Modbus.Message
 		{
 		}
 
-		public ReadHoldingInputRegistersResponse(byte slaveAddress, byte byteCount, RegisterCollection data)
-			: base(slaveAddress, Modbus.ReadHoldingRegisters)
+		public ReadHoldingInputRegistersResponse(byte functionCode, byte slaveAddress, byte byteCount, RegisterCollection data)
+			: base(slaveAddress, functionCode)
 		{
 			ByteCount = byteCount;
 			Data = data;
