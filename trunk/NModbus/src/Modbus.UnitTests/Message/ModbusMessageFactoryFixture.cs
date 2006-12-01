@@ -35,7 +35,7 @@ namespace Modbus.UnitTests.Message
 		public void CreateModbusMessageReadCoilsResponse()
 		{
 			ReadCoilsInputsResponse response = ModbusMessageFactory.CreateModbusMessage<ReadCoilsInputsResponse>(new byte[] { 11, Modbus.ReadCoils, 1, 1 });
-			ReadCoilsInputsResponse expectedResponse = new ReadCoilsInputsResponse(11, 1, new DiscreteCollection(true, false, false, false));
+			ReadCoilsInputsResponse expectedResponse = new ReadCoilsInputsResponse(Modbus.ReadCoils, 11, 1, new DiscreteCollection(true, false, false, false));
 			AssertModbusMessagePropertiesAreEqual(expectedResponse, response);
 			Assert.AreEqual(expectedResponse.Data.NetworkBytes, response.Data.NetworkBytes);
 		}
@@ -79,7 +79,7 @@ namespace Modbus.UnitTests.Message
 		public void CreateModbusMessageReadHoldingRegistersResponse()
 		{
 			ReadHoldingInputRegistersResponse response = ModbusMessageFactory.CreateModbusMessage<ReadHoldingInputRegistersResponse>(new byte[] { 11, Modbus.ReadHoldingRegisters, 4, 0, 3, 0, 4 });
-			ReadHoldingInputRegistersResponse expectedResponse = new ReadHoldingInputRegistersResponse(11, 4, new RegisterCollection(3, 4));
+			ReadHoldingInputRegistersResponse expectedResponse = new ReadHoldingInputRegistersResponse(Modbus.ReadHoldingRegisters, 11, 4, new RegisterCollection(3, 4));
 			AssertModbusMessagePropertiesAreEqual(expectedResponse, response);
 		}
 
