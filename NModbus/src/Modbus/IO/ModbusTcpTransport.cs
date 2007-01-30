@@ -11,7 +11,7 @@ namespace Modbus.IO
 {
 	class ModbusTcpTransport : ModbusTransport
 	{
-		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusTcpTransport));
+		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusTcpTransport));		
 		private NetworkStream _networkStream;
 
 		public ModbusTcpTransport()
@@ -27,7 +27,7 @@ namespace Modbus.IO
 		{
 			get { return _networkStream; }
 			set { _networkStream = value; }
-		}
+		}		
 
 		public static byte[] GetMbapHeader(IModbusMessage message)
 		{

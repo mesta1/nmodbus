@@ -26,6 +26,6 @@ namespace Modbus.UnitTests.IO
 			WriteMultipleRegistersRequest message = new WriteMultipleRegistersRequest(3, 1, CollectionUtil.CreateDefaultCollection<RegisterCollection, ushort>(0, 120));
 			byte[] header = ModbusTcpTransport.GetMbapHeader(message);
 			Assert.AreEqual(new byte[] { 0, 0, 0, 0, 0, 247, 3}, header);
-		}
+		}		
 	}
 }

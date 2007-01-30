@@ -84,24 +84,12 @@
     <Compile Include="Message\WriteSingleCoilRequestResponse.cs" />
     <Compile Include="Message\WriteSingleRegisterRequestResponse.cs" />
     <Compile Include="Modbus.cs" />
-    <Compile Include="ModbusResources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ModbusResources.resx</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SlaveException.cs" />
     <Compile Include="Util\CollectionUtil.cs" />
     <Compile Include="Util\DelegateDefinitions.cs" />
     <Compile Include="Util\ModbusUtil.cs" />
     <Compile Include="Util\StringUtil.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="ModbusResources.resx">
-      <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>ModbusResources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
