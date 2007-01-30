@@ -21,44 +21,44 @@ namespace Modbus.Device
 			return new ModbusTcpMaster(new ModbusTcpTransport(tcpClient));
 		}
 
-		public bool[] ReadCoils(ushort startAddress, ushort numberOfPoints)
+		public bool[] ReadCoils(ushort modbusAddress, ushort numberOfPoints)
 		{
-			return base.ReadCoils(Modbus.DefaultTcpSlaveUnitID, startAddress, numberOfPoints);
+			return base.ReadCoils(Modbus.DefaultTcpSlaveUnitId, modbusAddress, numberOfPoints);
 		}
 
-		public bool[] ReadInputs(ushort startAddress, ushort numberOfPoints)
+		public bool[] ReadInputs(ushort modbusAddress, ushort numberOfPoints)
 		{
-			return base.ReadInputs(Modbus.DefaultTcpSlaveUnitID, startAddress, numberOfPoints);
+			return base.ReadInputs(Modbus.DefaultTcpSlaveUnitId, modbusAddress, numberOfPoints);
 		}
 
-		public ushort[] ReadHoldingRegisters(ushort startAddress, ushort numberOfPoints)
+		public ushort[] ReadHoldingRegisters(ushort modbusAddress, ushort numberOfPoints)
 		{
-			return base.ReadHoldingRegisters(Modbus.DefaultTcpSlaveUnitID, startAddress, numberOfPoints);
+			return base.ReadHoldingRegisters(Modbus.DefaultTcpSlaveUnitId, modbusAddress, numberOfPoints);
 		}
 
-		public ushort[] ReadInputRegisters(ushort startAddress, ushort numberOfPoints)
+		public ushort[] ReadInputRegisters(ushort modbusAddress, ushort numberOfPoints)
 		{
-			return base.ReadHoldingRegisters(Modbus.DefaultTcpSlaveUnitID, startAddress, numberOfPoints);
+			return base.ReadHoldingRegisters(Modbus.DefaultTcpSlaveUnitId, modbusAddress, numberOfPoints);
 		}
 
-		public void WriteSingleCoil(ushort coilAddress, bool value)
+		public void WriteSingleCoil(ushort modbusAddress, bool value)
 		{
-			base.WriteSingleCoil(Modbus.DefaultTcpSlaveUnitID, coilAddress, value);
+			base.WriteSingleCoil(Modbus.DefaultTcpSlaveUnitId, modbusAddress, value);
 		}
 
-		public void WriteSingleRegister(ushort registerAddress, ushort value)
+		public void WriteSingleRegister(ushort modbusAddress, ushort value)
 		{
-			base.WriteSingleRegister(Modbus.DefaultTcpSlaveUnitID, registerAddress, value);
+			base.WriteSingleRegister(Modbus.DefaultTcpSlaveUnitId, modbusAddress, value);
 		}
 
-		public void WriteMultipleRegisters(ushort startAddress, ushort[] data)
+		public void WriteMultipleRegisters(ushort modbusAddress, ushort[] data)
 		{
-			base.WriteMultipleRegisters(Modbus.DefaultTcpSlaveUnitID, startAddress, data);
+			base.WriteMultipleRegisters(Modbus.DefaultTcpSlaveUnitId, modbusAddress, data);
 		}
 
-		public void WriteMultipleCoils(ushort startAddress, bool[] data)
+		public void WriteMultipleCoils(ushort modbusAddress, bool[] data)
 		{
-			base.WriteMultipleCoils(Modbus.DefaultTcpSlaveUnitID, startAddress, data);
+			base.WriteMultipleCoils(Modbus.DefaultTcpSlaveUnitId, modbusAddress, data);
 		}
 	}
 }

@@ -58,6 +58,7 @@ namespace Modbus.IntegrationTests
 		{
 			log.Debug("Start NModbus slave.");
 			SlaveThread = new Thread(Slave.Listen);
+			SlaveThread.IsBackground = true;
 			SlaveThread.Start();
 		}
 
@@ -80,19 +81,10 @@ namespace Modbus.IntegrationTests
 			log.Debug("Clean up after tests.");
 
 			if (MasterSerialPort != null && MasterSerialPort.IsOpen)
-			{
-				MasterSerialPort.Close();
 				MasterSerialPort.Dispose();
-			}
 
 			if (SlaveSerialPort != null && SlaveSerialPort.IsOpen)
-			{
-				SlaveSerialPort.Close();
 				SlaveSerialPort.Dispose();			
-			}
-
-			if (SlaveThread != null && SlaveThread.IsAlive)
-				SlaveThread.Abort();
 
 			if (Jamod != null)
 			{

@@ -17,11 +17,14 @@ namespace Modbus.IO
 		{
 		}
 
+		/// <summary>
+		/// Number of times to retry sending message.
+		/// </summary>
 		public int Retries
 		{
 			get { return _retries; }
 			set { _retries = value; }
-		}
+		}		
 
 		internal virtual T UnicastMessage<T>(IModbusMessage message) where T : IModbusMessage, new()
 		{
@@ -44,7 +47,7 @@ namespace Modbus.IO
 					// ensure response is of appropriate function code
 					if (message.FunctionCode != response.FunctionCode)
 					{
-						string errorMessage = String.Format(ModbusResources.InvalidResponseExceptionMessage, message.FunctionCode, response.FunctionCode);
+						string errorMessage = String.Format("Received response of invalid type. Expected {0}, received {1}.", message.FunctionCode, response.FunctionCode);
 						_log.ErrorFormat(errorMessage);
 						throw new IOException(errorMessage);
 					}
@@ -53,16 +56,19 @@ namespace Modbus.IO
 				}
 				catch (TimeoutException te)
 				{
-					_log.ErrorFormat(te.Message);
-					throw te;
+					_log.ErrorFormat("Timeout, {0} retries remaining - {1}", _retries + 1 - attempt, te.Message);
+
+					if (attempt++ > _retries)
+						throw te;
 				}
 				catch (Exception e)
 				{
-					_log.ErrorFormat("Failure {0}, {1} retries remaining. {2}", attempt, _retries + 1 - attempt, e.Message);
+					_log.ErrorFormat("Failure, {0} retries remaining - {1}", _retries + 1 - attempt, e.Message);					
 
 					if (attempt++ > _retries)
 						throw e;
-				}				
+				}
+
 			} while (!success);
 
 			return response;

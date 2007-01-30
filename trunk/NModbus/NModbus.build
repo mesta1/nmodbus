@@ -2,7 +2,7 @@
 <project default="all">
 
 	<!-- tools paths -->
-	<property name="nantcontrib" value="C:\Program Files\NAntContrib\bin\NAnt.Contrib.Tasks.dll" />
+	<property name="nantcontrib" value="C:\nantcontrib\bin\NAnt.Contrib.Tasks.dll" />
 	<property name="nunitconsole" value="tools\nunit\nunit-console.exe" />
 	<property name="path.bin" value="src\Modbus\bin\Release" />
 	<property name="path.src" value="src" />

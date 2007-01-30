@@ -59,7 +59,7 @@ namespace Modbus.Device
 				catch (Exception e)
 				{
 					// TODO explicitly catch timeout exception
-					_log.ErrorFormat(ModbusResources.ModbusSlaveListenerException, e.Message);
+					_log.ErrorFormat("Exception encountered while listening for requests - {0}", e.Message);
 				}
 			}
 		}

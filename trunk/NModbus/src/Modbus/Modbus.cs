@@ -36,8 +36,8 @@ namespace Modbus
 
 		public const ushort CoilOn = 0xFF00;
 		public const ushort CoilOff = 0x0000;
-
+	
 		// TCP slaves should be addressed by IP
-		public const byte DefaultTcpSlaveUnitID = 0;
+		public const byte DefaultTcpSlaveUnitId = 0;
 	}
 }

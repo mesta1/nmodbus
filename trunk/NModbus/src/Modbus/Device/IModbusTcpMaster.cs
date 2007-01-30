@@ -6,13 +6,13 @@ namespace Modbus.Device
 {
 	public interface IModbusTcpMaster : IModbusMaster
 	{
-		bool[] ReadCoils(ushort startAddress, ushort numberOfPoints);
-		bool[] ReadInputs(ushort startAddress, ushort numberOfPoints);
-		ushort[] ReadHoldingRegisters(ushort startAddress, ushort numberOfPoints);
-		ushort[] ReadInputRegisters(ushort startAddress, ushort numberOfPoints);
-		void WriteSingleCoil(ushort coilAddress, bool value);
-		void WriteSingleRegister(ushort registerAddress, ushort value);
-		void WriteMultipleRegisters(ushort startAddress, ushort[] data);
-		void WriteMultipleCoils(ushort startAddress, bool[] data);
+		bool[] ReadCoils(ushort modbusAddress, ushort numberOfPoints);
+		bool[] ReadInputs(ushort modbusAddress, ushort numberOfPoints);
+		ushort[] ReadHoldingRegisters(ushort modbusAddress, ushort numberOfPoints);
+		ushort[] ReadInputRegisters(ushort modbusAddress, ushort numberOfPoints);
+		void WriteSingleCoil(ushort modbusAddress, bool value);
+		void WriteSingleRegister(ushort modbusAddress, ushort value);
+		void WriteMultipleRegisters(ushort modbusAddress, ushort[] data);
+		void WriteMultipleCoils(ushort modbusAddress, bool[] data);
 	}
 }
