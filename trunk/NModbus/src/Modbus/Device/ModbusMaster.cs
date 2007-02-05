@@ -21,7 +21,7 @@ namespace Modbus.Device
 		{
 			return ReadDiscretes(Modbus.ReadCoils, slaveAddress, startAddress, numberOfPoints);
 		}
-
+			
 		public bool[] ReadInputs(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
 		{
 			return ReadDiscretes(Modbus.ReadInputs, slaveAddress, startAddress, numberOfPoints);
