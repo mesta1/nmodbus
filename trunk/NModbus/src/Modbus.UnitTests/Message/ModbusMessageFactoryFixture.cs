@@ -26,7 +26,7 @@ namespace Modbus.UnitTests.Message
 		[ExpectedException(typeof(FormatException))]
 		public void CreateModbusMessageReadCoilsRequestWithInvalidFrameSize()
 		{
-			byte[] frame = new byte[] { 11, Modbus.ReadCoils, 4, 1, 2 };
+			byte[] frame = { 11, Modbus.ReadCoils, 4, 1, 2 };
 			ReadCoilsInputsRequest request = ModbusMessageFactory.CreateModbusMessage<ReadCoilsInputsRequest>(frame);
 			Assert.Fail();
 		}
@@ -44,7 +44,7 @@ namespace Modbus.UnitTests.Message
 		[ExpectedException(typeof(FormatException))]
 		public void CreateModbusMessageReadCoilsResponseWithNoByteCount()
 		{
-			byte[] frame = new byte[] { 11, Modbus.ReadCoils };
+			byte[] frame = { 11, Modbus.ReadCoils };
 			ReadCoilsInputsResponse response = ModbusMessageFactory.CreateModbusMessage<ReadCoilsInputsResponse>(frame);
 			Assert.Fail();
 		}
@@ -53,7 +53,7 @@ namespace Modbus.UnitTests.Message
 		[ExpectedException(typeof(FormatException))]
 		public void CreateModbusMessageReadCoilsResponseWithInvalidDataSize()
 		{
-			byte[] frame = new byte[] { 11, Modbus.ReadCoils, 4, 1, 2, 3 };
+			byte[] frame = { 11, Modbus.ReadCoils, 4, 1, 2, 3 };
 			ReadCoilsInputsResponse response = ModbusMessageFactory.CreateModbusMessage<ReadCoilsInputsResponse>(frame);
 			Assert.Fail();
 		}

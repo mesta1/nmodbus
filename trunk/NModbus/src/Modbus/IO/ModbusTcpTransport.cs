@@ -31,7 +31,7 @@ namespace Modbus.IO
 
 		public static byte[] GetMbapHeader(IModbusMessage message)
 		{
-			byte[] mbapHeader = new byte[] { 0, 0, 0, 0, 0, 0, 0 };
+			byte[] mbapHeader = { 0, 0, 0, 0, 0, 0, 0 };
 			byte[] length = BitConverter.GetBytes((short) IPAddress.HostToNetworkOrder((short) (message.ProtocolDataUnit.Length + 1)));
 			mbapHeader[4] = length[0];
 			mbapHeader[5] = length[1];

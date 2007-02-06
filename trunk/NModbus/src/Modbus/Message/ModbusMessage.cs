@@ -41,7 +41,7 @@ namespace Modbus.Message
 			get { return _messageImpl.MessageFrame; }
 		}
 
-		public byte[] ProtocolDataUnit
+		public virtual byte[] ProtocolDataUnit
 		{
 			get { return _messageImpl.ProtocolDataUnit; }
 		}

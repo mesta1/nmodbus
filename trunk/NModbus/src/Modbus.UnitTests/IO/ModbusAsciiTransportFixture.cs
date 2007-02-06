@@ -19,7 +19,7 @@ namespace Modbus.UnitTests.IO
 		[Test]
 		public void BuildMessageFrame()
 		{
-			byte[] message = new byte[] { 58, 48, 50, 48, 49, 48, 48, 48, 48, 48, 48, 48, 49, 70, 67, 13, 10 };
+			byte[] message = { 58, 48, 50, 48, 49, 48, 48, 48, 48, 48, 48, 48, 49, 70, 67, 13, 10 };
 			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 2, 0, 1);
 			Assert.AreEqual(message, new ModbusAsciiTransport().BuildMessageFrame(request));
 		}
@@ -64,7 +64,7 @@ namespace Modbus.UnitTests.IO
 		{
 			ModbusAsciiTransport transport = new ModbusAsciiTransport();
 			ReadCoilsInputsRequest message = new ReadCoilsInputsRequest(Modbus.ReadCoils, 17, 19, 37);
-			byte[] frame = new byte[] { 17, Modbus.ReadCoils, 0, 19, 0, 37, 182 };
+			byte[] frame = { 17, Modbus.ReadCoils, 0, 19, 0, 37, 182 };
 			Assert.IsTrue(transport.ChecksumsMatch(message, frame));
 		}
 
@@ -73,7 +73,7 @@ namespace Modbus.UnitTests.IO
 		{
 			ModbusAsciiTransport transport = new ModbusAsciiTransport();
 			ReadCoilsInputsRequest message = new ReadCoilsInputsRequest(Modbus.ReadCoils, 17, 19, 37);
-			byte[] frame = new byte[] { 17, Modbus.ReadCoils, 0, 19, 0, 37, 181 };
+			byte[] frame = { 17, Modbus.ReadCoils, 0, 19, 0, 37, 181 };
 			Assert.IsFalse(transport.ChecksumsMatch(message, frame));
 		}
 	}
