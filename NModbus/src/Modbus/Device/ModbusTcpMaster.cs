@@ -60,5 +60,20 @@ namespace Modbus.Device
 		{
 			base.WriteMultipleCoils(Modbus.DefaultTcpSlaveUnitId, startAddress, data);
 		}
+
+		/// <summary>
+		/// Performs a combination of one read operation and one write operation in a single MODBUS transaction. 
+		/// The write operation is performed before the read.
+		/// Message uses default TCP slave id of 0.
+		/// </summary>
+		/// <param name="startReadAddress">Address to begin reading (Holding registers are addressed starting at 0).</param>
+		/// <param name="numberOfPointsToRead">Number of registers to read.</param>
+		/// <param name="startWriteAddress">Address to begin writing (Holding registers are addressed starting at 0).</param>
+		/// <param name="numberOfPointsToWrite">Number of registers to write.</param>
+		/// <param name="writeData">Register values to write.</param>
+		public ushort[] ReadWriteMultipleRegisters(ushort startReadAddress, ushort numberOfPointsToRead, ushort startWriteAddress, ushort numberOfPointsToWrite, ushort[] writeData)
+		{
+			return base.ReadWriteMultipleRegisters(Modbus.DefaultTcpSlaveUnitId, startReadAddress, numberOfPointsToRead, startWriteAddress, numberOfPointsToWrite, writeData);
+		}
 	}
 }

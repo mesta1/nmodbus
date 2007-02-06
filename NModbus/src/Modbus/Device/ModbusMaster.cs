@@ -61,6 +61,21 @@ namespace Modbus.Device
 			Transport.UnicastMessage<WriteMultipleCoilsResponse>(request);
 		}
 
+		/// <summary>
+		/// Performs a combination of one read operation and one write operation in a single MODBUS transaction. 
+		/// The write operation is performed before the read.
+		/// </summary>
+		/// <param name="slaveAddress">Address of device to read values from.</param>
+		/// <param name="startReadAddress">Address to begin reading (Holding registers are addressed starting at 0).</param>
+		/// <param name="numberOfPointsToRead">Number of registers to read.</param>
+		/// <param name="startWriteAddress">Address to begin writing (Holding registers are addressed starting at 0).</param>
+		/// <param name="numberOfPointsToWrite">Number of registers to write.</param>
+		/// <param name="writeData">Register values to write.</param>
+		public ushort[] ReadWriteMultipleRegisters(byte slaveAddress, ushort startReadAddress, ushort numberOfPointsToRead, ushort startWriteAddress, ushort numberOfPointsToWrite, ushort[] writeData)
+		{
+			throw new NotImplementedException();
+		}
+
 		internal ushort[] ReadRegisters(byte functionCode, byte slaveAddress, ushort startAddress, ushort numberOfPoints)
 		{
 			ReadHoldingInputRegistersRequest request = new ReadHoldingInputRegistersRequest(functionCode, slaveAddress, startAddress, numberOfPoints);
