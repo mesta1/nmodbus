@@ -46,7 +46,7 @@ namespace Modbus.UnitTests.Message
 		public void ProtocolDataUnit()
 		{
 			ModbusMessageImpl messageImpl = new ModbusMessageImpl(11, Modbus.ReadCoils);
-			byte[] expectedResult = new byte[] { Modbus.ReadCoils };
+			byte[] expectedResult = { Modbus.ReadCoils };
 			Assert.AreEqual(expectedResult, messageImpl.ProtocolDataUnit);
 		}
 
@@ -54,7 +54,7 @@ namespace Modbus.UnitTests.Message
 		public void MessageFrame()
 		{
 			ModbusMessageImpl messageImpl = new ModbusMessageImpl(11, Modbus.ReadHoldingRegisters);
-			byte[] expectedMessageFrame = new byte[] { 11, Modbus.ReadHoldingRegisters };
+			byte[] expectedMessageFrame = { 11, Modbus.ReadHoldingRegisters };
 			Assert.AreEqual(expectedMessageFrame, messageImpl.MessageFrame);
 		}		
 	}

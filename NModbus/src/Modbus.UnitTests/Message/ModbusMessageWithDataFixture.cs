@@ -22,7 +22,7 @@ namespace Modbus.UnitTests.Message
 		public void ProtocolDataUnitReadCoilsResponse()
 		{
 			ModbusMessageWithData<DiscreteCollection> message = new ReadCoilsInputsResponse(Modbus.ReadCoils, 1, 2, new DiscreteCollection(true));
-			byte[] expectedResult = new byte[] { 1, 2, 1 };
+			byte[] expectedResult = { 1, 2, 1 };
 			Assert.AreEqual(expectedResult, message.ProtocolDataUnit);
 		}
 

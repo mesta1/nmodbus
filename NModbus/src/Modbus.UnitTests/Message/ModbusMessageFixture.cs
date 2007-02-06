@@ -14,7 +14,7 @@ namespace Modbus.UnitTests.Message
 		public void ProtocolDataUnitReadCoilsRequest()
 		{
 			ModbusMessage message = new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 100, 9);
-			byte[] expectedResult = new byte[] { Modbus.ReadCoils, 0, 100, 0, 9 };
+			byte[] expectedResult = { Modbus.ReadCoils, 0, 100, 0, 9 };
 			Assert.AreEqual(expectedResult, message.ProtocolDataUnit);
 		}
 
@@ -22,7 +22,7 @@ namespace Modbus.UnitTests.Message
 		public void MessageFrameReadCoilsRequest()
 		{
 			ModbusMessage message = new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 2, 3);
-			byte[] expectedMessageFrame = new byte[] { 1, Modbus.ReadCoils, 0, 2, 0, 3 };
+			byte[] expectedMessageFrame = { 1, Modbus.ReadCoils, 0, 2, 0, 3 };
 			Assert.AreEqual(expectedMessageFrame, message.MessageFrame);
 		}
 

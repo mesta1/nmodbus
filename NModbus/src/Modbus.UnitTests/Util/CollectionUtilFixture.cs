@@ -15,21 +15,21 @@ namespace Modbus.UnitTests.Util
 		[Test]
 		public void SliceMiddle()
 		{
-			byte[] test = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+			byte[] test = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 			Assert.AreEqual(new byte[] { 3, 4, 5, 6, 7 }, CollectionUtil.Slice<byte>(test, 2, 5));	
 		}
 
 		[Test]
 		public void SliceBeginning()
 		{
-			byte[] test = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+			byte[] test = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 			Assert.AreEqual(new byte[] { 1, 2 }, CollectionUtil.Slice<byte>(test, 0, 2));						
 		}
 
 		[Test]
 		public void SliceEnd()
 		{
-			byte[] test = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+			byte[] test = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 			Assert.AreEqual(new byte[] { 9, 10 }, CollectionUtil.Slice<byte>(test, 8, 2));
 		}
 
