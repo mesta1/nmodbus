@@ -71,9 +71,9 @@ namespace Modbus.Device
 		/// <param name="startWriteAddress">Address to begin writing (Holding registers are addressed starting at 0).</param>
 		/// <param name="numberOfPointsToWrite">Number of registers to write.</param>
 		/// <param name="writeData">Register values to write.</param>
-		public ushort[] ReadWriteMultipleRegisters(ushort startReadAddress, ushort numberOfPointsToRead, ushort startWriteAddress, ushort numberOfPointsToWrite, ushort[] writeData)
+		public ushort[] ReadWriteMultipleRegisters(ushort startReadAddress, ushort numberOfPointsToRead, ushort startWriteAddress, ushort[] writeData)
 		{
-			return base.ReadWriteMultipleRegisters(Modbus.DefaultTcpSlaveUnitId, startReadAddress, numberOfPointsToRead, startWriteAddress, numberOfPointsToWrite, writeData);
+			return base.ReadWriteMultipleRegisters(Modbus.DefaultTcpSlaveUnitId, startReadAddress, numberOfPointsToRead, startWriteAddress, writeData);
 		}
 	}
 }

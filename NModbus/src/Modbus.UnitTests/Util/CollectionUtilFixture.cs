@@ -106,6 +106,12 @@ namespace Modbus.UnitTests.Util
 		}
 
 		[Test]
+		public void Combine3()
+		{
+			Assert.AreEqual(new byte[] { 1, 2, 3, 4, 5, 6 }, CollectionUtil.Combine(new byte[] { 1, 2 }, new byte[] { 3, 4 }, new byte[] { 5, 6 }));
+		}
+
+		[Test]
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void CombineNullArgument1()
 		{
@@ -117,6 +123,13 @@ namespace Modbus.UnitTests.Util
 		public void CombineNullArgument2()
 		{
 			CollectionUtil.Combine(new byte[] { 1, 2 }, null);
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]
+		public void CombineNullArgument3()
+		{
+			CollectionUtil.Combine(new byte[] { 1, 2 }, new byte[] { 1, 2 }, null);
 		}
 
 		[Test]

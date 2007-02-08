@@ -80,6 +80,14 @@ namespace Modbus.Util
 			return result;
 		}
 
+		public static T[] Combine<T>(T[] array1, T[] array2, T[] array3)
+		{
+			if (array3 == null)
+				throw new ArgumentNullException("array3");
+
+			return Combine(Combine(array1, array2), array3);
+		}
+
 		public static void Update<T>(IList<T> items, IList<T> destination, int startIndex)
 		{
 			if (startIndex < 0 || destination.Count < startIndex + items.Count)

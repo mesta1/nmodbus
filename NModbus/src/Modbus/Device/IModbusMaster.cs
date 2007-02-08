@@ -16,6 +16,6 @@ namespace Modbus.Device
 		void WriteSingleRegister(byte slaveAddress, ushort registerAddress, ushort value);
 		void WriteMultipleRegisters(byte slaveAddress, ushort startAddress, ushort[] data);
 		void WriteMultipleCoils(byte slaveAddress, ushort startAddress, bool[] data);
-		ushort[] ReadWriteMultipleRegisters(byte slaveAddress, ushort startReadAddress, ushort numberOfPointsToRead, ushort startWriteAddress, ushort numberOfPointsToWrite, ushort[] writeData);
+		ushort[] ReadWriteMultipleRegisters(byte slaveAddress, ushort startReadAddress, ushort numberOfPointsToRead, ushort startWriteAddress, ushort[] writeData);
 	}
 }

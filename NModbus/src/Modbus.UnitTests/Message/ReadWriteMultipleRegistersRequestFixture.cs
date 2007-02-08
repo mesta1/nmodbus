@@ -19,11 +19,17 @@ namespace Modbus.UnitTests.Message
 			Assert.AreEqual(Modbus.ReadWriteMultipleRegisters, request.FunctionCode);
 			Assert.AreEqual(5, request.SlaveAddress);
 
-			// TODO 
-			// test start read address
-			// number of points to read
-			// test start write address
-			// number of points to write
+			// test read
+			Assert.IsNotNull(request.ReadRequest);
+			Assert.AreEqual(request.SlaveAddress, request.ReadRequest.SlaveAddress);
+			Assert.AreEqual(3, request.ReadRequest.StartAddress);
+			Assert.AreEqual(6, request.ReadRequest.NumberOfPoints);
+
+			// test write
+			Assert.IsNotNull(request.WriteRequest);
+			Assert.AreEqual(request.SlaveAddress, request.WriteRequest.SlaveAddress);
+			Assert.AreEqual(14, request.WriteRequest.StartAddress);
+			Assert.AreEqual(writeCollection.NetworkBytes, request.WriteRequest.Data.NetworkBytes);
 		}
 
 		[Test]
