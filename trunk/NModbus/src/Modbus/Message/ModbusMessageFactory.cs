@@ -49,6 +49,9 @@ namespace Modbus.Message
 				case Modbus.WriteMultipleRegisters:
 					request = CreateModbusMessage<WriteMultipleRegistersRequest>(frame);
 					break;
+				case Modbus.ReadWriteMultipleRegisters:
+					request = CreateModbusMessage<ReadWriteMultipleRegistersRequest>(frame);
+					break;
 				default:
 					throw new ArgumentException(String.Format("Unsupported function code {0}", functionCode), "frame");
 			}

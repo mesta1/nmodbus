@@ -216,6 +216,23 @@ namespace Modbus.UnitTests.Message
 			Assert.Fail();
 		}
 
+		[Test]
+		public void CreateModbusMessageReadWriteMultipleRegistersRequest()
+		{
+			ReadWriteMultipleRegistersRequest request = ModbusMessageFactory.CreateModbusMessage<ReadWriteMultipleRegistersRequest>(new byte[] { 0x05, 0x17, 0x00, 0x03, 0x00, 0x06, 0x00, 0x0e, 0x00, 0x03, 0x06, 0x00, 0xff, 0x00, 0xff, 0x00, 0xff });
+			RegisterCollection writeCollection = new RegisterCollection(255, 255, 255);
+			ReadWriteMultipleRegistersRequest expectedRequest = new ReadWriteMultipleRegistersRequest(5, 3, 6, 14, writeCollection);
+			AssertModbusMessagePropertiesAreEqual(expectedRequest, request);
+		}
+
+		[Test]
+		[ExpectedException(typeof(FormatException))]
+		public void CreateModbusMessageReadWriteMultipleRegistersRequestWithInvalidFrameSize()
+		{
+			ReadWriteMultipleRegistersRequest request = ModbusMessageFactory.CreateModbusMessage<ReadWriteMultipleRegistersRequest>(new byte[] { 17, Modbus.ReadWriteMultipleRegisters, 1, 2, 3 });
+			Assert.Fail();
+		}
+
 		[Test, ExpectedException(typeof(FormatException))]
 		public void CreateModbusRequestWithInvalidMessageFrame()
 		{

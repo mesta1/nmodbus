@@ -81,5 +81,18 @@ namespace Modbus.IntegrationTests
 		{
 			base.WriteMultipleRegisters();
 		}
+
+		[Test]
+		public void ReadWriteMultipleRegisters()
+		{
+			ushort startReadAddress = 120;
+			ushort numberOfPointsToRead = 5;
+			ushort startWriteAddress = 50;			
+			ushort[] valuesToWrite = new ushort[] { 10, 20, 30, 40, 50 };
+
+			ushort[] valuesToRead = Master.ReadHoldingRegisters(SlaveAddress, startReadAddress, numberOfPointsToRead);
+			ushort[] readValues = Master.ReadWriteMultipleRegisters(SlaveAddress, startReadAddress, numberOfPointsToRead, startWriteAddress, valuesToWrite);
+			Assert.AreEqual(valuesToRead, readValues);
+		}
 	}
 }

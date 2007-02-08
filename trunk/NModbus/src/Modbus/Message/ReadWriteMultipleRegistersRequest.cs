@@ -27,24 +27,35 @@ namespace Modbus.Message
 		{
 			get
 			{				
-				// read and write PDUs minus their function code
+				// read and write PDUs without function codes
 				byte[] read = CollectionUtil.Slice(_readRequest.ProtocolDataUnit, 1, _readRequest.ProtocolDataUnit.Length - 1);
 				byte[] write = CollectionUtil.Slice(_writeRequest.ProtocolDataUnit, 1, _writeRequest.ProtocolDataUnit.Length - 1);
 				
-				// TODO add params type to Combine
-				return CollectionUtil.Combine(new byte[] { this.FunctionCode }, CollectionUtil.Combine(read, write));
+				return CollectionUtil.Combine(new byte[] { this.FunctionCode }, read, write);
 			}
-		}		
+		}
 
+		public ReadHoldingInputRegistersRequest ReadRequest
+		{					
+			get { return _readRequest; }
+		}
+
+		public WriteMultipleRegistersRequest WriteRequest
+		{
+			get { return _writeRequest; }
+		}
+	
 		public override int MinimumFrameSize
 		{
-			get { return MinimumFrameSize; }
+			get { return _minimumFrameSize; }
 		}
 
 		protected override void InitializeUnique(byte[] frame)
 		{
 			if (frame.Length < _minimumFrameSize + frame[10])
 				throw new FormatException("Message frame does not contain enough bytes.");
+
+			// TODO create read and write messages
 		}
 	}
 }

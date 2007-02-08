@@ -83,6 +83,7 @@ namespace Modbus.Device
 			return response;
 		}
 
+		// TODO unit test
 		internal IModbusMessage ApplyRequest(IModbusMessage request)
 		{
 			IModbusMessage response;
@@ -113,6 +114,11 @@ namespace Modbus.Device
 					break;
 				case Modbus.WriteMultipleRegisters:
 					response = WriteMultipleRegisters((WriteMultipleRegistersRequest) request, DataStore.HoldingRegisters);
+					break;
+				case Modbus.ReadWriteMultipleRegisters:
+					ReadWriteMultipleRegistersRequest readWriteRequest = (ReadWriteMultipleRegistersRequest) request;
+					WriteMultipleRegisters(readWriteRequest.WriteRequest, DataStore.HoldingRegisters);
+					response = ReadRegisters(readWriteRequest.ReadRequest, DataStore.HoldingRegisters);
 					break;
 				default:
 					string errorMessage = String.Format("Unsupported function code {0}", request.FunctionCode);
