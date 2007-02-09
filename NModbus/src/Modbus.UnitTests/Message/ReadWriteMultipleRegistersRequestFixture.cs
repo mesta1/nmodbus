@@ -33,14 +33,6 @@ namespace Modbus.UnitTests.Message
 		}
 
 		[Test]
-		// TODO
-		public void ReadWriteMultipleRegistersRequestFromFrame()
-		{
-			byte[] frame = { Modbus.ReadWriteMultipleRegisters };
-			
-		}
-
-		[Test]
 		public void ProtocolDataUnit()
 		{
 			RegisterCollection writeCollection = new RegisterCollection(255, 255, 255);

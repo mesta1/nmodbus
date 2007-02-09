@@ -8,7 +8,7 @@
 	<property name="path.src" value="src" />
 	<property name="path.docs" value="docs" />
 	<property name="path.dist" value="dist" />
-	<property name="version" value="0.0.3a" />
+	<property name="version" value="0.0.4" />
 
 	<target name="build">
 		<loadtasks assembly="${nantcontrib}"/>
@@ -52,7 +52,7 @@
 		</foreach>
 	</target>
 
-	<target name="dist" depends="all,docs">
+	<target name="dist" depends="all">
 		<mkdir dir="${path.dist}" />
 		<zip zipfile="${path.dist}\NModbus_${version}-source.zip">
 			<fileset basedir="." prefix="source">

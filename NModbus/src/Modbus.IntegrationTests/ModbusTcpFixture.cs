@@ -93,6 +93,9 @@ namespace Modbus.IntegrationTests
 			ushort[] valuesToRead = Master.ReadHoldingRegisters(SlaveAddress, startReadAddress, numberOfPointsToRead);
 			ushort[] readValues = Master.ReadWriteMultipleRegisters(SlaveAddress, startReadAddress, numberOfPointsToRead, startWriteAddress, valuesToWrite);
 			Assert.AreEqual(valuesToRead, readValues);
+
+			ushort[] writtenValues = Master.ReadHoldingRegisters(SlaveAddress, startWriteAddress, (ushort) valuesToWrite.Length);
+			Assert.AreEqual(valuesToWrite, writtenValues);
 		}
 	}
 }
