@@ -44,21 +44,16 @@ namespace Modbus.Util
 
 		// converts to string of hex characters w/ appropriate padding
 		// converts each char to decimal value		
-		public static byte[] GetAsciiBytes(byte[] numbers)
+		public static byte[] GetAsciiBytes(params byte[] numbers)
 		{			
 			return Encoding.ASCII.GetBytes(String.Join("", Array.ConvertAll<byte, string>(numbers, delegate(byte n) { return n.ToString("X2"); })));
 		}
 
-		public static byte[] GetAsciiBytes(byte number)
+		public static byte[] GetAsciiBytes(params ushort[] numbers)
 		{
-			return Encoding.ASCII.GetBytes(number.ToString("X2"));
+			return Encoding.ASCII.GetBytes(String.Join("", Array.ConvertAll<ushort, string>(numbers, delegate(ushort n) { return n.ToString("X4"); })));
 		}
-
-		public static byte[] GetAsciiBytes(int[] numbers)
-		{
-			return Encoding.ASCII.GetBytes(String.Join("", Array.ConvertAll<int, string>(numbers, delegate(int n) { return n.ToString("X4"); })));
-		}
-
+		
 		public static byte[] GetAsciiBytes(char[] characters)
 		{
 			return Encoding.ASCII.GetBytes(characters);

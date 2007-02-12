@@ -40,14 +40,5 @@ namespace Modbus.UnitTests.Message
 			byte[] pdu = { 0x17, 0x00, 0x03, 0x00, 0x06, 0x00, 0x0e, 0x00, 0x03, 0x06, 0x00, 0xff, 0x00, 0xff, 0x00, 0xff };
 			Assert.AreEqual(pdu, request.ProtocolDataUnit);
 		}
-
-		[Test]
-		public void MessageFrame()
-		{
-			RegisterCollection writeCollection = new RegisterCollection(255, 255, 255);
-			ReadWriteMultipleRegistersRequest request = new ReadWriteMultipleRegistersRequest(5, 3, 6, 14, writeCollection);
-			byte[] message = CollectionUtil.Combine(new byte[] { 5 }, request.ProtocolDataUnit);
-			Assert.AreEqual(new byte[] { 0x05, 0x17, 0x00, 0x03, 0x00, 0x06, 0x00, 0x0e, 0x00, 0x03, 0x06, 0x00, 0xff, 0x00, 0xff, 0x00, 0xff }, message);
-		}
 	}
 }

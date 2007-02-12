@@ -14,6 +14,7 @@ namespace Modbus.Message
 	{
 		private byte _exceptionCode;
 		private byte _functionCode;
+		private ushort? _subFunctionCode;
 		private byte _slaveAddress;
 		private ushort? _startAddress;
 		private ushort? _numberOfPoints;
@@ -64,7 +65,13 @@ namespace Modbus.Message
 		{
 			get { return _startAddress.Value; }
 			set { _startAddress = value; }
-		}	
+		}
+
+		public ushort SubFunctionCode
+		{
+			get { return _subFunctionCode.Value; }
+			set { _subFunctionCode = value; }
+		}
 
 		public IModbusMessageDataCollection Data
 		{
@@ -91,6 +98,9 @@ namespace Modbus.Message
 				List<byte> pdu = new List<byte>();
 				
 				pdu.Add(_functionCode);
+
+				if (_subFunctionCode != null)
+					pdu.AddRange(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short) _subFunctionCode.Value)));
 
 				if (_startAddress != null)
 					pdu.AddRange(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short) _startAddress.Value)));
