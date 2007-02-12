@@ -229,8 +229,22 @@ namespace Modbus.UnitTests.Message
 		[ExpectedException(typeof(FormatException))]
 		public void CreateModbusMessageReadWriteMultipleRegistersRequestWithInvalidFrameSize()
 		{
-			ReadWriteMultipleRegistersRequest request = ModbusMessageFactory.CreateModbusMessage<ReadWriteMultipleRegistersRequest>(new byte[] { 17, Modbus.ReadWriteMultipleRegisters, 1, 2, 3 });
+			byte[] frame = new byte[] { 17, Modbus.ReadWriteMultipleRegisters, 1, 2, 3 };
+			ReadWriteMultipleRegistersRequest request = ModbusMessageFactory.CreateModbusMessage<ReadWriteMultipleRegistersRequest>(frame);
 			Assert.Fail();
+		}
+
+		[Test]
+		public void CreateModbusMessageReturnQueryDataRequestResponse()
+		{
+			byte slaveAddress = 5;
+			RegisterCollection data = new RegisterCollection(1, 2, 3, 4);
+			byte[] frame = CollectionUtil.Combine(new byte[] { slaveAddress, 8, 0, 0 }, data.NetworkBytes);
+			ReturnQueryDataRequestResponse message = ModbusMessageFactory.CreateModbusMessage<ReturnQueryDataRequestResponse>(frame);
+			ReturnQueryDataRequestResponse expectedMessage = new ReturnQueryDataRequestResponse(slaveAddress, data);
+
+			Assert.AreEqual(expectedMessage.SubFunctionCode, message.SubFunctionCode);
+			AssertModbusMessagePropertiesAreEqual(expectedMessage, message);
 		}
 
 		[Test, ExpectedException(typeof(FormatException))]

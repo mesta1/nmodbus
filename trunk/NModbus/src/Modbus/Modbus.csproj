@@ -70,6 +70,7 @@
     <Compile Include="Message\ReadCoilsInputsRequest.cs" />
     <Compile Include="Message\ReadHoldingInputRegistersRequest.cs" />
     <Compile Include="Message\ReadWriteMultipleRegistersRequest.cs" />
+    <Compile Include="Message\ReturnQueryDataRequestResponse.cs" />
     <Compile Include="Message\SlaveExceptionResponse.cs" />
     <Compile Include="Message\IModbusMessage.cs" />
     <Compile Include="Message\ModbusMessage.cs" />

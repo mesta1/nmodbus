@@ -11,14 +11,15 @@ namespace Modbus.UnitTests.Util
 	public class ModbusUtilFixture
 	{
 		[Test]
-		public void GetASCIIBytesEmpty()
+		public void GetAsciiBytesFromEmpty()
 		{
 			Assert.AreEqual(new byte[] { }, ModbusUtil.GetAsciiBytes(new byte[] { }));
-			Assert.AreEqual(new byte[] { }, ModbusUtil.GetAsciiBytes(new int[] { }));
+			Assert.AreEqual(new byte[] { }, ModbusUtil.GetAsciiBytes(new ushort[] { }));
+			Assert.AreEqual(new byte[] { }, ModbusUtil.GetAsciiBytes(new char[] { }));
 		}
 
 		[Test]
-		public void GetASCIIBytesNormal()
+		public void GetAsciiBytesFromBytes()
 		{
 			byte[] buf = { 2, 5 };
 			byte[] expectedResult = { 48, 50, 48, 53 };
@@ -27,16 +28,16 @@ namespace Modbus.UnitTests.Util
 		}
 
 		[Test]
-		public void GetASCIIBytesFromIntNormal()
+		public void GetAsciiBytesFromUshorts()
 		{
-			int[] buf = new int[] { 300, 400 };
+			ushort[] buf = { 300, 400 };
 			byte[] expectedResult = { 48, 49, 50, 67, 48, 49, 57, 48 };
 			byte[] result = ModbusUtil.GetAsciiBytes(buf);
 			Assert.AreEqual(expectedResult, result);			
 		}
 
 		[Test]
-		public void GetASCIIBytesFromCharNormal()
+		public void GetAsciiBytesFromChar()
 		{
 			char[] buf = new char[] { ':' };
 			byte[] expectedResult = { 58 };
@@ -45,7 +46,7 @@ namespace Modbus.UnitTests.Util
 		}
 
 		[Test]
-		public void GetASCIIBytesFromCharNormal2()
+		public void GetAsciiBytesFromChar2()
 		{
 			char[] buf = new char[] { '\r', '\n' };
 			byte[] expectedResult = { 13, 10 };
