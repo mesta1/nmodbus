@@ -235,6 +235,7 @@ namespace Modbus.UnitTests.Message
 		}
 
 		[Test]
+		[Ignore("Not yet implemented")]
 		public void CreateModbusMessageReturnQueryDataRequestResponse()
 		{
 			byte slaveAddress = 5;

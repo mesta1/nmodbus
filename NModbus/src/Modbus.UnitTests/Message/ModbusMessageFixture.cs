@@ -26,7 +26,7 @@ namespace Modbus.UnitTests.Message
 			Assert.AreEqual(expectedMessageFrame, message.MessageFrame);
 		}
 
-		internal void AssertModbusMessagePropertiesAreEqual(ModbusMessage obj1, ModbusMessage obj2)
+		internal void AssertModbusMessagePropertiesAreEqual(IModbusMessage obj1, IModbusMessage obj2)
 		{
 			Assert.AreEqual(obj1.FunctionCode, obj2.FunctionCode);
 			Assert.AreEqual(obj1.SlaveAddress, obj2.SlaveAddress);

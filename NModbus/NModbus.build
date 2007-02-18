@@ -18,7 +18,7 @@
 		</msbuild>
 	</target>
 
-	 <target name="clean">
+	<target name="clean">
 	 	<foreach item="Folder" property="foldername">
 			<in>
 				<items basedir="src">
@@ -92,6 +92,5 @@
 		<exec program="cmd.exe" commandline="/c Docs.bat" workingdir="${path.docs}" />
 	</target>
 
-	<target name="all" depends="clean,build,run-unit-tests">
-	</target>
+	<target name="all" depends="clean,build,run-unit-tests" />
 </project>
