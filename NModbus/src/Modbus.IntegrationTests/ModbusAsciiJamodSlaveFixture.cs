@@ -24,5 +24,11 @@ namespace Modbus.IntegrationTests
 			SetupMasterSerialPort();
 			Master = ModbusSerialMaster.CreateAscii(MasterSerialPort);
 		}
+
+		[Test]
+		public override void ReadCoils()
+		{
+			base.ReadCoils();
+		}
 	}
 }
