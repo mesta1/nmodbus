@@ -35,15 +35,12 @@ namespace Modbus.Device
 		/// <param name="slaveAddress">Address of device to test.</param>
 		/// <param name="data">Data to return.</param>
 		/// <returns>Returns original data.</returns>
-		public ushort[] ReturnQueryData(byte slaveAddress, ushort[] data)
+		public ushort[] ReturnQueryData(byte slaveAddress, ushort data)
 		{
-			// TODO
-			//ReturnQueryDataRequestResponse request = new ReturnQueryDataRequestResponse(slaveAddress, new RegisterCollection(data));
-			//ReturnQueryDataRequestResponse response = Transport.UnicastMessage<ReturnQueryDataRequestResponse>(request);
-			
-			//return CollectionUtil.ToArray<ushort>(response.Data);
+			DiagnosticsRequestResponse request = new DiagnosticsRequestResponse(Modbus.DiagnosticsReturnQueryData, slaveAddress, new RegisterCollection(data));
+			DiagnosticsRequestResponse response = Transport.UnicastMessage<DiagnosticsRequestResponse>(request);
 
-			throw new NotImplementedException();
+			return CollectionUtil.ToArray<ushort>(response.Data);
 		}
 	}
 }

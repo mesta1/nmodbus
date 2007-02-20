@@ -3,27 +3,28 @@ using System.Collections.Generic;
 using System.Text;
 using Modbus.Data;
 using System.Net;
+using Modbus.Util;
 
 namespace Modbus.Message
 {
-	class ReturnQueryDataRequestResponse : ModbusMessageWithData<RegisterCollection>, IModbusMessage
+	class DiagnosticsRequestResponse : ModbusMessageWithData<RegisterCollection>, IModbusMessage
 	{
-		private const int _minimumFrameSize = 4;
+		private const int _minimumFrameSize = 6;
 
-		public ReturnQueryDataRequestResponse()
+		public DiagnosticsRequestResponse()
 		{
 		}
 
-		public ReturnQueryDataRequestResponse(byte slaveAddress, RegisterCollection data)
+		public DiagnosticsRequestResponse(ushort subFunctionCode, byte slaveAddress, RegisterCollection data)
 			: base(slaveAddress, Modbus.Diagnostics)
 		{
-			SubFunctionCode = Modbus.DiagnosticsReturnQueryData;
+			SubFunctionCode = subFunctionCode;
 			Data = data;
 		}
 		
 		public override int MinimumFrameSize
 		{
-			get { return _minimumFrameSize; }		
+			get { return _minimumFrameSize; }
 		}
 
 		public ushort SubFunctionCode
@@ -34,8 +35,11 @@ namespace Modbus.Message
 
 		protected override void InitializeUnique(byte[] frame)
 		{
+			if (frame.Length < _minimumFrameSize)
+				throw new FormatException("Message frame does not contain enough bytes.");
+
 			SubFunctionCode = (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 2));
-			//Data = new RegisterCollection(CollectionUtil.Slice<byte>(frame, 3, ByteCount));
+			Data = new RegisterCollection(CollectionUtil.Slice<byte>(frame, 4, 2));
 		}
 	}
 }

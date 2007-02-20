@@ -235,17 +235,34 @@ namespace Modbus.UnitTests.Message
 		}
 
 		[Test]
-		[Ignore("Not yet implemented")]
 		public void CreateModbusMessageReturnQueryDataRequestResponse()
 		{
 			byte slaveAddress = 5;
-			RegisterCollection data = new RegisterCollection(1, 2, 3, 4);
+			RegisterCollection data = new RegisterCollection(50);
 			byte[] frame = CollectionUtil.Combine(new byte[] { slaveAddress, 8, 0, 0 }, data.NetworkBytes);
-			ReturnQueryDataRequestResponse message = ModbusMessageFactory.CreateModbusMessage<ReturnQueryDataRequestResponse>(frame);
-			ReturnQueryDataRequestResponse expectedMessage = new ReturnQueryDataRequestResponse(slaveAddress, data);
+			DiagnosticsRequestResponse message = ModbusMessageFactory.CreateModbusMessage<DiagnosticsRequestResponse>(frame);
+			DiagnosticsRequestResponse expectedMessage = new DiagnosticsRequestResponse(Modbus.DiagnosticsReturnQueryData, slaveAddress, data);
 
 			Assert.AreEqual(expectedMessage.SubFunctionCode, message.SubFunctionCode);
 			AssertModbusMessagePropertiesAreEqual(expectedMessage, message);
+		}
+
+		[Test]
+		[ExpectedException(typeof(FormatException))]
+		[Ignore("not implemented yet")]
+		public void CreateModbusMessageReturnQueryDataRequestResponseToMuchData()
+		{
+			RegisterCollection data = new RegisterCollection(1, 2);
+			byte[] frame = CollectionUtil.Combine(new byte[] { 5, 8, 0, 0 }, data.NetworkBytes);
+			DiagnosticsRequestResponse message = ModbusMessageFactory.CreateModbusMessage<DiagnosticsRequestResponse>(frame);
+		}
+
+		[Test]
+		[ExpectedException(typeof(FormatException))]
+		public void CreateModbusMessageReturnQueryDataRequestResponseTooSmall()
+		{
+			byte[] frame = new byte[] { 5, 8, 0, 0, 5 };
+			DiagnosticsRequestResponse message = ModbusMessageFactory.CreateModbusMessage<DiagnosticsRequestResponse>(frame);
 		}
 
 		[Test, ExpectedException(typeof(FormatException))]

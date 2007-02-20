@@ -52,7 +52,7 @@ namespace Modbus.Device
 					// perform action
 					IModbusMessage response = ApplyRequest(request);
 
-					// write response				
+					// write response
 					byte[] responseFrame = new ModbusTcpTransport().BuildMessageFrame(response);
 					_log.DebugFormat("TX: {0}", StringUtil.Join(", ", responseFrame));
 					stream.Write(responseFrame, 0, responseFrame.Length);
