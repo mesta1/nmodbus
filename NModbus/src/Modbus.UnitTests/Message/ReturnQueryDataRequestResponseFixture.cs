@@ -15,7 +15,7 @@ namespace Modbus.UnitTests.Message
 		public void ReturnQueryDataRequestResponse()
 		{
 			RegisterCollection data = new RegisterCollection(1, 2, 3, 4);
-			ReturnQueryDataRequestResponse request = new ReturnQueryDataRequestResponse(5, data);
+			DiagnosticsRequestResponse request = new DiagnosticsRequestResponse(Modbus.DiagnosticsReturnQueryData, 5, data);
 			Assert.AreEqual(Modbus.Diagnostics, request.FunctionCode);
 			Assert.AreEqual(Modbus.DiagnosticsReturnQueryData, request.SubFunctionCode);
 			Assert.AreEqual(5, request.SlaveAddress);
@@ -26,7 +26,7 @@ namespace Modbus.UnitTests.Message
 		public void ProtocolDataUnit()
 		{
 			RegisterCollection data = new RegisterCollection(1, 2, 3, 4);
-			ReturnQueryDataRequestResponse request = new ReturnQueryDataRequestResponse(5, data);
+			DiagnosticsRequestResponse request = new DiagnosticsRequestResponse(Modbus.DiagnosticsReturnQueryData, 5, data);
 			Assert.AreEqual(new byte[] { 8, 0, 0, 0, 1, 0, 2, 0, 3, 0, 4 }, request.ProtocolDataUnit);
 		}
 	}
