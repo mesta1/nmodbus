@@ -6,7 +6,6 @@
   <property name="path.java" value="C:\Program Files\Java" />
   <property name="path.jre" value="${path.java}\jre1.6.0" />
   <property name="path.jdk" value="${path.java}\jdk1.6.0" />
-	<property name="nunitconsole" value="tools\nunit\nunit-console.exe" />
 	<property name="path.bin" value="src\Modbus\bin\Release" />
 	<property name="path.src" value="src" />
   <property name="path.lib" value="lib" />
@@ -41,24 +40,24 @@
 		 <delete dir="${path.docs}" />
 	 </target>
 
-	<target name="run-unit-tests">
-		<foreach item="Folder" property="foldername">
-			<in>
-				<items basedir="src">
-					<include name="*.UnitTests"></include>
-					<exclude name="."></exclude>
-				 </items>
-			 </in>
-			 <do>
-				 <exec program="${nunitconsole}" >
-					<arg value="${foldername}\bin\Release\${path::get-file-name(foldername)}.dll" />
-					<arg value="/xml:${foldername}\bin\Release\${path::get-file-name(foldername)}.xml" />
-				 </exec>
-			 </do>
-		</foreach>
-	</target>
-
-  <target name="run-integration-tests">
+  <target name="run-unit-tests" depends="build">
+    <foreach item="Folder" property="foldername">
+      <in>
+        <items basedir="src">
+          <include name="*.UnitTests"></include>
+          <exclude name="."></exclude>
+        </items>
+      </in>
+      <do>
+        <nunit2>
+          <formatter type="Xml" />
+          <test assemblyname="${foldername}\bin\Release\${path::get-file-name(foldername)}.dll" />
+        </nunit2>                
+      </do>
+    </foreach>
+  </target>
+    
+  <target name="run-integration-tests" depends="build">
     <foreach item="Folder" property="foldername">
       <in>
         <items basedir="src">
@@ -67,10 +66,10 @@
         </items>
       </in>
       <do>
-        <exec program="${nunitconsole}" >
-          <arg value="${foldername}\bin\Release\${path::get-file-name(foldername)}.dll" />
-          <arg value="/xml:${foldername}\bin\Release\${path::get-file-name(foldername)}.xml" />
-        </exec>
+        <nunit2>
+          <formatter type="Xml" />
+          <test assemblyname="${foldername}\bin\Release\${path::get-file-name(foldername)}.dll" />
+        </nunit2>
       </do>
     </foreach>
   </target>
