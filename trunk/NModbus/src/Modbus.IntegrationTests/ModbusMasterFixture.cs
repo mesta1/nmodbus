@@ -18,12 +18,12 @@ namespace Modbus.IntegrationTests
 		public Process Jamod;
 		public IModbusMaster Master;
 		public SerialPort MasterSerialPort;
-		public const string MasterSerialPortName = "COM3";
+		public const string MasterSerialPortName = "COM5";
 
 		public ModbusSlave Slave;
 		public Thread SlaveThread;
 		public SerialPort SlaveSerialPort;
-		public const string SlaveSerialPortName = "COM4";
+		public const string SlaveSerialPortName = "COM6";
 		public const byte SlaveAddress = 1;
 
 		public IPAddress TcpHost = new IPAddress(new byte[] { 127, 0, 0, 1 });
