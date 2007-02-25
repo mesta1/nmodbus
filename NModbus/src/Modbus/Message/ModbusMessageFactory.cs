@@ -43,6 +43,9 @@ namespace Modbus.Message
 				case Modbus.WriteSingleRegister:
 					request = CreateModbusMessage<WriteSingleRegisterRequestResponse>(frame);
 					break;
+				case Modbus.Diagnostics:
+					request = CreateModbusMessage<DiagnosticsRequestResponse>(frame);
+					break;
 				case Modbus.WriteMultipleCoils:
 					request = CreateModbusMessage<WriteMultipleCoilsRequest>(frame);
 					break;

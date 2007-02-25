@@ -88,6 +88,7 @@ namespace Modbus.IO
 				case Modbus.ReadInputRegisters:
 				case Modbus.WriteSingleCoil:
 				case Modbus.WriteSingleRegister:
+				case Modbus.Diagnostics:
 					numBytes = 1;
 					break;
 				case Modbus.WriteMultipleCoils:
@@ -122,11 +123,13 @@ namespace Modbus.IO
 				case Modbus.WriteSingleRegister:
 				case Modbus.WriteMultipleCoils:
 				case Modbus.WriteMultipleRegisters:
+				case Modbus.Diagnostics:
 					numBytes = 4;
 					break;
 				default:
-					numBytes = 1;
-					break;
+					string errorMessage = String.Format("Function code {0} not supported.", functionCode);
+					_log.Error(errorMessage);
+					throw new NotImplementedException(errorMessage);
 			}
 
 			return numBytes;

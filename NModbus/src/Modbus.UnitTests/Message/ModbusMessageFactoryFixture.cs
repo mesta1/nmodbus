@@ -249,16 +249,6 @@ namespace Modbus.UnitTests.Message
 
 		[Test]
 		[ExpectedException(typeof(FormatException))]
-		[Ignore("not implemented yet")]
-		public void CreateModbusMessageReturnQueryDataRequestResponseToMuchData()
-		{
-			RegisterCollection data = new RegisterCollection(1, 2);
-			byte[] frame = CollectionUtil.Combine(new byte[] { 5, 8, 0, 0 }, data.NetworkBytes);
-			DiagnosticsRequestResponse message = ModbusMessageFactory.CreateModbusMessage<DiagnosticsRequestResponse>(frame);
-		}
-
-		[Test]
-		[ExpectedException(typeof(FormatException))]
 		public void CreateModbusMessageReturnQueryDataRequestResponseTooSmall()
 		{
 			byte[] frame = new byte[] { 5, 8, 0, 0, 5 };
@@ -285,6 +275,14 @@ namespace Modbus.UnitTests.Message
 			ReadCoilsInputsRequest req = new ReadCoilsInputsRequest(1, 2, 1, 10);
 			IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(req.MessageFrame);
 			Assert.AreEqual(typeof(ReadCoilsInputsRequest), request.GetType());
+		}
+
+		[Test]
+		public void CreateModbusRequestForDiagnostics()
+		{	
+			DiagnosticsRequestResponse diagnosticsRequest = new DiagnosticsRequestResponse(0, 2, new RegisterCollection(45));
+			IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(diagnosticsRequest.MessageFrame);			
+			Assert.AreEqual(typeof(DiagnosticsRequestResponse), request.GetType());
 		}
 	}
 }
