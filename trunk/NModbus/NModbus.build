@@ -17,7 +17,7 @@
   <property name="path.nunit" value="${path.tools}\nunit" />
 	<property name="path.docs" value="docs" />
 	<property name="path.dist" value="dist" />
-	<property name="version" value="0.0.4" />  
+	<property name="version" value="1.0" />  
 
 	<target name="build">
 		<loadtasks assembly="${nantcontrib}"/>
