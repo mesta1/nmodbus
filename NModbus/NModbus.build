@@ -3,14 +3,18 @@
 
 	<!-- tools paths -->
 	<property name="nantcontrib" value="C:\nantcontrib\bin\NAnt.Contrib.Tasks.dll" />
+  <property name="path.ncoverconsole" value="C:\Program Files\NCover\NCover.Console.exe" />
+  <property name="path.ncoverexplorer" value="C:\Program Files\TestDriven.NET 2.0\NCoverExplorer\ncoverexplorer.console.exe" />
   <property name="path.java" value="C:\Program Files\Java" />
   <property name="path.jre" value="${path.java}\jre1.6.0" />
   <property name="path.jdk" value="${path.java}\jdk1.6.0" />
 	<property name="path.bin" value="src\Modbus\bin\Release" />
 	<property name="path.src" value="src" />
+  <property name="path.output" value="testOutput" />
   <property name="path.lib" value="lib" />
   <property name="path.tools" value="tools" />
-  <property name="path.tools.jamod" value="${path.tools}\jamod" />
+  <property name="path.jamod" value="${path.tools}\jamod" />
+  <property name="path.nunit" value="${path.tools}\nunit" />
 	<property name="path.docs" value="docs" />
 	<property name="path.dist" value="dist" />
 	<property name="version" value="0.0.4" />  
@@ -33,9 +37,10 @@
 			 </in>
 			 <do>
 				 <delete dir="${foldername}\bin" />
-				 <delete dir="${foldername}\obj" />
+				 <delete dir="${foldername}\obj" />         
 			 </do>
 		 </foreach>
+     <delete dir="${path.output}" />
 		 <delete dir="${path.dist}" />
 		 <delete dir="${path.docs}" />
 	 </target>
@@ -48,11 +53,11 @@
           <exclude name="."></exclude>
         </items>
       </in>
-      <do>
+      <do>        
         <nunit2>
-          <formatter type="Xml" />
-          <test assemblyname="${foldername}\bin\Release\${path::get-file-name(foldername)}.dll" />
-        </nunit2>                
+          <formatter type="Xml" usefile="true" extension=".xml"/>
+          <test assemblyname="${foldername}\bin\Release\${path::get-file-name(foldername)}.dll" />          
+        </nunit2>
       </do>
     </foreach>
   </target>
@@ -74,13 +79,37 @@
     </foreach>
   </target>
 
-	<target name="dist" depends="all">
-		<mkdir dir="${path.dist}" />
-		<zip zipfile="${path.dist}\NModbus_${version}-source.zip">
-			<fileset basedir="." prefix="source">
-				<include name="**" />
-				<exclude name="**/*.suo" />
-				<exclude name="**/*.user" />
+  <target name="run-code-coverage" depends="build">    
+    <mkdir dir="${path.output}" failonerror="false"/>
+    
+    <ncover program="${path.ncoverconsole}"
+      commandLineExe="${path.nunit}\nunit-console.exe"
+      commandLineArgs="C:\Code\NModbus\src\Modbus.UnitTests\bin\Release\Modbus.UnitTests.dll /xml=&quot;ModbusUnitTests.xml&quot;"
+      workingDirectory="${path.output}"
+      logLevel="Verbose"    
+      coverageFile="${path.output}\Coverage.xml" 
+      logFile="${path.output}\Coverage.log"
+    />
+    
+    <ncoverexplorer program="${path.ncoverexplorer}"       
+      projectName="NModbus"
+      outputDir="${path.output}"
+      reportType="4"
+      htmlReportName="CoverageSummary.html"
+      mergeFileName="AllUtility.NCover.xml"
+      xmlReportName="CoverageSummary.xml"
+      showExcluded="True"
+      satisfactoryCoverage="80"
+    />    
+  </target>
+
+  <target name="dist" depends="all">
+    <mkdir dir="${path.dist}" />
+    <zip zipfile="${path.dist}\NModbus_${version}-source.zip">
+      <fileset basedir="." prefix="source">
+        <include name="**" />
+        <exclude name="**/*.suo" />
+        <exclude name="**/*.user" />
 				<exclude name="**/obj/**" />
 				<exclude name="**/bin/**" />
 				<exclude name="**/docs/**" />
@@ -114,12 +143,12 @@
 		<exec program="cmd.exe" commandline="/c Docs.bat" workingdir="${path.docs}" />
 	</target>
 
-	<target name="all" depends="clean,build,run-unit-tests,run-integration-tests" />
+	<target name="all" depends="clean,build,run-unit-tests,run-integration-tests,run-code-coverage" />
 
   <target name="setup-java">
     <copy file="${path.lib}\javax.comm.properties" todir="${path.jre}\lib" />
     <copy file="${path.lib}\win32com.dll" todir="${path.jre}\bin" />
-    <exec program="${path.jdk}\bin\javac.exe" commandline="-classpath comm.jar;jamod.jar;. *.java" workingdir="${path.tools.jamod}" />
+    <exec program="${path.jdk}\bin\javac.exe" commandline="-classpath comm.jar;jamod.jar;. *.java" workingdir="${path.jamod}" />
   </target>
   
 </project>
