@@ -84,7 +84,7 @@ namespace Modbus.IntegrationTests
 				MasterSerialPort.Dispose();
 
 			if (SlaveSerialPort != null && SlaveSerialPort.IsOpen)
-				SlaveSerialPort.Dispose();			
+				SlaveSerialPort.Dispose();
 
 			if (Jamod != null)
 			{
@@ -178,7 +178,7 @@ namespace Modbus.IntegrationTests
 			Assert.AreEqual(testValues, newValues);
 			Master.WriteMultipleCoils(SlaveAddress, testAddress, originalValues);
 		}
-
+		
 		// TODO how can we test a slave exception?
 	}
 }

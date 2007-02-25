@@ -27,13 +27,12 @@ namespace Modbus.UnitTests.IO
 		{
 		    byte[] frameStart = { 0x11, 0x01, 0x05, 0xCD, 0x6B, 0xB2, 0x0E, 0x1B };
 		    Assert.AreEqual(6, ModbusRtuTransport.ResponseBytesToRead(frameStart));
-
 		}
 
 		[Test]
 		public void ResponseBytesToReadCoilsNoData()
 		{
-		    byte[] frameStart = { 0x11, 0x01, 0x00, 0, 0 };
+		    byte[] frameStart = { 0x11, 0x01, 0x00, 0x00, 0x00 };
 		    Assert.AreEqual(1, ModbusRtuTransport.ResponseBytesToRead(frameStart));
 		}
 
@@ -42,6 +41,20 @@ namespace Modbus.UnitTests.IO
 		{
 		    byte[] frameStart = { 0x11, 0x0F, 0x00, 0x13, 0x00, 0x0A, 0, 0 };
 		    Assert.AreEqual(4, ModbusRtuTransport.ResponseBytesToRead(frameStart));
+		}
+
+		[Test]
+		public void ResponseBytesToReadDiagnostics()
+		{
+			byte[] frameStart = { 0x01, 0x08, 0x00, 0x00 };
+			Assert.AreEqual(4, ModbusRtuTransport.ResponseBytesToRead(frameStart));
+		}
+
+		[Test]
+		public void RequestBytesToReadDiagnostics()
+		{
+			byte[] frame = { 0x01, 0x08, 0x00, 0x00, 0xA5, 0x37, 0, 0 };
+			Assert.AreEqual(1, ModbusRtuTransport.RequestBytesToRead(frame));
 		}
 
 		[Test]
@@ -71,7 +84,7 @@ namespace Modbus.UnitTests.IO
 			byte[] frame = { 0x11, 0xFF, 0x00, 0x01, 0x00, 0x02, 0x04 };
 			ModbusRtuTransport.RequestBytesToRead(frame);
 			Assert.Fail();
-		}
+		}		
 
 		[Test]
 		public void ChecksumsMatchSucceed()

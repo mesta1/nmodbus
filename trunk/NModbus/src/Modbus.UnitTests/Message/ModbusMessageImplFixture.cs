@@ -39,7 +39,7 @@ namespace Modbus.UnitTests.Message
 		public void InitializeInvalidFrame()
 		{
 			ModbusMessageImpl messageImpl = new ModbusMessageImpl();
-			messageImpl.Initialize(new byte[] { 1 });
+			messageImpl.Initialize(new byte[] { 1 });	
 		}
 
 		[Test]

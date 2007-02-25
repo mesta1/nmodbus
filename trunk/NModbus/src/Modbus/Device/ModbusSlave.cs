@@ -109,6 +109,9 @@ namespace Modbus.Device
 				case Modbus.WriteSingleRegister:
 					response = WriteSingleRegister((WriteSingleRegisterRequestResponse) request, DataStore.HoldingRegisters);
 					break;
+				case Modbus.Diagnostics:
+					response = request;
+					break;
 				case Modbus.WriteMultipleCoils:
 					response = WriteMultipleCoils((WriteMultipleCoilsRequest) request, DataStore.CoilDiscretes);
 					break;

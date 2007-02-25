@@ -71,5 +71,12 @@ namespace Modbus.IntegrationTests
 		{
 			base.WriteMultipleRegisters();
 		}
+
+		[Test]
+		public void ReturnQueryData()
+		{
+			Assert.IsTrue(((ModbusSerialMaster) Master).ReturnQueryData(SlaveAddress, 18));
+			Assert.IsTrue(((ModbusSerialMaster) Master).ReturnQueryData(SlaveAddress, 5));
+		}
 	}
 }

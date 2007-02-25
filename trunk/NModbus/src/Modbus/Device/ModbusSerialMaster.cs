@@ -34,13 +34,13 @@ namespace Modbus.Device
 		/// </summary>
 		/// <param name="slaveAddress">Address of device to test.</param>
 		/// <param name="data">Data to return.</param>
-		/// <returns>Returns original data.</returns>
-		public ushort[] ReturnQueryData(byte slaveAddress, ushort data)
+		/// <returns>Return true if slave device echoed data.</returns>
+		public bool ReturnQueryData(byte slaveAddress, ushort data)
 		{
 			DiagnosticsRequestResponse request = new DiagnosticsRequestResponse(Modbus.DiagnosticsReturnQueryData, slaveAddress, new RegisterCollection(data));
 			DiagnosticsRequestResponse response = Transport.UnicastMessage<DiagnosticsRequestResponse>(request);
 
-			return CollectionUtil.ToArray<ushort>(response.Data);
+			return response.Data[0] == data;
 		}
 	}
 }

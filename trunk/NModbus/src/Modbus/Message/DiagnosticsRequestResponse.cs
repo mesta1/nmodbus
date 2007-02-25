@@ -35,9 +35,6 @@ namespace Modbus.Message
 
 		protected override void InitializeUnique(byte[] frame)
 		{
-			if (frame.Length < _minimumFrameSize)
-				throw new FormatException("Message frame does not contain enough bytes.");
-
 			SubFunctionCode = (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 2));
 			Data = new RegisterCollection(CollectionUtil.Slice<byte>(frame, 4, 2));
 		}
