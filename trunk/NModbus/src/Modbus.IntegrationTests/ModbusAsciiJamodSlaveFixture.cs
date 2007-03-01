@@ -12,7 +12,7 @@ namespace Modbus.IntegrationTests
 	[TestFixture]
 	public class ModbusAsciiJamodSlaveFixture : ModbusMasterFixture
 	{		
-		private string program = String.Format("SerialSlave {0} ASCII", SlaveSerialPortName);
+		private string program = String.Format("SerialSlave {0} ASCII", DefaultSlaveSerialPortName);
 
 		[TestFixtureSetUp]
 		public override void Init()
@@ -21,7 +21,7 @@ namespace Modbus.IntegrationTests
 			
 			StartJamodSlave(program);
 
-			SetupMasterSerialPort();
+			SetupMasterSerialPort(ModbusMasterFixture.DefaultMasterSerialPortName);
 			Master = ModbusSerialMaster.CreateAscii(MasterSerialPort);
 		}
 

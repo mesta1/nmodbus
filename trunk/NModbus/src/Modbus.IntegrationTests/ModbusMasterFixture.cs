@@ -18,12 +18,12 @@ namespace Modbus.IntegrationTests
 		public Process Jamod;
 		public IModbusMaster Master;
 		public SerialPort MasterSerialPort;
-		public const string MasterSerialPortName = "COM5";
+		public const string DefaultMasterSerialPortName = "COM5";
 
 		public ModbusSlave Slave;
 		public Thread SlaveThread;
 		public SerialPort SlaveSerialPort;
-		public const string SlaveSerialPortName = "COM6";
+		public const string DefaultSlaveSerialPortName = "COM6";
 		public const byte SlaveAddress = 1;
 
 		public IPAddress TcpHost = new IPAddress(new byte[] { 127, 0, 0, 1 });
@@ -40,16 +40,16 @@ namespace Modbus.IntegrationTests
 
 		public void SetupSlaveSerialPort()
 		{
-			log.DebugFormat("Configure and open slave serial port {0}.", SlaveSerialPortName);
-			SlaveSerialPort = new SerialPort(SlaveSerialPortName);
+			log.DebugFormat("Configure and open slave serial port {0}.", DefaultSlaveSerialPortName);
+			SlaveSerialPort = new SerialPort(DefaultSlaveSerialPortName);
 			SlaveSerialPort.Parity = Parity.None;
 			SlaveSerialPort.Open();
 		}
 
-		public void SetupMasterSerialPort()
+		public void SetupMasterSerialPort(string portName)
 		{
-			log.DebugFormat("Configure and open master serial port {0}.", MasterSerialPortName);
-			MasterSerialPort = new SerialPort(MasterSerialPortName);
+			log.DebugFormat("Configure and open master serial port {0}.", DefaultMasterSerialPortName);
+			MasterSerialPort = new SerialPort(portName);
 			MasterSerialPort.Parity = Parity.None;
 			MasterSerialPort.Open();
 		}
