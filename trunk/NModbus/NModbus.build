@@ -55,7 +55,7 @@
       </in>
       <do>        
         <nunit2>
-          <formatter type="Xml" usefile="true" extension=".xml"/>
+          <formatter type="Xml" />
           <test assemblyname="${foldername}\bin\Release\${path::get-file-name(foldername)}.dll" />          
         </nunit2>
       </do>
@@ -79,28 +79,41 @@
     </foreach>
   </target>
 
-  <target name="run-code-coverage" depends="build">    
+  <target name="run-code-coverage" depends="build">
     <mkdir dir="${path.output}" failonerror="false"/>
-    
-    <ncover program="${path.ncoverconsole}"
-      commandLineExe="${path.nunit}\nunit-console.exe"
-      commandLineArgs="C:\Code\NModbus\src\Modbus.UnitTests\bin\Release\Modbus.UnitTests.dll /xml=&quot;ModbusUnitTests.xml&quot;"
-      workingDirectory="${path.output}"
-      logLevel="Verbose"    
-      coverageFile="${path.output}\Coverage.xml" 
-      logFile="${path.output}\Coverage.log"
-    />
+
+    <foreach item="Folder" property="foldername">
+      <in>
+        <items basedir="src">
+          <include name="*Tests"></include>        
+          <exclude name="."></exclude>
+        </items>
+      </in>
+      <do>
+        <ncover program="${path.ncoverconsole}"
+          commandLineExe="${path.nunit}\nunit-console.exe"
+          commandLineArgs="${foldername}\bin\Release\${path::get-file-name(foldername)}.dll"
+          workingDirectory="${path.output}"
+          coverageFile="${path.output}\Modbus.${path::get-file-name(foldername)}.NCover.xml" 
+          logFile="${path.output}\Coverage.log"
+         />
+      </do>
+    </foreach>
     
     <ncoverexplorer program="${path.ncoverexplorer}"       
       projectName="NModbus"
       outputDir="${path.output}"
       reportType="4"
-      htmlReportName="CoverageSummary.html"
-      mergeFileName="AllUtility.NCover.xml"
       xmlReportName="CoverageSummary.xml"
-      showExcluded="True"
       satisfactoryCoverage="80"
-    />    
+    >
+      <fileset>
+        <include name="${path.output}\*.NCover.xml"/>
+      </fileset>
+      <exclusions>
+        <exclusion type="Assembly" pattern="*Tests" />
+      </exclusions>
+    </ncoverexplorer>
   </target>
 
   <target name="dist" depends="all">
