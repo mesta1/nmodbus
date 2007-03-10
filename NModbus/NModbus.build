@@ -116,6 +116,15 @@
     </ncoverexplorer>
   </target>
 
+  <target name="run-fxcop" depends="build">
+    <loadtasks assembly="${nantcontrib}"/>
+    <fxcop analysisReportFilename="${path.output}\fxcop.xml">
+      <targets>
+        <include name="${path.bin}\Modbus.dll" />
+      </targets>
+    </fxcop>
+  </target>
+
   <target name="dist" depends="all">
     <mkdir dir="${path.dist}" />
     <zip zipfile="${path.dist}\NModbus_${version}-source.zip">
@@ -156,7 +165,7 @@
 		<exec program="cmd.exe" commandline="/c Docs.bat" workingdir="${path.docs}" />
 	</target>
 
-	<target name="all" depends="clean,build,run-unit-tests,run-integration-tests,run-code-coverage" />
+	<target name="all" depends="clean, build, run-unit-tests, run-integration-tests, run-code-coverage, run-fxcop" />
 
   <target name="setup-java">
     <copy file="${path.lib}\javax.comm.properties" todir="${path.jre}\lib" />
