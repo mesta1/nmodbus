@@ -14,7 +14,7 @@ namespace Modbus.IntegrationTests
 		{
 			base.Init();
 
-			SetupMasterSerialPort("COM1");
+			SetupMasterSerialPort("COM4");
 			Master = ModbusSerialMaster.CreateRtu(MasterSerialPort);
 		}
 
