@@ -21,17 +21,17 @@ public class SerialSlave
 			//1. Prepare a process image
 			spi = new SimpleProcessImage();
 
-			for (int i = 0; i < 600; i++)
+			for (int i = 0; i < 3000; i++)
 				spi.addDigitalOut(new SimpleDigitalOut(false));
 
 
-			for (int i = 0; i < 600; i++)
+			for (int i = 0; i < 3000; i++)
 				spi.addDigitalIn(new SimpleDigitalIn(false));
 
-			for (int i = 0; i < 600; i++)
+			for (int i = 0; i < 3000; i++)
 				spi.addRegister(new SimpleRegister(0));
 
-			for (int i = 0; i < 600; i++)
+			for (int i = 0; i < 3000; i++)
 				spi.addInputRegister(new SimpleInputRegister(0));
 
 			//2. Create the coupler and set the slave identity

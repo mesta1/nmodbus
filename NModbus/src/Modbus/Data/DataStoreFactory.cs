@@ -6,7 +6,7 @@ namespace Modbus.Data
 {
 	public static class DataStoreFactory
 	{
-		const int DefaultSize = 400;
+		const int DefaultSize = 3000;
 
 		public static DataStore CreateTestDataStore()
 		{

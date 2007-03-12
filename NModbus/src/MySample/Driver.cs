@@ -10,6 +10,7 @@ using Modbus.Device;
 using Modbus.Util;
 using Modbus.IO;
 using System.Net;
+using System.Diagnostics;
 
 namespace MySample
 {
@@ -20,11 +21,12 @@ namespace MySample
 	{
 		static void Main(string[] args)
 		{
-			log4net.Config.XmlConfigurator.Configure();
+			//log4net.Config.XmlConfigurator.Configure();
 
 			try
 			{
-				ModbusSerialRtuMasterWriteRegisters();
+				SimplePerfTest();
+				//ModbusSerialRtuMasterWriteRegisters();
 				//ModbusSerialAsciiMasterReadRegisters();
 				//ModbusTcpMasterReadInputs();				
 				//StartModbusAsciiSlave();
@@ -38,6 +40,45 @@ namespace MySample
 			}
 
 			Console.ReadKey();
+		}
+
+		public static void SimplePerfTest()
+		{
+			using (SerialPort port = new SerialPort("COM4"))
+			{
+				// configure serial port
+				port.BaudRate = 9600;
+				port.DataBits = 8;
+				port.Parity = Parity.None;
+				port.StopBits = StopBits.One;
+				port.Open();
+
+				// create modbus master
+				ModbusSerialMaster master = ModbusSerialMaster.CreateRtu(port);
+
+				byte slaveID = 1;
+				ushort startAddress = 5;
+				ushort numRegisters = 5;
+
+				// JIT compile the IL
+				master.ReadHoldingRegisters(slaveID, startAddress, numRegisters);
+
+				Stopwatch stopwatch = new Stopwatch();
+				long sum = 0;
+				double numberOfReads = 1000;
+
+				for (int i = 0; i < numberOfReads; i++)
+				{
+					stopwatch.Reset();
+					stopwatch.Start();
+					ushort[] registers = master.ReadHoldingRegisters(slaveID, startAddress, numRegisters);
+					stopwatch.Stop();
+					Console.WriteLine(String.Format("Read {0} - {1} milliseconds", i + 1, stopwatch.ElapsedMilliseconds));
+					sum += stopwatch.ElapsedMilliseconds;
+				}
+
+				Console.WriteLine(String.Format("Average {0}ms", sum / numberOfReads));
+			}
 		}
 
 		/// <summary>
@@ -134,7 +175,7 @@ namespace MySample
 		/// </summary>
 		public static void StartModbusAsciiSlave()
 		{
-			using (SerialPort slavePort = new SerialPort("COM1"))
+			using (SerialPort slavePort = new SerialPort("COM4"))
 			{
 				// configure serial port
 				slavePort.BaudRate = 9600;
@@ -217,7 +258,7 @@ namespace MySample
 		{
 			Thread slaveThread;
 
-			using (SerialPort masterPort = new SerialPort("COM1"))
+			using (SerialPort masterPort = new SerialPort("COM4"))
 			using (SerialPort slavePort = new SerialPort("COM5"))
 			{
 				// configure serial ports

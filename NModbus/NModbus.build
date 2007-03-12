@@ -167,10 +167,13 @@
 
 	<target name="all" depends="clean, build, run-unit-tests, run-integration-tests, run-code-coverage, run-fxcop" />
 
-  <target name="setup-java">
-    <copy file="${path.lib}\javax.comm.properties" todir="${path.jre}\lib" />
-    <copy file="${path.lib}\win32com.dll" todir="${path.jre}\bin" />
+  <target name="build-jamod">
     <exec program="${path.jdk}\bin\javac.exe" commandline="-classpath comm.jar;jamod.jar;. *.java" workingdir="${path.jamod}" />
+  </target>
+  
+  <target name="setup-java" depends="build-jamod">
+    <copy file="${path.lib}\javax.comm.properties" todir="${path.jre}\lib" />
+    <copy file="${path.lib}\win32com.dll" todir="${path.jre}\bin" />    
   </target>
   
 </project>
