@@ -98,7 +98,7 @@ namespace Modbus.IntegrationTests
 		[Test]
 		public virtual void ReadCoils()
 		{
-			bool[] coils = Master.ReadCoils(SlaveAddress, 1, 8);
+			bool[] coils = Master.ReadCoils(SlaveAddress, 2048, 8);
 			Assert.AreEqual(new bool[] { false, false, false, false, false, false, false, false }, coils);
 		}
 
