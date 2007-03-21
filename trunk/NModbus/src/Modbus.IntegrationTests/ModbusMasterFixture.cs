@@ -48,7 +48,7 @@ namespace Modbus.IntegrationTests
 
 		public void SetupMasterSerialPort(string portName)
 		{
-			log.DebugFormat("Configure and open master serial port {0}.", DefaultMasterSerialPortName);
+			log.DebugFormat("Configure and open master serial port {0}.", portName);
 			MasterSerialPort = new SerialPort(portName);
 			MasterSerialPort.Parity = Parity.None;
 			MasterSerialPort.Open();
@@ -69,7 +69,7 @@ namespace Modbus.IntegrationTests
 			ProcessStartInfo startInfo = new ProcessStartInfo("java", String.Format("{0} {1}", classpath, program));
 			Jamod = Process.Start(startInfo);
 
-			Thread.Sleep(2000);
+			Thread.Sleep(4000);
 			Assert.IsFalse(Jamod.HasExited, "Jamod Serial Ascii Slave did not start correctly.");
 			
 			// TODO test whether the slave has opened the serial port
@@ -80,19 +80,19 @@ namespace Modbus.IntegrationTests
 		{
 			log.Debug("Clean up after tests.");
 
-			if (MasterSerialPort != null && MasterSerialPort.IsOpen)
+			if (MasterSerialPort != null)
 				MasterSerialPort.Dispose();
 
-			if (SlaveSerialPort != null && SlaveSerialPort.IsOpen)
+			if (SlaveSerialPort != null)
 				SlaveSerialPort.Dispose();
 
 			if (Jamod != null)
 			{
 				Jamod.CloseMainWindow();
-				Jamod.Close();
+				Jamod.Dispose();
 			}
 
-			Thread.Sleep(1000);
+			Thread.Sleep(4000);
 		}
 
 		[Test]
