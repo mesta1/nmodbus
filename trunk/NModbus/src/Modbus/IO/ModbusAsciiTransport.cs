@@ -32,7 +32,7 @@ namespace Modbus.IO
 			frame.AddRange(ModbusUtil.GetAsciiBytes(message.SlaveAddress));
 			frame.AddRange(ModbusUtil.GetAsciiBytes(message.ProtocolDataUnit));
 			frame.AddRange(ModbusUtil.GetAsciiBytes(ModbusUtil.CalculateLrc(message.MessageFrame)));
-			frame.AddRange(ModbusUtil.GetAsciiBytes(FrameEnd.ToCharArray()));
+			frame.AddRange(Encoding.ASCII.GetBytes(FrameEnd.ToCharArray()));
 
 			return frame.ToArray();
 		}
