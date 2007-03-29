@@ -42,23 +42,53 @@ namespace Modbus.Util
 			0X8201, 0X42C0, 0X4380, 0X8341, 0X4100, 0X81C1, 0X8081, 0X4040 
 		};
 
-		// converts to string of hex characters w/ appropriate padding
-		// converts each char to decimal value		
+		/// <summary>
+		/// Converts two UInt16 values into a IEEE 32 floating point format
+		/// </summary>
+		/// <param name="highOrderValue">High order ushort value</param>
+		/// <param name="lowOrderValue">Low order ushort value</param>
+		/// <returns>IEEE 32 floating point value</returns>
+		public static float GetSingle(ushort highOrderValue, ushort lowOrderValue)
+		{
+			return BitConverter.ToSingle(CollectionUtil.Combine(BitConverter.GetBytes(lowOrderValue), BitConverter.GetBytes(highOrderValue)), 0);
+		}
+
+		/// <summary>
+		/// Converts two UInt16 values into a UInt32
+		/// </summary>
+		/// <param name="highOrderValue"></param>
+		/// <param name="lowOrderValue"></param>
+		/// <returns></returns>
+		public static UInt32 GetUInt32(ushort highOrderValue, ushort lowOrderValue)
+		{
+			return BitConverter.ToUInt32(CollectionUtil.Combine(BitConverter.GetBytes(lowOrderValue), BitConverter.GetBytes(highOrderValue)), 0);
+		}
+
+		/// <summary>
+		/// Converts an array of bytes to an ASCII byte array
+		/// </summary>
+		/// <param name="numbers">The byte array</param>
+		/// <returns>An array of ASCII byte values</returns>
 		public static byte[] GetAsciiBytes(params byte[] numbers)
 		{			
 			return Encoding.ASCII.GetBytes(String.Join("", Array.ConvertAll<byte, string>(numbers, delegate(byte n) { return n.ToString("X2"); })));
 		}
-
+		
+		/// <summary>
+		/// Converts an array of UInt16 to an ASCII byte array
+		/// </summary>
+		/// <param name="numbers">The ushort array</param>
+		/// <returns>An array of ASCII byte values</returns>
 		public static byte[] GetAsciiBytes(params ushort[] numbers)
 		{
 			return Encoding.ASCII.GetBytes(String.Join("", Array.ConvertAll<ushort, string>(numbers, delegate(ushort n) { return n.ToString("X4"); })));
 		}
-		
-		public static byte[] GetAsciiBytes(char[] characters)
-		{
-			return Encoding.ASCII.GetBytes(characters);
-		}
 
+		/// <summary>
+		/// Converts a network order byte array to an array of UInt16 values in host order
+		/// </summary>
+		/// <param name="networkBytes">The network order byte array</param>
+		/// <returns>The host order ushort array</returns>
 		public static ushort[] NetworkBytesToHostUInt16(byte[] networkBytes)
 		{
 			if (networkBytes == null)
@@ -76,8 +106,10 @@ namespace Modbus.Util
 		}
 
 		/// <summary>
-		/// Converts a string of hex to a byte array.
+		/// Converts a hex string to a byte array.
 		/// </summary>
+		/// <param name="hex">The hex string</param>
+		/// <returns>Array of bytes</returns>
 		public static byte[] HexToBytes(string hex)
 		{
 			if (hex == null)
@@ -95,8 +127,10 @@ namespace Modbus.Util
 		}
 
 		/// <summary>
-		/// Longitudinal Redundancy Check.
+		/// Calculate Longitudinal Redundancy Check.
 		/// </summary>
+		/// <param name="data">The data used in LRC</param>
+		/// <returns>LRC value</returns>
 		public static byte CalculateLrc(byte[] data)
 		{
 			if (data == null)
@@ -112,8 +146,10 @@ namespace Modbus.Util
 		}
 
 		/// <summary>
-		/// Cyclical Redundancy Check.
+		/// Calculate Cyclical Redundancy Check
 		/// </summary>
+		/// <param name="data">The data used in CRC</param>
+		/// <returns>CRC value</returns>
 		public static byte[] CalculateCrc(byte[] data)
 		{
 			if (data == null)

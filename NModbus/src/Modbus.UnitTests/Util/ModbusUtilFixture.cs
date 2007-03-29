@@ -15,7 +15,6 @@ namespace Modbus.UnitTests.Util
 		{
 			Assert.AreEqual(new byte[] { }, ModbusUtil.GetAsciiBytes(new byte[] { }));
 			Assert.AreEqual(new byte[] { }, ModbusUtil.GetAsciiBytes(new ushort[] { }));
-			Assert.AreEqual(new byte[] { }, ModbusUtil.GetAsciiBytes(new char[] { }));
 		}
 
 		[Test]
@@ -34,24 +33,6 @@ namespace Modbus.UnitTests.Util
 			byte[] expectedResult = { 48, 49, 50, 67, 48, 49, 57, 48 };
 			byte[] result = ModbusUtil.GetAsciiBytes(buf);
 			Assert.AreEqual(expectedResult, result);			
-		}
-
-		[Test]
-		public void GetAsciiBytesFromChar()
-		{
-			char[] buf = new char[] { ':' };
-			byte[] expectedResult = { 58 };
-			byte[] result = ModbusUtil.GetAsciiBytes(buf);
-			Assert.AreEqual(expectedResult, result);
-		}
-
-		[Test]
-		public void GetAsciiBytesFromChar2()
-		{
-			char[] buf = new char[] { '\r', '\n' };
-			byte[] expectedResult = { 13, 10 };
-			byte[] result = ModbusUtil.GetAsciiBytes(buf);
-			Assert.AreEqual(expectedResult, result);
 		}
 
 		[Test]
@@ -169,6 +150,24 @@ namespace Modbus.UnitTests.Util
 		public void NetworkBytesToHostUInt16EmptyBytes()
 		{
 			Assert.AreEqual(new ushort[] { }, ModbusUtil.NetworkBytesToHostUInt16(new byte[] { }));
+		}
+
+		[Test]
+		public void GetSingle()
+		{
+			Assert.AreEqual(0F, ModbusUtil.GetSingle(0, 0));
+			Assert.AreEqual(1F, ModbusUtil.GetSingle(16256, 0));
+			Assert.AreEqual(9999999F, ModbusUtil.GetSingle(19224, 38527));
+			Assert.AreEqual(500.625F, ModbusUtil.GetSingle(17402, 20480));
+		}
+
+		[Test]
+		public void GetUInt32()
+		{
+			Assert.AreEqual(0, ModbusUtil.GetUInt32(0, 0));
+			Assert.AreEqual(1, ModbusUtil.GetUInt32(0, 1));
+			Assert.AreEqual(45, ModbusUtil.GetUInt32(0, 45));
+			Assert.AreEqual(65536, ModbusUtil.GetUInt32(1, 0));
 		}
 	}
 }
