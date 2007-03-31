@@ -7,6 +7,7 @@ using Modbus.IO;
 using Modbus.Message;
 using NUnit.Framework;
 using Modbus.Util;
+using Rhino.Mocks;
 
 namespace Modbus.UnitTests.IO
 {
@@ -26,6 +27,18 @@ namespace Modbus.UnitTests.IO
 			WriteMultipleRegistersRequest message = new WriteMultipleRegistersRequest(3, 1, CollectionUtil.CreateDefaultCollection<RegisterCollection, ushort>(0, 120));
 			byte[] header = ModbusTcpTransport.GetMbapHeader(message);
 			Assert.AreEqual(new byte[] { 0, 0, 0, 0, 0, 247, 3}, header);
-		}		
+		}
+
+		[Test]
+		public void TestSomething()
+		{
+			// TODO finish test
+			//MockRepository mocks = new MockRepository();
+			//TcpTransportAdapter transport = mocks.CreateMock<TcpTransportAdapter>(null);
+			//Expect.Call(transport.Read(new byte[] { }, 1, 1)).Return(6);
+			//mocks.ReplayAll();
+			//byte[] result = ModbusTcpTransport.ReadRequestResponse(transport);
+			//mocks.VerifyAll();
+		}
 	}
 }

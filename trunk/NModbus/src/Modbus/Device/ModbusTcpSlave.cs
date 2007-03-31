@@ -36,14 +36,14 @@ namespace Modbus.Device
 			_log.Debug("Block for pending client connection.");
 			TcpClient master = _tcpListener.AcceptTcpClient();
 			_log.Debug("Connected to client.");
-			NetworkStream stream = master.GetStream();
+			TcpTransportAdapter tcpTransportAdapter = new TcpTransportAdapter(master.GetStream());
 
 			try
 			{
 				while (true)
 				{
 					// use transport to retrieve raw message frame from stream
-					byte[] frame = ModbusTcpTransport.ReadRequestResponse(stream);
+					byte[] frame = ModbusTcpTransport.ReadRequestResponse(tcpTransportAdapter);
 
 					// build request from frame
 					IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(frame);
@@ -55,7 +55,7 @@ namespace Modbus.Device
 					// write response
 					byte[] responseFrame = new ModbusTcpTransport().BuildMessageFrame(response);
 					_log.DebugFormat("TX: {0}", StringUtil.Join(", ", responseFrame));
-					stream.Write(responseFrame, 0, responseFrame.Length);
+					tcpTransportAdapter.Write(responseFrame, 0, responseFrame.Length);
 				}
 			}
 			catch (ThreadAbortException)
@@ -68,8 +68,8 @@ namespace Modbus.Device
 			}
 			finally
 			{
-				if (stream != null)
-					stream.Close();
+				if (tcpTransportAdapter != null)
+					tcpTransportAdapter.Close();
 
 				if (master != null)
 					master.Close();
