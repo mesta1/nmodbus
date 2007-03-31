@@ -12,7 +12,7 @@ namespace Modbus.IO
 	class ModbusTcpTransport : ModbusTransport
 	{
 		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusTcpTransport));		
-		private NetworkStream _networkStream;
+		private TcpTransportAdapter _tcpTransportAdapter;
 
 		public ModbusTcpTransport()
 		{
@@ -20,14 +20,14 @@ namespace Modbus.IO
 
 		public ModbusTcpTransport(TcpClient tcpClient)
 		{
-			_networkStream = tcpClient.GetStream();	
+			_tcpTransportAdapter = new TcpTransportAdapter(tcpClient.GetStream());	
 		}
 
 		public NetworkStream NetworkStream
 		{
-			get { return _networkStream; }
-			set { _networkStream = value; }
-		}		
+			get { return _tcpTransportAdapter.NetworkStream; }
+			set { _tcpTransportAdapter.NetworkStream = value; }
+		}
 
 		public static byte[] GetMbapHeader(IModbusMessage message)
 		{
@@ -43,7 +43,7 @@ namespace Modbus.IO
 		internal override void Write(IModbusMessage message)
 		{			
 			byte[] frame = BuildMessageFrame(message);
-			NetworkStream.Write(frame, 0, frame.Length);
+			_tcpTransportAdapter.Write(frame, 0, frame.Length);
 		}
 
 		internal override byte[] BuildMessageFrame(IModbusMessage message)
@@ -58,21 +58,21 @@ namespace Modbus.IO
 
 		internal override byte[] ReadResponse()
 		{
-			return ReadRequestResponse(NetworkStream);
+			return ReadRequestResponse(_tcpTransportAdapter);
 		}
 
 		internal override byte[] ReadRequest()
 		{
-			return ReadRequestResponse(NetworkStream);
+			return ReadRequestResponse(_tcpTransportAdapter);
 		}
 
-		public static byte[] ReadRequestResponse(NetworkStream stream)
+		public static byte[] ReadRequestResponse(TcpTransportAdapter tcpTransportAdapter)
 		{
 			// read header
 			byte[] mbapHeader = new byte[6];
 			int numBytesRead = 0;
 			while (numBytesRead != 6)
-				numBytesRead += stream.Read(mbapHeader, numBytesRead, 6 - numBytesRead);
+				numBytesRead += tcpTransportAdapter.Read(mbapHeader, numBytesRead, 6 - numBytesRead);
 
 			_log.DebugFormat("MBAP header: {0}", StringUtil.Join(", ", mbapHeader));
 			
@@ -83,7 +83,7 @@ namespace Modbus.IO
 			byte[] frame = new byte[frameLength];
 			numBytesRead = 0;
 			while (numBytesRead != frameLength)
-				numBytesRead += stream.Read(frame, numBytesRead, frameLength - numBytesRead);
+				numBytesRead += tcpTransportAdapter.Read(frame, numBytesRead, frameLength - numBytesRead);
 
 			_log.DebugFormat("PDU: {0}", StringUtil.Join(", ", frame));
 
