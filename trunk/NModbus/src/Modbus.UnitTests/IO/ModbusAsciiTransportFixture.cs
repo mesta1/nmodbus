@@ -32,33 +32,46 @@ namespace Modbus.UnitTests.IO
 			Assert.Fail();
 		}
 
-		// TODO refactor, this pattern does not work for rtu b/c there is not a stringreader.read(byte[] method
-		[Test, ExpectedException(typeof(IOException))]
-		public void ReadNotEnoughBytes()
-		{
-			MockRepository mocks = new MockRepository();
-			TextReader reader = mocks.CreateMock<StringReader>("");
-			ModbusAsciiTransport transport = new ModbusAsciiTransport();
-			transport.Reader = reader;
-			Expect.Call(reader.ReadLine()).Return(":10");
-			mocks.ReplayAll();
-			transport.ReadResponse();
-			mocks.VerifyAll();
-		}
-
 		[Test]
-		public void Read()
+		public void ReadRequestResponse()
 		{
 			MockRepository mocks = new MockRepository();
-			TextReader reader = mocks.CreateMock<StringReader>("");
-			ModbusAsciiTransport transport = new ModbusAsciiTransport();
-			transport.Reader = reader;
-			Expect.Call(reader.ReadLine()).Return(":110100130025B6");
+			SerialPortStreamAdapter mockStream = mocks.CreateMock<SerialPortStreamAdapter>();
+			Expect.Call(mockStream.ReadTimeout).Return(SerialPort.InfiniteTimeout);
+			mockStream.WriteTimeout = 0;
+			LastCall.IgnoreArguments();
+			Expect.Call(mockStream.WriteTimeout).Return(SerialPort.InfiniteTimeout);
+			mockStream.ReadTimeout = 0;
+			LastCall.IgnoreArguments();
+			Expect.Call(mockStream.ReadLine()).Return(":110100130025B6");
 			mocks.ReplayAll();
-			transport.ReadResponse();
+
+			ModbusAsciiTransport transport = new ModbusAsciiTransport(mockStream);
+			Assert.AreEqual(new byte[] { 17, 1, 0, 19, 0, 37, 182 }, transport.ReadRequestResponse());
+
 			mocks.VerifyAll();
 		}
+			
+		[Test, ExpectedException(typeof(IOException))]
+		public void ReadRequestResponseNotEnoughBytes()
+		{
+			MockRepository mocks = new MockRepository(); 
+			SerialPortStreamAdapter mockStream = mocks.CreateMock<SerialPortStreamAdapter>();
+			Expect.Call(mockStream.ReadTimeout).Return(SerialPort.InfiniteTimeout);
+			mockStream.WriteTimeout = 0;
+			LastCall.IgnoreArguments();
+			Expect.Call(mockStream.WriteTimeout).Return(SerialPort.InfiniteTimeout);
+			mockStream.ReadTimeout = 0;
+			LastCall.IgnoreArguments();
+			Expect.Call(mockStream.ReadLine()).Return(":10");						
+			mocks.ReplayAll();
 
+			ModbusAsciiTransport transport = new ModbusAsciiTransport(mockStream);			
+			transport.ReadRequestResponse();
+
+			mocks.VerifyAll();
+		}
+		
 		[Test]
 		public void ChecksumsMatchSucceed()
 		{

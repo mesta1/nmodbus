@@ -9,6 +9,7 @@ using Modbus.UnitTests.Message;
 using Modbus.Util;
 using System.IO;
 using System.IO.Ports;
+using Rhino.Mocks;
 
 namespace Modbus.UnitTests.IO
 {
@@ -31,6 +32,42 @@ namespace Modbus.UnitTests.IO
 			byte lrc = ModbusUtil.CalculateLrc(expectedResponse.MessageFrame);
 			ReadCoilsInputsResponse response = transport.CreateResponse<ReadCoilsInputsResponse>(new byte[] { 2, Modbus.ReadCoils, 1, 129, lrc });
 			AssertModbusMessagePropertiesAreEqual(expectedResponse, response);
+		}
+
+		[Test]
+		public void SetupTimeoutsNonDefaultTimeout()
+		{			
+			int nonDefaultReadTimeout = 67;
+			int nonDefaultWriteTimeout = 42;
+			MockRepository mocks = new MockRepository();
+			SerialPortStreamAdapter mockStream = mocks.CreateMock<SerialPortStreamAdapter>();
+
+			Expect.Call(mockStream.WriteTimeout).Return(nonDefaultWriteTimeout);
+			Expect.Call(mockStream.WriteTimeout).Return(nonDefaultWriteTimeout);
+			mockStream.WriteTimeout = nonDefaultWriteTimeout;			
+			Expect.Call(mockStream.ReadTimeout).Return(nonDefaultReadTimeout);
+			Expect.Call(mockStream.ReadTimeout).Return(nonDefaultReadTimeout);
+			mockStream.ReadTimeout =  nonDefaultReadTimeout;
+
+			mocks.ReplayAll();
+			ModbusAsciiTransport transport = new ModbusAsciiTransport(mockStream);
+			mocks.VerifyAll();
+		}
+
+		[Test]
+		public void SetupTimeoutsDefaultTimeout()
+		{
+			MockRepository mocks = new MockRepository();
+			SerialPortStreamAdapter mockStream = mocks.CreateMock<SerialPortStreamAdapter>();
+
+			Expect.Call(mockStream.WriteTimeout).Return(SerialPort.InfiniteTimeout);
+			mockStream.WriteTimeout = Modbus.DefaultTimeout;
+			Expect.Call(mockStream.ReadTimeout).Return(SerialPort.InfiniteTimeout);
+			mockStream.ReadTimeout = Modbus.DefaultTimeout;
+
+			mocks.ReplayAll();
+			ModbusAsciiTransport transport = new ModbusAsciiTransport(mockStream);
+			mocks.VerifyAll();
 		}
 	}
 }

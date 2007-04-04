@@ -20,12 +20,12 @@ namespace Modbus.Device
 
 		public static ModbusSerialSlave CreateAscii(byte unitID, SerialPort serialPort)
 		{
-			return new ModbusSerialSlave(unitID, new ModbusAsciiTransport(serialPort));
+			return new ModbusSerialSlave(unitID, new ModbusAsciiTransport(new SerialPortStreamAdapter(serialPort)));
 		}
 
 		public static ModbusSerialSlave CreateRtu(byte unitID, SerialPort serialPort)
 		{
-			return new ModbusSerialSlave(unitID, new ModbusRtuTransport(serialPort));
+			return new ModbusSerialSlave(unitID, new ModbusRtuTransport(new SerialPortStreamAdapter(serialPort)));
 		}
 		
 		public override void Listen()

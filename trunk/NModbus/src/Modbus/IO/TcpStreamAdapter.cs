@@ -5,30 +5,20 @@ using System.Net.Sockets;
 
 namespace Modbus.IO
 {
-	public class TcpTransportAdapter
+	public delegate int StreamReadWriteDelegate(byte[] buffer, int offset, int count);
+
+	public class TcpStreamAdapter
 	{
 		private NetworkStream _networkStream;
 
-		public TcpTransportAdapter()
+		public TcpStreamAdapter()
 		{
 		}
 
-		public TcpTransportAdapter(NetworkStream networkStream)
+		public TcpStreamAdapter(NetworkStream networkStream)
 		{
 			_networkStream = networkStream;
-		}
-
-		public NetworkStream NetworkStream
-		{
-			get 
-			{ 
-				return _networkStream; 
-			}
-			set
-			{
-				_networkStream = value;
-			}
-		}
+		}		
 
 		public virtual void Close()
 		{
