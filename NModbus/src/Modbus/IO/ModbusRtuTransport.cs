@@ -21,8 +21,8 @@ namespace Modbus.IO
 		{
 		}
 
-		public ModbusRtuTransport(SerialPort serialPort)
-			: base (serialPort)
+		public ModbusRtuTransport(SerialPortStreamAdapter serialPortStreamAdapter)
+			: base(serialPortStreamAdapter)
 		{
 		}
 
@@ -70,7 +70,7 @@ namespace Modbus.IO
 			int numBytesRead = 0;			
 
 			while (numBytesRead != count)
-				numBytesRead += SerialPort.Read(frameBytes, numBytesRead, count - numBytesRead);			
+				numBytesRead += _serialPortStreamAdapter.Read(frameBytes, numBytesRead, count - numBytesRead);			
 
 			return frameBytes;
 		}

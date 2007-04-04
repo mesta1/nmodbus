@@ -11,47 +11,32 @@ namespace Modbus.IO
 	abstract class ModbusSerialTransport : ModbusTransport
 	{
 		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusTransport));
-		private SerialPort _serialPort;
-		private TextReader _reader;
+		protected SerialPortStreamAdapter _serialPortStreamAdapter;
 
 		public ModbusSerialTransport()
 		{
 		}
 
-		public ModbusSerialTransport(SerialPort serialPort)
+		public ModbusSerialTransport(SerialPortStreamAdapter serialPortStreamAdapter)
 		{
-			if (serialPort == null)
-				throw new ArgumentNullException("serialPort");
+			if (serialPortStreamAdapter == null)
+				throw new ArgumentNullException("serialPortStreamAdapter");
 
-			serialPort.WriteTimeout = serialPort.WriteTimeout == SerialPort.InfiniteTimeout ? Modbus.DefaultTimeout : serialPort.WriteTimeout;
-			serialPort.ReadTimeout = serialPort.ReadTimeout == SerialPort.InfiniteTimeout ? Modbus.DefaultTimeout : serialPort.ReadTimeout;
+			_serialPortStreamAdapter = serialPortStreamAdapter;
 
-			_serialPort = serialPort;
-			_reader = new StreamReader(_serialPort.BaseStream);
-		}
-
-		internal SerialPort SerialPort
-		{
-			get { return _serialPort; }
-			set { _serialPort = value; }
-		}
-
-		internal TextReader Reader
-		{
-			get { return _reader; }
-			set { _reader = value; }
+			_serialPortStreamAdapter.WriteTimeout = _serialPortStreamAdapter.WriteTimeout == SerialPort.InfiniteTimeout ? Modbus.DefaultTimeout : _serialPortStreamAdapter.WriteTimeout;
+			_serialPortStreamAdapter.ReadTimeout = _serialPortStreamAdapter.ReadTimeout == SerialPort.InfiniteTimeout ? Modbus.DefaultTimeout : _serialPortStreamAdapter.ReadTimeout;
 		}
 
 		internal override void Write(IModbusMessage message)
 		{
 			byte[] frame = BuildMessageFrame(message);
-			SerialPort.Write(frame, 0, frame.Length);
+			_serialPortStreamAdapter.Write(frame, 0, frame.Length);
 		}
 
 		internal override T UnicastMessage<T>(IModbusMessage message)
 		{
-			// clear any old messages from input buffer
-			_serialPort.DiscardInBuffer();
+			_serialPortStreamAdapter.DiscardInBuffer();
 
 			return base.UnicastMessage<T>(message);
 		}

@@ -26,19 +26,46 @@ namespace Modbus.UnitTests.IO
 		{
 			WriteMultipleRegistersRequest message = new WriteMultipleRegistersRequest(3, 1, CollectionUtil.CreateDefaultCollection<RegisterCollection, ushort>(0, 120));
 			byte[] header = ModbusTcpTransport.GetMbapHeader(message);
-			Assert.AreEqual(new byte[] { 0, 0, 0, 0, 0, 247, 3}, header);
+			Assert.AreEqual(new byte[] { 0, 0, 0, 0, 0, 247, 3 }, header);
 		}
 
 		[Test]
-		public void TestSomething()
+		public void Write()
 		{
-			// TODO finish test
-			//MockRepository mocks = new MockRepository();
-			//TcpTransportAdapter transport = mocks.CreateMock<TcpTransportAdapter>(null);
-			//Expect.Call(transport.Read(new byte[] { }, 1, 1)).Return(6);
-			//mocks.ReplayAll();
-			//byte[] result = ModbusTcpTransport.ReadRequestResponse(transport);
-			//mocks.VerifyAll();
+			MockRepository mocks = new MockRepository();
+			TcpStreamAdapter mockTransport = mocks.CreateMock<TcpStreamAdapter>();
+			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 1, 3);
+			mockTransport.Write(new byte[] { 0, 0, 0, 0, 0, 6, 1, 1, 0, 1, 0, 3 }, 0, 12);
+			mocks.ReplayAll();
+			new ModbusTcpTransport(mockTransport).Write(request);
+			mocks.VerifyAll();
+		}
+
+		[Test]
+		public void ReadRequestResponse()
+		{
+			MockRepository mocks = new MockRepository();
+			TcpStreamAdapter mockTransport = mocks.CreateMock<TcpStreamAdapter>(null);
+
+			byte[] mbapHeader = { 4, 5, 0, 0, 0, 6 };
+
+			Expect.Call(mockTransport.Read(new byte[6], 0, 6)).Do(((StreamReadWriteDelegate) delegate(byte[] buf, int offset, int count)
+			{
+				Array.Copy(mbapHeader, buf, 6);
+				return 6;
+			}));
+
+			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 1, 3);
+
+			Expect.Call(mockTransport.Read(new byte[6], 0, 6)).Do(((StreamReadWriteDelegate) delegate(byte[] buf, int offset, int count)
+			{
+				Array.Copy(CollectionUtil.Combine(new byte[] { 1 }, request.ProtocolDataUnit), buf, 6);
+				return 6;
+			}));
+
+			mocks.ReplayAll();
+			Assert.AreEqual(ModbusTcpTransport.ReadRequestResponse(mockTransport), new byte[] { 1, 1, 0, 1, 0, 3 });
+			mocks.VerifyAll();
 		}
 	}
 }

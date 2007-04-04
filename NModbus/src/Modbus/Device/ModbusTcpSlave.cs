@@ -36,7 +36,7 @@ namespace Modbus.Device
 			_log.Debug("Block for pending client connection.");
 			TcpClient master = _tcpListener.AcceptTcpClient();
 			_log.Debug("Connected to client.");
-			TcpTransportAdapter tcpTransportAdapter = new TcpTransportAdapter(master.GetStream());
+			TcpStreamAdapter tcpTransportAdapter = new TcpStreamAdapter(master.GetStream());
 
 			try
 			{

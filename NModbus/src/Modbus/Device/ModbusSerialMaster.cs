@@ -21,12 +21,12 @@ namespace Modbus.Device
 
 		public static ModbusSerialMaster CreateAscii(SerialPort serialPort)
 		{
-			return new ModbusSerialMaster(new ModbusAsciiTransport(serialPort));
+			return new ModbusSerialMaster(new ModbusAsciiTransport(new SerialPortStreamAdapter(serialPort)));
 		}
 
 		public static ModbusSerialMaster CreateRtu(SerialPort serialPort)
 		{
-			return new ModbusSerialMaster(new ModbusRtuTransport(serialPort));
+			return new ModbusSerialMaster(new ModbusRtuTransport(new SerialPortStreamAdapter(serialPort)));
 		}
 		
 		/// <summary>

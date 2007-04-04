@@ -12,22 +12,16 @@ namespace Modbus.IO
 	class ModbusTcpTransport : ModbusTransport
 	{
 		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusTcpTransport));		
-		private TcpTransportAdapter _tcpTransportAdapter;
+		private TcpStreamAdapter _tcpStreamAdapter;
 
 		public ModbusTcpTransport()
 		{
 		}
 
-		public ModbusTcpTransport(TcpClient tcpClient)
+		public ModbusTcpTransport(TcpStreamAdapter tcpStreamAdapter)
 		{
-			_tcpTransportAdapter = new TcpTransportAdapter(tcpClient.GetStream());	
-		}
-
-		public NetworkStream NetworkStream
-		{
-			get { return _tcpTransportAdapter.NetworkStream; }
-			set { _tcpTransportAdapter.NetworkStream = value; }
-		}
+			_tcpStreamAdapter = tcpStreamAdapter;
+		}		
 
 		public static byte[] GetMbapHeader(IModbusMessage message)
 		{
@@ -43,7 +37,7 @@ namespace Modbus.IO
 		internal override void Write(IModbusMessage message)
 		{			
 			byte[] frame = BuildMessageFrame(message);
-			_tcpTransportAdapter.Write(frame, 0, frame.Length);
+			_tcpStreamAdapter.Write(frame, 0, frame.Length);
 		}
 
 		internal override byte[] BuildMessageFrame(IModbusMessage message)
@@ -58,15 +52,15 @@ namespace Modbus.IO
 
 		internal override byte[] ReadResponse()
 		{
-			return ReadRequestResponse(_tcpTransportAdapter);
+			return ReadRequestResponse(_tcpStreamAdapter);
 		}
 
 		internal override byte[] ReadRequest()
 		{
-			return ReadRequestResponse(_tcpTransportAdapter);
+			return ReadRequestResponse(_tcpStreamAdapter);
 		}
 
-		public static byte[] ReadRequestResponse(TcpTransportAdapter tcpTransportAdapter)
+		public static byte[] ReadRequestResponse(TcpStreamAdapter tcpTransportAdapter)
 		{
 			// read header
 			byte[] mbapHeader = new byte[6];

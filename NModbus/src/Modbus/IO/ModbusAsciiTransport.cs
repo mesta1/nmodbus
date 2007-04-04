@@ -19,10 +19,9 @@ namespace Modbus.IO
 		{
 		}
 
-		internal ModbusAsciiTransport(SerialPort serialPort)
-			: base(serialPort)
+		internal ModbusAsciiTransport(SerialPortStreamAdapter serialPortStreamAdapter)
+			: base(serialPortStreamAdapter)
 		{
-			SerialPort.NewLine = FrameEnd;
 		}
 
 		internal override byte[] BuildMessageFrame(IModbusMessage message)
@@ -55,7 +54,7 @@ namespace Modbus.IO
 		internal byte[] ReadRequestResponse()
 		{
 			// read message frame, removing frame start ':'
-			string frameHex = Reader.ReadLine().Substring(1);
+			string frameHex = _serialPortStreamAdapter.ReadLine().Substring(1);
 
 			// convert hex to bytes
 			byte[] frame = ModbusUtil.HexToBytes(frameHex);
