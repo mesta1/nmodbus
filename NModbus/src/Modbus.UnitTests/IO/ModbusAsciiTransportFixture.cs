@@ -36,17 +36,18 @@ namespace Modbus.UnitTests.IO
 		public void ReadRequestResponse()
 		{
 			MockRepository mocks = new MockRepository();
-			SerialPortStreamAdapter mockStream = mocks.CreateMock<SerialPortStreamAdapter>();
-			Expect.Call(mockStream.ReadTimeout).Return(SerialPort.InfiniteTimeout);
-			mockStream.WriteTimeout = 0;
+			SerialPortAdapter mockSerialPort = mocks.CreateMock<SerialPortAdapter>();
+			mockSerialPort.NewLine = ModbusAsciiTransport.FrameEnd;
+			Expect.Call(mockSerialPort.ReadTimeout).Return(SerialPort.InfiniteTimeout);
+			mockSerialPort.WriteTimeout = 0;
 			LastCall.IgnoreArguments();
-			Expect.Call(mockStream.WriteTimeout).Return(SerialPort.InfiniteTimeout);
-			mockStream.ReadTimeout = 0;
+			Expect.Call(mockSerialPort.WriteTimeout).Return(SerialPort.InfiniteTimeout);
+			mockSerialPort.ReadTimeout = 0;
 			LastCall.IgnoreArguments();
-			Expect.Call(mockStream.ReadLine()).Return(":110100130025B6");
+			Expect.Call(mockSerialPort.ReadLine()).Return(":110100130025B6");
 			mocks.ReplayAll();
 
-			ModbusAsciiTransport transport = new ModbusAsciiTransport(mockStream);
+			ModbusAsciiTransport transport = new ModbusAsciiTransport(mockSerialPort);
 			Assert.AreEqual(new byte[] { 17, 1, 0, 19, 0, 37, 182 }, transport.ReadRequestResponse());
 
 			mocks.VerifyAll();
@@ -56,17 +57,18 @@ namespace Modbus.UnitTests.IO
 		public void ReadRequestResponseNotEnoughBytes()
 		{
 			MockRepository mocks = new MockRepository(); 
-			SerialPortStreamAdapter mockStream = mocks.CreateMock<SerialPortStreamAdapter>();
-			Expect.Call(mockStream.ReadTimeout).Return(SerialPort.InfiniteTimeout);
-			mockStream.WriteTimeout = 0;
+			SerialPortAdapter mockSerialPort = mocks.CreateMock<SerialPortAdapter>();
+			mockSerialPort.NewLine = ModbusAsciiTransport.FrameEnd;
+			Expect.Call(mockSerialPort.ReadTimeout).Return(SerialPort.InfiniteTimeout);
+			mockSerialPort.WriteTimeout = 0;
 			LastCall.IgnoreArguments();
-			Expect.Call(mockStream.WriteTimeout).Return(SerialPort.InfiniteTimeout);
-			mockStream.ReadTimeout = 0;
+			Expect.Call(mockSerialPort.WriteTimeout).Return(SerialPort.InfiniteTimeout);
+			mockSerialPort.ReadTimeout = 0;
 			LastCall.IgnoreArguments();
-			Expect.Call(mockStream.ReadLine()).Return(":10");						
+			Expect.Call(mockSerialPort.ReadLine()).Return(":10");						
 			mocks.ReplayAll();
 
-			ModbusAsciiTransport transport = new ModbusAsciiTransport(mockStream);			
+			ModbusAsciiTransport transport = new ModbusAsciiTransport(mockSerialPort);			
 			transport.ReadRequestResponse();
 
 			mocks.VerifyAll();

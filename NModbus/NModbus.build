@@ -125,7 +125,7 @@
     </fxcop>
   </target>
 
-  <target name="dist" depends="all">
+  <target name="dist" depends="clean, build, run-unit-tests">
     <mkdir dir="${path.dist}" />
     <zip zipfile="${path.dist}\NModbus_${version}-source.zip">
       <fileset basedir="." prefix="source">
@@ -135,6 +135,7 @@
 				<exclude name="**/obj/**" />
 				<exclude name="**/bin/**" />
 				<exclude name="**/docs/**" />
+        <exclude name="README.txt" />
 			</fileset>
 			<fileset basedir="${path.bin}" prefix="bin">
 				<include name="*.dll" />

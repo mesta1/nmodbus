@@ -5,15 +5,15 @@ using System.IO.Ports;
 
 namespace Modbus.IO
 {
-	public class SerialPortStreamAdapter
+	public class SerialPortAdapter
 	{
 		private SerialPort _serialPort;
 
-		public SerialPortStreamAdapter()
+		public SerialPortAdapter()
 		{
 		}		
 
-		public SerialPortStreamAdapter(SerialPort serialPort)
+		public SerialPortAdapter(SerialPort serialPort)
 		{
 			_serialPort = serialPort;
 		}
@@ -28,6 +28,12 @@ namespace Modbus.IO
 		{
 			get { return _serialPort.WriteTimeout; }
 			set { _serialPort.WriteTimeout = value; }
+		}
+
+		public virtual string NewLine
+		{
+			get { return _serialPort.NewLine; }
+			set { _serialPort.NewLine = value; }
 		}
 
 		public void DiscardInBuffer()

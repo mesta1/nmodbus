@@ -5,6 +5,9 @@ using Modbus.IO;
 
 namespace Modbus.Device
 {
+	/// <summary>
+	/// Modbus master device.
+	/// </summary>
 	public interface IModbusMaster
 	{
 		/// <summary>

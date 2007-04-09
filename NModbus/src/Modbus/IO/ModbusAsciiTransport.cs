@@ -13,15 +13,16 @@ namespace Modbus.IO
 	class ModbusAsciiTransport : ModbusSerialTransport
 	{
 		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusAsciiTransport));
-		private const string FrameEnd = "\r\n";
+		public const string FrameEnd = "\r\n";
 
 		internal ModbusAsciiTransport()
 		{
 		}
 
-		internal ModbusAsciiTransport(SerialPortStreamAdapter serialPortStreamAdapter)
-			: base(serialPortStreamAdapter)
+		internal ModbusAsciiTransport(SerialPortAdapter serialPortAdapter)
+			: base(serialPortAdapter)
 		{
+			serialPortAdapter.NewLine = FrameEnd;
 		}
 
 		internal override byte[] BuildMessageFrame(IModbusMessage message)

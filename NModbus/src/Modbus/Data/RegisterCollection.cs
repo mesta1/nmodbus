@@ -8,27 +8,45 @@ using System.Collections;
 
 namespace Modbus.Data
 {
+	/// <summary>
+	/// Collection of 16 bit registers.
+	/// </summary>
 	public class RegisterCollection : Collection<ushort>, IModbusMessageDataCollection
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="RegisterCollection"/> class.
+		/// </summary>
 		public RegisterCollection()
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="RegisterCollection"/> class.
+		/// </summary>
 		public RegisterCollection(byte[] bytes)
 			: this((IList<ushort>) ModbusUtil.NetworkBytesToHostUInt16(bytes))
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="RegisterCollection"/> class.
+		/// </summary>
 		public RegisterCollection(params ushort[] registers)
 			: this((IList<ushort>) registers)
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="RegisterCollection"/> class.
+		/// </summary>
 		public RegisterCollection(IList<ushort> registers)
 			: base(registers.IsReadOnly ? new List<ushort>(registers) : registers)
 		{
 		}
 
+		/// <summary>
+		/// Gets the network bytes.
+		/// </summary>
 		public byte[] NetworkBytes
 		{
 			get
@@ -42,6 +60,9 @@ namespace Modbus.Data
 			}
 		}
 
+		/// <summary>
+		/// Gets the byte count.
+		/// </summary>
 		public byte ByteCount
 		{
 			get 

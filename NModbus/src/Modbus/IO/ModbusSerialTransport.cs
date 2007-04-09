@@ -11,13 +11,13 @@ namespace Modbus.IO
 	abstract class ModbusSerialTransport : ModbusTransport
 	{
 		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusTransport));
-		protected SerialPortStreamAdapter _serialPortStreamAdapter;
+		protected SerialPortAdapter _serialPortStreamAdapter;
 
 		public ModbusSerialTransport()
 		{
 		}
 
-		public ModbusSerialTransport(SerialPortStreamAdapter serialPortStreamAdapter)
+		public ModbusSerialTransport(SerialPortAdapter serialPortStreamAdapter)
 		{
 			if (serialPortStreamAdapter == null)
 				throw new ArgumentNullException("serialPortStreamAdapter");

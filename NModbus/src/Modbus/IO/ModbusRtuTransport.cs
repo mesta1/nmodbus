@@ -21,7 +21,7 @@ namespace Modbus.IO
 		{
 		}
 
-		public ModbusRtuTransport(SerialPortStreamAdapter serialPortStreamAdapter)
+		public ModbusRtuTransport(SerialPortAdapter serialPortStreamAdapter)
 			: base(serialPortStreamAdapter)
 		{
 		}
@@ -63,7 +63,7 @@ namespace Modbus.IO
 			return CollectionUtil.Combine<byte>(frameStart, frameEnd);
 		}
 
-		public byte[] Read(int count)
+		public virtual byte[] Read(int count)
 		{
 			_log.DebugFormat("Read {0} bytes.", count);
 			byte[] frameBytes = new byte[count];
