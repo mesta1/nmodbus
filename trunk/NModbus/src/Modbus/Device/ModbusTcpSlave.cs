@@ -12,6 +12,9 @@ using log4net;
 
 namespace Modbus.Device
 {
+	/// <summary>
+	/// Modbus TCP slave device.
+	/// </summary>
 	public class ModbusTcpSlave : ModbusSlave
 	{
 		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusTcpSlave));
@@ -23,11 +26,17 @@ namespace Modbus.Device
 			_tcpListener = tcpListener;
 		}
 
+		/// <summary>
+		/// Modbus TCP slave factory method.
+		/// </summary>
 		public static ModbusTcpSlave CreateTcp(byte unitID, TcpListener tcpListener)
 		{
 			return new ModbusTcpSlave(unitID, tcpListener);
 		}
 
+		/// <summary>
+		/// Start slave listening for requests.
+		/// </summary>
 		public override void Listen()
 		{
 			_log.Debug("Start Modbus Tcp Server.");

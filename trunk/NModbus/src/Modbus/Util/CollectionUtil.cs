@@ -64,6 +64,9 @@ namespace Modbus.Util
 			return bits;
 		}
 
+		/// <summary>
+		/// Combines array1 with array2.
+		/// </summary>
 		public static T[] Combine<T>(T[] array1, T[] array2)
 		{
 			if (array1 == null)
@@ -80,6 +83,9 @@ namespace Modbus.Util
 			return result;
 		}
 
+		/// <summary>
+		/// Combines array1 with array2 with array3.
+		/// </summary>
 		public static T[] Combine<T>(T[] array1, T[] array2, T[] array3)
 		{
 			if (array3 == null)
@@ -88,6 +94,9 @@ namespace Modbus.Util
 			return Combine(Combine(array1, array2), array3);
 		}
 
+		/// <summary>
+		/// Updates subset of values in a collection.
+		/// </summary>
 		public static void Update<T>(IList<T> items, IList<T> destination, int startIndex)
 		{
 			if (startIndex < 0 || destination.Count < startIndex + items.Count)
@@ -97,6 +106,9 @@ namespace Modbus.Util
 				destination[i + startIndex] = items[i];
 		}
 
+		/// <summary>
+		/// Creates a collection initialized to a default value.
+		/// </summary>
 		public static T CreateDefaultCollection<T, V>(V defaultValue, int size) where T : ICollection<V>, new()
 		{
 			if (size < 0)

@@ -22,7 +22,6 @@ namespace Modbus.IntegrationTests
 			StartSlave();
 
 			MasterTcp = new TcpClient(TcpHost.ToString(), TcpPort);
-			MasterTcp.ReceiveTimeout = Modbus.DefaultTimeout;
 			Master = ModbusTcpMaster.CreateTcp(MasterTcp);
 		}
 

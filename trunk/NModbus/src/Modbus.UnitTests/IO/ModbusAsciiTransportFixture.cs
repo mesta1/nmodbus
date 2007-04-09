@@ -38,12 +38,6 @@ namespace Modbus.UnitTests.IO
 			MockRepository mocks = new MockRepository();
 			SerialPortAdapter mockSerialPort = mocks.CreateMock<SerialPortAdapter>();
 			mockSerialPort.NewLine = ModbusAsciiTransport.FrameEnd;
-			Expect.Call(mockSerialPort.ReadTimeout).Return(SerialPort.InfiniteTimeout);
-			mockSerialPort.WriteTimeout = 0;
-			LastCall.IgnoreArguments();
-			Expect.Call(mockSerialPort.WriteTimeout).Return(SerialPort.InfiniteTimeout);
-			mockSerialPort.ReadTimeout = 0;
-			LastCall.IgnoreArguments();
 			Expect.Call(mockSerialPort.ReadLine()).Return(":110100130025B6");
 			mocks.ReplayAll();
 

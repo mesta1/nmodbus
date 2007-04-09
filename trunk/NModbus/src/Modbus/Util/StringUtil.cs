@@ -4,13 +4,24 @@ using System.Text;
 
 namespace Modbus.Util
 {
+	/// <summary>
+	/// String utility methods.
+	/// </summary>
 	public static class StringUtil
 	{
+		/// <summary>
+		/// Concatenates a specified separator String between each element of a specified collection, 
+		/// yielding a single concatenated string. 
+		/// </summary>
 		public static string Join<T>(string separator, ICollection<T> collection)
 		{
 			return Join(separator, collection, DefaultConversion);
 		}
-		
+
+		/// <summary>
+		/// Concatenates a specified separator String between each converted element of a specified collection, 
+		/// yielding a single concatenated string. 
+		/// </summary>
 		public static string Join<T>(string separator, ICollection<T> collection, Converter<T, string> conversion)
 		{
 			if (collection == null)
@@ -22,11 +33,19 @@ namespace Modbus.Util
 			return Join(separator, CollectionUtil.ToArray<T>(collection), conversion);			
 		}
 
+		/// <summary>
+		/// Concatenates a specified separator String between each element of a specified array, 
+		/// yielding a single concatenated string. 
+		/// </summary>
 		public static string Join<T>(string separator, T[] collection)
 		{
 			return Join(separator, collection, DefaultConversion);
 		}
 
+		/// <summary>
+		/// Concatenates a specified separator String between each converted element of a specified array, 
+		/// yielding a single concatenated string. 
+		/// </summary>
 		public static string Join<T>(string separator, T[] collection, Converter<T, string> conversion)
 		{
 			if (collection == null)

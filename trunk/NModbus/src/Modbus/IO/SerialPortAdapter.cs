@@ -5,13 +5,13 @@ using System.IO.Ports;
 
 namespace Modbus.IO
 {
-	public class SerialPortAdapter
+	internal class SerialPortAdapter
 	{
 		private SerialPort _serialPort;
 
 		public SerialPortAdapter()
 		{
-		}		
+		}
 
 		public SerialPortAdapter(SerialPort serialPort)
 		{

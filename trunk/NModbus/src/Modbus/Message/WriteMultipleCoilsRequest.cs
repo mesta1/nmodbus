@@ -20,7 +20,7 @@ namespace Modbus.Message
 		{
 			StartAddress = startAddress;
 			NumberOfPoints = (ushort) data.Count;
-			ByteCount = (byte)(data.Count / 8 + (data.Count % 8 > 0 ? 1 : 0));
+			ByteCount = (byte) ((data.Count + 7) / 8);
 			Data = data;
 		}
 

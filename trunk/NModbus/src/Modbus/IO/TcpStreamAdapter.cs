@@ -5,9 +5,9 @@ using System.Net.Sockets;
 
 namespace Modbus.IO
 {
-	public delegate int StreamReadWriteDelegate(byte[] buffer, int offset, int count);
+	internal delegate int StreamReadWriteDelegate(byte[] buffer, int offset, int count);
 
-	public class TcpStreamAdapter
+	internal class TcpStreamAdapter
 	{
 		private NetworkStream _networkStream;
 

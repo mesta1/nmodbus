@@ -22,10 +22,7 @@ namespace Modbus.IO
 			if (serialPortStreamAdapter == null)
 				throw new ArgumentNullException("serialPortStreamAdapter");
 
-			_serialPortStreamAdapter = serialPortStreamAdapter;
-
-			_serialPortStreamAdapter.WriteTimeout = _serialPortStreamAdapter.WriteTimeout == SerialPort.InfiniteTimeout ? Modbus.DefaultTimeout : _serialPortStreamAdapter.WriteTimeout;
-			_serialPortStreamAdapter.ReadTimeout = _serialPortStreamAdapter.ReadTimeout == SerialPort.InfiniteTimeout ? Modbus.DefaultTimeout : _serialPortStreamAdapter.ReadTimeout;
+			_serialPortStreamAdapter = serialPortStreamAdapter;		
 		}
 
 		internal override void Write(IModbusMessage message)

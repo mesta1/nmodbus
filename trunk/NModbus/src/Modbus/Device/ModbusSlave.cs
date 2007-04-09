@@ -12,12 +12,18 @@ using Modbus.Util;
 
 namespace Modbus.Device
 {
+	/// <summary>
+	/// Modbus slave device.
+	/// </summary>
 	public abstract class ModbusSlave : ModbusDevice
 	{
 		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusSlave));
 		private byte _unitID;
 		private DataStore _dataStore;
-		
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ModbusSlave"/> class.
+		/// </summary>
 		public ModbusSlave(byte unitID, ModbusTransport transport)
 			: base(transport)
 		{
@@ -25,12 +31,18 @@ namespace Modbus.Device
 			_unitID = unitID;
 		}
 
+		/// <summary>
+		/// Gets or sets the data store.
+		/// </summary>
 		public DataStore DataStore
 		{
 			get { return _dataStore; }
 			set { _dataStore = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the unit ID.
+		/// </summary>
 		public byte UnitID
 		{
 			get { return _unitID; }
@@ -132,6 +144,9 @@ namespace Modbus.Device
 			return response;
 		}
 
+		/// <summary>
+		/// Start slave listening for requests.
+		/// </summary>
 		public abstract void Listen();
 	}
 }

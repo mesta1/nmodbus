@@ -4,6 +4,9 @@ using System.Text;
 
 namespace Modbus.Device
 {
+	/// <summary>
+	/// Modbus TCP master device.
+	/// </summary>
 	public interface IModbusTcpMaster : IModbusMaster
 	{
 		/// <summary>

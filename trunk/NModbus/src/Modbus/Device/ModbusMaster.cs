@@ -10,8 +10,14 @@ using Modbus.Data;
 
 namespace Modbus.Device
 {
+	/// <summary>
+	/// Modbus master device.
+	/// </summary>
 	public abstract class ModbusMaster : ModbusDevice
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ModbusMaster"/> class.
+		/// </summary>
 		public ModbusMaster(ModbusTransport transport)
 			: base(transport)
 		{
