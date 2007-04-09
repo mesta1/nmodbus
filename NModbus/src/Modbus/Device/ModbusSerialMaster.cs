@@ -10,7 +10,7 @@ using Modbus.Util;
 namespace Modbus.Device
 {
 	/// <summary>
-	/// Modbus serial ASCII master.
+	/// Modbus serial master device.
 	/// </summary>
 	public class ModbusSerialMaster : ModbusMaster, IModbusMaster
 	{
@@ -19,13 +19,25 @@ namespace Modbus.Device
 		{
 		}
 
+		/// <summary>
+		/// Modbus ASCII master factory method.
+		/// </summary>
 		public static ModbusSerialMaster CreateAscii(SerialPort serialPort)
 		{
-			return new ModbusSerialMaster(new ModbusAsciiTransport(new SerialPortAdapter(serialPort)));
+			SerialPortAdapter serialPortAdapter = new SerialPortAdapter(serialPort);
+			InitializeSerialPortTimeouts(serialPortAdapter);
+
+			return new ModbusSerialMaster(new ModbusAsciiTransport(serialPortAdapter));
 		}
 
+		/// <summary>
+		/// Modbus RTU master factory method.
+		/// </summary>
 		public static ModbusSerialMaster CreateRtu(SerialPort serialPort)
 		{
+			SerialPortAdapter serialPortAdapter = new SerialPortAdapter(serialPort);
+			InitializeSerialPortTimeouts(serialPortAdapter);
+
 			return new ModbusSerialMaster(new ModbusRtuTransport(new SerialPortAdapter(serialPort)));
 		}
 		
@@ -41,6 +53,15 @@ namespace Modbus.Device
 			DiagnosticsRequestResponse response = Transport.UnicastMessage<DiagnosticsRequestResponse>(request);
 
 			return response.Data[0] == data;
+		}
+
+		/// <summary>
+		/// Initializes serial port read write timeouts to default value if they have not been overridden already.
+		/// </summary>
+		internal static void InitializeSerialPortTimeouts(SerialPortAdapter serialPortAdapter)
+		{
+			serialPortAdapter.WriteTimeout = serialPortAdapter.WriteTimeout == SerialPort.InfiniteTimeout ? Modbus.DefaultTimeout : serialPortAdapter.WriteTimeout;
+			serialPortAdapter.ReadTimeout = serialPortAdapter.ReadTimeout == SerialPort.InfiniteTimeout ? Modbus.DefaultTimeout : serialPortAdapter.ReadTimeout;
 		}
 	}
 }

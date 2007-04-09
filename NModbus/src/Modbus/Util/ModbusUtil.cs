@@ -5,6 +5,9 @@ using System.Net;
 
 namespace Modbus.Util
 {
+	/// <summary>
+	/// Modbus utility methods.
+	/// </summary>
 	public static class ModbusUtil
 	{
 		private static ushort[] crcTable = {

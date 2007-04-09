@@ -8,14 +8,13 @@ using System.IO;
 
 namespace Modbus.IO
 {
+	/// <summary>
+	/// Modbus transport.
+	/// </summary>
 	public abstract class ModbusTransport
 	{
 		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusTransport));
 		private int _retries = Modbus.DefaultRetries;
-
-		public ModbusTransport()
-		{
-		}
 
 		/// <summary>
 		/// Number of times to retry sending message.

@@ -156,12 +156,7 @@ namespace Modbus.UnitTests.IO
 		{
 			MockRepository mocks = new MockRepository();
 			SerialPortAdapter mockSerialPort = mocks.CreateMock<SerialPortAdapter>(null);
-
-			Expect.Call(mockSerialPort.WriteTimeout).Return(SerialPort.InfiniteTimeout);
-			mockSerialPort.WriteTimeout = Modbus.DefaultTimeout;
-			Expect.Call(mockSerialPort.ReadTimeout).Return(SerialPort.InfiniteTimeout);
-			mockSerialPort.ReadTimeout = Modbus.DefaultTimeout;
-
+			
 			Expect.Call(mockSerialPort.Read(new byte[5], 0, 5)).Do(((StreamReadWriteDelegate) delegate(byte[] buf, int offset, int count)
 			{
 				Array.Copy(new byte[] { 2, 2, 2 }, buf, 3);

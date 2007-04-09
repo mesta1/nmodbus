@@ -7,6 +7,9 @@ using System.Collections.ObjectModel;
 
 namespace Modbus.Data
 {
+	/// <summary>
+	/// Object simulation of device memory map.
+	/// </summary>
 	public class DataStore
 	{
 		private DiscreteCollection _coilDiscretes = new DiscreteCollection();
@@ -14,28 +17,36 @@ namespace Modbus.Data
 		private RegisterCollection _holdingRegisters = new RegisterCollection();
 		private RegisterCollection _inputRegisters = new RegisterCollection();
 
-		public DataStore()
-		{
-		}
-
+		/// <summary>
+		/// Gets or sets the coil discretes.
+		/// </summary>
 		public DiscreteCollection CoilDiscretes
 		{
 			get { return _coilDiscretes; }
 			set { _coilDiscretes = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the input discretes.
+		/// </summary>
 		public DiscreteCollection InputDiscretes
 		{
 			get { return _inputDiscetes; }
 			set { _inputDiscetes = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the holding registers.
+		/// </summary>
 		public RegisterCollection HoldingRegisters
 		{
 			get { return _holdingRegisters; }
 			set { _holdingRegisters = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the input registers.
+		/// </summary>
 		public RegisterCollection InputRegisters
 		{
 			get { return _inputRegisters; }
@@ -66,6 +77,11 @@ namespace Modbus.Data
 			return result;
 		}
 
+		/// <summary>
+		/// Write data to data store.
+		/// </summary>
+		/// <typeparam name="T">The collection type.</typeparam>
+		/// <typeparam name="U">The type of elements in the collection.</typeparam>
 		public static void WriteData<T, U>(T items, T destination, ushort startAddress) where T : Collection<U>, IModbusMessageDataCollection, new()
 		{
 			int startIndex = startAddress - 1;

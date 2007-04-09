@@ -9,6 +9,9 @@ using log4net;
 
 namespace Modbus.Device
 {
+	/// <summary>
+	/// Modbus serial slave device.
+	/// </summary>
 	public class ModbusSerialSlave : ModbusSlave
 	{
 		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusSerialSlave));
@@ -18,16 +21,25 @@ namespace Modbus.Device
 		{
 		}
 
+		/// <summary>
+		/// Modbus ASCII slave factory method.
+		/// </summary>
 		public static ModbusSerialSlave CreateAscii(byte unitID, SerialPort serialPort)
 		{
 			return new ModbusSerialSlave(unitID, new ModbusAsciiTransport(new SerialPortAdapter(serialPort)));
 		}
 
+		/// <summary>
+		/// Modbus RTU slave factory method.
+		/// </summary>
 		public static ModbusSerialSlave CreateRtu(byte unitID, SerialPort serialPort)
 		{
 			return new ModbusSerialSlave(unitID, new ModbusRtuTransport(new SerialPortAdapter(serialPort)));
 		}
-		
+
+		/// <summary>
+		/// Start slave listening for requests.
+		/// </summary>
 		public override void Listen()
 		{
 			while (true)

@@ -8,27 +8,45 @@ using Modbus.Util;
 
 namespace Modbus.Data
 {
+	/// <summary>
+	/// Collection of discrete values.
+	/// </summary>
 	public class DiscreteCollection : Collection<bool>, IModbusMessageDataCollection
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="DiscreteCollection"/> class.
+		/// </summary>
 		public DiscreteCollection ()
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="DiscreteCollection"/> class.
+		/// </summary>
 		public DiscreteCollection(params bool[] bits)
 			: this((IList<bool>)bits)
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="DiscreteCollection"/> class.
+		/// </summary>
 		public DiscreteCollection(params byte[] bytes)
 			: this((IList<bool>)CollectionUtil.ToBoolArray(new BitArray(bytes)))
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="DiscreteCollection"/> class.
+		/// </summary>
 		public DiscreteCollection(IList<bool> bits)
 		    : base(bits.IsReadOnly ? new List<bool>(bits) : bits)
 		{
 		}
-		
+
+		/// <summary>
+		/// Gets the network bytes.
+		/// </summary>
 		public byte[] NetworkBytes
 		{
 			get
@@ -38,19 +56,21 @@ namespace Modbus.Data
 
 				BitArray bitArray = new BitArray(bits);
 
-
-				byte[] bytes = new byte[Count / 8 + (Count % 8 > 0 ? 1 : 0)];
+				byte[] bytes = new byte[ByteCount];
 				bitArray.CopyTo(bytes, 0);
 
 				return bytes;
 			}
 		}
 
+		/// <summary>
+		/// Gets the byte count.
+		/// </summary>
 		public byte ByteCount
 		{
 			get
 			{
-				return (byte) (Count / 8 + (Count % 8 > 0 ? 1 : 0));
+				return (byte) ((Count + 7) / 8);
 			}
 		}
 	}

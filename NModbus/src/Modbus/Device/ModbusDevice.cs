@@ -6,18 +6,24 @@ using Modbus.IO;
 
 namespace Modbus.Device
 {
+	/// <summary>
+	/// Modbus device.
+	/// </summary>
 	public abstract class ModbusDevice
 	{
 		private ModbusTransport _transport;
 
-		public ModbusTransport Transport
-		{
-			get { return _transport; }
-		}
-
 		internal ModbusDevice(ModbusTransport transport)
 		{
 			_transport = transport;
+		}
+
+		/// <summary>
+		/// Gets the modbus transport.
+		/// </summary>
+		public ModbusTransport Transport
+		{
+			get { return _transport; }
 		}
 	}
 }
