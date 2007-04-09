@@ -61,14 +61,21 @@ namespace Modbus.IO
 					if (attempt++ > _retries)
 						throw te;
 				}
-				catch (Exception e)
+				catch (IOException ioe)
 				{
-					_log.ErrorFormat("Failure, {0} retries remaining - {1}", _retries + 1 - attempt, e.Message);					
+					_log.ErrorFormat("IO Exception, {0} retries remaining - {1}", _retries + 1 - attempt, ioe.Message);
 
 					if (attempt++ > _retries)
-						throw e;
+						throw ioe;
 				}
+				catch (SlaveException se)
+				{
+					_log.ErrorFormat("Slave Exception, {0} retries remaining - {1}", _retries + 1 - attempt, se.Message);
 
+					if (attempt++ > _retries)
+						throw se;
+				}	
+		
 			} while (!success);
 
 			return response;

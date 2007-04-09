@@ -40,17 +40,17 @@ namespace Modbus.UnitTests.IO
 			int nonDefaultReadTimeout = 67;
 			int nonDefaultWriteTimeout = 42;
 			MockRepository mocks = new MockRepository();
-			SerialPortStreamAdapter mockStream = mocks.CreateMock<SerialPortStreamAdapter>();
-
-			Expect.Call(mockStream.WriteTimeout).Return(nonDefaultWriteTimeout);
-			Expect.Call(mockStream.WriteTimeout).Return(nonDefaultWriteTimeout);
-			mockStream.WriteTimeout = nonDefaultWriteTimeout;			
-			Expect.Call(mockStream.ReadTimeout).Return(nonDefaultReadTimeout);
-			Expect.Call(mockStream.ReadTimeout).Return(nonDefaultReadTimeout);
-			mockStream.ReadTimeout =  nonDefaultReadTimeout;
+			SerialPortAdapter mockSerialPort = mocks.CreateMock<SerialPortAdapter>();
+			
+			Expect.Call(mockSerialPort.WriteTimeout).Return(nonDefaultWriteTimeout);
+			Expect.Call(mockSerialPort.WriteTimeout).Return(nonDefaultWriteTimeout);
+			mockSerialPort.WriteTimeout = nonDefaultWriteTimeout;			
+			Expect.Call(mockSerialPort.ReadTimeout).Return(nonDefaultReadTimeout);
+			Expect.Call(mockSerialPort.ReadTimeout).Return(nonDefaultReadTimeout);
+			mockSerialPort.ReadTimeout =  nonDefaultReadTimeout;
 
 			mocks.ReplayAll();
-			ModbusAsciiTransport transport = new ModbusAsciiTransport(mockStream);
+			ModbusRtuTransport transport = new ModbusRtuTransport(mockSerialPort);
 			mocks.VerifyAll();
 		}
 
@@ -58,15 +58,15 @@ namespace Modbus.UnitTests.IO
 		public void SetupTimeoutsDefaultTimeout()
 		{
 			MockRepository mocks = new MockRepository();
-			SerialPortStreamAdapter mockStream = mocks.CreateMock<SerialPortStreamAdapter>();
+			SerialPortAdapter mockSerialPort = mocks.CreateMock<SerialPortAdapter>();
 
-			Expect.Call(mockStream.WriteTimeout).Return(SerialPort.InfiniteTimeout);
-			mockStream.WriteTimeout = Modbus.DefaultTimeout;
-			Expect.Call(mockStream.ReadTimeout).Return(SerialPort.InfiniteTimeout);
-			mockStream.ReadTimeout = Modbus.DefaultTimeout;
+			Expect.Call(mockSerialPort.WriteTimeout).Return(SerialPort.InfiniteTimeout);
+			mockSerialPort.WriteTimeout = Modbus.DefaultTimeout;
+			Expect.Call(mockSerialPort.ReadTimeout).Return(SerialPort.InfiniteTimeout);
+			mockSerialPort.ReadTimeout = Modbus.DefaultTimeout;
 
 			mocks.ReplayAll();
-			ModbusAsciiTransport transport = new ModbusAsciiTransport(mockStream);
+			ModbusRtuTransport transport = new ModbusRtuTransport(mockSerialPort);
 			mocks.VerifyAll();
 		}
 	}

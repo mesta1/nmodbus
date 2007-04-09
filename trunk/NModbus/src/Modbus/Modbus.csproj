@@ -67,7 +67,7 @@
     <Compile Include="Data\IModbusMessageDataCollection.cs" />
     <Compile Include="IO\ModbusTcpTransport.cs" />
     <Compile Include="IO\ModbusTransport.cs" />
-    <Compile Include="IO\SerialPortStreamAdapter.cs" />
+    <Compile Include="IO\SerialPortAdapter.cs" />
     <Compile Include="IO\TcpStreamAdapter.cs" />
     <Compile Include="Message\ReadCoilsInputsRequest.cs" />
     <Compile Include="Message\ReadHoldingInputRegistersRequest.cs" />

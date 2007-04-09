@@ -8,6 +8,7 @@ using Modbus.Util;
 using System.IO;
 using Rhino.Mocks;
 using System.Net.Sockets;
+using System.IO.Ports;
 
 namespace Modbus.UnitTests.IO
 {
@@ -48,6 +49,14 @@ namespace Modbus.UnitTests.IO
 		{
 			byte[] frameStart = { 0x01, 0x08, 0x00, 0x00 };
 			Assert.AreEqual(4, ModbusRtuTransport.ResponseBytesToRead(frameStart));
+		}
+
+		[Test, ExpectedException(typeof(NotImplementedException))]
+		public void ResponseBytesToReadInvalidFunctionCode()
+		{
+			byte[] frame = { 0x11, 0xFF, 0x00, 0x01, 0x00, 0x02, 0x04 };
+			ModbusRtuTransport.ResponseBytesToRead(frame);
+			Assert.Fail();
 		}
 
 		[Test]
@@ -102,6 +111,75 @@ namespace Modbus.UnitTests.IO
 		    ReadCoilsInputsRequest message = new ReadCoilsInputsRequest(Modbus.ReadCoils, 17, 19, 38);
 		    byte[] frame = { 17, Modbus.ReadCoils, 0, 19, 0, 37, 14, 132 };
 		    Assert.IsFalse(transport.ChecksumsMatch(message, frame));
+		}
+
+		[Test]
+		public void ReadResponse()
+		{
+			MockRepository mocks = new MockRepository();
+			ModbusRtuTransport transport = mocks.PartialMock<ModbusRtuTransport>();
+
+			Expect.Call(transport.Read(ModbusRtuTransport.ResponseFrameStartLength))
+				.Return(new byte[] { 1, 1, 1, 0 });
+
+			Expect.Call(transport.Read(2))
+				.Return(new byte[] { 81, 136 });
+
+			mocks.ReplayAll();
+
+			Assert.AreEqual(new byte[] { 1, 1, 1, 0, 81, 136 }, transport.ReadResponse());
+
+			mocks.VerifyAll();
+		}
+
+		[Test]
+		public void ReadRequest()
+		{
+			MockRepository mocks = new MockRepository();
+			ModbusRtuTransport transport = mocks.PartialMock<ModbusRtuTransport>();
+
+			Expect.Call(transport.Read(ModbusRtuTransport.RequestFrameStartLength))
+				.Return(new byte[] { 1, 1, 1, 0, 1, 0, 0 });
+
+			Expect.Call(transport.Read(1))
+				.Return(new byte[] { 5 });
+
+			mocks.ReplayAll();
+
+			Assert.AreEqual(new byte[] { 1, 1, 1, 0, 1, 0, 0, 5 }, transport.ReadRequest());
+
+			mocks.VerifyAll();
+		}
+
+		[Test]
+		public void Read()
+		{
+			MockRepository mocks = new MockRepository();
+			SerialPortAdapter mockSerialPort = mocks.CreateMock<SerialPortAdapter>(null);
+
+			Expect.Call(mockSerialPort.WriteTimeout).Return(SerialPort.InfiniteTimeout);
+			mockSerialPort.WriteTimeout = Modbus.DefaultTimeout;
+			Expect.Call(mockSerialPort.ReadTimeout).Return(SerialPort.InfiniteTimeout);
+			mockSerialPort.ReadTimeout = Modbus.DefaultTimeout;
+
+			Expect.Call(mockSerialPort.Read(new byte[5], 0, 5)).Do(((StreamReadWriteDelegate) delegate(byte[] buf, int offset, int count)
+			{
+				Array.Copy(new byte[] { 2, 2, 2 }, buf, 3);
+				return 3;
+			}));
+
+			Expect.Call(mockSerialPort.Read(new byte[] { 2, 2, 2, 0, 0 }, 3, 2)).Do(((StreamReadWriteDelegate) delegate(byte[] buf, int offset, int count)
+			{
+				Array.Copy(new byte[] { 3, 3 }, 0, buf, 3, 2);
+				return 2;
+			}));
+
+			mocks.ReplayAll();
+
+			ModbusRtuTransport transport = new ModbusRtuTransport(mockSerialPort);
+			Assert.AreEqual(new byte[] { 2, 2, 2, 3, 3 }, transport.Read(5));
+
+			mocks.VerifyAll();
 		}
 	}
 }
