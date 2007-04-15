@@ -1,12 +1,9 @@
-using System.IO;
-using Modbus.Message;
-using System.IO.Ports;
-using System.Text;
-using Modbus.Util;
-using System;
 using System.Collections.Generic;
-using System.Threading;
+using System.IO;
+using System.Text;
 using log4net;
+using Modbus.Message;
+using Modbus.Util;
 
 namespace Modbus.IO
 {
@@ -59,7 +56,7 @@ namespace Modbus.IO
 
 			// convert hex to bytes
 			byte[] frame = ModbusUtil.HexToBytes(frameHex);
-			_log.DebugFormat("Read message frame {0}", StringUtil.Join(", ", frame));
+			_log.InfoFormat("RX: {0}", StringUtil.Join(", ", frame));
 
 			if (frame.Length < 3)
 				throw new IOException("Premature end of stream, message truncated.");

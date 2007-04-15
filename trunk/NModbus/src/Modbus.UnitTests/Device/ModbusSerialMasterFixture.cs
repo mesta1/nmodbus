@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.IO.Ports;
+using Modbus.Device;
+using Modbus.IO;
 using NUnit.Framework;
 using Rhino.Mocks;
-using Modbus.IO;
-using Modbus.Device;
-using System.IO.Ports;
 
 namespace Modbus.UnitTests.Device
 {

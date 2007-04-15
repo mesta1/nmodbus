@@ -1,9 +1,7 @@
-using System.IO;
-using System.IO.Ports;
-using System.Reflection;
-using Modbus.Message;
 using System;
+using System.IO;
 using log4net;
+using Modbus.Message;
 using Modbus.Util;
 
 namespace Modbus.IO
@@ -28,6 +26,7 @@ namespace Modbus.IO
 		internal override void Write(IModbusMessage message)
 		{
 			byte[] frame = BuildMessageFrame(message);
+			_log.InfoFormat("TX: {0}", StringUtil.Join(", ", frame));
 			_serialPortStreamAdapter.Write(frame, 0, frame.Length);
 		}
 

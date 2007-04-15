@@ -1,12 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
-using Modbus.Device;
 using Modbus.Data;
+using Modbus.Device;
 using Modbus.Message;
 using Modbus.UnitTests.Message;
 using Modbus.Util;
+using NUnit.Framework;
 
 namespace Modbus.UnitTests.Device
 {

@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
 using Modbus.Message;
+using NUnit.Framework;
 
 namespace Modbus.UnitTests.Message
 {

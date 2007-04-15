@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using log4net;
 using Modbus.Message;
 using Modbus.Util;
-using System.IO;
 
 namespace Modbus.IO
 {
@@ -13,7 +13,7 @@ namespace Modbus.IO
 		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusTcpTransport));
 		private TcpStreamAdapter _tcpStreamAdapter;
 		private ushort _transactionID;
-		private static Object _transactionIDLock = new Object();
+		private static object _transactionIDLock = new object();
 
 		public ModbusTcpTransport()
 		{

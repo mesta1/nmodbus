@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Modbus.Data;
 using NUnit.Framework;
-using Modbus.Util;
 
 namespace Modbus.UnitTests.Data
 {
