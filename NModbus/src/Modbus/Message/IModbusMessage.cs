@@ -12,6 +12,7 @@ namespace Modbus.Message
 		void Initialize(byte[] frame);
 		byte[] MessageFrame { get; }
 		byte[] ProtocolDataUnit { get; }
+		ushort TransactionID { get; set; }
 		byte FunctionCode { get; set; }
 		byte SlaveAddress { get; set; }
 	}

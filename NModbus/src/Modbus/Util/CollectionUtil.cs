@@ -84,14 +84,24 @@ namespace Modbus.Util
 		}
 
 		/// <summary>
-		/// Combines array1 with array2 with array3.
+		/// Combines arrays
 		/// </summary>
-		public static T[] Combine<T>(T[] array1, T[] array2, T[] array3)
+		public static T[] Combine<T>(T[] array1, T[] array2, params T[][] additionalArrays)
 		{
-			if (array3 == null)
-				throw new ArgumentNullException("array3");
+			if (additionalArrays == null)
+				throw new ArgumentNullException("additionalArrays");
 
-			return Combine(Combine(array1, array2), array3);
+			T[] result = Combine(array1, array2);
+
+			foreach (T[] array in additionalArrays)
+			{
+				if (array == null)
+					throw new ArgumentNullException("additionalArrays");
+
+				result = Combine(result, array);
+			}
+
+			return result;
 		}
 
 		/// <summary>

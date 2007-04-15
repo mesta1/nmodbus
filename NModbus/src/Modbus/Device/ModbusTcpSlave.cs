@@ -44,42 +44,32 @@ namespace Modbus.Device
 			
 			_log.Debug("Block for pending client connection.");
 			TcpClient master = _tcpListener.AcceptTcpClient();
-			_log.Debug("Connected to client.");
-			TcpStreamAdapter tcpTransportAdapter = new TcpStreamAdapter(master.GetStream());
+			_log.Debug("Connected to client."); 
+			Transport = new ModbusTcpTransport(new TcpStreamAdapter(master.GetStream()));
 
 			try
 			{
 				while (true)
 				{
-					// use transport to retrieve raw message frame from stream
-					byte[] frame = ModbusTcpTransport.ReadRequestResponse(tcpTransportAdapter);
+					// read request and build message
+					byte[] frame = Transport.ReadRequest();
+					IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(CollectionUtil.Slice(frame, 6, frame.Length - 6));					
+					request.TransactionID = (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 0));
 
-					// build request from frame
-					IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(frame);
-					_log.DebugFormat("RX: {0}", StringUtil.Join(", ", request.MessageFrame));
-
-					// perform action
+					// perform action and build response
 					IModbusMessage response = ApplyRequest(request);
+					response.TransactionID = request.TransactionID;
 
 					// write response
-					byte[] responseFrame = new ModbusTcpTransport().BuildMessageFrame(response);
-					_log.DebugFormat("TX: {0}", StringUtil.Join(", ", responseFrame));
-					tcpTransportAdapter.Write(responseFrame, 0, responseFrame.Length);
+					Transport.Write(response);
 				}
 			}
 			catch (ThreadAbortException)
 			{
 				_log.Info("NModbus slave thread aborted.");
 			}
-			catch (Exception e)
-			{
-				_log.ErrorFormat("Unexpected exception - {0}", e.Message);
-			}
 			finally
 			{
-				if (tcpTransportAdapter != null)
-					tcpTransportAdapter.Close();
-
 				if (master != null)
 					master.Close();
 			}				

@@ -1,15 +1,13 @@
 using System;
-using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.IO.Ports;
+using System.Net;
 using System.Net.Sockets;
-using System.Text;
+using System.Threading;
 using log4net;
 using Modbus.Device;
 using NUnit.Framework;
-using System.Threading;
-using System.Diagnostics;
-using System.IO;
-using System.Net;
 
 namespace Modbus.IntegrationTests
 {

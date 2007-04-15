@@ -106,30 +106,43 @@ namespace Modbus.UnitTests.Util
 		}
 
 		[Test]
-		public void Combine3()
+		public void Combine_ThreeArrays()
 		{
 			Assert.AreEqual(new byte[] { 1, 2, 3, 4, 5, 6 }, CollectionUtil.Combine(new byte[] { 1, 2 }, new byte[] { 3, 4 }, new byte[] { 5, 6 }));
 		}
 
 		[Test]
+		public void Combine_FourArrays()
+		{
+			Assert.AreEqual(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }, CollectionUtil.Combine(new byte[] { 1, 2 }, new byte[] { 3, 4 }, new byte[] { 5, 6 }, new byte[] { 7, 8 }));
+		}
+
+		[Test]
 		[ExpectedException(typeof(ArgumentNullException))]
-		public void CombineNullArgument1()
+		public void Combine_NullParams()
+		{
+			CollectionUtil.Combine(new byte[] { 1, 2 }, new byte[] { 3, 4 }, null);
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]
+		public void Combine_SomeParamsWithOneNull()
+		{
+			CollectionUtil.Combine(new byte[] { 1, 2 }, new byte[] { 3, 4 }, new byte[] { 5, 6 }, null, new byte[] { 7, 8 });
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]
+		public void Combine_NullArgument1()
 		{
 			CollectionUtil.Combine(null, new byte[] { 1, 2 });
 		}
 
 		[Test]
 		[ExpectedException(typeof(ArgumentNullException))]
-		public void CombineNullArgument2()
+		public void Combine_NullArgument2()
 		{
 			CollectionUtil.Combine(new byte[] { 1, 2 }, null);
-		}
-
-		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
-		public void CombineNullArgument3()
-		{
-			CollectionUtil.Combine(new byte[] { 1, 2 }, new byte[] { 1, 2 }, null);
 		}
 
 		[Test]

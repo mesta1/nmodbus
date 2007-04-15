@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.IO;
 using log4net;
 using Modbus.Message;
 using Modbus.Util;
-using System.IO;
 
 namespace Modbus.IO
 {
@@ -35,22 +33,9 @@ namespace Modbus.IO
 			{
 				try
 				{
-					// write message
-					_log.InfoFormat("TX: {0}", StringUtil.Join(", ", message.MessageFrame));
 					Write(message);
-
-					// read response
-					response = CreateResponse<T>(ReadResponse());
-					_log.InfoFormat("RX: {0}", StringUtil.Join(", ", response.MessageFrame));
-
-					// ensure response is of appropriate function code
-					if (message.FunctionCode != response.FunctionCode)
-					{
-						string errorMessage = String.Format("Received response of invalid type. Expected {0}, received {1}.", message.FunctionCode, response.FunctionCode);
-						_log.ErrorFormat(errorMessage);
-						throw new IOException(errorMessage);
-					}
-
+					response = ReadResponse<T>();
+					ValidateResponse(message, response);
 					success = true;
 				}
 				catch (TimeoutException te)
@@ -94,8 +79,14 @@ namespace Modbus.IO
 			return response;
 		}
 
+		internal virtual void ValidateResponse(IModbusMessage request, IModbusMessage response)
+		{
+			if (request.FunctionCode != response.FunctionCode)
+				throw new IOException(String.Format("Received response with unexpected Function Code. Expected {0}, received {1}.", request.FunctionCode, response.FunctionCode));
+		}
+
 		internal abstract byte[] ReadRequest();
-		internal abstract byte[] ReadResponse();
+		internal abstract T ReadResponse<T>() where T : IModbusMessage, new();
 		internal abstract byte[] BuildMessageFrame(IModbusMessage message);		
 		internal abstract void Write(IModbusMessage message);
 	}
