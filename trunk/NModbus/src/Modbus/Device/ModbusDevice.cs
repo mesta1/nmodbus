@@ -19,11 +19,19 @@ namespace Modbus.Device
 		}
 
 		/// <summary>
-		/// Gets the modbus transport.
+		/// Gets the Modbus Transport.
 		/// </summary>
+		/// <value>The transport.</value>
 		public ModbusTransport Transport
 		{
-			get { return _transport; }
+			get 
+			{ 
+				return _transport; 
+			}
+			internal set
+			{
+				_transport = value;
+			}
 		}
 	}
 }

@@ -7,16 +7,17 @@ using System.Net;
 namespace Modbus.Message
 {
 	/// <summary>
-	/// Abstract class holding all implementation shared between two or more message types. 
+	/// Class holding all implementation shared between two or more message types. 
 	/// Interfaces expose subsets of type specific implementations.
 	/// </summary>
 	class ModbusMessageImpl
-	{
+	{		
 		private byte _exceptionCode;
+		private ushort _transactionID;
 		private byte _functionCode;
 		private ushort? _subFunctionCode;
 		private byte _slaveAddress;
-		private ushort? _startAddress;
+		private ushort? _startAddress;		
 		private ushort? _numberOfPoints;
 		private byte? _byteCount;
 		private IModbusMessageDataCollection _data;
@@ -42,7 +43,13 @@ namespace Modbus.Message
 			get { return _exceptionCode; }
 			set { _exceptionCode = value; }
 		}
-		
+
+		public ushort TransactionID
+		{
+			get { return _transactionID; }
+			set { _transactionID = value; }
+		}
+
 		public byte FunctionCode
 		{
 			get { return _functionCode; }

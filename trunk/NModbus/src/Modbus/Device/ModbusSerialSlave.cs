@@ -6,6 +6,7 @@ using Modbus.IO;
 using Modbus.Message;
 using Modbus.Util;
 using log4net;
+using System.IO;
 
 namespace Modbus.Device
 {
@@ -42,16 +43,13 @@ namespace Modbus.Device
 		/// </summary>
 		public override void Listen()
 		{
-			while (true)
+			try
 			{
-				try
+				while (true)
 				{
-					// use transport to retrieve raw message frame from stream
+					// read request and build message
 					byte[] frame = Transport.ReadRequest();
-
-					// build request from frame
 					IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(frame);
-					_log.InfoFormat("RX: {0}", StringUtil.Join(", ", request.MessageFrame));
 
 					// only service requests addressed to this particular slave
 					if (request.SlaveAddress != UnitID)
@@ -64,15 +62,16 @@ namespace Modbus.Device
 					IModbusMessage response = ApplyRequest(request);
 
 					// write response
-					_log.InfoFormat("TX: {0}", StringUtil.Join(", ", response.MessageFrame));
 					Transport.Write(response);
-
 				}
-				catch (Exception e)
-				{
-					// TODO explicitly catch timeout exception
-					_log.ErrorFormat("Exception encountered while listening for requests - {0}", e.Message);
-				}
+			}
+			catch (IOException ioe)
+			{
+				_log.ErrorFormat("IO Exception encountered while listening for requests - {0}", ioe.Message);
+			}
+			catch (TimeoutException te)
+			{
+				_log.ErrorFormat("Timeout Exception encountered while listening for requests - {0}", te.Message);
 			}
 		}
 	}

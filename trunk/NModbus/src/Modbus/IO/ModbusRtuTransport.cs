@@ -39,33 +39,26 @@ namespace Modbus.IO
 		internal override bool ChecksumsMatch(IModbusMessage message, byte[] messageFrame)
 		{
 			return BitConverter.ToUInt16(messageFrame, messageFrame.Length - 2) == BitConverter.ToUInt16(ModbusUtil.CalculateCrc(message.MessageFrame), 0);
-		}		
-		
-		internal override byte[] ReadResponse()
+		}
+
+		internal override T ReadResponse<T>()
 		{
 			byte[] frameStart = Read(ResponseFrameStartLength);
-			_log.DebugFormat("Frame start {0}.", StringUtil.Join(", ", frameStart));	
-
 			byte[] frameEnd = Read(ResponseBytesToRead(frameStart));
-			_log.DebugFormat("Frame end {0}.", StringUtil.Join(", ", frameEnd));
 
-			return CollectionUtil.Combine<byte>(frameStart, frameEnd);
+			return CreateResponse<T>(CollectionUtil.Combine<byte>(frameStart, frameEnd));
 		}
 
 		internal override byte[] ReadRequest()
 		{			
 			byte[] frameStart = Read(RequestFrameStartLength);
-			_log.DebugFormat("Frame start {0}.", StringUtil.Join(", ", frameStart));			
-			
 			byte[] frameEnd = Read(RequestBytesToRead(frameStart));
-			_log.DebugFormat("Frame end {0}.", StringUtil.Join(", ", frameEnd));
 
 			return CollectionUtil.Combine<byte>(frameStart, frameEnd);
 		}
 
 		public virtual byte[] Read(int count)
 		{
-			_log.DebugFormat("Read {0} bytes.", count);
 			byte[] frameBytes = new byte[count];
 			int numBytesRead = 0;			
 
@@ -133,6 +126,6 @@ namespace Modbus.IO
 			}
 
 			return numBytes;
-		}		
+		}	
 	}
 }

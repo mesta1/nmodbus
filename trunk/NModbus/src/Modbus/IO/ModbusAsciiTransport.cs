@@ -42,14 +42,14 @@ namespace Modbus.IO
 			return ModbusUtil.CalculateLrc(message.MessageFrame) == messageFrame[messageFrame.Length - 1];
 		}
 
-		internal override byte[] ReadResponse()
+		internal override byte[] ReadRequest()
 		{
 			return ReadRequestResponse();
 		}
 
-		internal override byte[] ReadRequest()
+		internal override T ReadResponse<T>()
 		{
-			return ReadRequestResponse();
+			return CreateResponse<T>(ReadRequestResponse());
 		}
 
 		internal byte[] ReadRequestResponse()

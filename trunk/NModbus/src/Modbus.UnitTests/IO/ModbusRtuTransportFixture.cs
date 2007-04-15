@@ -9,6 +9,7 @@ using System.IO;
 using Rhino.Mocks;
 using System.Net.Sockets;
 using System.IO.Ports;
+using Modbus.Data;
 
 namespace Modbus.UnitTests.IO
 {
@@ -127,7 +128,9 @@ namespace Modbus.UnitTests.IO
 
 			mocks.ReplayAll();
 
-			Assert.AreEqual(new byte[] { 1, 1, 1, 0, 81, 136 }, transport.ReadResponse());
+			ReadCoilsInputsResponse response = transport.ReadResponse<ReadCoilsInputsResponse>();
+			ReadCoilsInputsResponse expectedResponse = new ReadCoilsInputsResponse(Modbus.ReadCoils, 1, 1, new DiscreteCollection(false));
+			Assert.AreEqual(response.MessageFrame, expectedResponse.MessageFrame);
 
 			mocks.VerifyAll();
 		}
@@ -147,7 +150,6 @@ namespace Modbus.UnitTests.IO
 			mocks.ReplayAll();
 
 			Assert.AreEqual(new byte[] { 1, 1, 1, 0, 1, 0, 0, 5 }, transport.ReadRequest());
-
 			mocks.VerifyAll();
 		}
 
