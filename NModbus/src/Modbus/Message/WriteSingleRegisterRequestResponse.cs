@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Modbus.Data;
 using System.Net;
+using Modbus.Data;
 
 namespace Modbus.Message
 {

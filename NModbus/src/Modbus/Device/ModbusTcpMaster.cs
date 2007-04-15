@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Modbus.IO;
 using System.Net.Sockets;
+using Modbus.IO;
 
 namespace Modbus.Device
 {

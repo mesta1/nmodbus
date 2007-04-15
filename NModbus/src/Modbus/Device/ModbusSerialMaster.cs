@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO.Ports;
+using Modbus.Data;
 using Modbus.IO;
 using Modbus.Message;
-using Modbus.Data;
-using Modbus.Util;
 
 namespace Modbus.Device
 {

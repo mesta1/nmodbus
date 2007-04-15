@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
+using Modbus.Message;
 using Modbus.Util;
 using NUnit.Framework;
-using Modbus.Message;
 
 namespace Modbus.UnitTests.Util
 {

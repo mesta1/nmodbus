@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
 using Modbus.Device;
-using System.IO.Ports;
-using System.Threading;
+using NUnit.Framework;
 
 namespace Modbus.IntegrationTests
 {

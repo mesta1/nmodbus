@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
-using Modbus.Util;
 using System.Net;
-using System.Collections;
+using Modbus.Util;
 
 namespace Modbus.Data
 {

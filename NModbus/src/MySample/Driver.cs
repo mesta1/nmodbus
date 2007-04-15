@@ -1,21 +1,15 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics;
 using System.IO.Ports;
+using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using log4net;
-using Modbus;
 using Modbus.Device;
-using Modbus.Util;
-using Modbus.IO;
-using System.Net;
-using System.Diagnostics;
 
 namespace MySample
 {
 	/// <summary>
-	/// Demonstration of NModbus.
+	/// Demonstration of NModbus.u
 	/// </summary>
 	public class Driver
 	{

@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
-using Modbus.Device;
 using System.Net.Sockets;
+using Modbus.Device;
+using NUnit.Framework;
 
 namespace Modbus.IntegrationTests
 {

@@ -1,14 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
+using log4net;
+using Modbus.IO;
 using Modbus.Message;
 using Modbus.Util;
-using Modbus.IO;
-using System.Threading;
-using System.IO;
-using log4net;
 
 namespace Modbus.Device
 {

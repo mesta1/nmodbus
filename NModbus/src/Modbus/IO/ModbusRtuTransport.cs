@@ -1,12 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using Modbus.Message;
-using System.IO.Ports;
-using Modbus.Util;
-using System.IO;
-using Modbus.IO;
 using log4net;
+using Modbus.Message;
+using Modbus.Util;
 
 namespace Modbus.IO
 {
@@ -45,16 +41,20 @@ namespace Modbus.IO
 		{
 			byte[] frameStart = Read(ResponseFrameStartLength);
 			byte[] frameEnd = Read(ResponseBytesToRead(frameStart));
+			byte[] frame = CollectionUtil.Combine<byte>(frameStart, frameEnd);
+			_log.InfoFormat("RX: {0}", StringUtil.Join(", ", frame));
 
-			return CreateResponse<T>(CollectionUtil.Combine<byte>(frameStart, frameEnd));
+			return CreateResponse<T>(frame);
 		}
 
 		internal override byte[] ReadRequest()
 		{			
 			byte[] frameStart = Read(RequestFrameStartLength);
 			byte[] frameEnd = Read(RequestBytesToRead(frameStart));
+			byte[] frame = CollectionUtil.Combine<byte>(frameStart, frameEnd);
+			_log.InfoFormat("RX: {0}", StringUtil.Join(", ", frame));
 
-			return CollectionUtil.Combine<byte>(frameStart, frameEnd);
+			return frame;
 		}
 
 		public virtual byte[] Read(int count)
