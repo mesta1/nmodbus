@@ -1,49 +1,50 @@
 <?xml version="1.0"?>
 <project default="all">
 
-	<!-- tools paths -->
-	<property name="nantcontrib" value="C:\nantcontrib\bin\NAnt.Contrib.Tasks.dll" />
+  <!-- tools paths -->
+  <property name="path.shfb" value="C:\Program Files\EWSoftware\Sandcastle Help File Builder\SandcastleBuilderConsole.exe" />
+  <property name="nantcontrib" value="C:\nantcontrib\bin\NAnt.Contrib.Tasks.dll" />
   <property name="path.ncoverconsole" value="C:\Program Files\NCover\NCover.Console.exe" />
   <property name="path.ncoverexplorer" value="C:\Program Files\TestDriven.NET 2.0\NCoverExplorer\ncoverexplorer.console.exe" />
   <property name="path.java" value="C:\Program Files\Java" />
   <property name="path.jre" value="${path.java}\jre1.6.0" />
   <property name="path.jdk" value="${path.java}\jdk1.6.0" />
-	<property name="path.bin" value="src\Modbus\bin\Release" />
-	<property name="path.src" value="src" />
+  <property name="path.bin" value="src\Modbus\bin\Release" />
+  <property name="path.src" value="src" />
   <property name="path.output" value="testOutput" />
   <property name="path.lib" value="lib" />
   <property name="path.tools" value="tools" />
   <property name="path.jamod" value="${path.tools}\jamod" />
   <property name="path.nunit" value="${path.tools}\nunit" />
-	<property name="path.docs" value="docs" />
-	<property name="path.dist" value="dist" />
-	<property name="version" value="1.0" />  
+  <property name="path.docs" value="docs" />
+  <property name="path.dist" value="dist" />
+  <property name="version" value="1.1" />
 
-	<target name="build">
-		<loadtasks assembly="${nantcontrib}"/>
+  <target name="build">
+    <loadtasks assembly="${nantcontrib}"/>
 
-		<msbuild project="src\NModbus.sln">
-			<arg value="/p:Configuration=Release"/>
-		</msbuild>
-	</target>
+    <msbuild project="src\NModbus.sln">
+      <arg value="/p:Configuration=Release"/>
+    </msbuild>
+  </target>
 
-	<target name="clean">
-	 	<foreach item="Folder" property="foldername">
-			<in>
-				<items basedir="src">
-					<include name="*"></include>
-					<exclude name="."></exclude>
-				 </items>
-			 </in>
-			 <do>
-				 <delete dir="${foldername}\bin" />
-				 <delete dir="${foldername}\obj" />         
-			 </do>
-		 </foreach>
-     <delete dir="${path.output}" />
-		 <delete dir="${path.dist}" />
-		 <delete dir="${path.docs}" />
-	 </target>
+  <target name="clean">
+    <foreach item="Folder" property="foldername">
+      <in>
+        <items basedir="src">
+          <include name="*"></include>
+          <exclude name="."></exclude>
+        </items>
+      </in>
+      <do>
+        <delete dir="${foldername}\bin" />
+        <delete dir="${foldername}\obj" />
+      </do>
+    </foreach>
+    <delete dir="${path.output}" />
+    <delete dir="${path.dist}" />
+    <delete dir="${path.docs}" />
+  </target>
 
   <target name="run-unit-tests" depends="build">
     <foreach item="Folder" property="foldername">
@@ -53,15 +54,15 @@
           <exclude name="."></exclude>
         </items>
       </in>
-      <do>        
+      <do>
         <nunit2>
           <formatter type="Xml" />
-          <test assemblyname="${foldername}\bin\Release\${path::get-file-name(foldername)}.dll" />          
+          <test assemblyname="${foldername}\bin\Release\${path::get-file-name(foldername)}.dll" />
         </nunit2>
       </do>
     </foreach>
   </target>
-    
+
   <target name="run-integration-tests" depends="build">
     <foreach item="Folder" property="foldername">
       <in>
@@ -85,7 +86,7 @@
     <foreach item="Folder" property="foldername">
       <in>
         <items basedir="src">
-          <include name="*Tests"></include>        
+          <include name="*Tests"></include>
           <exclude name="."></exclude>
         </items>
       </in>
@@ -99,7 +100,7 @@
          />
       </do>
     </foreach>
-    
+
     <ncoverexplorer program="${path.ncoverexplorer}"       
       projectName="NModbus"
       outputDir="${path.output}"
@@ -125,56 +126,57 @@
     </fxcop>
   </target>
 
-  <target name="dist" depends="clean, build, run-unit-tests">
+  <target name="dist" depends="clean, build, run-unit-tests, docs">
+    <copy file="${path.docs}\Documentation.chm" tofile="${path.docs}\NModbus.chm" />    
     <mkdir dir="${path.dist}" />
     <zip zipfile="${path.dist}\NModbus_${version}-source.zip">
       <fileset basedir="." prefix="source">
         <include name="**" />
         <exclude name="**/*.suo" />
         <exclude name="**/*.user" />
-				<exclude name="**/obj/**" />
-				<exclude name="**/bin/**" />
-				<exclude name="**/docs/**" />
+        <exclude name="**/obj/**" />
+        <exclude name="**/bin/**" />
+        <exclude name="**/docs/**" />
         <exclude name="README.txt" />
-			</fileset>
-			<fileset basedir="${path.bin}" prefix="bin">
-				<include name="*.dll" />
-			</fileset>
-			<fileset basedir=".">
-				<include name="README.txt" />
-			</fileset>
-			<fileset basedir="${path.docs}">
-				<include name="*.chm" />
-			</fileset>
-		</zip>
-		<zip zipfile="${path.dist}\NModbus_${version}.zip">
-			<fileset basedir="${path.bin}" prefix="bin">
-				<include name="*.dll" />
-			</fileset>
-			<fileset basedir=".">
-				<include name="README.txt" />
-			</fileset>
-			<fileset basedir="${path.docs}">
-				<include name="*.chm" />
-			</fileset>
-		</zip>
-	</target>
+      </fileset>
+      <fileset basedir="${path.bin}" prefix="bin">
+        <include name="*.dll" />
+      </fileset>
+      <fileset basedir=".">
+        <include name="README.txt" />
+      </fileset>
+      <fileset basedir="${path.docs}">
+        <include name="NModbus.chm" />
+      </fileset>      
+    </zip>
+    <zip zipfile="${path.dist}\NModbus_${version}.zip">
+      <fileset basedir="${path.bin}" prefix="bin">
+        <include name="*.dll" />
+      </fileset>
+      <fileset basedir=".">
+        <include name="README.txt" />
+      </fileset>
+      <fileset basedir="${path.docs}">
+        <include name="NModbus.chm" />
+      </fileset>
+    </zip>
+  </target>
 
-	<target name="docs" depends="build">
-		<copy file="Docs.bat" todir="${path.docs}" />
-		<copy file="sandcastle.config" todir="${path.docs}" />
-		<exec program="cmd.exe" commandline="/c Docs.bat" workingdir="${path.docs}" />
-	</target>
-
-	<target name="all" depends="clean, build, run-unit-tests, run-integration-tests, run-code-coverage, run-fxcop" />
+  <target name="all" depends="clean, build, run-unit-tests, run-integration-tests, run-code-coverage, run-fxcop" />
 
   <target name="build-jamod">
     <exec program="${path.jdk}\bin\javac.exe" commandline="-classpath comm.jar;jamod.jar;. *.java" workingdir="${path.jamod}" />
   </target>
-  
+
   <target name="setup-java" depends="build-jamod">
     <copy file="${path.lib}\javax.comm.properties" todir="${path.jre}\lib" />
-    <copy file="${path.lib}\win32com.dll" todir="${path.jre}\bin" />    
-  </target>
+    <copy file="${path.lib}\win32com.dll" todir="${path.jre}\bin" />
+  </target>  
   
+  <target name="docs" depends="build">
+    <exec program="${path.shfb}">
+      <arg value="NModbus.shfb"/>
+    </exec>
+  </target>
+
 </project>
