@@ -11,7 +11,7 @@ namespace Modbus.IntegrationTests
 		{
 			base.Init();
 
-			SetupMasterSerialPort("COM4");
+			SetupMasterSerialPort("COM7");
 			Master = ModbusSerialMaster.CreateRtu(MasterSerialPort);
 		}
 
@@ -19,6 +19,12 @@ namespace Modbus.IntegrationTests
 		public override void Read0Coils()
 		{
 			base.Read0Coils();
+		}
+
+		[Test]
+		public override void ReadCoils()
+		{
+			base.ReadCoils();
 		}
 	}
 }
