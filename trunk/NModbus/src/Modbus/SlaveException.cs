@@ -1,35 +1,71 @@
 using System;
 using Modbus.Message;
+using System.Runtime.Serialization;
 
 namespace Modbus
 {
-	class SlaveException : Exception
+	/// <summary>
+	/// Represents slave errors that occur during communication.
+	/// </summary>
+	public class SlaveException : Exception
 	{
 		private SlaveExceptionResponse _slaveExceptionResponse;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="SlaveException"/> class.
+		/// </summary>
 		public SlaveException()
 		{
 		}
 
-		public SlaveException(SlaveExceptionResponse slaveExceptionResponse) 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="SlaveException"/> class.
+		/// </summary>
+		/// <param name="message">The message.</param>
+		public SlaveException(string message)
+			: base(message)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="SlaveException"/> class.
+		/// </summary>
+		/// <param name="message">The message.</param>
+		/// <param name="innerException">The inner exception.</param>
+		public SlaveException(string message, Exception innerException)
+			: base(message, innerException)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="SlaveException"/> class.
+		/// </summary>
+		/// <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo"></see> that holds the serialized object data about the exception being thrown.</param>
+		/// <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext"></see> that contains contextual information about the source or destination.</param>
+		/// <exception cref="T:System.Runtime.Serialization.SerializationException">The class name is null or <see cref="P:System.Exception.HResult"></see> is zero (0). </exception>
+		/// <exception cref="T:System.ArgumentNullException">The info parameter is null. </exception>
+		protected SlaveException(SerializationInfo info, StreamingContext context)
+			: base(info, context)
+		{
+			// TODO: Implement type-specific serialization constructor logic.
+		}
+
+		internal SlaveException(SlaveExceptionResponse slaveExceptionResponse)
 		{
 			_slaveExceptionResponse = slaveExceptionResponse;
 		}
 
-		public SlaveException(string message, SlaveExceptionResponse slaveExceptionResponse)
+		internal SlaveException(string message, SlaveExceptionResponse slaveExceptionResponse)
 			: base(message)
 		{
 			_slaveExceptionResponse = slaveExceptionResponse;
 		}
 
-		public SlaveException(string message, Exception innerException, SlaveExceptionResponse slaveExceptionResponse)
-			: base(message, innerException)
-		{
-			_slaveExceptionResponse = slaveExceptionResponse;
-		}
-
-		// TODO serializable
-
+		/// <summary>
+		/// Gets a message that describes the current exception.
+		/// </summary>
+		/// <value></value>
+		/// <returns>The error message that explains the reason for the exception, or an empty string("").</returns>
 		public override string Message
 		{
 			get
@@ -38,6 +74,30 @@ namespace Modbus
 					return base.Message;
 
 				return String.Format("{0}{1}Function Code: {2}{1}Exception Code: {3}", base.Message, Environment.NewLine, _slaveExceptionResponse.FunctionCode, _slaveExceptionResponse.SlaveExceptionCode);
+			}
+		}
+
+		/// <summary>
+		/// Gets the response function code that caused the exception to occur, or 0.
+		/// </summary>
+		/// <value>The function code.</value>
+		public byte FunctionCode
+		{
+			get
+			{
+				return _slaveExceptionResponse != null ? _slaveExceptionResponse.FunctionCode : (byte) 0;
+			}
+		}
+
+		/// <summary>
+		/// Gets the slave exception code, or 0.
+		/// </summary>
+		/// <value>The slave exception code.</value>
+		public byte SlaveExceptionCode
+		{
+			get
+			{
+				return _slaveExceptionResponse != null ? _slaveExceptionResponse.SlaveExceptionCode : (byte) 0;
 			}
 		}
 	}

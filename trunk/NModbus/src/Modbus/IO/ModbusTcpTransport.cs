@@ -5,6 +5,7 @@ using System.Net;
 using log4net;
 using Modbus.Message;
 using Modbus.Util;
+using System.Net.Sockets;
 
 namespace Modbus.IO
 {
@@ -47,8 +48,12 @@ namespace Modbus.IO
 			byte[] mbapHeader = new byte[6];
 			int numBytesRead = 0;
 			while (numBytesRead != 6)
+			{
 				numBytesRead += tcpTransportAdapter.Read(mbapHeader, numBytesRead, 6 - numBytesRead);
 
+				if (numBytesRead == 0)
+					throw new SocketException(Modbus.WSAECONNABORTED);
+			}
 			_log.DebugFormat("MBAP header: {0}", StringUtil.Join(", ", mbapHeader));
 
 			ushort frameLength = (ushort) (IPAddress.HostToNetworkOrder(BitConverter.ToInt16(mbapHeader, 4)));
@@ -58,7 +63,12 @@ namespace Modbus.IO
 			byte[] messageFrame = new byte[frameLength];
 			numBytesRead = 0;
 			while (numBytesRead != frameLength)
+			{
 				numBytesRead += tcpTransportAdapter.Read(messageFrame, numBytesRead, frameLength - numBytesRead);
+				
+				if (numBytesRead == 0)
+					throw new SocketException(Modbus.WSAECONNABORTED);
+			}
 			_log.DebugFormat("PDU: {0}", frameLength);
 
 			byte[] frame = CollectionUtil.Combine(mbapHeader, messageFrame);

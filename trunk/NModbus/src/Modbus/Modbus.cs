@@ -38,5 +38,8 @@ namespace Modbus
 	
 		// TCP slaves should be addressed by IP
 		public const byte DefaultTcpSlaveUnitId = 0;
+
+		// An established connection was aborted by the software in your host computer, possibly due to a data transmission time-out or protocol error
+		public const int WSAECONNABORTED = 10053;
 	}
 }
