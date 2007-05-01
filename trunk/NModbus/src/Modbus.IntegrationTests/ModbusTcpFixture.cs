@@ -24,8 +24,8 @@ namespace Modbus.IntegrationTests
 		[TestFixtureTearDown]
 		public void TestFixtureTearDown()
 		{
-			MasterTcp.Close();
 			SlaveTcp.Stop();
+			MasterTcp.Close();
 			CleanUp();
 		}
 

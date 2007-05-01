@@ -61,9 +61,17 @@ namespace Modbus.Device
 					Transport.Write(response);
 				}
 			}
-			catch (ThreadAbortException)
+			catch (SocketException se)
 			{
-				_log.Info("NModbus slave thread aborted.");
+				if (se.ErrorCode == Modbus.WSAECONNABORTED)
+				{
+					_log.Info("Master connection aborted.");
+				}
+				else
+				{
+					_log.Error(String.Format("Unexpected Socket Exception - {0}", se.Message));
+					throw se;
+				}
 			}
 			finally
 			{
