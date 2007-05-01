@@ -176,7 +176,5 @@ namespace Modbus.IntegrationTests
 			Assert.AreEqual(testValues, newValues);
 			Master.WriteMultipleCoils(SlaveAddress, testAddress, originalValues);
 		}
-		
-		// TODO how can we test a slave exception?
 	}
 }

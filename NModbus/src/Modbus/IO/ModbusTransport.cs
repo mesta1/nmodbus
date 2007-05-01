@@ -57,7 +57,7 @@ namespace Modbus.IO
 
 					if (attempt++ > _retries)
 						throw se;
-				}	
+				}
 		
 			} while (!success);
 

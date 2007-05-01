@@ -9,7 +9,7 @@ using Modbus.Device;
 namespace MySample
 {
 	/// <summary>
-	/// Demonstration of NModbus.u
+	/// Demonstration of NModbus
 	/// </summary>
 	public class Driver
 	{
@@ -235,7 +235,6 @@ namespace MySample
 			// clean up
 			masterTcpClient.Close();
 			slaveTcpListener.Stop();
-			slaveThread.Abort();
 
 			// output
 			// Register 100=0
@@ -252,7 +251,7 @@ namespace MySample
 		{
 			Thread slaveThread;
 
-			using (SerialPort masterPort = new SerialPort("COM4"))
+			using (SerialPort masterPort = new SerialPort("COM6"))
 			using (SerialPort slavePort = new SerialPort("COM5"))
 			{
 				// configure serial ports
@@ -281,9 +280,7 @@ namespace MySample
 
 				for (int i = 0; i < numRegisters; i++)
 					Console.WriteLine("Register {0}={1}", startAddress + i, registers[i]);
-			}
-
-			slaveThread.Abort();
+			}			
 
 			// output
 			// Register 100=0
