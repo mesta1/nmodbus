@@ -121,5 +121,33 @@ namespace Modbus.UnitTests.IO
 			transport.CreateResponse<ReadCoilsInputsResponse>(new byte[] { 2, 129, 1, 5 });
 			mocks.VerifyAll();
 		}
+
+		[Test, ExpectedException(typeof(IOException))]
+		public void ValidateResponse_MismatchingFunctionCodes()
+		{
+			MockRepository mocks = new MockRepository();
+			ModbusTransport transport = mocks.PartialMock<ModbusTransport>();
+			
+			IModbusMessage request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 1, 1);
+			IModbusMessage response = new ReadHoldingInputRegistersResponse(Modbus.ReadHoldingRegisters, 1, 1, null);
+			
+			mocks.ReplayAll();
+			transport.ValidateResponse(request, response);
+			mocks.VerifyAll();
+		}
+
+		[Test]
+		public void ValidateResponse()
+		{
+			MockRepository mocks = new MockRepository();
+			ModbusTransport transport = mocks.PartialMock<ModbusTransport>();
+
+			IModbusMessage request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 1, 1);
+			IModbusMessage response = new ReadCoilsInputsResponse(Modbus.ReadCoils, 1, 1, null);
+
+			mocks.ReplayAll();
+			transport.ValidateResponse(request, response);
+			mocks.VerifyAll();
+		}
 	}
 }
