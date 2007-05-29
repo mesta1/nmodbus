@@ -65,7 +65,7 @@ namespace Modbus.Device
 		/// <returns>Input registers status</returns>
 		public ushort[] ReadInputRegisters(ushort startAddress, ushort numberOfPoints)
 		{
-			return base.ReadHoldingRegisters(Modbus.DefaultTcpSlaveUnitId, startAddress, numberOfPoints);
+			return base.ReadInputRegisters(Modbus.DefaultTcpSlaveUnitId, startAddress, numberOfPoints);
 		}
 
 		/// <summary>
