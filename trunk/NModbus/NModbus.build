@@ -18,7 +18,7 @@
   <property name="path.nunit" value="${path.tools}\nunit" />
   <property name="path.docs" value="docs" />
   <property name="path.dist" value="dist" />
-  <property name="version" value="1.1" />
+  <property name="version" value="1.1.0.1" />
 
   <target name="build">
     <loadtasks assembly="${nantcontrib}"/>
@@ -95,13 +95,13 @@
           commandLineExe="${path.nunit}\nunit-console.exe"
           commandLineArgs="${foldername}\bin\Release\${path::get-file-name(foldername)}.dll"
           workingDirectory="${path.output}"
-          coverageFile="${path.output}\Modbus.${path::get-file-name(foldername)}.NCover.xml" 
+          coverageFile="${path.output}\Modbus.${path::get-file-name(foldername)}.NCover.xml"
           logFile="${path.output}\Coverage.log"
          />
       </do>
     </foreach>
 
-    <ncoverexplorer program="${path.ncoverexplorer}"       
+    <ncoverexplorer program="${path.ncoverexplorer}"
       projectName="NModbus"
       outputDir="${path.output}"
       reportType="4"
@@ -126,8 +126,8 @@
     </fxcop>
   </target>
 
-  <target name="dist" depends="clean, build, run-unit-tests, docs">
-    <copy file="${path.docs}\Documentation.chm" tofile="${path.docs}\NModbus.chm" />    
+  <target name="dist" depends="clean, update-assemblyinfo, build, run-unit-tests, docs">
+    <copy file="${path.docs}\Documentation.chm" tofile="${path.docs}\NModbus.chm" />
     <mkdir dir="${path.dist}" />
     <zip zipfile="${path.dist}\NModbus_${version}-source.zip">
       <fileset basedir="." prefix="source">
@@ -147,7 +147,7 @@
       </fileset>
       <fileset basedir="${path.docs}">
         <include name="NModbus.chm" />
-      </fileset>      
+      </fileset>
     </zip>
     <zip zipfile="${path.dist}\NModbus_${version}.zip">
       <fileset basedir="${path.bin}" prefix="bin">
@@ -171,12 +171,35 @@
   <target name="setup-java" depends="build-jamod">
     <copy file="${path.lib}\javax.comm.properties" todir="${path.jre}\lib" />
     <copy file="${path.lib}\win32com.dll" todir="${path.jre}\bin" />
-  </target>  
-  
+  </target>
+
   <target name="docs" depends="build">
     <exec program="${path.shfb}">
       <arg value="NModbus.shfb"/>
     </exec>
+  </target>
+
+  <target name="update-assemblyinfo">
+    <asminfo output="${path.src}\Modbus\Properties\AssemblyInfo.cs" language="CSharp">
+      <imports>
+        <import namespace="System.Reflection" />
+        <import namespace="System.Runtime.CompilerServices" />
+        <import namespace="System.Runtime.InteropServices" />
+      </imports>
+      <attributes>
+        <attribute type="AssemblyTitleAttribute" value="Modbus" />
+        <attribute type="AssemblyProductAttribute" value="NModbus" />
+        <attribute type="InternalsVisibleToAttribute" value="Modbus.UnitTests" />
+        <attribute type="InternalsVisibleToAttribute" value="DynamicProxyGenAssembly2" />
+        <attribute type="ComVisibleAttribute" value="false" />
+        <attribute type="GuidAttribute" value="a2ec5378-e1b7-4bb0-b696-1c657407eeb9" />
+        <attribute type="AssemblyVersionAttribute" value="${version}" />
+        <attribute type="AssemblyFileVersionAttribute" value="*" />
+      </attributes>
+      <references>
+        <include name="System.EnterpriseServices.dll" />
+      </references>
+    </asminfo>
   </target>
 
 </project>
