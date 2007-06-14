@@ -8,9 +8,9 @@ namespace Modbus.Device
 	/// <summary>
 	/// Modbus serial master device.
 	/// </summary>
-	public class ModbusSerialMaster : ModbusMaster, IModbusMaster
+	public class ModbusSerialMaster : ModbusMaster, IModbusMaster, IModbusSerialMaster
 	{
-		private ModbusSerialMaster(ModbusTransport transport)
+		private ModbusSerialMaster(ModbusSerialTransport transport)
 			: base(transport)
 		{
 		}
@@ -58,6 +58,14 @@ namespace Modbus.Device
 		{
 			serialPortAdapter.WriteTimeout = serialPortAdapter.WriteTimeout == SerialPort.InfiniteTimeout ? Modbus.DefaultTimeout : serialPortAdapter.WriteTimeout;
 			serialPortAdapter.ReadTimeout = serialPortAdapter.ReadTimeout == SerialPort.InfiniteTimeout ? Modbus.DefaultTimeout : serialPortAdapter.ReadTimeout;
+		}
+
+		ModbusSerialTransport IModbusSerialMaster.Transport
+		{
+			get 
+			{
+				return (ModbusSerialTransport) this.Transport;
+			}
 		}
 	}
 }

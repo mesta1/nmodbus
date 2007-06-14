@@ -11,14 +11,6 @@ namespace Modbus.UnitTests.IO
 	[TestFixture]
 	public class ModbusSerialTransportFixture : ModbusMessageFixture
 	{
-		[Test, ExpectedException(typeof(IOException))]
-		public void CreateResponseErroneousLrc()
-		{
-			ModbusAsciiTransport transport = new ModbusAsciiTransport();
-			transport.CreateResponse<ReadCoilsInputsResponse>(new byte[] { 19, Modbus.ReadCoils, 0, 0, 0, 2, 115 });
-			Assert.Fail();
-		}
-
 		[Test]
 		public void CreateResponse()
 		{
@@ -27,6 +19,22 @@ namespace Modbus.UnitTests.IO
 			byte lrc = ModbusUtil.CalculateLrc(expectedResponse.MessageFrame);
 			ReadCoilsInputsResponse response = transport.CreateResponse<ReadCoilsInputsResponse>(new byte[] { 2, Modbus.ReadCoils, 1, 129, lrc });
 			AssertModbusMessagePropertiesAreEqual(expectedResponse, response);
+		}
+
+		[Test, ExpectedException(typeof(IOException))]
+		public void CreateResponseErroneousLrc()
+		{
+			ModbusAsciiTransport transport = new ModbusAsciiTransport();
+			transport.CheckFrame = true;
+			transport.CreateResponse<ReadCoilsInputsResponse>(new byte[] { 19, Modbus.ReadCoils, 0, 0, 0, 2, 115 });
+		}
+
+		[Test]
+		public void CreateResponseErroneousLrcDoNotCheckFrame()
+		{
+			ModbusAsciiTransport transport = new ModbusAsciiTransport();
+			transport.CheckFrame = false;
+			transport.CreateResponse<ReadCoilsInputsResponse>(new byte[] { 19, Modbus.ReadCoils, 0, 0, 0, 2, 115 });
 		}
 	}
 }

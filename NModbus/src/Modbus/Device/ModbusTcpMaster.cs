@@ -6,7 +6,7 @@ namespace Modbus.Device
 	/// <summary>
 	/// Modbus IP based TCP master.
 	/// </summary>
-	public class ModbusTcpMaster : ModbusMaster, IModbusTcpMaster
+	public class ModbusTcpMaster : ModbusMaster, IModbusMaster
 	{
 		private ModbusTcpMaster(ModbusTcpTransport transport)
 			: base(transport)
