@@ -7,7 +7,7 @@
   <property name="path.ncoverconsole" value="C:\Program Files\NCover\NCover.Console.exe" />
   <property name="path.ncoverexplorer" value="C:\Program Files\TestDriven.NET 2.0\NCoverExplorer\ncoverexplorer.console.exe" />
   <property name="path.java" value="C:\Program Files\Java" />
-  <property name="path.jre" value="${path.java}\jre1.6.0" />
+  <property name="path.jre" value="${path.java}\jre1.6.0_01" />
   <property name="path.jdk" value="${path.java}\jdk1.6.0" />
   <property name="path.bin" value="src\Modbus\bin\Release" />
   <property name="path.src" value="src" />
@@ -169,8 +169,8 @@
   </target>
 
   <target name="setup-java" depends="build-jamod">
-    <copy file="${path.lib}\javax.comm.properties" todir="${path.jre}\lib" />
-    <copy file="${path.lib}\win32com.dll" todir="${path.jre}\bin" />
+    <copy file="${path.jamod}\javax.comm.properties" todir="${path.jre}\lib" />
+    <copy file="${path.jamod}\win32com.dll" todir="${path.jre}\bin" />
   </target>
 
   <target name="docs" depends="build">
