@@ -18,7 +18,7 @@
   <property name="path.nunit" value="${path.tools}\nunit" />
   <property name="path.docs" value="docs" />
   <property name="path.dist" value="dist" />
-  <property name="version" value="1.1.0.1" />
+  <property name="version" value="1.2.0.0" />
 
   <target name="build">
     <loadtasks assembly="${nantcontrib}"/>
@@ -194,7 +194,7 @@
         <attribute type="ComVisibleAttribute" value="false" />
         <attribute type="GuidAttribute" value="a2ec5378-e1b7-4bb0-b696-1c657407eeb9" />
         <attribute type="AssemblyVersionAttribute" value="${version}" />
-        <attribute type="AssemblyFileVersionAttribute" value="*" />
+        <attribute type="AssemblyFileVersionAttribute" value="${version}" />
       </attributes>
       <references>
         <include name="System.EnterpriseServices.dll" />
