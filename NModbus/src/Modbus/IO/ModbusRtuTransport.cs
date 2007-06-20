@@ -7,13 +7,13 @@ using Modbus.Util;
 namespace Modbus.IO
 {
 	class ModbusRtuTransport : ModbusSerialTransport
-	{		
+	{
 		public const int RequestFrameStartLength = 7;
 		public const int ResponseFrameStartLength = 4;
 
 		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusRtuTransport));
 
-		public ModbusRtuTransport ()
+		public ModbusRtuTransport()
 		{
 		}
 
@@ -48,7 +48,7 @@ namespace Modbus.IO
 		}
 
 		internal override byte[] ReadRequest()
-		{			
+		{
 			byte[] frameStart = Read(RequestFrameStartLength);
 			byte[] frameEnd = Read(RequestBytesToRead(frameStart));
 			byte[] frame = CollectionUtil.Combine<byte>(frameStart, frameEnd);
@@ -60,10 +60,10 @@ namespace Modbus.IO
 		public virtual byte[] Read(int count)
 		{
 			byte[] frameBytes = new byte[count];
-			int numBytesRead = 0;			
+			int numBytesRead = 0;
 
 			while (numBytesRead != count)
-				numBytesRead += _serialPortStreamAdapter.Read(frameBytes, numBytesRead, count - numBytesRead);			
+				numBytesRead += _serialPortStreamAdapter.Read(frameBytes, numBytesRead, count - numBytesRead);
 
 			return frameBytes;
 		}
@@ -100,17 +100,20 @@ namespace Modbus.IO
 
 		public static int ResponseBytesToRead(byte[] frameStart)
 		{
-			byte functionCode = frameStart[1];
-			byte byteCount = frameStart[2];
-			int numBytes;
+			byte functionCode = frameStart[1];			
 
+			// exception response
+			if (functionCode > Modbus.ExceptionOffset)
+				return 1;
+
+			int numBytes;
 			switch (functionCode)
 			{
 				case Modbus.ReadCoils:
 				case Modbus.ReadInputs:
 				case Modbus.ReadHoldingRegisters:
 				case Modbus.ReadInputRegisters:
-					numBytes = byteCount + 1;
+					numBytes = frameStart[2] + 1;
 					break;
 				case Modbus.WriteSingleCoil:
 				case Modbus.WriteSingleRegister:
@@ -126,6 +129,6 @@ namespace Modbus.IO
 			}
 
 			return numBytes;
-		}	
+		}
 	}
 }
