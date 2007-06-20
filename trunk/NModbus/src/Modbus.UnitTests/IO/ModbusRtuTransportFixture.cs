@@ -4,6 +4,7 @@ using Modbus.IO;
 using Modbus.Message;
 using NUnit.Framework;
 using Rhino.Mocks;
+using Modbus.Util;
 
 namespace Modbus.UnitTests.IO
 {
@@ -46,10 +47,17 @@ namespace Modbus.UnitTests.IO
 			Assert.AreEqual(4, ModbusRtuTransport.ResponseBytesToRead(frameStart));
 		}
 
+		[Test]
+		public void ResponseBytesToReadSlaveException()
+		{
+			byte[] frameStart = { 0x01, Modbus.ExceptionOffset + 1, 0x01};
+			Assert.AreEqual(1, ModbusRtuTransport.ResponseBytesToRead(frameStart));
+		}
+
 		[Test, ExpectedException(typeof(NotImplementedException))]
 		public void ResponseBytesToReadInvalidFunctionCode()
 		{
-			byte[] frame = { 0x11, 0xFF, 0x00, 0x01, 0x00, 0x02, 0x04 };
+			byte[] frame = { 0x11, 0x16, 0x00, 0x01, 0x00, 0x02, 0x04 };
 			ModbusRtuTransport.ResponseBytesToRead(frame);
 			Assert.Fail();
 		}
@@ -126,6 +134,28 @@ namespace Modbus.UnitTests.IO
 			ReadCoilsInputsResponse expectedResponse = new ReadCoilsInputsResponse(Modbus.ReadCoils, 1, 1, new DiscreteCollection(false));
 			Assert.AreEqual(response.MessageFrame, expectedResponse.MessageFrame);
 
+			mocks.VerifyAll();
+		}
+
+		[Test, ExpectedException(typeof(SlaveException))]
+		public void ReadResponseSlaveException()
+		{
+			MockRepository mocks = new MockRepository();
+			ModbusRtuTransport transport = mocks.PartialMock<ModbusRtuTransport>();
+
+			byte[] messageFrame = { 0x01, 0x81, 0x02 };
+			byte[] crc = ModbusUtil.CalculateCrc(messageFrame);
+
+			Expect.Call(transport.Read(ModbusRtuTransport.ResponseFrameStartLength))
+				.Return(CollectionUtil.Combine(messageFrame, new byte[] { crc[0] }));
+
+			Expect.Call(transport.Read(1))
+				.Return(new byte[] { crc[1] });
+
+			mocks.ReplayAll();
+
+			ReadCoilsInputsResponse response = transport.ReadResponse<ReadCoilsInputsResponse>();
+		
 			mocks.VerifyAll();
 		}
 
