@@ -52,7 +52,7 @@ namespace Modbus.IO
 				numBytesRead += tcpTransportAdapter.Read(mbapHeader, numBytesRead, 6 - numBytesRead);
 
 				if (numBytesRead == 0)
-					throw new SocketException(Modbus.WSAECONNABORTED);
+					throw new SocketException(Modbus.ConnectionAborted);
 			}
 			_log.DebugFormat("MBAP header: {0}", StringUtil.Join(", ", mbapHeader));
 
@@ -67,7 +67,7 @@ namespace Modbus.IO
 				numBytesRead += tcpTransportAdapter.Read(messageFrame, numBytesRead, frameLength - numBytesRead);
 				
 				if (numBytesRead == 0)
-					throw new SocketException(Modbus.WSAECONNABORTED);
+					throw new SocketException(Modbus.ConnectionAborted);
 			}
 			_log.DebugFormat("PDU: {0}", frameLength);
 
@@ -80,8 +80,8 @@ namespace Modbus.IO
 		internal override void Write(IModbusMessage message)
 		{			
 			byte[] frame = BuildMessageFrame(message);
-			_log.InfoFormat("TX: {0}", StringUtil.Join(", ", frame));
-			_tcpStreamAdapter.Write(frame, 0, frame.Length);
+			_log.InfoFormat("TX: {0}", StringUtil.Join(", ", frame));			
+			_tcpStreamAdapter.BeginWrite(frame, 0, frame.Length, WriteCompleted, _tcpStreamAdapter);
 		}
 
 		internal override byte[] BuildMessageFrame(IModbusMessage message)
@@ -119,6 +119,13 @@ namespace Modbus.IO
 				throw new IOException(String.Format("Response was not of expected transaction ID. Expected {0}, received {1}.", request.TransactionID, response.TransactionID));
 
 			base.ValidateResponse(request, response);
-		}	
+		}
+
+		internal void WriteCompleted(IAsyncResult ar)
+		{
+			_log.Debug("Write completed.");
+			TcpStreamAdapter stream = (TcpStreamAdapter) ar.AsyncState;
+			stream.EndWrite(ar);
+		}
 	}
 }

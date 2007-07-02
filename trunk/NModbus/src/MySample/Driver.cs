@@ -19,14 +19,14 @@ namespace MySample
 
 			try
 			{
-				SimplePerfTest();
+				//SimplePerfTest();
 				//ModbusSerialRtuMasterWriteRegisters();
 				//ModbusSerialAsciiMasterReadRegisters();
 				//ModbusTcpMasterReadInputs();				
 				//StartModbusAsciiSlave();
 				//ModbusTcpMasterReadInputsFromModbusSlave();
 				//ModbusSerialAsciiMasterReadRegistersFromModbusSlave();
-				//StartModbusTcpSlave();
+				StartModbusTcpSlave();
 			}
 			catch (Exception e)
 			{
@@ -199,7 +199,7 @@ namespace MySample
 			// create and start the TCP slave
 			TcpListener slaveTcpListener = new TcpListener(address, port);
 			slaveTcpListener.Start();
-			ModbusSlave slave = ModbusTcpSlave.CreateTcp(slaveID, slaveTcpListener);
+			ModbusSlave slave = ModbusTcpSlave.CreateTcp(slaveID, slaveTcpListener);			
 			slave.Listen();
 		}
 
