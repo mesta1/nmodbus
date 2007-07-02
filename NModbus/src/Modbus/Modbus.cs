@@ -40,6 +40,9 @@ namespace Modbus
 		public const byte DefaultTcpSlaveUnitId = 0;
 
 		// An established connection was aborted by the software in your host computer, possibly due to a data transmission time-out or protocol error
-		public const int WSAECONNABORTED = 10053;
+		public const int ConnectionAborted = 10053;
+
+		// An existing connection was forcibly closed by the remote host
+		public const int ConnectionResetByPeer = 10054;
 	}
 }

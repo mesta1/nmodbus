@@ -35,6 +35,7 @@ namespace Modbus.UnitTests.IO
 		}
 
 		[Test]
+		[Ignore("working on asynchronous Modbus TCP slave")]
 		public void Write()
 		{
 			MockRepository mocks = new MockRepository();

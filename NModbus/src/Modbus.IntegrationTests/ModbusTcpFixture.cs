@@ -1,6 +1,7 @@
 using System.Net.Sockets;
 using Modbus.Device;
 using NUnit.Framework;
+using System.Threading;
 
 namespace Modbus.IntegrationTests
 {
@@ -17,8 +18,9 @@ namespace Modbus.IntegrationTests
 			Slave = ModbusTcpSlave.CreateTcp(SlaveAddress, SlaveTcp);
 			StartSlave();
 
-			MasterTcp = new TcpClient(TcpHost.ToString(), TcpPort);
+			MasterTcp = new TcpClient(TcpHost.ToString(), TcpPort);			
 			Master = ModbusTcpMaster.CreateTcp(MasterTcp);
+			Master.Transport.Retries = 0;
 		}
 
 		[TestFixtureTearDown]
@@ -32,7 +34,7 @@ namespace Modbus.IntegrationTests
 		[Test]
 		public override void ReadCoils()
 		{
-			base.ReadCoils();
+			base.ReadCoils();	
 		}
 
 		[Test]
