@@ -13,8 +13,8 @@ namespace Modbus.IO
 	{
 		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusTcpTransport));
 		private TcpStreamAdapter _tcpStreamAdapter;
-		private ushort _transactionID;
-		private static object _transactionIDLock = new object();
+		private ushort _transactionId;
+		private static readonly object _transactionIdLock = new object();
 
 		public ModbusTcpTransport()
 		{
@@ -27,10 +27,10 @@ namespace Modbus.IO
 
 		public virtual ushort GetNewTransactionID()
 		{
-			lock (_transactionIDLock)
-				_transactionID = _transactionID == UInt16.MaxValue ? (ushort) 1 : ++_transactionID;
+			lock (_transactionIdLock)
+				_transactionId = _transactionId == UInt16.MaxValue ? (ushort) 1 : ++_transactionId;
 
-			return _transactionID;
+			return _transactionId;
 		}
 
 		public static byte[] GetMbapHeader(IModbusMessage message)
@@ -121,7 +121,7 @@ namespace Modbus.IO
 			base.ValidateResponse(request, response);
 		}
 
-		internal void WriteCompleted(IAsyncResult ar)
+		internal static void WriteCompleted(IAsyncResult ar)
 		{
 			_log.Debug("Write completed.");
 			TcpStreamAdapter stream = (TcpStreamAdapter) ar.AsyncState;

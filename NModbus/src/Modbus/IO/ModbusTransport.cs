@@ -42,21 +42,21 @@ namespace Modbus.IO
 					_log.ErrorFormat("Timeout, {0} retries remaining - {1}", _retries + 1 - attempt, te.Message);
 
 					if (attempt++ > _retries)
-						throw te;
+						throw;
 				}
 				catch (IOException ioe)
 				{
 					_log.ErrorFormat("IO Exception, {0} retries remaining - {1}", _retries + 1 - attempt, ioe.Message);
 
 					if (attempt++ > _retries)
-						throw ioe;
+						throw;
 				}
 				catch (SlaveException se)
 				{
 					_log.ErrorFormat("Slave Exception, {0} retries remaining - {1}", _retries + 1 - attempt, se.Message);
 
 					if (attempt++ > _retries)
-						throw se;
+						throw;
 				}
 		
 			} while (!success);

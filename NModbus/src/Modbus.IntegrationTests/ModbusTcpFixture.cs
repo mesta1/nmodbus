@@ -7,7 +7,7 @@ namespace Modbus.IntegrationTests
 {
 	[TestFixture]
 	public class ModbusTcpFixture : ModbusMasterFixture
-	{				
+	{
 		[TestFixtureSetUp]
 		public override void Init()
 		{
@@ -18,7 +18,7 @@ namespace Modbus.IntegrationTests
 			Slave = ModbusTcpSlave.CreateTcp(SlaveAddress, SlaveTcp);
 			StartSlave();
 
-			MasterTcp = new TcpClient(TcpHost.ToString(), TcpPort);			
+			MasterTcp = new TcpClient(TcpHost.ToString(), TcpPort);
 			Master = ModbusTcpMaster.CreateTcp(MasterTcp);
 			Master.Transport.Retries = 0;
 		}
@@ -34,7 +34,7 @@ namespace Modbus.IntegrationTests
 		[Test]
 		public override void ReadCoils()
 		{
-			base.ReadCoils();	
+			base.ReadCoils();
 		}
 
 		[Test]
@@ -80,11 +80,17 @@ namespace Modbus.IntegrationTests
 		}
 
 		[Test]
+		public override void ReadMaximumNumberOfHoldingRegisters()
+		{
+			base.ReadMaximumNumberOfHoldingRegisters();
+		}
+
+		[Test]
 		public void ReadWriteMultipleRegisters()
 		{
 			ushort startReadAddress = 120;
 			ushort numberOfPointsToRead = 5;
-			ushort startWriteAddress = 50;			
+			ushort startWriteAddress = 50;
 			ushort[] valuesToWrite = new ushort[] { 10, 20, 30, 40, 50 };
 
 			ushort[] valuesToRead = Master.ReadHoldingRegisters(SlaveAddress, startReadAddress, numberOfPointsToRead);

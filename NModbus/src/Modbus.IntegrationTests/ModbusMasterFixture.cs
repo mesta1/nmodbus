@@ -24,7 +24,7 @@ namespace Modbus.IntegrationTests
 		public const string DefaultSlaveSerialPortName = "COM6";
 		public const byte SlaveAddress = 1;
 
-		public IPAddress TcpHost = new IPAddress(new byte[] { 127, 0, 0, 1 });
+		public static IPAddress TcpHost = new IPAddress(new byte[] { 127, 0, 0, 1 });
 		public const int TcpPort = 502;
 		public TcpClient MasterTcp;
 		public TcpListener SlaveTcp;
@@ -69,8 +69,6 @@ namespace Modbus.IntegrationTests
 
 			Thread.Sleep(4000);
 			Assert.IsFalse(Jamod.HasExited, "Jamod Serial Ascii Slave did not start correctly.");
-			
-			// TODO test whether the slave has opened the serial port
 		}
 
 		[TestFixtureTearDown]
@@ -175,6 +173,21 @@ namespace Modbus.IntegrationTests
 			bool[] newValues = Master.ReadCoils(SlaveAddress, testAddress, (ushort) testValues.Length);
 			Assert.AreEqual(testValues, newValues);
 			Master.WriteMultipleCoils(SlaveAddress, testAddress, originalValues);
+		}
+
+		[Test]
+		public virtual void ReadMaximumNumberOfHoldingRegisters()
+		{
+			ushort[] registers = Master.ReadHoldingRegisters(SlaveAddress, 104, 125);
+			Assert.AreEqual(125, registers.Length);
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		[Ignore("TODO: perform check for number of registers.")]
+		public virtual void ReadTooManyHoldingRegisters()
+		{
+			Master.ReadHoldingRegisters(SlaveAddress, 104, 126);
 		}
 	}
 }

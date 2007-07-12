@@ -58,6 +58,7 @@
     <Compile Include="ModbusRtuFixture.cs" />
     <Compile Include="ModbusTcpFixture.cs" />
     <Compile Include="ModbusTcpJamodSlaveFixture.cs" />
+    <Compile Include="ModbusTcpSlaveFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

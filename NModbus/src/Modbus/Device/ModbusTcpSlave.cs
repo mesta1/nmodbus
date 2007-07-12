@@ -1,13 +1,13 @@
-using System;
-using System.Net;
-using System.Net.Sockets;
-using System.Threading;
 using log4net;
 using Modbus.IO;
 using Modbus.Message;
 using Modbus.Util;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
+using System.Net;
+using System.Net.Sockets;
 
 namespace Modbus.Device
 {
@@ -17,6 +17,7 @@ namespace Modbus.Device
 	public class ModbusTcpSlave : ModbusSlave
 	{
 		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusTcpSlave));
+		private static Dictionary<string, TcpClient> _masters = new Dictionary<string, TcpClient>();
 		private TcpListener _server;
 
 		private ModbusTcpSlave(byte unitID, TcpListener tcpListener)
@@ -26,14 +27,13 @@ namespace Modbus.Device
 		}
 
 		/// <summary>
-		/// Listens for connections from modbus masters (clients).
+		/// Gets the Modbus TCP Masters connected to this Modbus TCP Slave.
 		/// </summary>
-		/// <value>The server.</value>
-		public TcpListener Server
+		public static ReadOnlyCollection<TcpClient> Masters
 		{
 			get
 			{
-				return _server;
+				return new ReadOnlyCollection<TcpClient>(SequenceUtility.ToList(_masters.Values));
 			}
 		}
 
@@ -56,18 +56,27 @@ namespace Modbus.Device
 			_server.BeginAcceptTcpClient(AcceptCompleted, this);
 		}
 
-		private static void AcceptCompleted(IAsyncResult ar)
-		{		
-			_log.Debug("Accept completed.");
+		internal static void RemoveMaster(string endPoint)
+		{
+			if (!_masters.Remove(endPoint))
+				throw new ArgumentException(String.Format("EndPoint {0} cannot be removed, it does not exist.", endPoint));
+
+			_log.InfoFormat("Removed Master {0}", endPoint);
+		}
+
+		internal void AcceptCompleted(IAsyncResult ar)
+		{
 			ModbusTcpSlave slave = (ModbusTcpSlave) ar.AsyncState;
 
 			try
-			{				
-				TcpClient client = slave.Server.EndAcceptTcpClient(ar);
-				new ClientConnection(slave, client);
+			{
+				TcpClient client = _server.EndAcceptTcpClient(ar);
+				_masters.Add(client.Client.RemoteEndPoint.ToString(), client);
+				new MasterConnection(client.Client.RemoteEndPoint.ToString(), client.GetStream(), slave);
+				_log.Debug("Accept completed.");
 
 				// Accept another client
-				slave.Server.BeginAcceptTcpClient(AcceptCompleted, slave);
+				_server.BeginAcceptTcpClient(AcceptCompleted, slave);
 			}
 			catch (ObjectDisposedException)
 			{
@@ -76,54 +85,60 @@ namespace Modbus.Device
 		}
 
 		// TODO all read completed methods need to ensure all the data has been read, else they need to try to read again
-		internal class ClientConnection
+		// TODO really we should wrap any BeginXXX or EndXXX in a try catch block to make the slave more robust...
+		internal class MasterConnection
 		{
-			private static Dictionary<string, ClientConnection> _masters = new Dictionary<string, ClientConnection>();
-
 			private ModbusTcpSlave _slave;
-			private TcpClient _master;
+			private string _endPoint;
 			private NetworkStream _stream;
-			byte[] _mbapHeader = new byte[6];
-			byte[] _messageFrame;
+			private byte[] _mbapHeader = new byte[6];
+			private byte[] _messageFrame;
 
-			public ClientConnection(ModbusTcpSlave slave, TcpClient client)
+			public MasterConnection(string endPoint, NetworkStream stream, ModbusTcpSlave slave)
 			{
-				_log.DebugFormat("Creating new client connection at IP:{0}", client.Client.RemoteEndPoint);
+				if (stream == null)
+					throw new ArgumentException("stream");
 
+				if (slave == null)
+					throw new ArgumentException("slave");
+
+				_log.DebugFormat("Creating new Master connection at IP:{0}", endPoint);
 				_slave = slave;
-				_master = client;
-				_stream = client.GetStream();
-				_masters.Add(client.Client.RemoteEndPoint.ToString(), this);				
-				
+				_endPoint = endPoint;
+				_stream = stream;
+
 				_log.Debug("Begin reading header.");
 				_stream.BeginRead(_mbapHeader, 0, 6, ReadHeaderCompleted, null);
 			}
 
-			private void ReadHeaderCompleted(IAsyncResult ar)
+			internal void ReadHeaderCompleted(IAsyncResult ar)
 			{
 				_log.Debug("Read header completed.");
 
 				try
 				{
-					_stream.EndRead(ar);
+					if (_stream.EndRead(ar) == 0)
+					{
+						_log.Debug("0 bytes read, Master has closed Socket connection.");
+						RemoveMaster(_endPoint);
+						return;
+					}
 				}
 				catch (IOException ioe)
 				{
-					_log.DebugFormat("Exception encountered in ReadHeaderCompleted - {0}", ioe.Message);
+					_log.DebugFormat("IOException encountered in ReadHeaderCompleted - {0}", ioe.Message);
+					RemoveMaster(_endPoint);
 
 					SocketException socketException = ioe.InnerException as SocketException;
 					if (socketException != null && socketException.ErrorCode == Modbus.ConnectionResetByPeer)
 					{
-						// client closed connection
-						_log.Debug("Client closed connection, removing from Master list.");
-						_masters.Remove(_master.Client.RemoteEndPoint.ToString());
+						_log.Debug("Socket Exceptiong ConnectionResetByPeer, Master closed connection.");
 						return;
 					}
 
-					// not sure what happened
 					throw;
 				}
-				
+
 				_log.DebugFormat("MBAP header: {0}", StringUtil.Join(", ", _mbapHeader));
 				ushort frameLength = (ushort) (IPAddress.HostToNetworkOrder(BitConverter.ToInt16(_mbapHeader, 4)));
 				_log.DebugFormat("{0} bytes in PDU.", frameLength);
@@ -132,10 +147,9 @@ namespace Modbus.Device
 				_stream.BeginRead(_messageFrame, 0, frameLength, ReadFrameCompleted, null);
 			}
 
-			private void ReadFrameCompleted(IAsyncResult ar)
+			internal void ReadFrameCompleted(IAsyncResult ar)
 			{
-				_stream.EndRead(ar);
-
+				_log.DebugFormat("Read Frame completed {0} bytes", _stream.EndRead(ar));
 				byte[] frame = CollectionUtil.Combine(_mbapHeader, _messageFrame);
 				_log.InfoFormat("RX: {0}", StringUtil.Join(", ", frame));
 
@@ -165,9 +179,8 @@ namespace Modbus.Device
 				}
 				catch (IOException)
 				{
-					// client closed connection
-					_log.Debug("Client has closed connection.");
-					_masters.Remove(_master.Client.RemoteEndPoint.ToString());
+					_log.Debug("Master has closed Socket connection.");
+					RemoveMaster(_endPoint);
 				}
 			}
 		}
