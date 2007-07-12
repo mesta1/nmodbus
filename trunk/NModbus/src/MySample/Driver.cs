@@ -19,6 +19,7 @@ namespace MySample
 
 			try
 			{
+				ModbusTcpMasterReadInputs();
 				//SimplePerfTest();
 				//ModbusSerialRtuMasterWriteRegisters();
 				//ModbusSerialAsciiMasterReadRegisters();
@@ -26,14 +27,14 @@ namespace MySample
 				//StartModbusAsciiSlave();
 				//ModbusTcpMasterReadInputsFromModbusSlave();
 				//ModbusSerialAsciiMasterReadRegistersFromModbusSlave();
-				StartModbusTcpSlave();
+				//StartModbusTcpSlave();
 			}
 			catch (Exception e)
 			{
 				Console.WriteLine(e.Message);
 			}
 
-			Console.ReadKey();
+			//Console.ReadKey();
 		}
 
 		public static void SimplePerfTest()
@@ -153,7 +154,11 @@ namespace MySample
 				bool[] inputs = master.ReadInputs(startAddress, numInputs);
 
 				for (int i = 0; i < numInputs; i++)
-					Console.WriteLine("Input {0}={1}", startAddress + i, inputs[i] ? 1 : 0);				
+					Console.WriteLine("Input {0}={1}", startAddress + i, inputs[i] ? 1 : 0);
+
+				while (true)
+				{
+				}
 			}
 
 			// output: 
@@ -221,7 +226,7 @@ namespace MySample
 
 			// create the master
 			TcpClient masterTcpClient = new TcpClient(address.ToString(), port);
-			ModbusTcpMaster master = ModbusTcpMaster.CreateTcp(masterTcpClient);
+			ModbusTcpMaster master = ModbusTcpMaster.CreateTcp(masterTcpClient);	
 
 			ushort numInputs = 5;
 			ushort startAddress = 100;

@@ -8,6 +8,7 @@ using NUnit.Framework;
 using Rhino.Mocks;
 using System.Net.Sockets;
 using System.IO;
+using Modbus.Device;
 
 namespace Modbus.UnitTests.IO
 {
@@ -35,16 +36,15 @@ namespace Modbus.UnitTests.IO
 		}
 
 		[Test]
-		[Ignore("working on asynchronous Modbus TCP slave")]
 		public void Write()
 		{
 			MockRepository mocks = new MockRepository();
 			TcpStreamAdapter mockTcpStreamAdapter = mocks.CreateMock<TcpStreamAdapter>();
-			mockTcpStreamAdapter.Write(new byte[] { 255, 255, 0, 0, 0, 6, 1, 1, 0, 1, 0, 3 }, 0, 12);
+			Expect.Call(mockTcpStreamAdapter.BeginWrite(new byte[] { 255, 255, 0, 0, 0, 6, 1, 1, 0, 1, 0, 3 }, 0, 12, ModbusTcpTransport.WriteCompleted, mockTcpStreamAdapter)).Return(null);
 			ModbusTcpTransport mockModbusTcpTransport = mocks.PartialMock<ModbusTcpTransport>(mockTcpStreamAdapter);
 			Expect.Call(mockModbusTcpTransport.GetNewTransactionID()).Return(UInt16.MaxValue);
 			mocks.ReplayAll();
-			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 1, 3);
+			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 1, 3); 
 			mockModbusTcpTransport.Write(request);
 			mocks.VerifyAll();
 		}
