@@ -10,13 +10,12 @@ namespace Modbus.IntegrationTests
 	[TestFixture]
 	public class ModbusTcpSlaveFixture
 	{
-		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusTcpSlaveFixture));
-
 		/// <summary>
 		/// Tests the scenario when a slave is closed unexpectedly, causing a ConnectionResetByPeer SocketException
 		/// We want to handle this gracefully - remove the master from the dictionary
 		/// </summary>
 		[Test]
+		[Ignore("Need to finish")]
 		public void ModbusTcpSlave_ConnectionResetByPeer()
 		{
 			TcpListener slaveListener = new TcpListener(ModbusMasterFixture.TcpHost, ModbusMasterFixture.TcpPort);
