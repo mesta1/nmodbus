@@ -4,20 +4,29 @@ using NUnit.Framework;
 using System.Diagnostics;
 using System.Net.Sockets;
 using System.Threading;
+using System;
+using System.IO;
 
 namespace Modbus.IntegrationTests
 {
 	[TestFixture]
 	public class ModbusTcpSlaveFixture
 	{
+		[TearDown]
+		public void TearDown()
+		{
+			// a little time for resources to become free
+			Thread.Sleep(500);
+		}
+
 		/// <summary>
 		/// Tests the scenario when a slave is closed unexpectedly, causing a ConnectionResetByPeer SocketException
 		/// We want to handle this gracefully - remove the master from the dictionary
 		/// </summary>
 		[Test]
-		[Ignore("Need to finish")]
 		public void ModbusTcpSlave_ConnectionResetByPeer()
 		{
+			string test = Environment.CurrentDirectory;
 			TcpListener slaveListener = new TcpListener(ModbusMasterFixture.TcpHost, ModbusMasterFixture.TcpPort);
 			slaveListener.Start();
 			ModbusTcpSlave slave = ModbusTcpSlave.CreateTcp(ModbusMasterFixture.SlaveAddress, slaveListener);
@@ -27,7 +36,7 @@ namespace Modbus.IntegrationTests
 
 			Thread.Sleep(500);
 
-			Process masterProcess = Process.Start(@"C:\Code\NModbus\src\MySample\bin\Debug\MySample.exe");
+			Process masterProcess = Process.Start(Path.Combine(Environment.CurrentDirectory, @"..\..\..\..\tools\nmodbus\TestDriver.exe"));
 			Thread.Sleep(2000);
 
 			masterProcess.Kill();

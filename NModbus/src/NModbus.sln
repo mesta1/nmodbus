@@ -1,12 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modbus", "Modbus\Modbus.csproj", "{FF96B252-2B24-44A1-A09C-6401B5D7ED23}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modbus.IntegrationTests", "Modbus.IntegrationTests\Modbus.IntegrationTests.csproj", "{1AA055F2-68E1-409F-A744-6081D7A27A57}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
@@ -29,6 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\README.txt = ..\README.txt
 		..\tools\jamod\SerialSlave.java = ..\tools\jamod\SerialSlave.java
 		..\tools\jamod\TcpSlave.java = ..\tools\jamod\TcpSlave.java
+		..\tools\nmodbus\TestDriver.cs = ..\tools\nmodbus\TestDriver.cs
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MySample", "MySample\MySample.csproj", "{72FA8AB6-CE77-4578-8202-0DD32264783E}"
@@ -43,10 +38,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{FF96B252-2B24-44A1-A09C-6401B5D7ED23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FF96B252-2B24-44A1-A09C-6401B5D7ED23}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FF96B252-2B24-44A1-A09C-6401B5D7ED23}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FF96B252-2B24-44A1-A09C-6401B5D7ED23}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1AA055F2-68E1-409F-A744-6081D7A27A57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1AA055F2-68E1-409F-A744-6081D7A27A57}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1AA055F2-68E1-409F-A744-6081D7A27A57}.Release|Any CPU.ActiveCfg = Release|Any CPU
