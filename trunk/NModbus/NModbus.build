@@ -14,6 +14,7 @@
   <property name="path.lib" value="lib" />
   <property name="path.tools" value="tools" />
   <property name="path.jamod" value="${path.tools}\jamod" />
+  <property name="path.nmodbus" value="${path.tools}\nmodbus" />
   <property name="path.nunit" value="${path.tools}\nunit" />
   <property name="path.docs" value="docs" />
   <property name="path.dist" value="dist" />
@@ -165,6 +166,10 @@
 
   <target name="build-jamod">
     <exec program="${path.jdk}\bin\javac.exe" commandline="-classpath comm.jar;jamod.jar;. *.java" workingdir="${path.jamod}" />
+  </target>
+
+  <target name="build-nmodbus-test-driver">
+    <exec program="csc.exe" commandline="/r:modbus.dll *.cs" workingdir="${path.nmodbus}" />
   </target>
 
   <target name="setup-java" depends="build-jamod">
