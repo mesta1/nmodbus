@@ -57,7 +57,7 @@ namespace Modbus.Data
 		/// <typeparam name="U">The type of elements in the collection.</typeparam>
 		public static T ReadData<T, U>(T dataSource, ushort startAddress, ushort count) where T : Collection<U>, IModbusMessageDataCollection, new()
 		{
-			int startIndex = startAddress - 1;
+			int startIndex = startAddress + 1;
 
 			if (startIndex < 0 || startIndex >= dataSource.Count)
 				throw new ArgumentOutOfRangeException("Start address was out of range. Must be non-negative and <= the size of the collection.");
@@ -81,7 +81,7 @@ namespace Modbus.Data
 		/// <typeparam name="U">The type of elements in the collection.</typeparam>
 		public static void WriteData<T, U>(T items, T destination, ushort startAddress) where T : Collection<U>, IModbusMessageDataCollection, new()
 		{
-			int startIndex = startAddress - 1;
+			int startIndex = startAddress + 1;
 
 			if (startIndex < 0 || startIndex >= destination.Count)
 				throw new ArgumentOutOfRangeException("Start address was out of range. Must be non-negative and <= the size of the collection.");

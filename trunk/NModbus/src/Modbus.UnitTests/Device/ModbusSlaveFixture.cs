@@ -40,7 +40,7 @@ namespace Modbus.UnitTests.Device
 		public void ReadRegistersHoldingRegisters()
 		{
 			ReadHoldingInputRegistersResponse expectedResponse = new ReadHoldingInputRegistersResponse(Modbus.ReadHoldingRegisters, 1, 12, new RegisterCollection(1, 2, 3, 4, 5, 6));
-			ReadHoldingInputRegistersResponse response = ModbusSlave.ReadRegisters(new ReadHoldingInputRegistersRequest(Modbus.ReadHoldingRegisters, 1, 1, 6), _testDataStore.HoldingRegisters);
+			ReadHoldingInputRegistersResponse response = ModbusSlave.ReadRegisters(new ReadHoldingInputRegistersRequest(Modbus.ReadHoldingRegisters, 1, 0, 6), _testDataStore.HoldingRegisters);
 			AssertModbusMessagePropertiesAreEqual(expectedResponse, response);
 			Assert.AreEqual(expectedResponse.ByteCount, response.ByteCount);
 		}
@@ -49,7 +49,7 @@ namespace Modbus.UnitTests.Device
 		public void ReadRegistersInputRegisters()
 		{
 			ReadHoldingInputRegistersResponse expectedResponse = new ReadHoldingInputRegistersResponse(Modbus.ReadInputRegisters, 1, 12, new RegisterCollection(10, 20, 30, 40, 50, 60));
-			ReadHoldingInputRegistersResponse response = ModbusSlave.ReadRegisters(new ReadHoldingInputRegistersRequest(Modbus.ReadInputRegisters, 1, 1, 6), _testDataStore.InputRegisters);
+			ReadHoldingInputRegistersResponse response = ModbusSlave.ReadRegisters(new ReadHoldingInputRegistersRequest(Modbus.ReadInputRegisters, 1, 0, 6), _testDataStore.InputRegisters);
 			AssertModbusMessagePropertiesAreEqual(expectedResponse, response);
 			Assert.AreEqual(expectedResponse.ByteCount, response.ByteCount);
 		}
@@ -58,11 +58,11 @@ namespace Modbus.UnitTests.Device
 		public void WriteSingleCoil()
 		{			
 			ushort addressToWrite = 35;
-			bool valueToWrite = !_testDataStore.CoilDiscretes[addressToWrite - 1];
+			bool valueToWrite = !_testDataStore.CoilDiscretes[addressToWrite + 1];
 			WriteSingleCoilRequestResponse expectedResponse = new WriteSingleCoilRequestResponse(1, addressToWrite, valueToWrite);
 			WriteSingleCoilRequestResponse response = ModbusSlave.WriteSingleCoil(new WriteSingleCoilRequestResponse(1, addressToWrite, valueToWrite), _testDataStore.CoilDiscretes);
 			AssertModbusMessagePropertiesAreEqual(expectedResponse, response);
-			Assert.AreEqual(valueToWrite, _testDataStore.CoilDiscretes[addressToWrite - 1]);
+			Assert.AreEqual(valueToWrite, _testDataStore.CoilDiscretes[addressToWrite + 1]);
 		}
 
 		[Test]
@@ -70,11 +70,11 @@ namespace Modbus.UnitTests.Device
 		{
 			ushort startAddress = 35;
 			ushort numberOfPoints = 10;
-			bool val = !_testDataStore.CoilDiscretes[startAddress - 1];
+			bool val = !_testDataStore.CoilDiscretes[startAddress + 1];
 			WriteMultipleCoilsResponse expectedResponse = new WriteMultipleCoilsResponse(1, startAddress, numberOfPoints);
 			WriteMultipleCoilsResponse response = ModbusSlave.WriteMultipleCoils(new WriteMultipleCoilsRequest(1, startAddress, new DiscreteCollection(val, val, val, val, val, val, val, val, val, val)), _testDataStore.CoilDiscretes);
 			AssertModbusMessagePropertiesAreEqual(expectedResponse, response);
-			Assert.AreEqual(new bool[] { val, val, val, val, val, val, val, val, val, val }, CollectionUtil.Slice<bool>(_testDataStore.CoilDiscretes, startAddress - 1, numberOfPoints));
+			Assert.AreEqual(new bool[] { val, val, val, val, val, val, val, val, val, val }, CollectionUtil.Slice<bool>(_testDataStore.CoilDiscretes, startAddress + 1, numberOfPoints));
 		}
 
 		[Test]
