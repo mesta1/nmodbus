@@ -35,9 +35,9 @@ namespace Modbus.IO
 
 		public static byte[] GetMbapHeader(IModbusMessage message)
 		{
-			byte[] transactionID = BitConverter.GetBytes((short) IPAddress.HostToNetworkOrder((short) (message.TransactionID)));
+			byte[] transactionID = BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short) (message.TransactionID)));
 			byte[] protocol = { 0, 0 };
-			byte[] length = BitConverter.GetBytes((short) IPAddress.HostToNetworkOrder((short) (message.ProtocolDataUnit.Length + 1)));
+			byte[] length = BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short) (message.ProtocolDataUnit.Length + 1)));
 
 			return CollectionUtil.Combine(transactionID, protocol, length, new byte[] { message.SlaveAddress });
 		}

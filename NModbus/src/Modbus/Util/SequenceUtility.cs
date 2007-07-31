@@ -4,12 +4,12 @@ using System.Collections.Generic;
 namespace Modbus.Util
 {
 	/// <summary>
-	/// Utility class for IEnumerable<T>
+	/// Utility class for IEnumerable&lt;T&gt;
 	/// </summary>
 	public class SequenceUtility
 	{
 		/// <summary>
-		/// Builds an IList<T> from an IEnumerable<T> sequence.
+		/// Builds an IList&lt;T&gt; from an IEnumerable&lt;T&gt; sequence.
 		/// </summary>
 		public static IList<T> ToList<T>(IEnumerable<T> sequence)
 		{

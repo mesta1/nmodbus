@@ -16,6 +16,7 @@ namespace Modbus.Device
 	/// </summary>
 	public class ModbusTcpSlave : ModbusSlave
 	{
+		private static readonly object _mastersLock = new object();
 		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusTcpSlave));
 		private static Dictionary<string, TcpClient> _masters = new Dictionary<string, TcpClient>();
 		private TcpListener _server;
@@ -33,7 +34,8 @@ namespace Modbus.Device
 		{
 			get
 			{
-				return new ReadOnlyCollection<TcpClient>(SequenceUtility.ToList(_masters.Values));
+				lock (_mastersLock)
+					return new ReadOnlyCollection<TcpClient>(SequenceUtility.ToList(_masters.Values));
 			}
 		}
 
@@ -58,8 +60,11 @@ namespace Modbus.Device
 
 		internal static void RemoveMaster(string endPoint)
 		{
-			if (!_masters.Remove(endPoint))
-				throw new ArgumentException(String.Format("EndPoint {0} cannot be removed, it does not exist.", endPoint));
+			lock (_mastersLock)
+			{
+				if (!_masters.Remove(endPoint))
+					throw new ArgumentException(String.Format("EndPoint {0} cannot be removed, it does not exist.", endPoint));
+			}
 
 			_log.InfoFormat("Removed Master {0}", endPoint);
 		}
@@ -71,7 +76,10 @@ namespace Modbus.Device
 			try
 			{
 				TcpClient client = _server.EndAcceptTcpClient(ar);
-				_masters.Add(client.Client.RemoteEndPoint.ToString(), client);
+
+				lock (_mastersLock)
+					_masters.Add(client.Client.RemoteEndPoint.ToString(), client);
+
 				new MasterConnection(client.Client.RemoteEndPoint.ToString(), client.GetStream(), slave);
 				_log.Debug("Accept completed.");
 

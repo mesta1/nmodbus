@@ -11,8 +11,8 @@ namespace Modbus.UnitTests.Data
 		[Test]
 		public void ReadData()
 		{
-			RegisterCollection slaveCol = new RegisterCollection(1, 2, 3, 4, 5, 6);
-			RegisterCollection result = DataStore.ReadData<RegisterCollection, ushort>(slaveCol, 2, 3);
+			RegisterCollection slaveCol = new RegisterCollection(0, 1, 2, 3, 4, 5, 6);
+			RegisterCollection result = DataStore.ReadData<RegisterCollection, ushort>(slaveCol, 1, 3);
 			Assert.AreEqual(new ushort[] { 2, 3, 4 }, CollectionUtil.ToArray<ushort>(result));
 		}
 
@@ -28,28 +28,28 @@ namespace Modbus.UnitTests.Data
 			DataStore.ReadData<DiscreteCollection, bool>(new DiscreteCollection(true, false, true, true), 1, 5);
 		}
 
-		[Test, ExpectedException(typeof(ArgumentOutOfRangeException))]
-		public void ReadDataNegativeStartAddress()
+		[Test]
+		public void ReadDataStartAddressZero()
 		{
-			DataStore.ReadData<DiscreteCollection, bool>(new DiscreteCollection(true, false, true, true), 0, 5);
+			DataStore.ReadData<DiscreteCollection, bool>(new DiscreteCollection(true, false, true, true, true, true), 0, 5);
 		}
 
 		[Test]
 		public void WriteDataSingle()
 		{
-			DiscreteCollection destination = new DiscreteCollection(true);
+			DiscreteCollection destination = new DiscreteCollection(true, true);
 			DiscreteCollection newValues = new DiscreteCollection(false);
-			DataStore.WriteData<DiscreteCollection, bool>(newValues, destination, 1);
-			Assert.AreEqual(false, destination[0]);
+			DataStore.WriteData<DiscreteCollection, bool>(newValues, destination, 0);
+			Assert.AreEqual(false, destination[1]);
 		}
 
 		[Test]
 		public void WriteDataMultiple()
 		{
-			DiscreteCollection destination = new DiscreteCollection(true, false, false, false, false, true);
+			DiscreteCollection destination = new DiscreteCollection(true, false, false, false, false, false, true);
 			DiscreteCollection newValues = new DiscreteCollection(true, true, true, true);
-			DataStore.WriteData<DiscreteCollection, bool>(newValues, destination, 1);
-			Assert.AreEqual(new bool[] { true, true, true, true, false, true }, CollectionUtil.ToArray<bool>(destination));
+			DataStore.WriteData<DiscreteCollection, bool>(newValues, destination, 0);
+			Assert.AreEqual(new bool[] { true, true, true, true, true, false, true }, CollectionUtil.ToArray<bool>(destination));
 		}
 
 		[Test, ExpectedException(typeof(ArgumentOutOfRangeException))]
@@ -60,16 +60,32 @@ namespace Modbus.UnitTests.Data
 			DataStore.WriteData<DiscreteCollection, bool>(newValues, slaveCol, 1);
 		}
 
-		[Test, ExpectedException(typeof(ArgumentOutOfRangeException))]
+		[Test]
 		public void WriteDataStartAddressZero()
 		{
-			DataStore.WriteData<DiscreteCollection, bool>(new DiscreteCollection(true), new DiscreteCollection(true), 0);
+			DataStore.WriteData<DiscreteCollection, bool>(new DiscreteCollection(false), new DiscreteCollection(true, true), 0);
 		}
 
 		[Test, ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void WriteDataStartAddressTooLarge()
 		{
 			DataStore.WriteData<DiscreteCollection, bool>(new DiscreteCollection(true), new DiscreteCollection(true), 2);
+		}
+
+		/// <summary>
+		/// http://modbus.org/docs/Modbus_Application_Protocol_V1_1b.pdf
+		/// In the PDU Coils are addressed starting at zero. Therefore coils numbered 1-16 are addressed as 0-15.
+		/// So reading address 0 should get you 
+		/// </summary>
+		[Test]
+		public void TestReadMapping()
+		{
+			DataStore dataStore = DataStoreFactory.CreateDefaultDataStore();
+			dataStore.HoldingRegisters.Insert(1, 45);
+			dataStore.HoldingRegisters.Insert(2, 42);
+
+			Assert.AreEqual(45, DataStore.ReadData<RegisterCollection, ushort>(dataStore.HoldingRegisters, 0, 1)[0]);
+			Assert.AreEqual(42, DataStore.ReadData<RegisterCollection, ushort>(dataStore.HoldingRegisters, 1, 1)[0]);
 		}
 	}
 }
