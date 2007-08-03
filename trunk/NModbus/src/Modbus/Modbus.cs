@@ -24,6 +24,9 @@ namespace Modbus
 		// modbus slave exception offset that is added to the function code, to flag an exception
 		public const byte ExceptionOffset = 128;
 
+		// modbus slave exception codes
+		public const byte Acknowlege = 5;
+
 		// default setting for number of retries for IO operations
 		public const int DefaultRetries = 3;
 

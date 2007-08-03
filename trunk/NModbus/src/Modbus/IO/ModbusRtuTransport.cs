@@ -37,7 +37,7 @@ namespace Modbus.IO
 			return BitConverter.ToUInt16(messageFrame, messageFrame.Length - 2) == BitConverter.ToUInt16(ModbusUtil.CalculateCrc(message.MessageFrame), 0);
 		}
 
-		internal override T ReadResponse<T>()
+		internal override IModbusMessage ReadResponse<T>()
 		{
 			byte[] frameStart = Read(ResponseFrameStartLength);
 			byte[] frameEnd = Read(ResponseBytesToRead(frameStart));

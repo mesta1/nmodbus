@@ -49,7 +49,7 @@ namespace Modbus.UnitTests.Data
 			DiscreteCollection destination = new DiscreteCollection(true, false, false, false, false, false, true);
 			DiscreteCollection newValues = new DiscreteCollection(true, true, true, true);
 			DataStore.WriteData<DiscreteCollection, bool>(newValues, destination, 0);
-			Assert.AreEqual(new bool[] { true, true, true, true, true, false, true }, CollectionUtil.ToArray<bool>(destination));
+			Assert.AreEqual(new bool[] { true, true, true, true, true, false, true }, CollectionUtil.ToArray(destination));
 		}
 
 		[Test, ExpectedException(typeof(ArgumentOutOfRangeException))]

@@ -20,12 +20,13 @@ namespace Modbus.IO
 		{
 			get { return _retries; }
 			set { _retries = value; }
-		}		
+		}
 
-		internal virtual T UnicastMessage<T>(IModbusMessage message) where T : IModbusMessage, new()
+		internal virtual T UnicastMessage<T>(IModbusMessage message) where T : class, IModbusMessage, new()
 		{
-			T response = default(T);
+			IModbusMessage response = null;
 			int attempt = 1;
+			bool readAgain = false;
 			bool success = false;
 
 			do
@@ -33,7 +34,25 @@ namespace Modbus.IO
 				try
 				{
 					Write(message);
-					response = ReadResponse<T>();
+
+					do
+					{
+						response = ReadResponse<T>();
+
+						if (response is SlaveExceptionResponse)
+						{
+							if (response.FunctionCode == Modbus.Acknowlege)
+							{
+								readAgain = true;
+							}
+							else
+							{
+								throw new SlaveException((SlaveExceptionResponse) response);
+							}
+						}
+						
+					} while (readAgain);
+
 					ValidateResponse(message, response);
 					success = true;
 				}
@@ -58,22 +77,23 @@ namespace Modbus.IO
 					if (attempt++ > _retries)
 						throw;
 				}
-		
+
 			} while (!success);
 
-			return response;
+			return (T) response;
 		}
 
-		internal virtual T CreateResponse<T>(byte[] frame) where T : IModbusMessage, new()
+		internal virtual IModbusMessage CreateResponse<T>(byte[] frame) where T : IModbusMessage, new()
 		{
 			byte functionCode = frame[1];
+			IModbusMessage response = null;
 
 			// check for slave exception response
 			if (functionCode > Modbus.ExceptionOffset)
-				throw new SlaveException(ModbusMessageFactory.CreateModbusMessage<SlaveExceptionResponse>(frame));
-
-			// create message from frame
-			T response = ModbusMessageFactory.CreateModbusMessage<T>(frame);
+				response = ModbusMessageFactory.CreateModbusMessage<SlaveExceptionResponse>(frame);
+			else
+				// create message from frame
+				response = ModbusMessageFactory.CreateModbusMessage<T>(frame);
 
 			return response;
 		}
@@ -85,8 +105,8 @@ namespace Modbus.IO
 		}
 
 		internal abstract byte[] ReadRequest();
-		internal abstract T ReadResponse<T>() where T : IModbusMessage, new();
-		internal abstract byte[] BuildMessageFrame(IModbusMessage message);		
+		internal abstract IModbusMessage ReadResponse<T>() where T : IModbusMessage, new();
+		internal abstract byte[] BuildMessageFrame(IModbusMessage message);
 		internal abstract void Write(IModbusMessage message);
 	}
 }

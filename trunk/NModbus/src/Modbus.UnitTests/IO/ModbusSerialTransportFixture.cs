@@ -17,7 +17,8 @@ namespace Modbus.UnitTests.IO
 			ModbusAsciiTransport transport = new ModbusAsciiTransport();
 			ReadCoilsInputsResponse expectedResponse = new ReadCoilsInputsResponse(Modbus.ReadCoils, 2, 1, new DiscreteCollection(true, false, false, false, false, false, false, true));
 			byte lrc = ModbusUtil.CalculateLrc(expectedResponse.MessageFrame);
-			ReadCoilsInputsResponse response = transport.CreateResponse<ReadCoilsInputsResponse>(new byte[] { 2, Modbus.ReadCoils, 1, 129, lrc });
+			ReadCoilsInputsResponse response = transport.CreateResponse<ReadCoilsInputsResponse>(new byte[] { 2, Modbus.ReadCoils, 1, 129, lrc }) as ReadCoilsInputsResponse;
+			Assert.IsNotNull(response);
 			AssertModbusMessagePropertiesAreEqual(expectedResponse, response);
 		}
 

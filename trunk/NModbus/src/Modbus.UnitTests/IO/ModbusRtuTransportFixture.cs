@@ -5,6 +5,7 @@ using Modbus.Message;
 using NUnit.Framework;
 using Rhino.Mocks;
 using Modbus.Util;
+using System.IO;
 
 namespace Modbus.UnitTests.IO
 {
@@ -130,14 +131,15 @@ namespace Modbus.UnitTests.IO
 
 			mocks.ReplayAll();
 
-			ReadCoilsInputsResponse response = transport.ReadResponse<ReadCoilsInputsResponse>();
+			ReadCoilsInputsResponse response = transport.ReadResponse<ReadCoilsInputsResponse>() as ReadCoilsInputsResponse;
+			Assert.IsNotNull(response);
 			ReadCoilsInputsResponse expectedResponse = new ReadCoilsInputsResponse(Modbus.ReadCoils, 1, 1, new DiscreteCollection(false));
 			Assert.AreEqual(response.MessageFrame, expectedResponse.MessageFrame);
 
 			mocks.VerifyAll();
 		}
 
-		[Test, ExpectedException(typeof(SlaveException))]
+		[Test]
 		public void ReadResponseSlaveException()
 		{
 			MockRepository mocks = new MockRepository();
@@ -154,8 +156,35 @@ namespace Modbus.UnitTests.IO
 
 			mocks.ReplayAll();
 
-			ReadCoilsInputsResponse response = transport.ReadResponse<ReadCoilsInputsResponse>();
+			Assert.IsTrue(transport.ReadResponse<ReadCoilsInputsResponse>() is SlaveExceptionResponse);
 		
+			mocks.VerifyAll();
+		}
+
+		/// <summary>
+		/// We want to throw an IOException for any message w/ an invalid checksum, 
+		/// this must preceed throwing a SlaveException based on function code > 127
+		/// </summary>
+		[Test, ExpectedException(typeof(IOException))]
+		public void ReadResponseSlaveExceptionWithErroneousLrc()
+		{
+			MockRepository mocks = new MockRepository();
+			ModbusRtuTransport transport = mocks.PartialMock<ModbusRtuTransport>();
+
+			byte[] messageFrame = { 0x01, 0x81, 0x02 };
+			// invalid crc
+			byte[] crc = { 0x9, 0x9 };
+
+			Expect.Call(transport.Read(ModbusRtuTransport.ResponseFrameStartLength))
+				.Return(CollectionUtil.Combine(messageFrame, new byte[] { crc[0] }));
+
+			Expect.Call(transport.Read(1))
+				.Return(new byte[] { crc[1] });
+
+			mocks.ReplayAll();
+
+			transport.ReadResponse<ReadCoilsInputsResponse>();
+
 			mocks.VerifyAll();
 		}
 

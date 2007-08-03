@@ -101,13 +101,13 @@ namespace Modbus.IO
 			return ReadRequestResponse(_tcpStreamAdapter);
 		}		
 
-		internal override T ReadResponse<T>()
+		internal override IModbusMessage ReadResponse<T>()
 		{
 			byte[] fullFrame = ReadRequestResponse(_tcpStreamAdapter);
 			byte[] mbapHeader = CollectionUtil.Slice(fullFrame, 0, 6);
 			byte[] messageFrame = CollectionUtil.Slice(fullFrame, 6, fullFrame.Length - 6);
 
-			T response = base.CreateResponse<T>(messageFrame);
+			IModbusMessage response = base.CreateResponse<T>(messageFrame);
 			response.TransactionID = (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(mbapHeader, 0));
 
 			return response;
