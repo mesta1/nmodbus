@@ -57,9 +57,9 @@ namespace Modbus.IO
 			return base.UnicastMessage<T>(message);
 		}
 
-		internal override T CreateResponse<T>(byte[] frame)
+		internal override IModbusMessage CreateResponse<T>(byte[] frame)
 		{
-			T response = base.CreateResponse<T>(frame);
+			IModbusMessage response = base.CreateResponse<T>(frame);
 
 			// compare checksum
 			if (CheckFrame && !ChecksumsMatch(response, frame))

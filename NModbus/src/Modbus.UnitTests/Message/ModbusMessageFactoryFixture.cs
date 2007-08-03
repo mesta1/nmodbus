@@ -91,7 +91,11 @@ namespace Modbus.UnitTests.Message
 		public void CreateModbusMessageSlaveExceptionResponse()
 		{
 			SlaveExceptionResponse response = ModbusMessageFactory.CreateModbusMessage<SlaveExceptionResponse>(new byte[] { 11, 129, 2 });
-			AssertModbusMessagePropertiesAreEqual(new SlaveExceptionResponse(11, Modbus.ReadCoils, 2), response);
+			SlaveExceptionResponse expectedException = new SlaveExceptionResponse(11, Modbus.ReadCoils + Modbus.ExceptionOffset, 2);
+			Assert.AreEqual(expectedException.FunctionCode, response.FunctionCode);
+			Assert.AreEqual(expectedException.SlaveAddress, response.SlaveAddress);
+			Assert.AreEqual(expectedException.MessageFrame, response.MessageFrame);
+			Assert.AreEqual(expectedException.ProtocolDataUnit, response.ProtocolDataUnit);
 		}
 
 		[Test]

@@ -32,7 +32,6 @@ namespace Modbus.Message
 			if (FunctionCode <= Modbus.ExceptionOffset)
 				throw new FormatException("Invalid function code value for SlaveExceptionResponse.");
 
-			FunctionCode -= Modbus.ExceptionOffset;
 			SlaveExceptionCode = frame[2];
 		}
 	}

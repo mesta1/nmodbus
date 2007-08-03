@@ -10,13 +10,13 @@ namespace Modbus.Message
 	/// Interfaces expose subsets of type specific implementations.
 	/// </summary>
 	class ModbusMessageImpl
-	{		
-		private byte _exceptionCode;
+	{
+		private byte? _exceptionCode;
 		private ushort _transactionID;
 		private byte _functionCode;
 		private ushort? _subFunctionCode;
 		private byte _slaveAddress;
-		private ushort? _startAddress;		
+		private ushort? _startAddress;
 		private ushort? _numberOfPoints;
 		private byte? _byteCount;
 		private IModbusMessageDataCollection _data;
@@ -39,7 +39,7 @@ namespace Modbus.Message
 
 		public byte ExceptionCode
 		{
-			get { return _exceptionCode; }
+			get { return _exceptionCode.Value; }
 			set { _exceptionCode = value; }
 		}
 
@@ -54,7 +54,7 @@ namespace Modbus.Message
 			get { return _functionCode; }
 			set { _functionCode = value; }
 		}
-	
+
 		public ushort NumberOfPoints
 		{
 			get { return _numberOfPoints.Value; }
@@ -95,26 +95,29 @@ namespace Modbus.Message
 
 				return frame.ToArray();
 			}
-		}	
+		}
 
 		public byte[] ProtocolDataUnit
 		{
 			get
 			{
 				List<byte> pdu = new List<byte>();
-				
+
 				pdu.Add(_functionCode);
 
-				if (_subFunctionCode != null)
+				if (_exceptionCode.HasValue)
+					pdu.Add(_exceptionCode.Value);
+
+				if (_subFunctionCode.HasValue)
 					pdu.AddRange(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short) _subFunctionCode.Value)));
 
-				if (_startAddress != null)
+				if (_startAddress.HasValue)
 					pdu.AddRange(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short) _startAddress.Value)));
 
-				if (_numberOfPoints != null)
+				if (_numberOfPoints.HasValue)
 					pdu.AddRange(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short) _numberOfPoints.Value)));
 
-				if (_byteCount != null)
+				if (_byteCount.HasValue)
 					pdu.Add(_byteCount.Value);
 
 				if (_data != null)

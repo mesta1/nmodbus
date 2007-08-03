@@ -5,6 +5,7 @@ using Modbus.IO;
 using Modbus.Message;
 using NUnit.Framework;
 using Rhino.Mocks;
+using Modbus.Util;
 
 namespace Modbus.UnitTests.IO
 {
@@ -112,14 +113,13 @@ namespace Modbus.UnitTests.IO
 			mocks.VerifyAll();
 		}
 
-		[Test, ExpectedException(typeof(SlaveException))]
+		[Test]
 		public void CreateResponse_SlaveException()
 		{
-			MockRepository mocks = new MockRepository();
-			ModbusTransport transport = mocks.PartialMock<ModbusTransport>();
-			mocks.ReplayAll();
-			transport.CreateResponse<ReadCoilsInputsResponse>(new byte[] { 2, 129, 1, 5 });
-			mocks.VerifyAll();
+			ModbusTransport transport = new ModbusAsciiTransport();
+			byte[] frame = { 2, 129, 2 };
+			IModbusMessage message = transport.CreateResponse<ReadCoilsInputsResponse>(CollectionUtil.Combine(frame, new byte[] { ModbusUtil.CalculateLrc(frame) }));
+			Assert.IsTrue(message is SlaveExceptionResponse);
 		}
 
 		[Test, ExpectedException(typeof(IOException))]

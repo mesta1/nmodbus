@@ -44,7 +44,7 @@ namespace Modbus.IO
 			return ReadRequestResponse();
 		}
 
-		internal override T ReadResponse<T>()
+		internal override IModbusMessage ReadResponse<T>()
 		{
 			return CreateResponse<T>(ReadRequestResponse());
 		}
