@@ -22,11 +22,11 @@ namespace Modbus.IO
 			set { _retries = value; }
 		}
 
-		internal virtual T UnicastMessage<T>(IModbusMessage message) where T : class, IModbusMessage, new()
+		internal virtual T UnicastMessage<T>(IModbusMessage message) where T : IModbusMessage, new()
 		{
 			IModbusMessage response = null;
 			int attempt = 1;
-			bool readAgain = false;
+			bool readAgain;
 			bool success = false;
 
 			do
@@ -37,17 +37,19 @@ namespace Modbus.IO
 
 					do
 					{
+						readAgain = false;
 						response = ReadResponse<T>();
 
-						if (response is SlaveExceptionResponse)
+						SlaveExceptionResponse exceptionResponse = response as SlaveExceptionResponse;
+						if (exceptionResponse != null)
 						{
-							if (response.FunctionCode == Modbus.Acknowlege)
+							if (exceptionResponse.SlaveExceptionCode == Modbus.Acknowlege)
 							{
 								readAgain = true;
 							}
 							else
 							{
-								throw new SlaveException((SlaveExceptionResponse) response);
+								throw new SlaveException(exceptionResponse);
 							}
 						}
 						
@@ -86,7 +88,7 @@ namespace Modbus.IO
 		internal virtual IModbusMessage CreateResponse<T>(byte[] frame) where T : IModbusMessage, new()
 		{
 			byte functionCode = frame[1];
-			IModbusMessage response = null;
+			IModbusMessage response;
 
 			// check for slave exception response
 			if (functionCode > Modbus.ExceptionOffset)
