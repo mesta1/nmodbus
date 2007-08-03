@@ -69,10 +69,35 @@ namespace Modbus.UnitTests.IO
 			mocks.ReplayAll();
 
 			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadInputs, 2, 3, 4);
-			ReadCoilsInputsResponse response = transport.UnicastMessage<ReadCoilsInputsResponse>(request);
+			transport.UnicastMessage<ReadCoilsInputsResponse>(request);
 
 			mocks.VerifyAll();
-		}		
+		}
+
+		[Test]
+		public void UnicastMessage_AcknowlegeSlaveException()
+		{
+			MockRepository mocks = new MockRepository();
+			ModbusTransport transport = mocks.PartialMock<ModbusTransport>();
+			transport.Write(null);
+			LastCall.IgnoreArguments();
+
+			Expect.Call(transport.ReadResponse<ReadHoldingInputRegistersResponse>())
+				.Return(new SlaveExceptionResponse(1, Modbus.ReadHoldingRegisters + Modbus.ExceptionOffset, Modbus.Acknowlege))
+				.Repeat.Times(8);
+
+			Expect.Call(transport.ReadResponse<ReadHoldingInputRegistersResponse>())
+				.Return(new ReadHoldingInputRegistersResponse(Modbus.ReadHoldingRegisters, 1, 1, new RegisterCollection(1)));
+
+			mocks.ReplayAll();
+
+			ReadHoldingInputRegistersRequest request = new ReadHoldingInputRegistersRequest(Modbus.ReadHoldingRegisters, 1, 1, 1);
+			ReadHoldingInputRegistersResponse expectedResponse = new ReadHoldingInputRegistersResponse(Modbus.ReadHoldingRegisters, 1, 1, new RegisterCollection(1));
+			ReadHoldingInputRegistersResponse response = transport.UnicastMessage<ReadHoldingInputRegistersResponse>(request);
+			Assert.AreEqual(expectedResponse.MessageFrame, response.MessageFrame);
+
+			mocks.VerifyAll();
+		}
 
 		[Test, ExpectedException(typeof(TimeoutException))]
 		public void UnicastMessage_TimeoutException()
@@ -88,10 +113,10 @@ namespace Modbus.UnitTests.IO
 			mocks.ReplayAll();
 
 			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadInputs, 2, 3, 4);
-			ReadCoilsInputsResponse response = transport.UnicastMessage<ReadCoilsInputsResponse>(request);
+			transport.UnicastMessage<ReadCoilsInputsResponse>(request);
 
 			mocks.VerifyAll();
-		}		
+		}
 
 		[Test, ExpectedException(typeof(TimeoutException))]
 		public void UnicastMessage_Retries()
@@ -108,7 +133,7 @@ namespace Modbus.UnitTests.IO
 			mocks.ReplayAll();
 
 			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadInputs, 2, 3, 4);
-			ReadCoilsInputsResponse response = transport.UnicastMessage<ReadCoilsInputsResponse>(request);
+			transport.UnicastMessage<ReadCoilsInputsResponse>(request);
 
 			mocks.VerifyAll();
 		}
@@ -127,10 +152,10 @@ namespace Modbus.UnitTests.IO
 		{
 			MockRepository mocks = new MockRepository();
 			ModbusTransport transport = mocks.PartialMock<ModbusTransport>();
-			
+
 			IModbusMessage request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 1, 1);
 			IModbusMessage response = new ReadHoldingInputRegistersResponse(Modbus.ReadHoldingRegisters, 1, 1, null);
-			
+
 			mocks.ReplayAll();
 			transport.ValidateResponse(request, response);
 			mocks.VerifyAll();
