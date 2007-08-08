@@ -20,6 +20,7 @@
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>true</UseVSHostingProcess>
     <DocumentationFile>bin\Debug\Modbus.XML</DocumentationFile>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -51,6 +52,7 @@
     <Compile Include="Data\DataStore.cs" />
     <Compile Include="Data\DataStoreFactory.cs" />
     <Compile Include="Data\DiscreteCollection.cs" />
+    <Compile Include="Data\ModbusDataCollection.cs" />
     <Compile Include="Data\RegisterCollection.cs" />
     <Compile Include="Device\IModbusMaster.cs" />
     <Compile Include="Device\IModbusSerialMaster.cs" />
@@ -61,14 +63,18 @@
     <Compile Include="Device\ModbusSlave.cs" />
     <Compile Include="Device\ModbusTcpMaster.cs" />
     <Compile Include="Device\ModbusTcpSlave.cs" />
+    <Compile Include="IO\ISerialResource.cs" />
     <Compile Include="IO\ModbusAsciiTransport.cs" />
     <Compile Include="IO\ModbusRtuTransport.cs" />
     <Compile Include="IO\ModbusSerialTransport.cs" />
     <Compile Include="Data\IModbusMessageDataCollection.cs" />
     <Compile Include="IO\ModbusTcpTransport.cs" />
     <Compile Include="IO\ModbusTransport.cs" />
-    <Compile Include="IO\SerialPortAdapter.cs" />
+    <Compile Include="IO\ModbusUsbTransport.cs" />
+    <Compile Include="IO\CommPortAdapter.cs" />
     <Compile Include="IO\TcpStreamAdapter.cs" />
+    <Compile Include="IO\UsbPortAdapter.cs" />
+    <Compile Include="IO\FTD2XXUsbPort.cs" />
     <Compile Include="Message\ReadCoilsInputsRequest.cs" />
     <Compile Include="Message\ReadHoldingInputRegistersRequest.cs" />
     <Compile Include="Message\ReadWriteMultipleRegistersRequest.cs" />
@@ -89,12 +95,24 @@
     <Compile Include="Message\WriteSingleRegisterRequestResponse.cs" />
     <Compile Include="Modbus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="SlaveException.cs" />
     <Compile Include="Util\SequenceUtility.cs" />
-    <Compile Include="Util\CollectionUtil.cs" />
+    <Compile Include="Util\CollectionUtility.cs" />
     <Compile Include="Util\DelegateDefinitions.cs" />
-    <Compile Include="Util\ModbusUtil.cs" />
-    <Compile Include="Util\StringUtil.cs" />
+    <Compile Include="Util\ModbusUtility.cs" />
+    <Compile Include="Util\StringUtility.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -104,4 +122,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <PostBuildEvent>copy $(ProjectDir)\..\..\lib\FTD2XX.dll $(TargetDir)</PostBuildEvent>
+  </PropertyGroup>
 </Project>

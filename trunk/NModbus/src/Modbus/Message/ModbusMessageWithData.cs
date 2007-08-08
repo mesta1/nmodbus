@@ -2,8 +2,7 @@ using Modbus.Data;
 
 namespace Modbus.Message
 {
-	abstract class ModbusMessageWithData<TData> : ModbusMessage
-		where TData : IModbusMessageDataCollection
+	abstract class ModbusMessageWithData<TData> : ModbusMessage where TData : IModbusMessageDataCollection
 	{
 		public ModbusMessageWithData()
 		{

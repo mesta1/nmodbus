@@ -30,7 +30,7 @@ namespace Modbus.UnitTests.IO
 		[Test]
 		public void GetMbapHeader()
 		{
-			WriteMultipleRegistersRequest message = new WriteMultipleRegistersRequest(3, 1, CollectionUtil.CreateDefaultCollection<RegisterCollection, ushort>(0, 120));
+			WriteMultipleRegistersRequest message = new WriteMultipleRegistersRequest(3, 1, CollectionUtility.CreateDefaultCollection<RegisterCollection, ushort>(0, 120));
 			message.TransactionID = 45;
 			Assert.AreEqual(new byte[] { 0, 45, 0, 0, 0, 247, 3 }, ModbusTcpTransport.GetMbapHeader(message));
 		}
@@ -67,7 +67,7 @@ namespace Modbus.UnitTests.IO
 
 			Expect.Call(mockTransport.Read(new byte[6], 0, 6)).Do(((StreamReadWriteDelegate) delegate(byte[] buf, int offset, int count)
 			{
-				Array.Copy(CollectionUtil.Combine(new byte[] { 1 }, request.ProtocolDataUnit), buf, 6);
+				Array.Copy(CollectionUtility.Concat(new byte[] { 1 }, request.ProtocolDataUnit), buf, 6);
 				return 6;
 			}));
 

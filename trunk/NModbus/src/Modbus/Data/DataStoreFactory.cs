@@ -14,7 +14,7 @@ namespace Modbus.Data
 		{
 			DataStore dataStore = new DataStore();
 
-			for (int i = 0; i < DefaultSize; i++)
+			for (int i = 1; i < DefaultSize; i++)
 			{
 				bool value = i % 2 > 0;
 				dataStore.CoilDiscretes.Add(value);
@@ -33,7 +33,7 @@ namespace Modbus.Data
 		{
 			DataStore dataStore = new DataStore();
 
-			for (int i = 0; i < DefaultSize; i++)
+			for (int i = 1; i < DefaultSize; i++)
 			{
 				dataStore.CoilDiscretes.Add(false);
 				dataStore.InputDiscretes.Add(false);

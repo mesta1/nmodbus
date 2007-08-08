@@ -54,14 +54,14 @@ namespace Modbus.UnitTests.Data
 		public void CreateNewDiscreteCollectionFromBytesParamsOrder()
 		{
 			DiscreteCollection col = new DiscreteCollection(194);
-			Assert.AreEqual(new bool[] { false, true, false, false, false, false, true, true }, CollectionUtil.ToArray(col));
+			Assert.AreEqual(new bool[] { false, true, false, false, false, false, true, true }, CollectionUtility.ToArray(col));
 		}
 
 		[Test]
 		public void CreateNewDiscreteCollectionFromBytesParamsOrder2()
 		{
 			DiscreteCollection col = new DiscreteCollection(157, 7);
-			Assert.AreEqual(new bool[] { true, false, true, true, true, false, false, true, true, true, true, false, false, false, false, false }, CollectionUtil.ToArray(col));
+			Assert.AreEqual(new bool[] { true, false, true, true, true, false, false, true, true, true, true, false, false, false, false, false }, CollectionUtility.ToArray(col));
 		}
 
 		[Test]

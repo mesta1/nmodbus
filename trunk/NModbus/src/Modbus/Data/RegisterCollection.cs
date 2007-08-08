@@ -22,7 +22,7 @@ namespace Modbus.Data
 		/// Initializes a new instance of the <see cref="RegisterCollection"/> class.
 		/// </summary>
 		public RegisterCollection(byte[] bytes)
-			: this((IList<ushort>) ModbusUtil.NetworkBytesToHostUInt16(bytes))
+			: this((IList<ushort>) ModbusUtility.NetworkBytesToHostUInt16(bytes))
 		{
 		}
 

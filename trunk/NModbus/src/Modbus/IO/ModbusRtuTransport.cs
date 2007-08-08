@@ -17,8 +17,8 @@ namespace Modbus.IO
 		{
 		}
 
-		public ModbusRtuTransport(SerialPortAdapter serialPortStreamAdapter)
-			: base(serialPortStreamAdapter)
+		public ModbusRtuTransport(ISerialResource serialResource)
+			: base(serialResource)
 		{
 		}
 
@@ -27,22 +27,22 @@ namespace Modbus.IO
 			List<byte> messageBody = new List<byte>();
 			messageBody.Add(message.SlaveAddress);
 			messageBody.AddRange(message.ProtocolDataUnit);
-			messageBody.AddRange(ModbusUtil.CalculateCrc(message.MessageFrame));
+			messageBody.AddRange(ModbusUtility.CalculateCrc(message.MessageFrame));
 
 			return messageBody.ToArray();
 		}
 
 		internal override bool ChecksumsMatch(IModbusMessage message, byte[] messageFrame)
 		{
-			return BitConverter.ToUInt16(messageFrame, messageFrame.Length - 2) == BitConverter.ToUInt16(ModbusUtil.CalculateCrc(message.MessageFrame), 0);
+			return BitConverter.ToUInt16(messageFrame, messageFrame.Length - 2) == BitConverter.ToUInt16(ModbusUtility.CalculateCrc(message.MessageFrame), 0);
 		}
 
 		internal override IModbusMessage ReadResponse<T>()
 		{
 			byte[] frameStart = Read(ResponseFrameStartLength);
 			byte[] frameEnd = Read(ResponseBytesToRead(frameStart));
-			byte[] frame = CollectionUtil.Combine<byte>(frameStart, frameEnd);
-			_log.InfoFormat("RX: {0}", StringUtil.Join(", ", frame));
+			byte[] frame = CollectionUtility.Concat(frameStart, frameEnd);
+			_log.InfoFormat("RX: {0}", StringUtility.Join(", ", frame));
 
 			return CreateResponse<T>(frame);
 		}
@@ -51,8 +51,8 @@ namespace Modbus.IO
 		{
 			byte[] frameStart = Read(RequestFrameStartLength);
 			byte[] frameEnd = Read(RequestBytesToRead(frameStart));
-			byte[] frame = CollectionUtil.Combine<byte>(frameStart, frameEnd);
-			_log.InfoFormat("RX: {0}", StringUtil.Join(", ", frame));
+			byte[] frame = CollectionUtility.Concat<byte>(frameStart, frameEnd);
+			_log.InfoFormat("RX: {0}", StringUtility.Join(", ", frame));
 
 			return frame;
 		}
@@ -63,7 +63,7 @@ namespace Modbus.IO
 			int numBytesRead = 0;
 
 			while (numBytesRead != count)
-				numBytesRead += _serialPortStreamAdapter.Read(frameBytes, numBytesRead, count - numBytesRead);
+				numBytesRead += _serialResource.Read(frameBytes, numBytesRead, count - numBytesRead);
 
 			return frameBytes;
 		}

@@ -7,7 +7,7 @@ namespace Modbus.Util
 	/// <summary>
 	/// Provides methods for manipulating collections.
 	/// </summary>
-	public static class CollectionUtil
+	public static class CollectionUtility
 	{
 		/// <summary>
 		/// Returns a subset array of type T.
@@ -34,7 +34,7 @@ namespace Modbus.Util
 			T[] collectionArray = new T[collection.Count];
 			collection.CopyTo(collectionArray, 0);
 
-			return Slice<T>(collectionArray, startIndex, size);
+			return Slice(collectionArray, startIndex, size);
 		}
 
 		/// <summary>
@@ -45,7 +45,7 @@ namespace Modbus.Util
 			if (collection == null)
 				throw new ArgumentNullException("collection");
 
-			return Slice<T>(collection, 0, collection.Count);
+			return Slice(collection, 0, collection.Count);
 		}
 
 		/// <summary>
@@ -63,9 +63,9 @@ namespace Modbus.Util
 		}
 
 		/// <summary>
-		/// Combines array1 with array2.
+		/// Concatenates array1 with array2.
 		/// </summary>
-		public static T[] Combine<T>(T[] array1, T[] array2)
+		public static T[] Concat<T>(T[] array1, T[] array2)
 		{
 			if (array1 == null)
 				throw new ArgumentNullException("array1");
@@ -82,21 +82,21 @@ namespace Modbus.Util
 		}
 
 		/// <summary>
-		/// Combines arrays
+		/// Concatenates arrays
 		/// </summary>
-		public static T[] Combine<T>(T[] array1, T[] array2, params T[][] additionalArrays)
+		public static T[] Concat<T>(T[] array1, T[] array2, params T[][] additionalArrays)
 		{
 			if (additionalArrays == null)
 				throw new ArgumentNullException("additionalArrays");
 
-			T[] result = Combine(array1, array2);
+			T[] result = Concat(array1, array2);
 
 			foreach (T[] array in additionalArrays)
 			{
 				if (array == null)
 					throw new ArgumentNullException("additionalArrays");
 
-				result = Combine(result, array);
+				result = Concat(result, array);
 			}
 
 			return result;

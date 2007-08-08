@@ -2,32 +2,28 @@ using System.IO.Ports;
 
 namespace Modbus.IO
 {
-	internal class SerialPortAdapter
+	internal class CommPortAdapter : ISerialResource
 	{
-		private SerialPort _serialPort;
+		private readonly SerialPort _serialPort;
 
-		public SerialPortAdapter()
-		{
-		}
-
-		public SerialPortAdapter(SerialPort serialPort)
+		public CommPortAdapter(SerialPort serialPort)
 		{
 			_serialPort = serialPort;
 		}
 
-		public virtual int ReadTimeout
+		public int ReadTimeout
 		{
 			get { return _serialPort.ReadTimeout; }
 			set { _serialPort.ReadTimeout = value; }
 		}
 		
-		public virtual int WriteTimeout
+		public int WriteTimeout
 		{
 			get { return _serialPort.WriteTimeout; }
 			set { _serialPort.WriteTimeout = value; }
 		}
 
-		public virtual string NewLine
+		public string NewLine
 		{
 			get { return _serialPort.NewLine; }
 			set { _serialPort.NewLine = value; }
@@ -38,17 +34,17 @@ namespace Modbus.IO
 			_serialPort.DiscardInBuffer();
 		}
 
-		public virtual int Read(byte[] buffer, int offset, int count)
+		public int Read(byte[] buffer, int offset, int count)
 		{
 			return _serialPort.Read(buffer, offset, count);
 		}
 
-		public virtual string ReadLine()
+		public string ReadLine()
 		{
 			return _serialPort.ReadLine();
 		}
 
-		public virtual void Write(byte[] buffer, int offset, int count)
+		public void Write(byte[] buffer, int offset, int count)
 		{
 			_serialPort.Write(buffer, offset, count);
 		}		

@@ -9,7 +9,7 @@ namespace Modbus
 	/// </summary>
 	public class SlaveException : Exception
 	{
-		private SlaveExceptionResponse _slaveExceptionResponse;
+		private readonly SlaveExceptionResponse _slaveExceptionResponse;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SlaveException"/> class.
@@ -70,10 +70,7 @@ namespace Modbus
 		{
 			get
 			{
-				if (_slaveExceptionResponse == null)
-					return base.Message;
-
-				return String.Format("{0}{1}Function Code: {2}{1}Exception Code: {3}", base.Message, Environment.NewLine, _slaveExceptionResponse.FunctionCode, _slaveExceptionResponse.SlaveExceptionCode);
+				return String.Concat(base.Message, _slaveExceptionResponse != null ? String.Concat(Environment.NewLine, _slaveExceptionResponse) : String.Empty);
 			}
 		}
 

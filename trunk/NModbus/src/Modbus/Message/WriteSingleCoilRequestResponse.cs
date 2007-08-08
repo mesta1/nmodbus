@@ -34,7 +34,7 @@ namespace Modbus.Message
 		protected override void InitializeUnique(byte[] frame)
 		{
 			StartAddress = (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 2));
-			Data = new RegisterCollection(CollectionUtil.Slice<byte>(frame, 4, 2));
+			Data = new RegisterCollection(CollectionUtility.Slice<byte>(frame, 4, 2));
 		}
 	}
 }

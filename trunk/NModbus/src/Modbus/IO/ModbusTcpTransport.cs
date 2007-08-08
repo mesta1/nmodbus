@@ -2,17 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.Sockets;
 using log4net;
 using Modbus.Message;
 using Modbus.Util;
-using System.Net.Sockets;
 
 namespace Modbus.IO
 {
 	class ModbusTcpTransport : ModbusTransport
 	{
 		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusTcpTransport));
-		private TcpStreamAdapter _tcpStreamAdapter;
+		private readonly TcpStreamAdapter _tcpStreamAdapter;
 		private ushort _transactionId;
 		private static readonly object _transactionIdLock = new object();
 
@@ -39,7 +39,7 @@ namespace Modbus.IO
 			byte[] protocol = { 0, 0 };
 			byte[] length = BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short) (message.ProtocolDataUnit.Length + 1)));
 
-			return CollectionUtil.Combine(transactionID, protocol, length, new byte[] { message.SlaveAddress });
+			return CollectionUtility.Concat(transactionID, protocol, length, new byte[] { message.SlaveAddress });
 		}
 
 		public static byte[] ReadRequestResponse(TcpStreamAdapter tcpTransportAdapter)
@@ -54,7 +54,7 @@ namespace Modbus.IO
 				if (numBytesRead == 0)
 					throw new SocketException(Modbus.ConnectionAborted);
 			}
-			_log.DebugFormat("MBAP header: {0}", StringUtil.Join(", ", mbapHeader));
+			_log.DebugFormat("MBAP header: {0}", StringUtility.Join(", ", mbapHeader));
 
 			ushort frameLength = (ushort) (IPAddress.HostToNetworkOrder(BitConverter.ToInt16(mbapHeader, 4)));
 			_log.DebugFormat("{0} bytes in PDU.", frameLength);
@@ -71,8 +71,8 @@ namespace Modbus.IO
 			}
 			_log.DebugFormat("PDU: {0}", frameLength);
 
-			byte[] frame = CollectionUtil.Combine(mbapHeader, messageFrame);
-			_log.InfoFormat("RX: {0}", StringUtil.Join(", ", frame));
+			byte[] frame = CollectionUtility.Concat(mbapHeader, messageFrame);
+			_log.InfoFormat("RX: {0}", StringUtility.Join(", ", frame));
 
 			return frame;
 		}
@@ -80,7 +80,7 @@ namespace Modbus.IO
 		internal override void Write(IModbusMessage message)
 		{			
 			byte[] frame = BuildMessageFrame(message);
-			_log.InfoFormat("TX: {0}", StringUtil.Join(", ", frame));			
+			_log.InfoFormat("TX: {0}", StringUtility.Join(", ", frame));			
 			_tcpStreamAdapter.BeginWrite(frame, 0, frame.Length, WriteCompleted, _tcpStreamAdapter);
 		}
 
@@ -104,8 +104,8 @@ namespace Modbus.IO
 		internal override IModbusMessage ReadResponse<T>()
 		{
 			byte[] fullFrame = ReadRequestResponse(_tcpStreamAdapter);
-			byte[] mbapHeader = CollectionUtil.Slice(fullFrame, 0, 6);
-			byte[] messageFrame = CollectionUtil.Slice(fullFrame, 6, fullFrame.Length - 6);
+			byte[] mbapHeader = CollectionUtility.Slice(fullFrame, 0, 6);
+			byte[] messageFrame = CollectionUtility.Slice(fullFrame, 6, fullFrame.Length - 6);
 
 			IModbusMessage response = base.CreateResponse<T>(messageFrame);
 			response.TransactionID = (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(mbapHeader, 0));

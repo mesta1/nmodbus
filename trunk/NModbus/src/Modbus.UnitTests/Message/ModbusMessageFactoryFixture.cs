@@ -240,7 +240,7 @@ namespace Modbus.UnitTests.Message
 		{
 			byte slaveAddress = 5;
 			RegisterCollection data = new RegisterCollection(50);
-			byte[] frame = CollectionUtil.Combine(new byte[] { slaveAddress, 8, 0, 0 }, data.NetworkBytes);
+			byte[] frame = CollectionUtility.Concat(new byte[] { slaveAddress, 8, 0, 0 }, data.NetworkBytes);
 			DiagnosticsRequestResponse message = ModbusMessageFactory.CreateModbusMessage<DiagnosticsRequestResponse>(frame);
 			DiagnosticsRequestResponse expectedMessage = new DiagnosticsRequestResponse(Modbus.DiagnosticsReturnQueryData, slaveAddress, data);
 
