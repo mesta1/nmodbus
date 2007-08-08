@@ -19,12 +19,12 @@ namespace Modbus.IntegrationTests
 		public SerialPort MasterSerialPort;
 		public const string DefaultMasterSerialPortName = "COM4";
 		public FTD2XXUsbPort MasterUsbPort;
-		public const uint DefaultMasterUsbPortID = 0;
+		public const uint DefaultMasterUsbPortID = 1;
 
 		public ModbusSlave Slave;
 		public Thread SlaveThread;
 		public SerialPort SlaveSerialPort;
-		public const string DefaultSlaveSerialPortName = "COM3";
+		public const string DefaultSlaveSerialPortName = "COM8";
 		public const byte SlaveAddress = 1;
 
 		public static IPAddress TcpHost = new IPAddress(new byte[] { 127, 0, 0, 1 });
