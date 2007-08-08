@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using Modbus.Device;
+using Modbus.Util;
 
 namespace MySample
 {
@@ -293,6 +294,36 @@ namespace MySample
 			// Register 102=0
 			// Register 103=0
 			// Register 104=0
-		}	
+		}
+
+		public static void ReadWrite32BitValue()
+		{
+			using (SerialPort port = new SerialPort("COM6"))
+			{
+				// configure serial port
+				port.BaudRate = 9600;
+				port.DataBits = 8;
+				port.Parity = Parity.None;
+				port.StopBits = StopBits.One;
+				port.Open();
+
+				// create modbus master
+				ModbusSerialMaster master = ModbusSerialMaster.CreateRtu(port);
+
+				byte slaveID = 1;
+				ushort startAddress = 1008;
+				uint largeValue = UInt16.MaxValue + 5;
+
+				ushort lowOrderValue = BitConverter.ToUInt16(BitConverter.GetBytes(largeValue), 0);
+				ushort highOrderValue = BitConverter.ToUInt16(BitConverter.GetBytes(largeValue), 2);							
+
+				// write large value in two 16 bit chunks
+				master.WriteMultipleRegisters(slaveID, startAddress, new ushort[] { lowOrderValue, highOrderValue});
+
+				// read large value in two 16 bit chunks and perform conversion
+				ushort[] registers = master.ReadHoldingRegisters(slaveID, startAddress, 2);
+				uint value = ModbusUtil.GetUInt32(registers[1], registers[0]);
+			}
+		}
 	}
 }
