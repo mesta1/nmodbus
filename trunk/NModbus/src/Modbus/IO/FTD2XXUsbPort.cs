@@ -123,7 +123,7 @@ namespace Modbus.IO
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="UsbPort"/> class.
+		/// Initializes a new instance of the <see cref="FTD2XXUsbPort"/> class.
 		/// </summary>
 		/// <param name="deviceID">The device ID.</param>
 		public FTD2XXUsbPort(uint deviceID)
