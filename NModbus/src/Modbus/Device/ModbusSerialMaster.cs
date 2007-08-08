@@ -33,7 +33,7 @@ namespace Modbus.Device
 		/// <summary>
 		/// Modbus ASCII master factory method.
 		/// </summary>
-		public static ModbusSerialMaster CreateAscii(FTD2XXUsbPort usbPort)
+		public static ModbusSerialMaster CreateAscii(FtdUsbPort usbPort)
 		{
 			if (usbPort == null)
 				throw new ArgumentNullException("usbPort");
@@ -58,7 +58,7 @@ namespace Modbus.Device
 		/// <summary>
 		/// Modbus RTU master factory method.
 		/// </summary>
-		public static ModbusSerialMaster CreateRtu(FTD2XXUsbPort usbPort)
+		public static ModbusSerialMaster CreateRtu(FtdUsbPort usbPort)
 		{
 			if (usbPort == null)
 				throw new ArgumentNullException("usbPort");

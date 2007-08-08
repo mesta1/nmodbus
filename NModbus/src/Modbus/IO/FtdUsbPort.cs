@@ -10,7 +10,7 @@ namespace Modbus.IO
 	/// <summary>
 	/// Specifies the number of stop bits used on the UsbPort object.
 	/// </summary>
-	public enum FTStopBits
+	public enum FtdStopBits
 	{
 		/// <summary>
 		/// One stop bit is used.
@@ -29,7 +29,7 @@ namespace Modbus.IO
 	/// <summary>
 	/// Specifies the parity used on the UsbPort object.
 	/// </summary>
-	public enum FTParity
+	public enum FtdParity
 	{
 		/// <summary>
 		/// No parity check occurs.
@@ -56,7 +56,7 @@ namespace Modbus.IO
 	/// <summary>
 	/// Specifies the result of a UsbPort operation.
 	/// </summary>
-	internal enum FTStatus
+	internal enum FtdStatus
 	{
 		OK = 0,
 		InvalidHandle,
@@ -81,28 +81,28 @@ namespace Modbus.IO
 	/// <summary>
 	/// Wrapper class for the FTD2XX USB resource.
 	/// </summary>
-	public class FTD2XXUsbPort : IDisposable
+	public class FtdUsbPort : IDisposable
 	{
-		internal const string FTAssemblyName = "FTD2XX.dll";
+		internal const string FtdAssemblyName = "FTD2XX.dll";
 
-		[DllImport(FTAssemblyName)]
-		static extern FTStatus FT_Close(uint deviceHandle);
-		[DllImport(FTAssemblyName)]
-		static extern FTStatus FT_Open(uint deviceID, ref uint deviceHandle);
-		[DllImport(FTAssemblyName)]
-		static extern FTStatus FT_SetBaudRate(uint deviceHandle, uint baudRate);
-		[DllImport(FTAssemblyName)]
-		static extern FTStatus FT_SetDataCharacteristics(uint deviceHandle, byte wordLength, byte stopBits, byte parity);
-		[DllImport(FTAssemblyName)]
-		static extern unsafe FTStatus FT_Read(uint deviceHandle, void* buffer, uint bytesToRead, ref uint bytesReturned);
-		[DllImport(FTAssemblyName)]
-		static extern unsafe FTStatus FT_Write(uint deviceHandle, void* buffer, uint bytesToWrite, ref uint bytesWritten);
-		[DllImport(FTAssemblyName)]
-		static extern FTStatus FT_SetTimeouts(uint deviceHandle, uint readTimeout, uint writeTimeout);
-		[DllImport(FTAssemblyName)]
-		static extern FTStatus FT_Purge(uint deviceHandle, uint mask);
-		[DllImport(FTAssemblyName)]
-		static extern FTStatus FT_CreateDeviceInfoList(ref uint deviceCount);
+		[DllImport(FtdAssemblyName)]
+		static extern FtdStatus FT_Close(uint deviceHandle);
+		[DllImport(FtdAssemblyName)]
+		static extern FtdStatus FT_Open(uint deviceID, ref uint deviceHandle);
+		[DllImport(FtdAssemblyName)]
+		static extern FtdStatus FT_SetBaudRate(uint deviceHandle, uint baudRate);
+		[DllImport(FtdAssemblyName)]
+		static extern FtdStatus FT_SetDataCharacteristics(uint deviceHandle, byte wordLength, byte stopBits, byte parity);
+		[DllImport(FtdAssemblyName)]
+		static extern unsafe FtdStatus FT_Read(uint deviceHandle, void* buffer, uint bytesToRead, ref uint bytesReturned);
+		[DllImport(FtdAssemblyName)]
+		static extern unsafe FtdStatus FT_Write(uint deviceHandle, void* buffer, uint bytesToWrite, ref uint bytesWritten);
+		[DllImport(FtdAssemblyName)]
+		static extern FtdStatus FT_SetTimeouts(uint deviceHandle, uint readTimeout, uint writeTimeout);
+		[DllImport(FtdAssemblyName)]
+		static extern FtdStatus FT_Purge(uint deviceHandle, uint mask);
+		[DllImport(FtdAssemblyName)]
+		static extern FtdStatus FT_CreateDeviceInfoList(ref uint deviceCount);
 
 		private const byte PurgeRx = 1;
 		private uint _deviceID;
@@ -118,7 +118,7 @@ namespace Modbus.IO
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FTD2XXUsbPort"/> class.
 		/// </summary>
-		public FTD2XXUsbPort()
+		public FtdUsbPort()
 		{		
 		}
 
@@ -126,7 +126,7 @@ namespace Modbus.IO
 		/// Initializes a new instance of the <see cref="FTD2XXUsbPort"/> class.
 		/// </summary>
 		/// <param name="deviceID">The device ID.</param>
-		public FTD2XXUsbPort(uint deviceID)
+		public FtdUsbPort(uint deviceID)
 		{
 			_deviceID = deviceID;
 		}
@@ -179,7 +179,7 @@ namespace Modbus.IO
 
 				if (IsOpen)
 				{
-					InvokeFTMethod(delegate { return FT_SetBaudRate(_deviceHandle, (uint) _baudRate); });
+					InvokeFtdMethod(delegate { return FT_SetBaudRate(_deviceHandle, (uint) _baudRate); });
 				}
 			}
 		}
@@ -199,7 +199,7 @@ namespace Modbus.IO
 					throw new ArgumentOutOfRangeException("DataBits", "Value must be greater than 4 and less than 9.");
 
 				_dataBits = value;
-				InvokeFTMethod(delegate { return FT_SetDataCharacteristics(_deviceHandle, (byte) _dataBits, _stopBits, _parity); });
+				InvokeFtdMethod(delegate { return FT_SetDataCharacteristics(_deviceHandle, (byte) _dataBits, _stopBits, _parity); });
 			}
 		}
 
@@ -220,7 +220,7 @@ namespace Modbus.IO
 				_readTimeout = (uint) value;
 				if (IsOpen)
 				{
-					InvokeFTMethod(delegate { return FT_SetTimeouts(_deviceHandle, _readTimeout, _writeTimeout); });
+					InvokeFtdMethod(delegate { return FT_SetTimeouts(_deviceHandle, _readTimeout, _writeTimeout); });
 				}
 			}
 		}
@@ -242,7 +242,7 @@ namespace Modbus.IO
 				_writeTimeout = (uint) value;
 				if (IsOpen)
 				{
-					InvokeFTMethod(delegate { return FT_SetTimeouts(_deviceHandle, _readTimeout, _writeTimeout); });
+					InvokeFtdMethod(delegate { return FT_SetTimeouts(_deviceHandle, _readTimeout, _writeTimeout); });
 				}
 			}
 		}
@@ -250,32 +250,32 @@ namespace Modbus.IO
 		/// <summary>
 		/// Gets or sets the standard number of stopbits per byte.
 		/// </summary>
-		public FTStopBits StopBits
+		public FtdStopBits StopBits
 		{
 			get
 			{
-				return (FTStopBits) Enum.Parse(typeof(FTStopBits), _stopBits.ToString());
+				return (FtdStopBits) Enum.Parse(typeof(FtdStopBits), _stopBits.ToString());
 			}
 			set
 			{
 				_stopBits = (byte) value;
-				InvokeFTMethod(delegate { return FT_SetDataCharacteristics(_deviceHandle, (byte) _dataBits, _stopBits, _parity); });
+				InvokeFtdMethod(delegate { return FT_SetDataCharacteristics(_deviceHandle, (byte) _dataBits, _stopBits, _parity); });
 			}
 		}
 
 		/// <summary>
 		/// Gets or sets the parity-checking protocol.
 		/// </summary>
-		public FTParity Parity
+		public FtdParity Parity
 		{
 			get
 			{
-				return (FTParity) Enum.Parse(typeof(FTParity), _parity.ToString());
+				return (FtdParity) Enum.Parse(typeof(FtdParity), _parity.ToString());
 			}
 			set
 			{
 				_parity = (byte) value;
-				InvokeFTMethod(delegate { return FT_SetDataCharacteristics(_deviceHandle, (byte) _dataBits, _stopBits, _parity); });
+				InvokeFtdMethod(delegate { return FT_SetDataCharacteristics(_deviceHandle, (byte) _dataBits, _stopBits, _parity); });
 			}
 		}
 
@@ -302,7 +302,7 @@ namespace Modbus.IO
 		public static int DeviceCount()
 		{
 			uint deviceCount = 0;
-			InvokeFTMethod(delegate { return FT_CreateDeviceInfoList(ref deviceCount); });
+			InvokeFtdMethod(delegate { return FT_CreateDeviceInfoList(ref deviceCount); });
 
 			return (int) deviceCount;
 		}
@@ -312,10 +312,10 @@ namespace Modbus.IO
 		/// </summary>
 		public void Open()
 		{
-			InvokeFTMethod(delegate { return FT_Open(_deviceID, ref _deviceHandle); });
+			InvokeFtdMethod(delegate { return FT_Open(_deviceID, ref _deviceHandle); });
 			BaudRate = _baudRate;
-			InvokeFTMethod(delegate { return FT_SetDataCharacteristics(_deviceHandle, (byte) _dataBits, _stopBits, _parity); });
-			InvokeFTMethod(delegate { return FT_SetTimeouts(_deviceHandle, _readTimeout, _writeTimeout); });
+			InvokeFtdMethod(delegate { return FT_SetDataCharacteristics(_deviceHandle, (byte) _dataBits, _stopBits, _parity); });
+			InvokeFtdMethod(delegate { return FT_SetTimeouts(_deviceHandle, _readTimeout, _writeTimeout); });
 		}
 
 		/// <summary>
@@ -325,7 +325,7 @@ namespace Modbus.IO
 		{
 			try
 			{
-				InvokeFTMethod(delegate { return FT_Close(_deviceHandle); });
+				InvokeFtdMethod(delegate { return FT_Close(_deviceHandle); });
 			}
 			finally
 			{
@@ -356,7 +356,7 @@ namespace Modbus.IO
 
 			fixed (byte* pBuf = buffer)
 			{
-				InvokeFTMethod(delegate { return FT_Write(_deviceHandle, pBuf, (uint) size, ref numBytesReturned); });
+				InvokeFtdMethod(delegate { return FT_Write(_deviceHandle, pBuf, (uint) size, ref numBytesReturned); });
 			}
 		}
 
@@ -393,7 +393,7 @@ namespace Modbus.IO
 
 			fixed (byte* pBuf = buffer)
 			{
-				InvokeFTMethod(delegate { return FT_Read(_deviceHandle, pBuf, (uint) size, ref numBytesReturned); });
+				InvokeFtdMethod(delegate { return FT_Read(_deviceHandle, pBuf, (uint) size, ref numBytesReturned); });
 			}
 
 			return (int) numBytesReturned;
@@ -404,19 +404,19 @@ namespace Modbus.IO
 		/// </summary>
 		public void PurgeReceiveBuffer()
 		{
-			InvokeFTMethod(delegate { return FT_Purge(_deviceHandle, PurgeRx); });
+			InvokeFtdMethod(delegate { return FT_Purge(_deviceHandle, PurgeRx); });
 		}
 
 		/// <summary>
 		/// Invokes FT method and checks the FTStatus result, throw IOException if result is something other than FTStatus.OK
 		/// </summary>
-		internal static void InvokeFTMethod(Func<FTStatus> func)
+		internal static void InvokeFtdMethod(Func<FtdStatus> func)
 		{
-			FTStatus status = func();
+			FtdStatus status = func();
 
-			if (status != FTStatus.OK)
+			if (status != FtdStatus.OK)
 			{
-				throw new IOException(Enum.GetName(typeof(FTStatus), status));
+				throw new IOException(Enum.GetName(typeof(FtdStatus), status));
 			}
 		}
 	}

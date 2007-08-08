@@ -18,7 +18,7 @@ namespace Modbus.IntegrationTests
 		public IModbusMaster Master;
 		public SerialPort MasterSerialPort;
 		public const string DefaultMasterSerialPortName = "COM4";
-		public FTD2XXUsbPort MasterUsbPort;
+		public FtdUsbPort MasterUsbPort;
 		public const uint DefaultMasterUsbPortID = 1;
 
 		public ModbusSlave Slave;
@@ -58,7 +58,7 @@ namespace Modbus.IntegrationTests
 		public void SetupMasterUsbPort(uint portID)
 		{
 			log.DebugFormat("Configure and open master serial port {0}.", portID);
-			MasterUsbPort = new FTD2XXUsbPort(portID);
+			MasterUsbPort = new FtdUsbPort(portID);
 			MasterUsbPort.Open();
 		}
 

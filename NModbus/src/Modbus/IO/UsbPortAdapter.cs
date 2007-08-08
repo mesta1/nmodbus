@@ -8,9 +8,9 @@ namespace Modbus.IO
 {
 	internal class UsbPortAdapter : ISerialResource
 	{
-		private readonly FTD2XXUsbPort _usbPort;
+		private readonly FtdUsbPort _usbPort;
 
-		public UsbPortAdapter(FTD2XXUsbPort usbPort)
+		public UsbPortAdapter(FtdUsbPort usbPort)
 		{
 			_usbPort = usbPort;
 		}

@@ -41,15 +41,15 @@ namespace MySample
 
 		public static void ModbusUsbRtuMasterReadRegisters()
 		{
-			int test = FTD2XXUsbPort.DeviceCount();
+			int test = FtdUsbPort.DeviceCount();
 
-			using (FTD2XXUsbPort port = new FTD2XXUsbPort(0))
+			using (FtdUsbPort port = new FtdUsbPort(0))
 			{
 				// configure usb port
 				port.BaudRate = 9600;
 				port.DataBits = 8;
-				port.Parity = FTParity.None;
-				port.StopBits = FTStopBits.One;
+				port.Parity = FtdParity.None;
+				port.StopBits = FtdStopBits.One;
 				port.Open();
 
 				ModbusSerialMaster master = ModbusSerialMaster.CreateRtu(port);

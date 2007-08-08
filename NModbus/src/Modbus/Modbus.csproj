@@ -75,7 +75,7 @@
     <Compile Include="IO\CommPortAdapter.cs" />
     <Compile Include="IO\TcpStreamAdapter.cs" />
     <Compile Include="IO\UsbPortAdapter.cs" />
-    <Compile Include="IO\FTD2XXUsbPort.cs" />
+    <Compile Include="IO\FtdUsbPort.cs" />
     <Compile Include="Message\ReadCoilsInputsRequest.cs" />
     <Compile Include="Message\ReadHoldingInputRegistersRequest.cs" />
     <Compile Include="Message\ReadWriteMultipleRegistersRequest.cs" />
