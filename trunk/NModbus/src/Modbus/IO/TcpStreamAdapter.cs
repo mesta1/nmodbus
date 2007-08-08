@@ -9,6 +9,10 @@ namespace Modbus.IO
 	{
 		private readonly NetworkStream _networkStream;
 
+		public TcpStreamAdapter()
+		{
+		}
+
 		public TcpStreamAdapter(NetworkStream networkStream)
 		{
 			_networkStream = networkStream;

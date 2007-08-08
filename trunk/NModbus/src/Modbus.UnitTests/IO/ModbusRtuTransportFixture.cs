@@ -210,15 +210,15 @@ namespace Modbus.UnitTests.IO
 		public void Read()
 		{
 			MockRepository mocks = new MockRepository();
-			CommPortAdapter mockSerialPort = mocks.CreateMock<CommPortAdapter>(null);
+			ISerialResource mockSerialResource = mocks.CreateMock<ISerialResource>();
 			
-			Expect.Call(mockSerialPort.Read(new byte[5], 0, 5)).Do(((StreamReadWriteDelegate) delegate(byte[] buf, int offset, int count)
+			Expect.Call(mockSerialResource.Read(new byte[5], 0, 5)).Do(((StreamReadWriteDelegate) delegate(byte[] buf, int offset, int count)
 			{
 				Array.Copy(new byte[] { 2, 2, 2 }, buf, 3);
 				return 3;
 			}));
 
-			Expect.Call(mockSerialPort.Read(new byte[] { 2, 2, 2, 0, 0 }, 3, 2)).Do(((StreamReadWriteDelegate) delegate(byte[] buf, int offset, int count)
+			Expect.Call(mockSerialResource.Read(new byte[] { 2, 2, 2, 0, 0 }, 3, 2)).Do(((StreamReadWriteDelegate) delegate(byte[] buf, int offset, int count)
 			{
 				Array.Copy(new byte[] { 3, 3 }, 0, buf, 3, 2);
 				return 2;
@@ -226,7 +226,7 @@ namespace Modbus.UnitTests.IO
 
 			mocks.ReplayAll();
 
-			ModbusRtuTransport transport = new ModbusRtuTransport(mockSerialPort);
+			ModbusRtuTransport transport = new ModbusRtuTransport(mockSerialResource);
 			Assert.AreEqual(new byte[] { 2, 2, 2, 3, 3 }, transport.Read(5));
 
 			mocks.VerifyAll();
