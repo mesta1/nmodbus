@@ -83,10 +83,10 @@ namespace Modbus.Device
 		/// <summary>
 		/// Initializes serial port read write timeouts to default value if they have not been overridden already.
 		/// </summary>
-		internal static void InitializeSerialPortTimeouts(CommPortAdapter serialPortAdapter)
+		internal static void InitializeSerialPortTimeouts(ISerialResource serialResource)
 		{
-			serialPortAdapter.WriteTimeout = serialPortAdapter.WriteTimeout == SerialPort.InfiniteTimeout ? Modbus.DefaultTimeout : serialPortAdapter.WriteTimeout;
-			serialPortAdapter.ReadTimeout = serialPortAdapter.ReadTimeout == SerialPort.InfiniteTimeout ? Modbus.DefaultTimeout : serialPortAdapter.ReadTimeout;
+			serialResource.WriteTimeout = serialResource.WriteTimeout == SerialPort.InfiniteTimeout ? Modbus.DefaultTimeout : serialResource.WriteTimeout;
+			serialResource.ReadTimeout = serialResource.ReadTimeout == SerialPort.InfiniteTimeout ? Modbus.DefaultTimeout : serialResource.ReadTimeout;
 		}
 
 		ModbusSerialTransport IModbusSerialMaster.Transport

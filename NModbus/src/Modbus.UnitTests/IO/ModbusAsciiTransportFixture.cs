@@ -32,12 +32,12 @@ namespace Modbus.UnitTests.IO
 		public void ReadRequestResponse()
 		{
 			MockRepository mocks = new MockRepository();
-			CommPortAdapter mockSerialPort = mocks.CreateMock<CommPortAdapter>();
-			mockSerialPort.NewLine = Environment.NewLine;
-			Expect.Call(mockSerialPort.ReadLine()).Return(":110100130025B6");
+			ISerialResource mockSerialResource = mocks.CreateMock<ISerialResource>();
+			mockSerialResource.NewLine = Environment.NewLine;
+			Expect.Call(mockSerialResource.ReadLine()).Return(":110100130025B6");
 			mocks.ReplayAll();
 
-			ModbusAsciiTransport transport = new ModbusAsciiTransport(mockSerialPort);
+			ModbusAsciiTransport transport = new ModbusAsciiTransport(mockSerialResource);
 			Assert.AreEqual(new byte[] { 17, 1, 0, 19, 0, 37, 182 }, transport.ReadRequestResponse());
 
 			mocks.VerifyAll();
@@ -47,18 +47,18 @@ namespace Modbus.UnitTests.IO
 		public void ReadRequestResponseNotEnoughBytes()
 		{
 			MockRepository mocks = new MockRepository(); 
-			CommPortAdapter mockSerialPort = mocks.CreateMock<CommPortAdapter>();
-			mockSerialPort.NewLine = Environment.NewLine;
-			Expect.Call(mockSerialPort.ReadTimeout).Return(SerialPort.InfiniteTimeout);
-			mockSerialPort.WriteTimeout = 0;
+			ISerialResource mockSerialResource = mocks.CreateMock<ISerialResource>();
+			mockSerialResource.NewLine = Environment.NewLine;
+			Expect.Call(mockSerialResource.ReadTimeout).Return(SerialPort.InfiniteTimeout);
+			mockSerialResource.WriteTimeout = 0;
 			LastCall.IgnoreArguments();
-			Expect.Call(mockSerialPort.WriteTimeout).Return(SerialPort.InfiniteTimeout);
-			mockSerialPort.ReadTimeout = 0;
+			Expect.Call(mockSerialResource.WriteTimeout).Return(SerialPort.InfiniteTimeout);
+			mockSerialResource.ReadTimeout = 0;
 			LastCall.IgnoreArguments();
-			Expect.Call(mockSerialPort.ReadLine()).Return(":10");						
+			Expect.Call(mockSerialResource.ReadLine()).Return(":10");						
 			mocks.ReplayAll();
 
-			ModbusAsciiTransport transport = new ModbusAsciiTransport(mockSerialPort);			
+			ModbusAsciiTransport transport = new ModbusAsciiTransport(mockSerialResource);			
 			transport.ReadRequestResponse();
 
 			mocks.VerifyAll();
