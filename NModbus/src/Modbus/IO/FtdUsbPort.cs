@@ -119,7 +119,7 @@ namespace Modbus.IO
 		/// Initializes a new instance of the <see cref="FTD2XXUsbPort"/> class.
 		/// </summary>
 		public FtdUsbPort()
-		{		
+		{
 		}
 
 		/// <summary>
@@ -136,9 +136,9 @@ namespace Modbus.IO
 		/// </summary>
 		public int DeviceID
 		{
-			get 
-			{ 
-				return (int) _deviceID; 
+			get
+			{
+				return (int) _deviceID;
 			}
 			set
 			{
@@ -178,9 +178,7 @@ namespace Modbus.IO
 				_baudRate = value;
 
 				if (IsOpen)
-				{
 					InvokeFtdMethod(delegate { return FT_SetBaudRate(_deviceHandle, (uint) _baudRate); });
-				}
 			}
 		}
 
@@ -199,7 +197,9 @@ namespace Modbus.IO
 					throw new ArgumentOutOfRangeException("DataBits", "Value must be greater than 4 and less than 9.");
 
 				_dataBits = value;
-				InvokeFtdMethod(delegate { return FT_SetDataCharacteristics(_deviceHandle, (byte) _dataBits, _stopBits, _parity); });
+
+				if (IsOpen)
+					InvokeFtdMethod(delegate { return FT_SetDataCharacteristics(_deviceHandle, (byte) _dataBits, _stopBits, _parity); });
 			}
 		}
 
@@ -218,10 +218,9 @@ namespace Modbus.IO
 					throw new ArgumentOutOfRangeException("ReadTimeout", "Read timeout must be greater than 0.");
 
 				_readTimeout = (uint) value;
+
 				if (IsOpen)
-				{
 					InvokeFtdMethod(delegate { return FT_SetTimeouts(_deviceHandle, _readTimeout, _writeTimeout); });
-				}
 			}
 		}
 
@@ -240,10 +239,9 @@ namespace Modbus.IO
 					throw new ArgumentOutOfRangeException("WriteTimeout", "Write timeout must be greater than 0.");
 
 				_writeTimeout = (uint) value;
+
 				if (IsOpen)
-				{
 					InvokeFtdMethod(delegate { return FT_SetTimeouts(_deviceHandle, _readTimeout, _writeTimeout); });
-				}
 			}
 		}
 
@@ -259,7 +257,9 @@ namespace Modbus.IO
 			set
 			{
 				_stopBits = (byte) value;
-				InvokeFtdMethod(delegate { return FT_SetDataCharacteristics(_deviceHandle, (byte) _dataBits, _stopBits, _parity); });
+
+				if (IsOpen)
+					InvokeFtdMethod(delegate { return FT_SetDataCharacteristics(_deviceHandle, (byte) _dataBits, _stopBits, _parity); });
 			}
 		}
 
@@ -275,7 +275,9 @@ namespace Modbus.IO
 			set
 			{
 				_parity = (byte) value;
-				InvokeFtdMethod(delegate { return FT_SetDataCharacteristics(_deviceHandle, (byte) _dataBits, _stopBits, _parity); });
+
+				if (IsOpen)
+					InvokeFtdMethod(delegate { return FT_SetDataCharacteristics(_deviceHandle, (byte) _dataBits, _stopBits, _parity); });
 			}
 		}
 
