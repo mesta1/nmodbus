@@ -13,21 +13,21 @@ namespace Modbus.UnitTests.Util
 		public void JoinArray()
 		{
 			ushort[] registers = new ushort[] { 1, 2, 3 };
-			Assert.AreEqual("1, 2, 3", StringUtil.Join(", ", registers));
+			Assert.AreEqual("1, 2, 3", StringUtility.Join(", ", registers));
 		}
 
 		[Test, ExpectedException(typeof(ArgumentNullException))]
 		public void JoinArrayNull()
 		{
 			bool[] array = null;
-			StringUtil.Join(", ", array);
+			StringUtility.Join(", ", array);
 			Assert.Fail();
 		}
 
 		[Test, ExpectedException(typeof(ArgumentNullException))]
 		public void JoinArrayConverterNull()
 		{
-			StringUtil.Join(", ", new bool[] { true, false }, null);
+			StringUtility.Join(", ", new bool[] { true, false }, null);
 			Assert.Fail();
 		}
 
@@ -35,21 +35,21 @@ namespace Modbus.UnitTests.Util
 		public void JoinCollection()
 		{
 			Collection<ushort> registers = new Collection<ushort>(new ushort[] { 1, 2, 3 });
-			Assert.AreEqual("1, 2, 3", StringUtil.Join(", ", registers));
+			Assert.AreEqual("1, 2, 3", StringUtility.Join(", ", registers));
 		}
 
 		[Test, ExpectedException(typeof(ArgumentNullException))]
 		public void JoinCollectionNull()
 		{
 			ICollection<bool> col = null;
-			StringUtil.Join(", ", col);
+			StringUtility.Join(", ", col);
 			Assert.Fail();
 		}
 
 		[Test, ExpectedException(typeof(ArgumentNullException))]
 		public void JoinCollectionConverterNull()
 		{
-			StringUtil.Join(", ", new Collection<ushort>(new ushort[] { 1 }), null);
+			StringUtility.Join(", ", new Collection<ushort>(new ushort[] { 1 }), null);
 			Assert.Fail();
 		}
 
@@ -57,7 +57,7 @@ namespace Modbus.UnitTests.Util
 		public void JoinArrayCustomConversion()
 		{
 			ushort[] registers = new ushort[] { 1, 2, 3 };
-			Assert.AreEqual("number: 1, number: 2, number: 3", StringUtil.Join(", ", registers, delegate(ushort number) { return String.Format("number: {0}", number); }));
+			Assert.AreEqual("number: 1, number: 2, number: 3", StringUtility.Join(", ", registers, delegate(ushort number) { return String.Format("number: {0}", number); }));
 		}
 
 
@@ -65,7 +65,7 @@ namespace Modbus.UnitTests.Util
 		public void JoinCollectionCustomConversion()
 		{
 			Collection<ushort> registers = new Collection<ushort>(new ushort[] { 1, 2, 3 });
-			Assert.AreEqual("number: 1, number: 2, number: 3", StringUtil.Join(", ", registers, delegate(ushort number) { return String.Format("number: {0}", number); }));
+			Assert.AreEqual("number: 1, number: 2, number: 3", StringUtility.Join(", ", registers, delegate(ushort number) { return String.Format("number: {0}", number); }));
 		}
 	}
 }

@@ -8,6 +8,7 @@ using System.Threading;
 using log4net;
 using Modbus.Device;
 using NUnit.Framework;
+using Modbus.IO;
 
 namespace Modbus.IntegrationTests
 {
@@ -16,12 +17,14 @@ namespace Modbus.IntegrationTests
 		public Process Jamod;
 		public IModbusMaster Master;
 		public SerialPort MasterSerialPort;
-		public const string DefaultMasterSerialPortName = "COM5";
+		public const string DefaultMasterSerialPortName = "COM4";
+		public FTD2XXUsbPort MasterUsbPort;
+		public const uint DefaultMasterUsbPortID = 0;
 
 		public ModbusSlave Slave;
 		public Thread SlaveThread;
 		public SerialPort SlaveSerialPort;
-		public const string DefaultSlaveSerialPortName = "COM6";
+		public const string DefaultSlaveSerialPortName = "COM3";
 		public const byte SlaveAddress = 1;
 
 		public static IPAddress TcpHost = new IPAddress(new byte[] { 127, 0, 0, 1 });
@@ -52,6 +55,13 @@ namespace Modbus.IntegrationTests
 			MasterSerialPort.Open();
 		}
 
+		public void SetupMasterUsbPort(uint portID)
+		{
+			log.DebugFormat("Configure and open master serial port {0}.", portID);
+			MasterUsbPort = new FTD2XXUsbPort(portID);
+			MasterUsbPort.Open();
+		}
+
 		public void StartSlave()
 		{
 			log.Debug("Start NModbus slave.");
@@ -78,6 +88,9 @@ namespace Modbus.IntegrationTests
 
 			if (MasterSerialPort != null)
 				MasterSerialPort.Dispose();
+
+			if (MasterUsbPort != null)
+				MasterUsbPort.Dispose();
 
 			if (SlaveSerialPort != null)
 				SlaveSerialPort.Dispose();

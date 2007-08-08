@@ -143,7 +143,7 @@ namespace Modbus.UnitTests.IO
 		{
 			ModbusTransport transport = new ModbusAsciiTransport();
 			byte[] frame = { 2, 129, 2 };
-			IModbusMessage message = transport.CreateResponse<ReadCoilsInputsResponse>(CollectionUtil.Combine(frame, new byte[] { ModbusUtil.CalculateLrc(frame) }));
+			IModbusMessage message = transport.CreateResponse<ReadCoilsInputsResponse>(CollectionUtility.Concat(frame, new byte[] { ModbusUtility.CalculateLrc(frame) }));
 			Assert.IsTrue(message is SlaveExceptionResponse);
 		}
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -10,33 +11,32 @@ namespace Modbus.IO
 	class ModbusAsciiTransport : ModbusSerialTransport
 	{
 		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusAsciiTransport));
-		public const string FrameEnd = "\r\n";
 
 		internal ModbusAsciiTransport()
 		{
 		}
 
-		internal ModbusAsciiTransport(SerialPortAdapter serialPortAdapter)
-			: base(serialPortAdapter)
+		internal ModbusAsciiTransport(ISerialResource serialResource)
+			: base(serialResource)
 		{
-			serialPortAdapter.NewLine = FrameEnd;
+			serialResource.NewLine = Environment.NewLine;
 		}
 
 		internal override byte[] BuildMessageFrame(IModbusMessage message)
 		{
 			List<byte> frame = new List<byte>();
 			frame.Add((byte) ':');
-			frame.AddRange(ModbusUtil.GetAsciiBytes(message.SlaveAddress));
-			frame.AddRange(ModbusUtil.GetAsciiBytes(message.ProtocolDataUnit));
-			frame.AddRange(ModbusUtil.GetAsciiBytes(ModbusUtil.CalculateLrc(message.MessageFrame)));
-			frame.AddRange(Encoding.ASCII.GetBytes(FrameEnd.ToCharArray()));
+			frame.AddRange(ModbusUtility.GetAsciiBytes(message.SlaveAddress));
+			frame.AddRange(ModbusUtility.GetAsciiBytes(message.ProtocolDataUnit));
+			frame.AddRange(ModbusUtility.GetAsciiBytes(ModbusUtility.CalculateLrc(message.MessageFrame)));
+			frame.AddRange(Encoding.ASCII.GetBytes(Environment.NewLine.ToCharArray()));
 
 			return frame.ToArray();
 		}
 
 		internal override bool ChecksumsMatch(IModbusMessage message, byte[] messageFrame)
 		{
-			return ModbusUtil.CalculateLrc(message.MessageFrame) == messageFrame[messageFrame.Length - 1];
+			return ModbusUtility.CalculateLrc(message.MessageFrame) == messageFrame[messageFrame.Length - 1];
 		}
 
 		internal override byte[] ReadRequest()
@@ -52,11 +52,11 @@ namespace Modbus.IO
 		internal byte[] ReadRequestResponse()
 		{
 			// read message frame, removing frame start ':'
-			string frameHex = _serialPortStreamAdapter.ReadLine().Substring(1);
+			string frameHex = _serialResource.ReadLine().Substring(1);
 
 			// convert hex to bytes
-			byte[] frame = ModbusUtil.HexToBytes(frameHex);
-			_log.InfoFormat("RX: {0}", StringUtil.Join(", ", frame));
+			byte[] frame = ModbusUtility.HexToBytes(frameHex);
+			_log.InfoFormat("RX: {0}", StringUtility.Join(", ", frame));
 
 			if (frame.Length < 3)
 				throw new IOException("Premature end of stream, message truncated.");

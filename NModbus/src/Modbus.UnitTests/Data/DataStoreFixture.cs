@@ -11,65 +11,65 @@ namespace Modbus.UnitTests.Data
 		[Test]
 		public void ReadData()
 		{
-			RegisterCollection slaveCol = new RegisterCollection(0, 1, 2, 3, 4, 5, 6);
+			ModbusDataCollection<ushort> slaveCol = new ModbusDataCollection<ushort>(0, 1, 2, 3, 4, 5, 6);
 			RegisterCollection result = DataStore.ReadData<RegisterCollection, ushort>(slaveCol, 1, 3);
-			Assert.AreEqual(new ushort[] { 2, 3, 4 }, CollectionUtil.ToArray<ushort>(result));
+			Assert.AreEqual(new ushort[] { 1, 2, 3 }, CollectionUtility.ToArray(result));
 		}
 
 		[Test, ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void ReadDataStartAddressTooLarge()
 		{
-			DataStore.ReadData<DiscreteCollection, bool>(new DiscreteCollection(), 3, 2);
+			DataStore.ReadData<DiscreteCollection, bool>(new ModbusDataCollection<bool>(), 3, 2);
 		}
 
 		[Test, ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void ReadDataCountTooLarge()
-		{ 
-			DataStore.ReadData<DiscreteCollection, bool>(new DiscreteCollection(true, false, true, true), 1, 5);
+		{
+			DataStore.ReadData<DiscreteCollection, bool>(new ModbusDataCollection<bool>(true, false, true, true), 1, 5);
 		}
 
 		[Test]
 		public void ReadDataStartAddressZero()
 		{
-			DataStore.ReadData<DiscreteCollection, bool>(new DiscreteCollection(true, false, true, true, true, true), 0, 5);
+			DataStore.ReadData<DiscreteCollection, bool>(new ModbusDataCollection<bool>(true, false, true, true, true, true), 0, 5);
 		}
 
 		[Test]
 		public void WriteDataSingle()
 		{
-			DiscreteCollection destination = new DiscreteCollection(true, true);
+			ModbusDataCollection<bool> destination = new ModbusDataCollection<bool>(true, true);
 			DiscreteCollection newValues = new DiscreteCollection(false);
-			DataStore.WriteData<DiscreteCollection, bool>(newValues, destination, 0);
+			DataStore.WriteData(newValues, destination, 0);
 			Assert.AreEqual(false, destination[1]);
 		}
 
 		[Test]
 		public void WriteDataMultiple()
 		{
-			DiscreteCollection destination = new DiscreteCollection(true, false, false, false, false, false, true);
+			ModbusDataCollection<bool> destination = new ModbusDataCollection<bool>(false, false, false, false, false, false, true);
 			DiscreteCollection newValues = new DiscreteCollection(true, true, true, true);
-			DataStore.WriteData<DiscreteCollection, bool>(newValues, destination, 0);
-			Assert.AreEqual(new bool[] { true, true, true, true, true, false, true }, CollectionUtil.ToArray(destination));
+			DataStore.WriteData(newValues, destination, 0);
+			Assert.AreEqual(new bool[] { false, true, true, true, true, false, false, true }, CollectionUtility.ToArray(destination));
 		}
 
 		[Test, ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void WriteDataTooLarge()
 		{
-			DiscreteCollection slaveCol = new DiscreteCollection(true);
+			ModbusDataCollection<bool> slaveCol = new ModbusDataCollection<bool>(true);
 			DiscreteCollection newValues = new DiscreteCollection(false, false);
-			DataStore.WriteData<DiscreteCollection, bool>(newValues, slaveCol, 1);
+			DataStore.WriteData(newValues, slaveCol, 1);
 		}
 
 		[Test]
 		public void WriteDataStartAddressZero()
 		{
-			DataStore.WriteData<DiscreteCollection, bool>(new DiscreteCollection(false), new DiscreteCollection(true, true), 0);
+			DataStore.WriteData(new DiscreteCollection(false), new ModbusDataCollection<bool>(true, true), 0);
 		}
 
 		[Test, ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void WriteDataStartAddressTooLarge()
 		{
-			DataStore.WriteData<DiscreteCollection, bool>(new DiscreteCollection(true), new DiscreteCollection(true), 2);
+			DataStore.WriteData(new DiscreteCollection(true), new ModbusDataCollection<bool>(true), 2);
 		}
 
 		/// <summary>

@@ -51,14 +51,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ModbusAsciiFixture.cs" />
+    <Compile Include="ModbusCommPortAsciiFixture.cs" />
     <Compile Include="ModbusAsciiJamodSlaveFixture.cs" />
     <Compile Include="ModbusMasterFixture.cs" />
     <Compile Include="ModbusRtuDl06SlaveFixture.cs" />
-    <Compile Include="ModbusRtuFixture.cs" />
+    <Compile Include="ModbusCommPortRtuFixture.cs" />
     <Compile Include="ModbusTcpFixture.cs" />
     <Compile Include="ModbusTcpJamodSlaveFixture.cs" />
     <Compile Include="ModbusTcpSlaveFixture.cs" />
+    <Compile Include="ModbusUsbPortAsciiFixture.cs" />
+    <Compile Include="ModbusUsbPortRtuFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -67,7 +67,7 @@ namespace Modbus.Message
 			StartAddress = (ushort)IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 2));
 			NumberOfPoints = (ushort)IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 4));
 			ByteCount = frame[6];
-			Data = new DiscreteCollection(CollectionUtil.Slice<byte>(frame, 7, ByteCount));
+			Data = new DiscreteCollection(CollectionUtility.Slice<byte>(frame, 7, ByteCount));
 		}
 	}
 }

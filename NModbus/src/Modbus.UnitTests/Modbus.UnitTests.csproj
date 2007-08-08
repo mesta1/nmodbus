@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="Data\DataStoreFixture.cs" />
     <Compile Include="Data\DiscreteCollectionFixture.cs" />
+    <Compile Include="Data\ModbusDataCollectionFixture.cs" />
     <Compile Include="Data\RegisterCollectionFixture.cs" />
     <Compile Include="Device\ModbusSerialMasterFixture.cs" />
     <Compile Include="Device\ModbusSlaveFixture.cs" />

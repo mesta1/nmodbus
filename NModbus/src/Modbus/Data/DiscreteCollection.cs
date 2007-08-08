@@ -29,7 +29,7 @@ namespace Modbus.Data
 		/// Initializes a new instance of the <see cref="DiscreteCollection"/> class.
 		/// </summary>
 		public DiscreteCollection(params byte[] bytes)
-			: this((IList<bool>)CollectionUtil.ToBoolArray(new BitArray(bytes)))
+			: this((IList<bool>)CollectionUtility.ToBoolArray(new BitArray(bytes)))
 		{
 		}
 

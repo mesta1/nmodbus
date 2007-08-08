@@ -32,8 +32,8 @@ namespace Modbus.UnitTests.IO
 		public void ReadRequestResponse()
 		{
 			MockRepository mocks = new MockRepository();
-			SerialPortAdapter mockSerialPort = mocks.CreateMock<SerialPortAdapter>();
-			mockSerialPort.NewLine = ModbusAsciiTransport.FrameEnd;
+			CommPortAdapter mockSerialPort = mocks.CreateMock<CommPortAdapter>();
+			mockSerialPort.NewLine = Environment.NewLine;
 			Expect.Call(mockSerialPort.ReadLine()).Return(":110100130025B6");
 			mocks.ReplayAll();
 
@@ -47,8 +47,8 @@ namespace Modbus.UnitTests.IO
 		public void ReadRequestResponseNotEnoughBytes()
 		{
 			MockRepository mocks = new MockRepository(); 
-			SerialPortAdapter mockSerialPort = mocks.CreateMock<SerialPortAdapter>();
-			mockSerialPort.NewLine = ModbusAsciiTransport.FrameEnd;
+			CommPortAdapter mockSerialPort = mocks.CreateMock<CommPortAdapter>();
+			mockSerialPort.NewLine = Environment.NewLine;
 			Expect.Call(mockSerialPort.ReadTimeout).Return(SerialPort.InfiniteTimeout);
 			mockSerialPort.WriteTimeout = 0;
 			LastCall.IgnoreArguments();

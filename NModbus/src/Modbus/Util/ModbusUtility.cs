@@ -7,7 +7,7 @@ namespace Modbus.Util
 	/// <summary>
 	/// Modbus utility methods.
 	/// </summary>
-	public static class ModbusUtil
+	public static class ModbusUtility
 	{
 		private readonly static ushort[] crcTable = {
 			0X0000, 0XC0C1, 0XC181, 0X0140, 0XC301, 0X03C0, 0X0280, 0XC241,
@@ -52,7 +52,7 @@ namespace Modbus.Util
 		/// <returns>IEEE 32 floating point value</returns>
 		public static float GetSingle(ushort highOrderValue, ushort lowOrderValue)
 		{
-			return BitConverter.ToSingle(CollectionUtil.Combine(BitConverter.GetBytes(lowOrderValue), BitConverter.GetBytes(highOrderValue)), 0);
+			return BitConverter.ToSingle(CollectionUtility.Concat(BitConverter.GetBytes(lowOrderValue), BitConverter.GetBytes(highOrderValue)), 0);
 		}
 
 		/// <summary>
@@ -63,7 +63,7 @@ namespace Modbus.Util
 		/// <returns></returns>
 		public static uint GetUInt32(ushort highOrderValue, ushort lowOrderValue)
 		{
-			return BitConverter.ToUInt32(CollectionUtil.Combine(BitConverter.GetBytes(lowOrderValue), BitConverter.GetBytes(highOrderValue)), 0);
+			return BitConverter.ToUInt32(CollectionUtility.Concat(BitConverter.GetBytes(lowOrderValue), BitConverter.GetBytes(highOrderValue)), 0);
 		}
 
 		/// <summary>

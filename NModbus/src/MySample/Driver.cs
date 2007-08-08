@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using Modbus.Device;
+using Modbus.IO;
 using Modbus.Util;
 
 namespace MySample
@@ -36,6 +37,40 @@ namespace MySample
 			}
 
 			//Console.ReadKey();
+		}
+
+		public static void ModbusUsbRtuMasterReadRegisters()
+		{
+			int test = FTD2XXUsbPort.DeviceCount();
+
+			using (FTD2XXUsbPort port = new FTD2XXUsbPort(0))
+			{
+				// configure usb port
+				port.BaudRate = 9600;
+				port.DataBits = 8;
+				port.Parity = FTParity.None;
+				port.StopBits = FTStopBits.One;
+				port.Open();
+
+				ModbusSerialMaster master = ModbusSerialMaster.CreateRtu(port);
+
+				byte slaveID = 1;
+				ushort startAddress = 1;
+				ushort numRegisters = 5;
+
+				// read five registers		
+				ushort[] registers = master.ReadHoldingRegisters(slaveID, startAddress, numRegisters);
+
+				for (int i = 0; i < numRegisters; i++)
+					Console.WriteLine("Register {0}={1}", startAddress + i, registers[i]);
+			}
+
+			// output: 
+			// Register 1=0
+			// Register 2=0
+			// Register 3=0
+			// Register 4=0
+			// Register 5=0
 		}
 
 		public static void SimplePerfTest()
@@ -93,7 +128,7 @@ namespace MySample
 
 				// create modbus master
 				ModbusSerialMaster master = ModbusSerialMaster.CreateRtu(port);
-							
+
 				byte slaveID = 1;
 				ushort startAddress = 100;
 				ushort[] registers = new ushort[] { 1, 2, 3 };
@@ -138,7 +173,7 @@ namespace MySample
 			// Register 4=0
 			// Register 5=0
 		}
-		
+
 		/// <summary>
 		/// Simple Modbus TCP master read inputs example.
 		/// </summary>
@@ -183,12 +218,12 @@ namespace MySample
 				slavePort.Parity = Parity.None;
 				slavePort.StopBits = StopBits.One;
 				slavePort.Open();
-				
+
 				byte unitID = 1;
 
 				// create modbus slave
 				ModbusSlave slave = ModbusSerialSlave.CreateAscii(unitID, slavePort);
-				
+
 				slave.Listen();
 			}
 		}
@@ -205,7 +240,7 @@ namespace MySample
 			// create and start the TCP slave
 			TcpListener slaveTcpListener = new TcpListener(address, port);
 			slaveTcpListener.Start();
-			ModbusSlave slave = ModbusTcpSlave.CreateTcp(slaveID, slaveTcpListener);			
+			ModbusSlave slave = ModbusTcpSlave.CreateTcp(slaveID, slaveTcpListener);
 			slave.Listen();
 		}
 
@@ -217,7 +252,7 @@ namespace MySample
 			byte slaveID = 1;
 			int port = 502;
 			IPAddress address = new IPAddress(new byte[] { 127, 0, 0, 1 });
-			
+
 			// create and start the TCP slave
 			TcpListener slaveTcpListener = new TcpListener(address, port);
 			slaveTcpListener.Start();
@@ -227,7 +262,7 @@ namespace MySample
 
 			// create the master
 			TcpClient masterTcpClient = new TcpClient(address.ToString(), port);
-			ModbusTcpMaster master = ModbusTcpMaster.CreateTcp(masterTcpClient);	
+			ModbusTcpMaster master = ModbusTcpMaster.CreateTcp(masterTcpClient);
 
 			ushort numInputs = 5;
 			ushort startAddress = 100;
@@ -237,7 +272,7 @@ namespace MySample
 
 			for (int i = 0; i < numInputs; i++)
 				Console.WriteLine("Register {0}={1}", startAddress + i, inputs[i]);
-			
+
 			// clean up
 			masterTcpClient.Close();
 			slaveTcpListener.Stop();
@@ -286,7 +321,7 @@ namespace MySample
 
 				for (int i = 0; i < numRegisters; i++)
 					Console.WriteLine("Register {0}={1}", startAddress + i, registers[i]);
-			}			
+			}
 
 			// output
 			// Register 100=0
@@ -322,7 +357,7 @@ namespace MySample
 
 				// read large value in two 16 bit chunks and perform conversion
 				ushort[] registers = master.ReadHoldingRegisters(slaveID, startAddress, 2);
-				uint value = ModbusUtil.GetUInt32(registers[1], registers[0]);
+				uint value = ModbusUtility.GetUInt32(registers[1], registers[0]);
 			}
 		}
 	}

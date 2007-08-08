@@ -146,10 +146,10 @@ namespace Modbus.UnitTests.IO
 			ModbusRtuTransport transport = mocks.PartialMock<ModbusRtuTransport>();
 
 			byte[] messageFrame = { 0x01, 0x81, 0x02 };
-			byte[] crc = ModbusUtil.CalculateCrc(messageFrame);
+			byte[] crc = ModbusUtility.CalculateCrc(messageFrame);
 
 			Expect.Call(transport.Read(ModbusRtuTransport.ResponseFrameStartLength))
-				.Return(CollectionUtil.Combine(messageFrame, new byte[] { crc[0] }));
+				.Return(CollectionUtility.Concat(messageFrame, new byte[] { crc[0] }));
 
 			Expect.Call(transport.Read(1))
 				.Return(new byte[] { crc[1] });
@@ -176,7 +176,7 @@ namespace Modbus.UnitTests.IO
 			byte[] crc = { 0x9, 0x9 };
 
 			Expect.Call(transport.Read(ModbusRtuTransport.ResponseFrameStartLength))
-				.Return(CollectionUtil.Combine(messageFrame, new byte[] { crc[0] }));
+				.Return(CollectionUtility.Concat(messageFrame, new byte[] { crc[0] }));
 
 			Expect.Call(transport.Read(1))
 				.Return(new byte[] { crc[1] });
@@ -210,7 +210,7 @@ namespace Modbus.UnitTests.IO
 		public void Read()
 		{
 			MockRepository mocks = new MockRepository();
-			SerialPortAdapter mockSerialPort = mocks.CreateMock<SerialPortAdapter>(null);
+			CommPortAdapter mockSerialPort = mocks.CreateMock<CommPortAdapter>(null);
 			
 			Expect.Call(mockSerialPort.Read(new byte[5], 0, 5)).Do(((StreamReadWriteDelegate) delegate(byte[] buf, int offset, int count)
 			{

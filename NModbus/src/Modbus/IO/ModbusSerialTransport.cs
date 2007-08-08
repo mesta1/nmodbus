@@ -12,7 +12,7 @@ namespace Modbus.IO
 	public abstract class ModbusSerialTransport : ModbusTransport
 	{
 		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusTransport));
-		internal SerialPortAdapter _serialPortStreamAdapter;
+		internal ISerialResource _serialResource;
 		private bool _checkFrame = true;
 
 		/// <summary>
@@ -34,25 +34,25 @@ namespace Modbus.IO
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ModbusSerialTransport"/> class.
 		/// </summary>
-		/// <param name="serialPortStreamAdapter">The serial port stream adapter.</param>
-		internal ModbusSerialTransport(SerialPortAdapter serialPortStreamAdapter)
+		/// <param name="serialResource">The serial resource.</param>
+		internal ModbusSerialTransport(ISerialResource serialResource)
 		{
-			if (serialPortStreamAdapter == null)
-				throw new ArgumentNullException("serialPortStreamAdapter");
+			if (serialResource == null)
+				throw new ArgumentNullException("serialResource");
 
-			_serialPortStreamAdapter = serialPortStreamAdapter;		
+			_serialResource = serialResource;		
 		}
 
 		internal override void Write(IModbusMessage message)
 		{
 			byte[] frame = BuildMessageFrame(message);
-			_log.InfoFormat("TX: {0}", StringUtil.Join(", ", frame));
-			_serialPortStreamAdapter.Write(frame, 0, frame.Length);
+			_log.InfoFormat("TX: {0}", StringUtility.Join(", ", frame));
+			_serialResource.Write(frame, 0, frame.Length);
 		}
 
 		internal override T UnicastMessage<T>(IModbusMessage message)
 		{
-			_serialPortStreamAdapter.DiscardInBuffer();
+			_serialResource.DiscardInBuffer();
 
 			return base.UnicastMessage<T>(message);
 		}
@@ -64,7 +64,7 @@ namespace Modbus.IO
 			// compare checksum
 			if (CheckFrame && !ChecksumsMatch(response, frame))
 			{
-				string errorMessage = String.Format("Checksums failed to match {0} != {1}", StringUtil.Join(", ", response.MessageFrame), StringUtil.Join(", ", frame));
+				string errorMessage = String.Format("Checksums failed to match {0} != {1}", StringUtility.Join(", ", response.MessageFrame), StringUtility.Join(", ", frame));
 				_log.Error(errorMessage);
 				throw new IOException(errorMessage);
 			}

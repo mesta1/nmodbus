@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using Modbus.Util;
+using System.Collections.Generic;
 
 namespace Modbus.Data
 {
@@ -9,15 +10,15 @@ namespace Modbus.Data
 	/// </summary>
 	public class DataStore
 	{
-		private DiscreteCollection _coilDiscretes = new DiscreteCollection();
-		private DiscreteCollection _inputDiscetes = new DiscreteCollection();
-		private RegisterCollection _holdingRegisters = new RegisterCollection();
-		private RegisterCollection _inputRegisters = new RegisterCollection();
+		private ModbusDataCollection<bool> _coilDiscretes = new ModbusDataCollection<bool>();
+		private ModbusDataCollection<bool> _inputDiscretes = new ModbusDataCollection<bool>();
+		private ModbusDataCollection<ushort> _holdingRegisters = new ModbusDataCollection<ushort>();
+		private ModbusDataCollection<ushort> _inputRegisters = new ModbusDataCollection<ushort>();
 
 		/// <summary>
 		/// Gets or sets the coil discretes.
 		/// </summary>
-		public DiscreteCollection CoilDiscretes
+		public ModbusDataCollection<bool> CoilDiscretes
 		{
 			get { return _coilDiscretes; }
 			set { _coilDiscretes = value; }
@@ -26,16 +27,16 @@ namespace Modbus.Data
 		/// <summary>
 		/// Gets or sets the input discretes.
 		/// </summary>
-		public DiscreteCollection InputDiscretes
+		public ModbusDataCollection<bool> InputDiscretes
 		{
-			get { return _inputDiscetes; }
-			set { _inputDiscetes = value; }
+			get { return _inputDiscretes; }
+			set { _inputDiscretes = value; }
 		}
 
 		/// <summary>
 		/// Gets or sets the holding registers.
 		/// </summary>
-		public RegisterCollection HoldingRegisters
+		public ModbusDataCollection<ushort> HoldingRegisters
 		{
 			get { return _holdingRegisters; }
 			set { _holdingRegisters = value; }
@@ -44,7 +45,7 @@ namespace Modbus.Data
 		/// <summary>
 		/// Gets or sets the input registers.
 		/// </summary>
-		public RegisterCollection InputRegisters
+		public ModbusDataCollection<ushort> InputRegisters
 		{
 			get { return _inputRegisters; }
 			set { _inputRegisters = value; }
@@ -55,7 +56,7 @@ namespace Modbus.Data
 		/// </summary>
 		/// <typeparam name="T">The collection type.</typeparam>
 		/// <typeparam name="U">The type of elements in the collection.</typeparam>
-		public static T ReadData<T, U>(T dataSource, ushort startAddress, ushort count) where T : Collection<U>, IModbusMessageDataCollection, new()
+		internal static T ReadData<T, U>(ModbusDataCollection<U> dataSource, ushort startAddress, ushort count) where T : Collection<U>, new()
 		{
 			int startIndex = startAddress + 1;
 
@@ -65,7 +66,7 @@ namespace Modbus.Data
 			if (dataSource.Count < startIndex + count)
 				throw new ArgumentOutOfRangeException("Read is outside valid range.");
 
-			U[] dataToRetrieve = CollectionUtil.Slice(dataSource, startIndex, count);
+			U[] dataToRetrieve = CollectionUtility.Slice(dataSource, startIndex, count);
 			T result = new T();
 
 			for (int i = 0; i < count; i++)
@@ -77,9 +78,8 @@ namespace Modbus.Data
 		/// <summary>
 		/// Write data to data store.
 		/// </summary>
-		/// <typeparam name="T">The collection type.</typeparam>
-		/// <typeparam name="U">The type of elements in the collection.</typeparam>
-		public static void WriteData<T, U>(T items, T destination, ushort startAddress) where T : Collection<U>, IModbusMessageDataCollection, new()
+		/// <typeparam name="TData">The type of the data.</typeparam>
+		internal static void WriteData<TData>(Collection<TData> items, ModbusDataCollection<TData> destination, ushort startAddress)
 		{
 			int startIndex = startAddress + 1;
 
@@ -89,7 +89,7 @@ namespace Modbus.Data
 			if (destination.Count < startIndex + items.Count)
 				throw new ArgumentOutOfRangeException("Items collection is too large to write at specified start index.");
 
-			CollectionUtil.Update(items, destination, startIndex);
+			CollectionUtility.Update(items, destination, startIndex);
 		}
 	}
 }

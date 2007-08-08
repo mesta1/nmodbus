@@ -7,11 +7,7 @@ namespace Modbus.IO
 
 	internal class TcpStreamAdapter
 	{
-		private NetworkStream _networkStream;
-
-		public TcpStreamAdapter()
-		{
-		}
+		private readonly NetworkStream _networkStream;
 
 		public TcpStreamAdapter(NetworkStream networkStream)
 		{

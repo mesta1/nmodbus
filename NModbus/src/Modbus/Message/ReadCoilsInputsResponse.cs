@@ -36,7 +36,7 @@ namespace Modbus.Message
 				throw new FormatException("Message frame data segment does not contain enough bytes.");
 
 			ByteCount = frame[2];
-			Data = new DiscreteCollection(CollectionUtil.Slice<byte>(frame, 3, ByteCount));
+			Data = new DiscreteCollection(CollectionUtility.Slice<byte>(frame, 3, ByteCount));
 		}
 	}
 }

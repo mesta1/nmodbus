@@ -24,7 +24,7 @@ namespace Modbus.Device
 		/// </summary>
 		public static ModbusSerialSlave CreateAscii(byte unitID, SerialPort serialPort)
 		{
-			return new ModbusSerialSlave(unitID, new ModbusAsciiTransport(new SerialPortAdapter(serialPort)));
+			return new ModbusSerialSlave(unitID, new ModbusAsciiTransport(new CommPortAdapter(serialPort)));
 		}
 
 		/// <summary>
@@ -32,7 +32,7 @@ namespace Modbus.Device
 		/// </summary>
 		public static ModbusSerialSlave CreateRtu(byte unitID, SerialPort serialPort)
 		{
-			return new ModbusSerialSlave(unitID, new ModbusRtuTransport(new SerialPortAdapter(serialPort)));
+			return new ModbusSerialSlave(unitID, new ModbusRtuTransport(new CommPortAdapter(serialPort)));
 		}
 
 		/// <summary>
