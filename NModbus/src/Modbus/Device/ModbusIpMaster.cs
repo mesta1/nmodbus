@@ -1,27 +1,37 @@
+using System.Net;
 using System.Net.Sockets;
 using Modbus.IO;
 
 namespace Modbus.Device
 {
 	/// <summary>
-	/// Modbus IP based TCP master.
+	/// Modbus IP master device.
 	/// </summary>
-	public class ModbusTcpMaster : ModbusMaster, IModbusMaster
+	public class ModbusIpMaster : ModbusMaster
 	{
-		private ModbusTcpMaster(ModbusTcpTransport transport)
+		private ModbusIpMaster(ModbusTransport transport)
 			: base(transport)
 		{
 		}
 
 		/// <summary>
-		/// Modbus TCP slave factory method.
+		/// Modbus TCP master factory method.
 		/// </summary>
-		public static ModbusTcpMaster CreateTcp(TcpClient tcpClient)
+		public static ModbusIpMaster CreateTcp(TcpClient tcpClient)
 		{
-			tcpClient.ReceiveTimeout = tcpClient.ReceiveTimeout != 0 ? tcpClient.ReceiveTimeout : Modbus.DefaultTimeout;
-			tcpClient.SendTimeout = tcpClient.SendTimeout != 0 ? tcpClient.SendTimeout : Modbus.DefaultTimeout;
+			InitializeTimeouts(tcpClient.Client);
 
-			return new ModbusTcpMaster(new ModbusTcpTransport(new TcpStreamAdapter(tcpClient.GetStream())));
+			return new ModbusIpMaster(new ModbusTcpTransport(new TcpStreamAdapter(tcpClient.GetStream())));
+		}
+
+		/// <summary>
+		/// Modbus UDP master factory method.
+		/// </summary>
+		public static ModbusIpMaster CreateUdp(UdpClient udpClient, IPEndPoint endPoint)
+		{
+			InitializeTimeouts(udpClient.Client);
+
+			return new ModbusIpMaster(new ModbusUdpTransport(udpClient));
 		}
 
 		/// <summary>
@@ -32,7 +42,7 @@ namespace Modbus.Device
 		/// <returns>Coils status</returns>
 		public bool[] ReadCoils(ushort startAddress, ushort numberOfPoints)
 		{
-			return base.ReadCoils(Modbus.DefaultTcpSlaveUnitId, startAddress, numberOfPoints);
+			return base.ReadCoils(Modbus.DefaultIpSlaveUnitId, startAddress, numberOfPoints);
 		}
 
 		/// <summary>
@@ -43,7 +53,7 @@ namespace Modbus.Device
 		/// <returns>Discrete inputs status</returns>
 		public bool[] ReadInputs(ushort startAddress, ushort numberOfPoints)
 		{
-			return base.ReadInputs(Modbus.DefaultTcpSlaveUnitId, startAddress, numberOfPoints);
+			return base.ReadInputs(Modbus.DefaultIpSlaveUnitId, startAddress, numberOfPoints);
 		}
 
 		/// <summary>
@@ -54,7 +64,7 @@ namespace Modbus.Device
 		/// <returns>Holding registers status</returns>
 		public ushort[] ReadHoldingRegisters(ushort startAddress, ushort numberOfPoints)
 		{
-			return base.ReadHoldingRegisters(Modbus.DefaultTcpSlaveUnitId, startAddress, numberOfPoints);
+			return base.ReadHoldingRegisters(Modbus.DefaultIpSlaveUnitId, startAddress, numberOfPoints);
 		}
 
 		/// <summary>
@@ -65,7 +75,7 @@ namespace Modbus.Device
 		/// <returns>Input registers status</returns>
 		public ushort[] ReadInputRegisters(ushort startAddress, ushort numberOfPoints)
 		{
-			return base.ReadInputRegisters(Modbus.DefaultTcpSlaveUnitId, startAddress, numberOfPoints);
+			return base.ReadInputRegisters(Modbus.DefaultIpSlaveUnitId, startAddress, numberOfPoints);
 		}
 
 		/// <summary>
@@ -75,7 +85,7 @@ namespace Modbus.Device
 		/// <param name="value">Value to write.</param>
 		public void WriteSingleCoil(ushort coilAddress, bool value)
 		{
-			base.WriteSingleCoil(Modbus.DefaultTcpSlaveUnitId, coilAddress, value);
+			base.WriteSingleCoil(Modbus.DefaultIpSlaveUnitId, coilAddress, value);
 		}
 
 		/// <summary>
@@ -85,7 +95,7 @@ namespace Modbus.Device
 		/// <param name="value">Value to write.</param>
 		public void WriteSingleRegister(ushort registerAddress, ushort value)
 		{
-			base.WriteSingleRegister(Modbus.DefaultTcpSlaveUnitId, registerAddress, value);
+			base.WriteSingleRegister(Modbus.DefaultIpSlaveUnitId, registerAddress, value);
 		}
 
 		/// <summary>
@@ -95,7 +105,7 @@ namespace Modbus.Device
 		/// <param name="data">Values to write.</param>
 		public void WriteMultipleRegisters(ushort startAddress, ushort[] data)
 		{
-			base.WriteMultipleRegisters(Modbus.DefaultTcpSlaveUnitId, startAddress, data);
+			base.WriteMultipleRegisters(Modbus.DefaultIpSlaveUnitId, startAddress, data);
 		}
 
 		/// <summary>
@@ -105,7 +115,7 @@ namespace Modbus.Device
 		/// <param name="data">Values to write.</param>
 		public void WriteMultipleCoils(ushort startAddress, bool[] data)
 		{
-			base.WriteMultipleCoils(Modbus.DefaultTcpSlaveUnitId, startAddress, data);
+			base.WriteMultipleCoils(Modbus.DefaultIpSlaveUnitId, startAddress, data);
 		}
 
 		/// <summary>
@@ -119,7 +129,16 @@ namespace Modbus.Device
 		/// <param name="writeData">Register values to write.</param>
 		public ushort[] ReadWriteMultipleRegisters(ushort startReadAddress, ushort numberOfPointsToRead, ushort startWriteAddress, ushort[] writeData)
 		{
-			return base.ReadWriteMultipleRegisters(Modbus.DefaultTcpSlaveUnitId, startReadAddress, numberOfPointsToRead, startWriteAddress, writeData);
+			return base.ReadWriteMultipleRegisters(Modbus.DefaultIpSlaveUnitId, startReadAddress, numberOfPointsToRead, startWriteAddress, writeData);
+		}
+
+		/// <summary>
+		/// Initializes socket read write timeouts to default value if they have not been overridden already.
+		/// </summary>
+		internal static void InitializeTimeouts(Socket socket)
+		{
+			socket.ReceiveTimeout = socket.ReceiveTimeout != 0 ? socket.ReceiveTimeout : Modbus.DefaultTimeout;
+			socket.SendTimeout = socket.SendTimeout != 0 ? socket.SendTimeout : Modbus.DefaultTimeout;
 		}
 	}
 }

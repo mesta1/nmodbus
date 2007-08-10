@@ -8,7 +8,7 @@ namespace Modbus.Device
 	/// <summary>
 	/// Modbus master device.
 	/// </summary>
-	public abstract class ModbusMaster : ModbusDevice
+	public abstract class ModbusMaster : ModbusDevice, IModbusMaster
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ModbusMaster"/> class.

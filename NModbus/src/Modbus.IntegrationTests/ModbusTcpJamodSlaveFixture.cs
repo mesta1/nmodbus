@@ -8,7 +8,7 @@ namespace Modbus.IntegrationTests
 	[TestFixture]
 	public class ModbusTcpJamodSlaveFixture : ModbusMasterFixture
 	{
-		private string program = String.Format("TcpSlave {0}", TcpPort);
+		private string program = String.Format("TcpSlave {0}", Port);
 
 		[TestFixtureSetUp]
 		public override void Init()
@@ -17,8 +17,8 @@ namespace Modbus.IntegrationTests
 
 			StartJamodSlave(program);
 
-			MasterTcp = new TcpClient(TcpHost.ToString(), TcpPort);
-			Master = ModbusTcpMaster.CreateTcp(MasterTcp);
+			MasterTcp = new TcpClient(TcpHost.ToString(), Port);
+			Master = ModbusIpMaster.CreateTcp(MasterTcp);
 		}
 
 		[Test]

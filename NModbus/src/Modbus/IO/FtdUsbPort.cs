@@ -116,14 +116,14 @@ namespace Modbus.IO
 		private byte _parity = 0;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="FTD2XXUsbPort"/> class.
+		/// Initializes a new instance of the <see cref="FtdUsbPort"/> class.
 		/// </summary>
 		public FtdUsbPort()
 		{
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="FTD2XXUsbPort"/> class.
+		/// Initializes a new instance of the <see cref="FtdUsbPort"/> class.
 		/// </summary>
 		/// <param name="deviceID">The device ID.</param>
 		public FtdUsbPort(uint deviceID)

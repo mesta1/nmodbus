@@ -1,5 +1,5 @@
-using System.Net.Sockets;
 using System;
+using System.Net.Sockets;
 
 namespace Modbus.IO
 {

@@ -39,8 +39,8 @@ namespace Modbus
 		public const ushort CoilOn = 0xFF00;
 		public const ushort CoilOff = 0x0000;
 	
-		// TCP slaves should be addressed by IP
-		public const byte DefaultTcpSlaveUnitId = 0;
+		// IP slaves should be addressed by IP
+		public const byte DefaultIpSlaveUnitId = 0;
 
 		// An established connection was aborted by the software in your host computer, possibly due to a data transmission time-out or protocol error
 		public const int ConnectionAborted = 10053;

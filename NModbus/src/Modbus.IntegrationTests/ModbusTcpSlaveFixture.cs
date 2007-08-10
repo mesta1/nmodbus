@@ -27,7 +27,7 @@ namespace Modbus.IntegrationTests
 		public void ModbusTcpSlave_ConnectionResetByPeer()
 		{
 			string test = Environment.CurrentDirectory;
-			TcpListener slaveListener = new TcpListener(ModbusMasterFixture.TcpHost, ModbusMasterFixture.TcpPort);
+			TcpListener slaveListener = new TcpListener(ModbusMasterFixture.TcpHost, ModbusMasterFixture.Port);
 			slaveListener.Start();
 			ModbusTcpSlave slave = ModbusTcpSlave.CreateTcp(ModbusMasterFixture.SlaveAddress, slaveListener);
 			Thread slaveThread = new Thread(slave.Listen);
@@ -54,15 +54,15 @@ namespace Modbus.IntegrationTests
 		[Test]
 		public void ModbusTcpSlave_ConnectionClosesGracefully()
 		{
-			TcpListener slaveListener = new TcpListener(ModbusMasterFixture.TcpHost, ModbusMasterFixture.TcpPort);
+			TcpListener slaveListener = new TcpListener(ModbusMasterFixture.TcpHost, ModbusMasterFixture.Port);
 			slaveListener.Start();
 			ModbusTcpSlave slave = ModbusTcpSlave.CreateTcp(ModbusMasterFixture.SlaveAddress, slaveListener);
 			Thread slaveThread = new Thread(slave.Listen);
 			slaveThread.Start();
 
-			using (TcpClient masterClient = new TcpClient(ModbusMasterFixture.TcpHost.ToString(), ModbusMasterFixture.TcpPort))
+			using (TcpClient masterClient = new TcpClient(ModbusMasterFixture.TcpHost.ToString(), ModbusMasterFixture.Port))
 			{
-				ModbusTcpMaster master = ModbusTcpMaster.CreateTcp(masterClient);
+				ModbusIpMaster master = ModbusIpMaster.CreateTcp(masterClient);
 				master.Transport.Retries = 0;
 
 				bool[] coils = master.ReadCoils(1, 1);
@@ -85,15 +85,15 @@ namespace Modbus.IntegrationTests
 		[Test]
 		public void ModbusTcpSlave_ConnectionSlowlyClosesGracefully()
 		{
-			TcpListener slaveListener = new TcpListener(ModbusMasterFixture.TcpHost, ModbusMasterFixture.TcpPort);
+			TcpListener slaveListener = new TcpListener(ModbusMasterFixture.TcpHost, ModbusMasterFixture.Port);
 			slaveListener.Start();
 			ModbusTcpSlave slave = ModbusTcpSlave.CreateTcp(ModbusMasterFixture.SlaveAddress, slaveListener);
 			Thread slaveThread = new Thread(slave.Listen);
 			slaveThread.Start();
 
-			using (TcpClient masterClient = new TcpClient(ModbusMasterFixture.TcpHost.ToString(), ModbusMasterFixture.TcpPort))
+			using (TcpClient masterClient = new TcpClient(ModbusMasterFixture.TcpHost.ToString(), ModbusMasterFixture.Port))
 			{
-				ModbusTcpMaster master = ModbusTcpMaster.CreateTcp(masterClient);
+				ModbusIpMaster master = ModbusIpMaster.CreateTcp(masterClient);
 				master.Transport.Retries = 0;
 
 				bool[] coils = master.ReadCoils(1, 1);

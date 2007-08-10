@@ -9,13 +9,14 @@ using Modbus.Util;
 
 namespace Modbus.IO
 {
-	class ModbusTcpTransport : ModbusTransport
+	class ModbusTcpTransport : ModbusIpTransport
 	{
 		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusTcpTransport));
 		private readonly TcpStreamAdapter _tcpStreamAdapter;
-		private ushort _transactionId;
-		private static readonly object _transactionIdLock = new object();
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ModbusTcpTransport"/> class.
+		/// </summary>
 		public ModbusTcpTransport()
 		{
 		}
@@ -23,23 +24,6 @@ namespace Modbus.IO
 		public ModbusTcpTransport(TcpStreamAdapter tcpStreamAdapter)
 		{
 			_tcpStreamAdapter = tcpStreamAdapter;
-		}
-
-		public virtual ushort GetNewTransactionID()
-		{
-			lock (_transactionIdLock)
-				_transactionId = _transactionId == UInt16.MaxValue ? (ushort) 1 : ++_transactionId;
-
-			return _transactionId;
-		}
-
-		public static byte[] GetMbapHeader(IModbusMessage message)
-		{
-			byte[] transactionID = BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short) (message.TransactionID)));
-			byte[] protocol = { 0, 0 };
-			byte[] length = BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short) (message.ProtocolDataUnit.Length + 1)));
-
-			return CollectionUtility.Concat(transactionID, protocol, length, new byte[] { message.SlaveAddress });
 		}
 
 		public static byte[] ReadRequestResponse(TcpStreamAdapter tcpTransportAdapter)
@@ -84,18 +68,6 @@ namespace Modbus.IO
 			_tcpStreamAdapter.BeginWrite(frame, 0, frame.Length, WriteCompleted, _tcpStreamAdapter);
 		}
 
-		internal override byte[] BuildMessageFrame(IModbusMessage message)
-		{
-			if (message.TransactionID == 0)
-				message.TransactionID = GetNewTransactionID();
-
-			List<byte> messageBody = new List<byte>();
-			messageBody.AddRange(GetMbapHeader(message));
-			messageBody.AddRange(message.ProtocolDataUnit);
-
-			return messageBody.ToArray();
-		}
-
 		internal override byte[] ReadRequest()
 		{
 			return ReadRequestResponse(_tcpStreamAdapter);
@@ -103,22 +75,7 @@ namespace Modbus.IO
 
 		internal override IModbusMessage ReadResponse<T>()
 		{
-			byte[] fullFrame = ReadRequestResponse(_tcpStreamAdapter);
-			byte[] mbapHeader = CollectionUtility.Slice(fullFrame, 0, 6);
-			byte[] messageFrame = CollectionUtility.Slice(fullFrame, 6, fullFrame.Length - 6);
-
-			IModbusMessage response = base.CreateResponse<T>(messageFrame);
-			response.TransactionID = (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(mbapHeader, 0));
-
-			return response;
-		}
-
-		internal override void ValidateResponse(IModbusMessage request, IModbusMessage response)
-		{
-			if (request.TransactionID != response.TransactionID)
-				throw new IOException(String.Format("Response was not of expected transaction ID. Expected {0}, received {1}.", request.TransactionID, response.TransactionID));
-
-			base.ValidateResponse(request, response);
+			return CreateMessageAndInitializeTransactionID<T>(ReadRequestResponse(_tcpStreamAdapter));
 		}
 
 		internal static void WriteCompleted(IAsyncResult ar)

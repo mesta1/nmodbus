@@ -7,30 +7,33 @@ using System.Net.Sockets;
 using System.Threading;
 using log4net;
 using Modbus.Device;
-using NUnit.Framework;
 using Modbus.IO;
+using NUnit.Framework;
 
 namespace Modbus.IntegrationTests
 {
 	public abstract class ModbusMasterFixture
 	{
-		public Process Jamod;
-		public IModbusMaster Master;
+		public ModbusMaster Master;
 		public SerialPort MasterSerialPort;
 		public const string DefaultMasterSerialPortName = "COM6";
 		public FtdUsbPort MasterUsbPort;
 		public const uint DefaultMasterUsbPortID = 1;
+		public TcpClient MasterTcp;
+		public UdpClient MasterUdp;
 
 		public ModbusSlave Slave;
 		public Thread SlaveThread;
 		public SerialPort SlaveSerialPort;
+		public TcpListener SlaveTcp;
+		public UdpClient SlaveUdp;
 		public const string DefaultSlaveSerialPortName = "COM5";
 		public const byte SlaveAddress = 1;
 
-		public static IPAddress TcpHost = new IPAddress(new byte[] { 127, 0, 0, 1 });
-		public const int TcpPort = 502;
-		public TcpClient MasterTcp;
-		public TcpListener SlaveTcp;
+		public static readonly IPAddress TcpHost = new IPAddress(new byte[] { 127, 0, 0, 1 });
+		public static readonly IPEndPoint ModbusIPEndPoint = new IPEndPoint(TcpHost, Port);
+		public const int Port = 502;
+		public Process Jamod;
 
 		protected static readonly ILog log = LogManager.GetLogger(typeof(ModbusMasterFixture));
 
@@ -201,6 +204,22 @@ namespace Modbus.IntegrationTests
 		public virtual void ReadTooManyHoldingRegisters()
 		{
 			Master.ReadHoldingRegisters(SlaveAddress, 104, 126);
+		}
+
+		[Test]
+		public virtual void ReadWriteMultipleRegisters()
+		{
+			ushort startReadAddress = 120;
+			ushort numberOfPointsToRead = 5;
+			ushort startWriteAddress = 50;
+			ushort[] valuesToWrite = new ushort[] { 10, 20, 30, 40, 50 };
+
+			ushort[] valuesToRead = Master.ReadHoldingRegisters(SlaveAddress, startReadAddress, numberOfPointsToRead);
+			ushort[] readValues = Master.ReadWriteMultipleRegisters(SlaveAddress, startReadAddress, numberOfPointsToRead, startWriteAddress, valuesToWrite);
+			Assert.AreEqual(valuesToRead, readValues);
+
+			ushort[] writtenValues = Master.ReadHoldingRegisters(SlaveAddress, startWriteAddress, (ushort) valuesToWrite.Length);
+			Assert.AreEqual(valuesToWrite, writtenValues);
 		}
 	}
 }

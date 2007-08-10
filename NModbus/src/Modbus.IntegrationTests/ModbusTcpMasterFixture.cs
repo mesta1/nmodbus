@@ -6,20 +6,20 @@ using System.Threading;
 namespace Modbus.IntegrationTests
 {
 	[TestFixture]
-	public class ModbusTcpFixture : ModbusMasterFixture
+	public class ModbusTcpMasterFixture : ModbusMasterFixture
 	{
 		[TestFixtureSetUp]
 		public override void Init()
 		{
 			base.Init();
 
-			SlaveTcp = new TcpListener(TcpHost, TcpPort);
+			SlaveTcp = new TcpListener(TcpHost, Port);
 			SlaveTcp.Start();
 			Slave = ModbusTcpSlave.CreateTcp(SlaveAddress, SlaveTcp);
 			StartSlave();
 
-			MasterTcp = new TcpClient(TcpHost.ToString(), TcpPort);
-			Master = ModbusTcpMaster.CreateTcp(MasterTcp);
+			MasterTcp = new TcpClient(TcpHost.ToString(), Port);
+			Master = ModbusIpMaster.CreateTcp(MasterTcp);
 			Master.Transport.Retries = 0;
 		}
 
@@ -86,19 +86,9 @@ namespace Modbus.IntegrationTests
 		}
 
 		[Test]
-		public void ReadWriteMultipleRegisters()
+		public override void ReadWriteMultipleRegisters()
 		{
-			ushort startReadAddress = 120;
-			ushort numberOfPointsToRead = 5;
-			ushort startWriteAddress = 50;
-			ushort[] valuesToWrite = new ushort[] { 10, 20, 30, 40, 50 };
-
-			ushort[] valuesToRead = Master.ReadHoldingRegisters(SlaveAddress, startReadAddress, numberOfPointsToRead);
-			ushort[] readValues = Master.ReadWriteMultipleRegisters(SlaveAddress, startReadAddress, numberOfPointsToRead, startWriteAddress, valuesToWrite);
-			Assert.AreEqual(valuesToRead, readValues);
-
-			ushort[] writtenValues = Master.ReadHoldingRegisters(SlaveAddress, startWriteAddress, (ushort) valuesToWrite.Length);
-			Assert.AreEqual(valuesToWrite, writtenValues);
+			base.ReadWriteMultipleRegisters();
 		}
 	}
 }
