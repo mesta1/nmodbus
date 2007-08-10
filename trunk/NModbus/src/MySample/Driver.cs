@@ -21,7 +21,7 @@ namespace MySample
 
 			try
 			{
-				ModbusTcpMasterReadInputs();
+				//ModbusTcpMasterReadInputs();
 				//SimplePerfTest();
 				//ModbusSerialRtuMasterWriteRegisters();
 				//ModbusSerialAsciiMasterReadRegisters();
@@ -30,6 +30,8 @@ namespace MySample
 				//ModbusTcpMasterReadInputsFromModbusSlave();
 				//ModbusSerialAsciiMasterReadRegistersFromModbusSlave();
 				//StartModbusTcpSlave();
+
+				StartModbusAsciiSlave();
 			}
 			catch (Exception e)
 			{
@@ -182,7 +184,7 @@ namespace MySample
 			using (TcpClient client = new TcpClient("127.0.0.1", 502))
 			{
 				client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
-				ModbusTcpMaster master = ModbusTcpMaster.CreateTcp(client);
+				ModbusIpMaster master = ModbusIpMaster.CreateTcp(client);
 
 				// read five input values
 				ushort startAddress = 100;
@@ -262,7 +264,7 @@ namespace MySample
 
 			// create the master
 			TcpClient masterTcpClient = new TcpClient(address.ToString(), port);
-			ModbusTcpMaster master = ModbusTcpMaster.CreateTcp(masterTcpClient);
+			ModbusIpMaster master = ModbusIpMaster.CreateTcp(masterTcpClient);
 
 			ushort numInputs = 5;
 			ushort startAddress = 100;

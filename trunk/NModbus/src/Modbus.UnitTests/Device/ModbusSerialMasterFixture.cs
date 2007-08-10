@@ -25,7 +25,7 @@ namespace Modbus.UnitTests.Device
 			mockSerialResource.ReadTimeout = nonDefaultReadTimeout;
 
 			mocks.ReplayAll();
-			ModbusSerialMaster.InitializeSerialPortTimeouts(mockSerialResource);
+			ModbusSerialMaster.InitializeTimeouts(mockSerialResource);
 			mocks.VerifyAll();
 		}
 
@@ -41,7 +41,7 @@ namespace Modbus.UnitTests.Device
 			mockSerialResource.ReadTimeout = Modbus.DefaultTimeout;
 
 			mocks.ReplayAll();
-			ModbusSerialMaster.InitializeSerialPortTimeouts(mockSerialResource);
+			ModbusSerialMaster.InitializeTimeouts(mockSerialResource);
 			mocks.VerifyAll();
 		}
 
