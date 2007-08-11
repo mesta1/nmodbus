@@ -3,8 +3,7 @@ using Modbus.Device;
 
 namespace Modbus.IntegrationTests
 {
-	[TestFixture]
-	public class ModbusSerialMasterFixture : ModbusMasterFixture
+	public abstract class ModbusSerialMasterFixture : ModbusMasterFixture
 	{
 		[Test]
 		public virtual void ReturnQueryData()

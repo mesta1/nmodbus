@@ -1,22 +1,34 @@
+using System.Net.Sockets;
 using Modbus.Device;
 using NUnit.Framework;
+using System.Threading;
 
 namespace Modbus.IntegrationTests
 {
 	[TestFixture]
-	public class ModbusCommPortRtuFixture : ModbusSerialMasterFixture
+	public class NModbusTcpMasterNModbusTcpSlaveFixture : ModbusMasterFixture
 	{
 		[TestFixtureSetUp]
 		public override void Init()
 		{
 			base.Init();
 
-			SetupSlaveSerialPort();
-			Slave = ModbusSerialSlave.CreateRtu(SlaveAddress, SlaveSerialPort);
+			SlaveTcp = new TcpListener(TcpHost, Port);
+			SlaveTcp.Start();
+			Slave = ModbusTcpSlave.CreateTcp(SlaveAddress, SlaveTcp);
 			StartSlave();
 
-			SetupMasterSerialPort(ModbusMasterFixture.DefaultMasterSerialPortName);
-			Master = ModbusSerialMaster.CreateRtu(MasterSerialPort);
+			MasterTcp = new TcpClient(TcpHost.ToString(), Port);
+			Master = ModbusIpMaster.CreateTcp(MasterTcp);
+			Master.Transport.Retries = 0;
+		}
+
+		[TestFixtureTearDown]
+		public void TestFixtureTearDown()
+		{
+			SlaveTcp.Stop();
+			MasterTcp.Close();
+			CleanUp();
 		}
 
 		[Test]
@@ -67,17 +79,16 @@ namespace Modbus.IntegrationTests
 			base.WriteMultipleRegisters();
 		}
 
-
-		[Test, Ignore("Need to fix RTU slave for this function code")]
-		public override void ReadWriteMultipleRegisters()
+		[Test]
+		public override void ReadMaximumNumberOfHoldingRegisters()
 		{
-			base.ReadWriteMultipleRegisters();
+			base.ReadMaximumNumberOfHoldingRegisters();
 		}
 
 		[Test]
-		public override void ReturnQueryData()
+		public override void ReadWriteMultipleRegisters()
 		{
-			base.ReturnQueryData();
+			base.ReadWriteMultipleRegisters();
 		}
 	}
 }

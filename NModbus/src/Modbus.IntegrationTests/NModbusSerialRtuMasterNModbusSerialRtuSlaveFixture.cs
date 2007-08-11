@@ -4,37 +4,31 @@ using NUnit.Framework;
 namespace Modbus.IntegrationTests
 {
 	[TestFixture]
-	public class ModbusCommPortAsciiFixture : ModbusSerialMasterFixture
+	public class NModbusSerialRtuMasterNModbusSerialRtuSlaveFixture : ModbusSerialMasterFixture
 	{
 		[TestFixtureSetUp]
 		public override void Init()
 		{
 			base.Init();
 
-			SetupMasterSerialPort(ModbusMasterFixture.DefaultMasterSerialPortName);			
-			Master = ModbusSerialMaster.CreateAscii(MasterSerialPort);
 			SetupSlaveSerialPort();
-			Slave = ModbusSerialSlave.CreateAscii(SlaveAddress, SlaveSerialPort);
-
+			Slave = ModbusSerialSlave.CreateRtu(SlaveAddress, SlaveSerialPort);
 			StartSlave();
+
+			SetupMasterSerialPort(ModbusMasterFixture.DefaultMasterSerialPortName);
+			Master = ModbusSerialMaster.CreateRtu(MasterSerialPort);
 		}
 
 		[Test]
 		public override void ReadCoils()
-		{ 
+		{
 			base.ReadCoils();
 		}
 
 		[Test]
 		public override void Read0Coils()
 		{
-			base.Read0Coils();			
-		}
-
-		[Test]
-		public override void ReadInputs()
-		{
-			base.ReadInputs();
+			base.Read0Coils();
 		}
 
 		[Test]
@@ -44,9 +38,9 @@ namespace Modbus.IntegrationTests
 		}
 
 		[Test]
-		public override void ReadInputRegisters()
+		public override void ReadInputs()
 		{
-			base.ReadInputRegisters();
+			base.ReadInputs();
 		}
 
 		[Test]
@@ -73,7 +67,8 @@ namespace Modbus.IntegrationTests
 			base.WriteMultipleRegisters();
 		}
 
-		[Test]
+
+		[Test, Ignore("Need to fix RTU slave for this function code")]
 		public override void ReadWriteMultipleRegisters()
 		{
 			base.ReadWriteMultipleRegisters();
@@ -83,5 +78,6 @@ namespace Modbus.IntegrationTests
 		public override void ReturnQueryData()
 		{
 			base.ReturnQueryData();
-		}	}
+		}
+	}
 }

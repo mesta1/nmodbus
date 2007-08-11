@@ -10,13 +10,13 @@ using System.IO;
 namespace Modbus.IntegrationTests
 {
 	[TestFixture]
-	public class ModbusTcpSlaveFixture
+	public class NModbusTcpSlaveFixture
 	{
 		[TearDown]
 		public void TearDown()
 		{
 			// a little time for resources to become free
-			Thread.Sleep(500);
+			Thread.Sleep(1000);
 		}
 
 		/// <summary>
@@ -26,7 +26,6 @@ namespace Modbus.IntegrationTests
 		[Test]
 		public void ModbusTcpSlave_ConnectionResetByPeer()
 		{
-			string test = Environment.CurrentDirectory;
 			TcpListener slaveListener = new TcpListener(ModbusMasterFixture.TcpHost, ModbusMasterFixture.Port);
 			slaveListener.Start();
 			ModbusTcpSlave slave = ModbusTcpSlave.CreateTcp(ModbusMasterFixture.SlaveAddress, slaveListener);
@@ -36,14 +35,14 @@ namespace Modbus.IntegrationTests
 
 			Thread.Sleep(500);
 
-			Process masterProcess = Process.Start(Path.Combine(Environment.CurrentDirectory, @"..\..\..\..\tools\nmodbus\TestDriver.exe"));
-			Thread.Sleep(2000);
+			using (Process masterProcess = Process.Start(Path.Combine(Environment.CurrentDirectory, @"..\..\..\..\tools\nmodbus\TestDriver.exe")))
+			{
+				Thread.Sleep(2000);
+				masterProcess.Kill();
+			}
 
-			masterProcess.Kill();
 			Thread.Sleep(2000);
-
 			Assert.AreEqual(0, ModbusTcpSlave.Masters.Count);
-
 			slaveListener.Stop();
 		}
 

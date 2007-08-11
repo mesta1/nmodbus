@@ -55,18 +55,18 @@
     <Reference Include="WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ModbusCommPortAsciiFixture.cs" />
-    <Compile Include="ModbusAsciiJamodSlaveFixture.cs" />
+    <Compile Include="NModbusSerialAsciiMasterNModbusSerialAsciiSlaveFixture.cs" />
+    <Compile Include="NModbusSerialAsciiMasterJamodSerialAsciiSlaveFixture.cs" />
     <Compile Include="ModbusMasterFixture.cs" />
-    <Compile Include="ModbusRtuDl06SlaveFixture.cs" />
-    <Compile Include="ModbusCommPortRtuFixture.cs" />
+    <Compile Include="NModbusSerialRtuMasterDl06SlaveFixture.cs" />
+    <Compile Include="NModbusSerialRtuMasterNModbusSerialRtuSlaveFixture.cs" />
     <Compile Include="ModbusSerialMasterFixture.cs" />
-    <Compile Include="ModbusTcpMasterFixture.cs" />
-    <Compile Include="ModbusTcpJamodSlaveFixture.cs" />
-    <Compile Include="ModbusTcpSlaveFixture.cs" />
-    <Compile Include="ModbusUdpMasterFixture.cs" />
-    <Compile Include="ModbusUsbPortAsciiFixture.cs" />
-    <Compile Include="ModbusUsbPortRtuFixture.cs" />
+    <Compile Include="NModbusTcpMasterNModbusTcpSlaveFixture.cs" />
+    <Compile Include="NModbusTcpMasterJamodTcpSlaveFixture.cs" />
+    <Compile Include="NModbusTcpSlaveFixture.cs" />
+    <Compile Include="NModbusUdpMasterNModbusUdpSlaveFixture.cs" />
+    <Compile Include="NModbusUsbAsciiNModbusSerialAsciiFixture.cs" />
+    <Compile Include="NModbusUsbRtuMasterNModbusSerialRtuSlaveFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
