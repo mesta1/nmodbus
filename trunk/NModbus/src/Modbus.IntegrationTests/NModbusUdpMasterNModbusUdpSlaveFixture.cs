@@ -22,13 +22,6 @@ namespace Modbus.IntegrationTests
 			Master.Transport.Retries = 0;
 		}
 
-		[TestFixtureTearDown]
-		public void TestFixtureTearDown()
-		{
-			SlaveTcp.Stop();
-			CleanUp();
-		}
-
 		[Test]
 		public override void ReadCoils()
 		{
