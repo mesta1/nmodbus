@@ -3,6 +3,7 @@ using System.IO;
 using Modbus.Data;
 using Modbus.IO;
 using Modbus.Message;
+using Modbus.Utility;
 using NUnit.Framework;
 using Rhino.Mocks;
 using Modbus.Util;

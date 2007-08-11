@@ -1,6 +1,6 @@
 using System;
 using Modbus.Data;
-using Modbus.Util;
+using Modbus.Utility;
 
 namespace Modbus.Message
 {

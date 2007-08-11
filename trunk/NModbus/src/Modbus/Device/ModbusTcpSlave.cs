@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using Modbus.Utility;
 
 namespace Modbus.Device
 {

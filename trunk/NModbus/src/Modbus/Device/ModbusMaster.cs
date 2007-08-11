@@ -1,7 +1,7 @@
 using Modbus.Data;
 using Modbus.IO;
 using Modbus.Message;
-using Modbus.Util;
+using Modbus.Utility;
 
 namespace Modbus.Device
 {
