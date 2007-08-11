@@ -60,6 +60,7 @@
     <Compile Include="ModbusMasterFixture.cs" />
     <Compile Include="ModbusRtuDl06SlaveFixture.cs" />
     <Compile Include="ModbusCommPortRtuFixture.cs" />
+    <Compile Include="ModbusSerialMasterFixture.cs" />
     <Compile Include="ModbusTcpMasterFixture.cs" />
     <Compile Include="ModbusTcpJamodSlaveFixture.cs" />
     <Compile Include="ModbusTcpSlaveFixture.cs" />

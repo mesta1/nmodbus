@@ -20,6 +20,13 @@ namespace Modbus.IntegrationTests
 			Master = ModbusSerialMaster.CreateAscii(MasterSerialPort);
 		}
 
+		/// <summary>
+		/// Jamod slave does not support this function
+		/// </summary>
+		public override void ReadWriteMultipleRegisters()
+		{
+		}
+
 		[Test]
 		public override void ReadCoils()
 		{

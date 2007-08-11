@@ -21,6 +21,13 @@ namespace Modbus.IntegrationTests
 			Master = ModbusIpMaster.CreateTcp(MasterTcp);
 		}
 
+		/// <summary>
+		/// Not supported by the Jamod Slave
+		/// </summary>
+		public override void ReadWriteMultipleRegisters()
+		{
+		}
+
 		[Test]
 		public override void ReadCoils()
 		{

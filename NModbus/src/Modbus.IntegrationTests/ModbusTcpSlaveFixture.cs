@@ -58,6 +58,7 @@ namespace Modbus.IntegrationTests
 			slaveListener.Start();
 			ModbusTcpSlave slave = ModbusTcpSlave.CreateTcp(ModbusMasterFixture.SlaveAddress, slaveListener);
 			Thread slaveThread = new Thread(slave.Listen);
+			slaveThread.IsBackground = true;
 			slaveThread.Start();
 
 			using (TcpClient masterClient = new TcpClient(ModbusMasterFixture.TcpHost.ToString(), ModbusMasterFixture.Port))
@@ -89,6 +90,7 @@ namespace Modbus.IntegrationTests
 			slaveListener.Start();
 			ModbusTcpSlave slave = ModbusTcpSlave.CreateTcp(ModbusMasterFixture.SlaveAddress, slaveListener);
 			Thread slaveThread = new Thread(slave.Listen);
+			slaveThread.IsBackground = true;
 			slaveThread.Start();
 
 			using (TcpClient masterClient = new TcpClient(ModbusMasterFixture.TcpHost.ToString(), ModbusMasterFixture.Port))
