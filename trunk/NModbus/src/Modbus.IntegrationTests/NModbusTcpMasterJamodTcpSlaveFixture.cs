@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace Modbus.IntegrationTests
 {
 	[TestFixture]
-	public class ModbusTcpJamodSlaveFixture : ModbusMasterFixture
+	public class NModbusTcpMasterJamodTcpSlaveFixture : ModbusMasterFixture
 	{
 		private string program = String.Format("TcpSlave {0}", Port);
 

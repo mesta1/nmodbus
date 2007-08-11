@@ -5,7 +5,7 @@ using NUnit.Framework;
 namespace Modbus.IntegrationTests
 {
 	[TestFixture]
-	public class ModbusAsciiJamodSlaveFixture : ModbusMasterFixture
+	public class NModbusSerialAsciiMasterJamodSerialAsciiSlaveFixture : ModbusMasterFixture
 	{		
 		private string program = String.Format("SerialSlave {0} ASCII", DefaultSlaveSerialPortName);
 

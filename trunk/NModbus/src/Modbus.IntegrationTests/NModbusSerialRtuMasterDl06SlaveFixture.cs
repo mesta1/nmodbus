@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace Modbus.IntegrationTests
 {
 	[TestFixture]
-	public class ModbusRtuDl06SlaveFixture : ModbusSerialMasterFixture
+	public class NModbusSerialRtuMasterDl06SlaveFixture : ModbusSerialMasterFixture
 	{
 		[TestFixtureSetUp]
 		public override void Init()

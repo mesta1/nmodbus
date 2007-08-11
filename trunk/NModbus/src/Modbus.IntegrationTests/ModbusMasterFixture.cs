@@ -16,9 +16,9 @@ namespace Modbus.IntegrationTests
 	{
 		public ModbusMaster Master;
 		public SerialPort MasterSerialPort;
-		public const string DefaultMasterSerialPortName = "COM6";
+		public const string DefaultMasterSerialPortName = "COM8";
 		public FtdUsbPort MasterUsbPort;
-		public const uint DefaultMasterUsbPortID = 1;
+		public const uint DefaultMasterUsbPortID = 0;
 		public TcpClient MasterTcp;
 		public UdpClient MasterUdp;
 
