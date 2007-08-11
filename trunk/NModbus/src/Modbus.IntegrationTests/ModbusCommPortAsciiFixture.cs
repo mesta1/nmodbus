@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace Modbus.IntegrationTests
 {
 	[TestFixture]
-	public class ModbusCommPortAsciiFixture : ModbusMasterFixture
+	public class ModbusCommPortAsciiFixture : ModbusSerialMasterFixture
 	{
 		[TestFixtureSetUp]
 		public override void Init()
@@ -74,10 +74,14 @@ namespace Modbus.IntegrationTests
 		}
 
 		[Test]
-		public void ReturnQueryData()
+		public override void ReadWriteMultipleRegisters()
 		{
-			Assert.IsTrue(((ModbusSerialMaster) Master).ReturnQueryData(SlaveAddress, 18));
-			Assert.IsTrue(((ModbusSerialMaster) Master).ReturnQueryData(SlaveAddress, 5));
+			base.ReadWriteMultipleRegisters();
 		}
-	}
+
+		[Test]
+		public override void ReturnQueryData()
+		{
+			base.ReturnQueryData();
+		}	}
 }

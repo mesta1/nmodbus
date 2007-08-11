@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace Modbus.IntegrationTests
 {
 	[TestFixture]
-	public class ModbusCommPortRtuFixture : ModbusMasterFixture
+	public class ModbusCommPortRtuFixture : ModbusSerialMasterFixture
 	{
 		[TestFixtureSetUp]
 		public override void Init()
@@ -67,11 +67,17 @@ namespace Modbus.IntegrationTests
 			base.WriteMultipleRegisters();
 		}
 
-		[Test]
-		public void ReturnQueryData()
+
+		[Test, Ignore("Need to fix RTU slave for this function code")]
+		public override void ReadWriteMultipleRegisters()
 		{
-			Assert.IsTrue(((ModbusSerialMaster) Master).ReturnQueryData(SlaveAddress, 18));
-			Assert.IsTrue(((ModbusSerialMaster) Master).ReturnQueryData(SlaveAddress, 5));
+			base.ReadWriteMultipleRegisters();
+		}
+
+		[Test]
+		public override void ReturnQueryData()
+		{
+			base.ReturnQueryData();
 		}
 	}
 }
