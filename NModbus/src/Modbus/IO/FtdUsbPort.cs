@@ -341,9 +341,7 @@ namespace Modbus.IO
 		public void Dispose()
 		{
 			if (IsOpen)
-			{
 				Close();
-			}
 		}
 
 		/// <summary>
@@ -391,6 +389,7 @@ namespace Modbus.IO
 		/// <returns>The number of bytes read.</returns>
 		public unsafe int Read(byte[] buffer, int offset, int size)
 		{
+			// TODO implement offset
 			uint numBytesReturned = 0;
 
 			fixed (byte* pBuf = buffer)

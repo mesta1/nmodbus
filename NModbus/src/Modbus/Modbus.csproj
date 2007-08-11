@@ -105,11 +105,11 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SlaveException.cs" />
-    <Compile Include="Util\SequenceUtility.cs" />
-    <Compile Include="Util\CollectionUtility.cs" />
-    <Compile Include="Util\DelegateDefinitions.cs" />
-    <Compile Include="Util\ModbusUtility.cs" />
-    <Compile Include="Util\StringUtility.cs" />
+    <Compile Include="Utility\SequenceUtility.cs" />
+    <Compile Include="Utility\CollectionUtility.cs" />
+    <Compile Include="Utility\DelegateDefinitions.cs" />
+    <Compile Include="Utility\ModbusUtility.cs" />
+    <Compile Include="Utility\StringUtility.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources.resx">

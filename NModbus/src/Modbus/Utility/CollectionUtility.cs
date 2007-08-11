@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Modbus.Util
+namespace Modbus.Utility
 {
 	/// <summary>
 	/// Provides methods for manipulating collections.
@@ -26,7 +26,7 @@ namespace Modbus.Util
 		/// <summary>
 		/// Returns a subset array of type T.
 		/// </summary>
-	    public static T[] Slice<T>(ICollection<T> collection, int startIndex, int size)
+		public static T[] Slice<T>(ICollection<T> collection, int startIndex, int size)
 		{
 			if (collection == null)
 				throw new ArgumentNullException("collection");

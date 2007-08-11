@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Modbus.Utility;
 
 namespace Modbus.Util
 {

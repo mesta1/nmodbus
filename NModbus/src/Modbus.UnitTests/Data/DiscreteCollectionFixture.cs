@@ -1,5 +1,5 @@
 using Modbus.Data;
-using Modbus.Util;
+using Modbus.Utility;
 using NUnit.Framework;
 
 namespace Modbus.UnitTests.Data
