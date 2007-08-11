@@ -25,6 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 	ProjectSection(SolutionItems) = preProject
+		Modbus\ModbusDevice.cd = Modbus\ModbusDevice.cd
 		..\NModbus.build = ..\NModbus.build
 		..\README.txt = ..\README.txt
 		..\tools\jamod\SerialSlave.java = ..\tools\jamod\SerialSlave.java
