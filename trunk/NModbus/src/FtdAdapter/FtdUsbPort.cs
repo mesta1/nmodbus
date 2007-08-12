@@ -204,6 +204,9 @@ namespace FtdAdapter
 			}
 		}
 
+		/// <summary>
+		/// Indicates that no time-out should occur.
+		/// </summary>
 		public int InfiniteTimeout
 		{
 			get { return (int) _infiniteTimeout; }
