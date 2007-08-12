@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Modbus.Util
+namespace Modbus.Utility
 {
 	/// <summary>
 	/// Utility class for IEnumerable&lt;T&gt;

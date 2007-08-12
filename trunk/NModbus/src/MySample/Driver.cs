@@ -4,9 +4,10 @@ using System.IO.Ports;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using FtdAdapter;
 using Modbus.Device;
 using Modbus.IO;
-using Modbus.Util;
+using Modbus.Utility;
 
 namespace MySample
 {

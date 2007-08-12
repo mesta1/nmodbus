@@ -5,9 +5,9 @@ using System.IO.Ports;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using FtdAdapter;
 using log4net;
 using Modbus.Device;
-using Modbus.IO;
 using NUnit.Framework;
 
 namespace Modbus.IntegrationTests

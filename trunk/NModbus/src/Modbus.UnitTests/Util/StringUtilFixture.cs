@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Modbus.Util;
+using Modbus.Utility;
 using NUnit.Framework;
 
 namespace Modbus.UnitTests.Util

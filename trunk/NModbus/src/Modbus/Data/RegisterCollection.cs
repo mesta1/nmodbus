@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Net;
-using Modbus.Util;
+using Modbus.Utility;
 
 namespace Modbus.Data
 {

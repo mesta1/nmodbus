@@ -39,6 +39,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MySample", "MySample\MySamp
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FtdAdapter", "FtdAdapter\FtdAdapter.csproj", "{16FFB4F2-5556-439E-8729-92FB3425EF1F}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +67,10 @@ Global
 		{72FA8AB6-CE77-4578-8202-0DD32264783E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72FA8AB6-CE77-4578-8202-0DD32264783E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72FA8AB6-CE77-4578-8202-0DD32264783E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16FFB4F2-5556-439E-8729-92FB3425EF1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16FFB4F2-5556-439E-8729-92FB3425EF1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16FFB4F2-5556-439E-8729-92FB3425EF1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16FFB4F2-5556-439E-8729-92FB3425EF1F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Modbus.Utility;
 
-namespace Modbus.Util
+namespace Modbus.Utility
 {
 	/// <summary>
 	/// String utility methods.
