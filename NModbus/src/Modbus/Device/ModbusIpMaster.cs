@@ -1,3 +1,4 @@
+using System;
 using System.Net;
 using System.Net.Sockets;
 using Modbus.IO;
@@ -19,6 +20,9 @@ namespace Modbus.Device
 		/// </summary>
 		public static ModbusIpMaster CreateTcp(TcpClient tcpClient)
 		{
+			if (tcpClient == null)
+				throw new ArgumentNullException("tcpClient");
+
 			InitializeTimeouts(tcpClient.Client);
 
 			return new ModbusIpMaster(new ModbusTcpTransport(new TcpStreamAdapter(tcpClient.GetStream())));
@@ -27,8 +31,11 @@ namespace Modbus.Device
 		/// <summary>
 		/// Modbus UDP master factory method.
 		/// </summary>
-		public static ModbusIpMaster CreateUdp(UdpClient udpClient, IPEndPoint endPoint)
+		public static ModbusIpMaster CreateUdp(UdpClient udpClient)
 		{
+			if (udpClient == null)
+				throw new ArgumentNullException("udpClient");
+
 			InitializeTimeouts(udpClient.Client);
 
 			return new ModbusIpMaster(new ModbusUdpTransport(udpClient));

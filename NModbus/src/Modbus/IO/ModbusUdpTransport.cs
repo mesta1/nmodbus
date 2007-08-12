@@ -10,8 +10,7 @@ namespace Modbus.IO
 	class ModbusUdpTransport : ModbusIpTransport
 	{
 		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusUdpTransport));
-		private UdpClient _udpClient;
-		private static IPEndPoint _remoteIpEndPoint;
+		private readonly UdpClient _udpClient;
 
 		public ModbusUdpTransport()
 		{
@@ -22,10 +21,16 @@ namespace Modbus.IO
 			_udpClient = udpClient;
 		}
 
-		public static byte[] ReadRequestResponse(UdpClient udpClient)
+		/// <summary>
+		/// Blocking receive of message from default remote host
+		/// </summary>
+		public byte[] ReadRequestResponse(UdpClient udpClient)
 		{
-			// Blocking receive of message
-			byte[] frame = udpClient.Receive(ref _remoteIpEndPoint);
+			if (!_udpClient.Client.Connected)
+				throw new InvalidOperationException("UdpClient must be bound to a default remote host. Call the Connect method.");
+
+			IPEndPoint remoteIpEndPoint = null;
+			byte[] frame = udpClient.Receive(ref remoteIpEndPoint);
 			_log.InfoFormat("RX: {0}", StringUtility.Join(", ", frame));
 
 			return frame;
@@ -33,14 +38,12 @@ namespace Modbus.IO
 
 		internal override void Write(IModbusMessage message)
 		{
+			if (!_udpClient.Client.Connected)
+				throw new InvalidOperationException("UdpClient must be bound to a default remote host. Call the Connect method.");
+
 			byte[] frame = BuildMessageFrame(message);
 			_log.InfoFormat("TX: {0}", StringUtility.Join(", ", frame));
-
-			// Check if the udpClient is connected
-			if (_udpClient.Client.Connected)
-				_udpClient.Send(frame, frame.Length);
-			else
-				_udpClient.Send(frame, frame.Length, _remoteIpEndPoint);
+			_udpClient.Send(frame, frame.Length);
 		}
 
 		internal override byte[] ReadRequest()
