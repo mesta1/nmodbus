@@ -6,8 +6,10 @@ using System.Net.Sockets;
 using System.Threading;
 using FtdAdapter;
 using Modbus.Device;
+using Modbus.IntegrationTests;
 using Modbus.IO;
 using Modbus.Utility;
+using Modbus.Data;
 
 namespace MySample
 {
@@ -31,88 +33,14 @@ namespace MySample
 				//ModbusTcpMasterReadInputsFromModbusSlave();
 				//ModbusSerialAsciiMasterReadRegistersFromModbusSlave();
 				//StartModbusTcpSlave();
-
-				StartModbusAsciiSlave();
+				//StartModbusAsciiSlave();
 			}
 			catch (Exception e)
 			{
 				Console.WriteLine(e.Message);
 			}
 
-			//Console.ReadKey();
-		}
-
-		public static void ModbusUsbRtuMasterReadRegisters()
-		{
-			int test = FtdUsbPort.DeviceCount();
-
-			using (FtdUsbPort port = new FtdUsbPort(0))
-			{
-				// configure usb port
-				port.BaudRate = 9600;
-				port.DataBits = 8;
-				port.Parity = FtdParity.None;
-				port.StopBits = FtdStopBits.One;
-				port.Open();
-
-				ModbusSerialMaster master = ModbusSerialMaster.CreateRtu(port);
-
-				byte slaveID = 1;
-				ushort startAddress = 1;
-				ushort numRegisters = 5;
-
-				// read five registers		
-				ushort[] registers = master.ReadHoldingRegisters(slaveID, startAddress, numRegisters);
-
-				for (int i = 0; i < numRegisters; i++)
-					Console.WriteLine("Register {0}={1}", startAddress + i, registers[i]);
-			}
-
-			// output: 
-			// Register 1=0
-			// Register 2=0
-			// Register 3=0
-			// Register 4=0
-			// Register 5=0
-		}
-
-		public static void SimplePerfTest()
-		{
-			using (SerialPort port = new SerialPort("COM4"))
-			{
-				// configure serial port
-				port.BaudRate = 9600;
-				port.DataBits = 8;
-				port.Parity = Parity.None;
-				port.StopBits = StopBits.One;
-				port.Open();
-
-				// create modbus master
-				ModbusSerialMaster master = ModbusSerialMaster.CreateRtu(port);
-
-				byte slaveID = 1;
-				ushort startAddress = 5;
-				ushort numRegisters = 5;
-
-				// JIT compile the IL
-				master.ReadHoldingRegisters(slaveID, startAddress, numRegisters);
-
-				Stopwatch stopwatch = new Stopwatch();
-				long sum = 0;
-				double numberOfReads = 1000;
-
-				for (int i = 0; i < numberOfReads; i++)
-				{
-					stopwatch.Reset();
-					stopwatch.Start();
-					ushort[] registers = master.ReadHoldingRegisters(slaveID, startAddress, numRegisters);
-					stopwatch.Stop();
-					Console.WriteLine(String.Format("Read {0} - {1} milliseconds", i + 1, stopwatch.ElapsedMilliseconds));
-					sum += stopwatch.ElapsedMilliseconds;
-				}
-
-				Console.WriteLine(String.Format("Average {0}ms", sum / numberOfReads));
-			}
+			Console.ReadKey();
 		}
 
 		/// <summary>
@@ -120,7 +48,7 @@ namespace MySample
 		/// </summary>
 		public static void ModbusSerialRtuMasterWriteRegisters()
 		{
-			using (SerialPort port = new SerialPort("COM5"))
+			using (SerialPort port = new SerialPort(ModbusMasterFixture.DefaultMasterSerialPortName))
 			{
 				// configure serial port
 				port.BaudRate = 9600;
@@ -146,7 +74,7 @@ namespace MySample
 		/// </summary>
 		public static void ModbusSerialAsciiMasterReadRegisters()
 		{
-			using (SerialPort port = new SerialPort("COM5"))
+			using (SerialPort port = new SerialPort(ModbusMasterFixture.DefaultMasterSerialPortName))
 			{
 				// configure serial port
 				port.BaudRate = 9600;
@@ -213,7 +141,7 @@ namespace MySample
 		/// </summary>
 		public static void StartModbusAsciiSlave()
 		{
-			using (SerialPort slavePort = new SerialPort("COM4"))
+			using (SerialPort slavePort = new SerialPort(ModbusMasterFixture.DefaultSlaveSerialPortName))
 			{
 				// configure serial port
 				slavePort.BaudRate = 9600;
@@ -295,8 +223,8 @@ namespace MySample
 		{
 			Thread slaveThread;
 
-			using (SerialPort masterPort = new SerialPort("COM6"))
-			using (SerialPort slavePort = new SerialPort("COM5"))
+			using (SerialPort masterPort = new SerialPort(ModbusMasterFixture.DefaultMasterSerialPortName))
+			using (SerialPort slavePort = new SerialPort(ModbusMasterFixture.DefaultSlaveSerialPortName))
 			{
 				// configure serial ports
 				masterPort.BaudRate = slavePort.BaudRate = 9600;
@@ -336,7 +264,7 @@ namespace MySample
 
 		public static void ReadWrite32BitValue()
 		{
-			using (SerialPort port = new SerialPort("COM6"))
+			using (SerialPort port = new SerialPort(ModbusMasterFixture.DefaultMasterSerialPortName))
 			{
 				// configure serial port
 				port.BaudRate = 9600;
@@ -353,10 +281,10 @@ namespace MySample
 				uint largeValue = UInt16.MaxValue + 5;
 
 				ushort lowOrderValue = BitConverter.ToUInt16(BitConverter.GetBytes(largeValue), 0);
-				ushort highOrderValue = BitConverter.ToUInt16(BitConverter.GetBytes(largeValue), 2);							
+				ushort highOrderValue = BitConverter.ToUInt16(BitConverter.GetBytes(largeValue), 2);
 
 				// write large value in two 16 bit chunks
-				master.WriteMultipleRegisters(slaveID, startAddress, new ushort[] { lowOrderValue, highOrderValue});
+				master.WriteMultipleRegisters(slaveID, startAddress, new ushort[] { lowOrderValue, highOrderValue });
 
 				// read large value in two 16 bit chunks and perform conversion
 				ushort[] registers = master.ReadHoldingRegisters(slaveID, startAddress, 2);

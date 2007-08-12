@@ -8,17 +8,25 @@ namespace Modbus.IntegrationTests
 	[TestFixture]
 	public class NModbusUdpMasterNModbusUdpSlaveFixture : ModbusMasterFixture
 	{
+		public override double AverageReadTime
+		{
+			get
+			{
+				return 5;
+			}
+		}
+
 		[TestFixtureSetUp]
 		public override void Init()
 		{
 			base.Init();
 
-			Slave = ModbusUdpSlave.CreateUdp(SlaveAddress, new UdpClient(Port), ModbusIPEndPoint);
+			Slave = ModbusUdpSlave.CreateUdp(SlaveAddress, new UdpClient(Port), DefaultModbusIPEndPoint);
 			StartSlave();
 
 			MasterUdp = new UdpClient();
-			MasterUdp.Connect(ModbusIPEndPoint);
-			Master = ModbusIpMaster.CreateUdp(MasterUdp, ModbusIPEndPoint);
+			MasterUdp.Connect(DefaultModbusIPEndPoint);
+			Master = ModbusIpMaster.CreateUdp(MasterUdp, DefaultModbusIPEndPoint);
 			Master.Transport.Retries = 0;
 		}
 
@@ -26,6 +34,12 @@ namespace Modbus.IntegrationTests
 		public override void ReadCoils()
 		{
 			base.ReadCoils();
+		}
+
+		[Test]
+		public override void SimpleReadRegistersPerformanceTest()
+		{
+			base.SimpleReadRegistersPerformanceTest();
 		}
 	}
 }

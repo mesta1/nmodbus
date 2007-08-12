@@ -1,13 +1,20 @@
 using System.Net.Sockets;
 using Modbus.Device;
 using NUnit.Framework;
-using System.Threading;
 
 namespace Modbus.IntegrationTests
 {
 	[TestFixture]
 	public class NModbusTcpMasterNModbusTcpSlaveFixture : ModbusMasterFixture
 	{
+		public override double AverageReadTime
+		{
+			get
+			{
+				return 5;
+			}
+		}
+
 		[TestFixtureSetUp]
 		public override void Init()
 		{
@@ -89,6 +96,12 @@ namespace Modbus.IntegrationTests
 		public override void ReadWriteMultipleRegisters()
 		{
 			base.ReadWriteMultipleRegisters();
+		}
+
+		[Test]
+		public override void SimpleReadRegistersPerformanceTest()
+		{
+			base.SimpleReadRegistersPerformanceTest();
 		}
 	}
 }
