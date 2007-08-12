@@ -1,11 +1,10 @@
-using log4net;
-using Modbus.Device;
-using NUnit.Framework;
+using System;
 using System.Diagnostics;
+using System.IO;
 using System.Net.Sockets;
 using System.Threading;
-using System;
-using System.IO;
+using Modbus.Device;
+using NUnit.Framework;
 
 namespace Modbus.IntegrationTests
 {

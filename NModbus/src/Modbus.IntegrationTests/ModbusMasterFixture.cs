@@ -31,11 +31,16 @@ namespace Modbus.IntegrationTests
 		public const byte SlaveAddress = 1;
 
 		public static readonly IPAddress TcpHost = new IPAddress(new byte[] { 127, 0, 0, 1 });
-		public static readonly IPEndPoint ModbusIPEndPoint = new IPEndPoint(TcpHost, Port);
+		public static readonly IPEndPoint DefaultModbusIPEndPoint = new IPEndPoint(TcpHost, Port);
 		public const int Port = 502;
 		public Process Jamod;
 
 		protected static readonly ILog log = LogManager.GetLogger(typeof(ModbusMasterFixture));
+
+		public virtual double AverageReadTime 
+		{
+			get { return 40; }
+		}
 
 		public virtual void Init()
 		{
@@ -220,6 +225,48 @@ namespace Modbus.IntegrationTests
 
 			ushort[] writtenValues = Master.ReadHoldingRegisters(SlaveAddress, startWriteAddress, (ushort) valuesToWrite.Length);
 			Assert.AreEqual(valuesToWrite, writtenValues);
+		}
+
+		[Test]
+		public virtual void SimpleReadRegistersPerformanceTest()
+		{
+			double actualAverageReadTime = CalculateAverage(Master);
+			log.InfoFormat("Average read time for {0} - {1}ms", GetType().FullName, actualAverageReadTime);
+			Assert.IsTrue(actualAverageReadTime < AverageReadTime, String.Format("Test failed, actual average read time {0} is greater than expected {1}", actualAverageReadTime, AverageReadTime));
+		}
+
+		/// <summary>
+		/// Perform read registers command 
+		/// </summary>
+		/// <param name="master"></param>
+		/// <returns></returns>
+		internal static double CalculateAverage(IModbusMaster master)
+		{
+			ushort startAddress = 5;
+			ushort numRegisters = 5;
+
+			// JIT compile the IL
+			master.ReadHoldingRegisters(SlaveAddress, startAddress, numRegisters);
+
+			Stopwatch stopwatch = new Stopwatch();
+			long sum = 0;
+			double numberOfReads = 1000;
+
+			for (int i = 0; i < numberOfReads; i++)
+			{
+				stopwatch.Reset();
+				stopwatch.Start();
+				master.ReadHoldingRegisters(SlaveAddress, startAddress, numRegisters);
+				stopwatch.Stop();
+				log.DebugFormat("CalculateAverage read {0}", i + 1);
+				
+				checked
+				{
+					sum += stopwatch.ElapsedMilliseconds;
+				}
+			}
+
+			return sum / numberOfReads;
 		}
 	}
 }
