@@ -7,14 +7,6 @@ namespace Modbus.IntegrationTests
 	[TestFixture]
 	public class NModbusTcpMasterNModbusTcpSlaveFixture : ModbusMasterFixture
 	{
-		public override double AverageReadTime
-		{
-			get
-			{
-				return 5;
-			}
-		}
-
 		[TestFixtureSetUp]
 		public override void Init()
 		{

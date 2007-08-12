@@ -39,7 +39,7 @@ namespace Modbus.IntegrationTests
 
 		public virtual double AverageReadTime 
 		{
-			get { return 40; }
+			get { return 100; }
 		}
 
 		public virtual void Init()
