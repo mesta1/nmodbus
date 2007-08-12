@@ -6,7 +6,6 @@ using Modbus.Message;
 using Modbus.Utility;
 using NUnit.Framework;
 using Rhino.Mocks;
-using Modbus.Util;
 
 namespace Modbus.UnitTests.IO
 {

@@ -1,4 +1,4 @@
-namespace Modbus.Util
+namespace Modbus.Utility
 {
 	/// <summary>
 	/// Generic delegate definition.

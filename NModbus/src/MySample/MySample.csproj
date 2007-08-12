@@ -42,6 +42,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FtdAdapter\FtdAdapter.csproj">
+      <Project>{16FFB4F2-5556-439E-8729-92FB3425EF1F}</Project>
+      <Name>FtdAdapter</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Modbus\Modbus.csproj">
       <Project>{FF96B252-2B24-44A1-A09C-6401B5D7ED23}</Project>
       <Name>Modbus</Name>

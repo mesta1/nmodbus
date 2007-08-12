@@ -1,7 +1,8 @@
 namespace Modbus.IO
 {
-	interface ISerialResource
+	public interface ISerialResource
 	{
+		int InfiniteTimeout { get; }
 		int ReadTimeout { get; set; }
 		int WriteTimeout { get; set; }
 		string NewLine { get; set; }

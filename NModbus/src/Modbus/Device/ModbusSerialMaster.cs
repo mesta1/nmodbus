@@ -31,22 +31,20 @@ namespace Modbus.Device
 		{
 			if (serialPort == null)
 				throw new ArgumentNullException("serialPort");
-			
-			CommPortAdapter serialPortAdapter = new CommPortAdapter(serialPort);
-			InitializeTimeouts(serialPortAdapter);
 
-			return new ModbusSerialMaster(new ModbusAsciiTransport(serialPortAdapter));
+			return CreateAscii(new CommPortAdapter(serialPort));
 		}
 
 		/// <summary>
 		/// Modbus ASCII master factory method.
 		/// </summary>
-		public static ModbusSerialMaster CreateAscii(FtdUsbPort usbPort)
+		public static ModbusSerialMaster CreateAscii(ISerialResource serialResource)
 		{
-			if (usbPort == null)
-				throw new ArgumentNullException("usbPort");
-			
-			return new ModbusSerialMaster(new ModbusAsciiTransport(new UsbPortAdapter(usbPort)));
+			if (serialResource == null)
+				throw new ArgumentNullException("serialResource");
+
+			InitializeTimeouts(serialResource);
+			return new ModbusSerialMaster(new ModbusAsciiTransport(serialResource));
 		}
 
 		/// <summary>
@@ -57,21 +55,19 @@ namespace Modbus.Device
 			if (serialPort == null)
 				throw new ArgumentNullException("serialPort");
 
-			CommPortAdapter serialPortAdapter = new CommPortAdapter(serialPort);
-			InitializeTimeouts(serialPortAdapter);
-
-			return new ModbusSerialMaster(new ModbusRtuTransport(serialPortAdapter));
+			return CreateRtu(new CommPortAdapter(serialPort));
 		}
 
 		/// <summary>
 		/// Modbus RTU master factory method.
 		/// </summary>
-		public static ModbusSerialMaster CreateRtu(FtdUsbPort usbPort)
+		public static ModbusSerialMaster CreateRtu(ISerialResource serialResource)
 		{
-			if (usbPort == null)
-				throw new ArgumentNullException("usbPort");
-			
-			return new ModbusSerialMaster(new ModbusRtuTransport(new UsbPortAdapter(usbPort)));
+			if (serialResource == null)
+				throw new ArgumentNullException("serialResource");
+
+			InitializeTimeouts(serialResource);
+			return new ModbusSerialMaster(new ModbusRtuTransport(serialResource));
 		}
 		
 		/// <summary>
@@ -95,8 +91,8 @@ namespace Modbus.Device
 		/// </summary>
 		internal static void InitializeTimeouts(ISerialResource serialResource)
 		{
-			serialResource.WriteTimeout = serialResource.WriteTimeout == SerialPort.InfiniteTimeout ? Modbus.DefaultTimeout : serialResource.WriteTimeout;
-			serialResource.ReadTimeout = serialResource.ReadTimeout == SerialPort.InfiniteTimeout ? Modbus.DefaultTimeout : serialResource.ReadTimeout;
+			serialResource.WriteTimeout = serialResource.WriteTimeout == serialResource.InfiniteTimeout ? Modbus.DefaultTimeout : serialResource.WriteTimeout;
+			serialResource.ReadTimeout = serialResource.ReadTimeout == serialResource.InfiniteTimeout ? Modbus.DefaultTimeout : serialResource.ReadTimeout;
 		}
 	}
 }

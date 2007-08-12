@@ -11,12 +11,17 @@ namespace Modbus.IO
 			_serialPort = serialPort;
 		}
 
+		public int InfiniteTimeout
+		{
+			get { return SerialPort.InfiniteTimeout; }
+		}
+
 		public int ReadTimeout
 		{
 			get { return _serialPort.ReadTimeout; }
 			set { _serialPort.ReadTimeout = value; }
 		}
-		
+
 		public int WriteTimeout
 		{
 			get { return _serialPort.WriteTimeout; }
@@ -47,6 +52,6 @@ namespace Modbus.IO
 		public void Write(byte[] buffer, int offset, int count)
 		{
 			_serialPort.Write(buffer, offset, count);
-		}		
+		}
 	}
 }

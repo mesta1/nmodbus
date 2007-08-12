@@ -4,7 +4,6 @@ using System.Net.Sockets;
 using log4net;
 using Modbus.IO;
 using Modbus.Message;
-using Modbus.Util;
 using Modbus.Utility;
 
 namespace Modbus.Device

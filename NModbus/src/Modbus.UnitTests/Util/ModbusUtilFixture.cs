@@ -1,6 +1,6 @@
 using System;
 using Modbus.Message;
-using Modbus.Util;
+using Modbus.Utility;
 using NUnit.Framework;
 
 namespace Modbus.UnitTests.Util

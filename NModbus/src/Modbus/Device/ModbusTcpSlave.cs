@@ -1,7 +1,6 @@
 using log4net;
 using Modbus.IO;
 using Modbus.Message;
-using Modbus.Util;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
