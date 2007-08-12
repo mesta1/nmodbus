@@ -109,6 +109,12 @@ namespace Modbus.IntegrationTests
 				Jamod.Dispose();
 			}
 
+			if (MasterUdp != null)
+				MasterUdp.Close();
+
+			if (SlaveUdp != null)
+				SlaveUdp.Close();
+
 			Thread.Sleep(4000);
 		}
 

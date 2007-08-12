@@ -12,7 +12,8 @@ namespace Modbus.IntegrationTests
 		{
 			base.Init();
 
-			Slave = ModbusUdpSlave.CreateUdp(SlaveAddress, new UdpClient(Port));
+			SlaveUdp = new UdpClient(Port);
+			Slave = ModbusUdpSlave.CreateUdp(SlaveUdp);
 			StartSlave();
 
 			MasterUdp = new UdpClient();
