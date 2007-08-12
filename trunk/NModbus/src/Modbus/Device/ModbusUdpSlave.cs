@@ -22,8 +22,6 @@ namespace Modbus.Device
 			_client = client;
 		}
 
-		// TODO overload factory method w/o unitID argument
-
 		/// <summary>
 		/// Modbus UDP slave factory method.
 		/// </summary>
@@ -34,6 +32,7 @@ namespace Modbus.Device
 
 		/// <summary>
 		/// Modbus UDP slave factory method.
+		/// Creates NModbus UDP slave with default
 		/// </summary>
 		public static ModbusUdpSlave CreateUdp(UdpClient client)
 		{
@@ -51,10 +50,20 @@ namespace Modbus.Device
 
 		internal void ReceiveRequestCompleted(IAsyncResult ar)
 		{
-			ModbusUdpSlave slave = (ModbusUdpSlave) ar.AsyncState;
-
 			IPEndPoint masterEndPoint = null;
-			byte[] frame = _client.EndReceive(ar, ref masterEndPoint);
+			byte[] frame = null;
+
+			try
+			{
+				frame = _client.EndReceive(ar, ref masterEndPoint);
+			}
+			catch (ObjectDisposedException)
+			{
+				// this hapens when slave stops
+				return;
+			}
+
+			ModbusUdpSlave slave = (ModbusUdpSlave) ar.AsyncState;
 
 			_log.DebugFormat("Read Frame completed {0} bytes", frame.Length);
 			_log.InfoFormat("RX: {0}", StringUtility.Join(", ", frame));
