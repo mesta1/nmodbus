@@ -1,4 +1,3 @@
-using System.Net;
 using System.Net.Sockets;
 using Modbus.Device;
 using NUnit.Framework;
@@ -13,12 +12,12 @@ namespace Modbus.IntegrationTests
 		{
 			base.Init();
 
-			Slave = ModbusUdpSlave.CreateUdp(SlaveAddress, new UdpClient(Port), DefaultModbusIPEndPoint);
+			Slave = ModbusUdpSlave.CreateUdp(SlaveAddress, new UdpClient(Port));
 			StartSlave();
 
 			MasterUdp = new UdpClient();
 			MasterUdp.Connect(DefaultModbusIPEndPoint);
-			Master = ModbusIpMaster.CreateUdp(MasterUdp, DefaultModbusIPEndPoint);
+			Master = ModbusIpMaster.CreateUdp(MasterUdp);
 			Master.Transport.Retries = 0;
 		}
 

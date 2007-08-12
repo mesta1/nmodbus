@@ -18,8 +18,8 @@ namespace Modbus.Device
 	{
 		private static readonly object _mastersLock = new object();
 		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusTcpSlave));
-		private static Dictionary<string, TcpClient> _masters = new Dictionary<string, TcpClient>();
-		private TcpListener _server;
+		private static readonly Dictionary<string, TcpClient> _masters = new Dictionary<string, TcpClient>();
+		private readonly TcpListener _server;
 
 		private ModbusTcpSlave(byte unitID, TcpListener tcpListener)
 			: base(unitID, new ModbusTcpTransport())
