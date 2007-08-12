@@ -9,6 +9,7 @@
   <property name="path.jre" value="${environment::get-variable('JRE_HOME')}" />
   <property name="path.jdk" value="${environment::get-variable('JDK_HOME')}" />
   <property name="path.bin" value="src\Modbus\bin\Release" />
+  <property name="path.ftd.bin" value="src\FtdAdapter\bin\Release" />
   <property name="path.src" value="src" />
   <property name="path.output" value="testOutput" />
   <property name="path.lib" value="lib" />
@@ -133,6 +134,7 @@
       <fileset basedir="." prefix="source">
         <include name="**" />
         <exclude name="**/*.suo" />
+        <exclude name="**/*.resharper" />
         <exclude name="**/*.user" />
         <exclude name="**/obj/**" />
         <exclude name="**/bin/**" />
@@ -141,6 +143,9 @@
       </fileset>
       <fileset basedir="${path.bin}" prefix="bin">
         <include name="*.dll" />
+      </fileset>
+      <fileset basedir="${path.ftd.bin}" prefix="bin">
+        <include name="FtdAdapter.dll" />
       </fileset>
       <fileset basedir=".">
         <include name="README.txt" />

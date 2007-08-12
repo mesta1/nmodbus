@@ -1,46 +1,51 @@
-﻿<project schemaVersion="1.3.3.1">
+﻿<project schemaVersion="1.4.0.2">
     <assemblies>
+        <assembly assemblyPath=".\src\FtdAdapter\bin\Release\FtdAdapter.dll" xmlCommentsPath=".\src\FtdAdapter\bin\Release\FtdAdapter.xml" commentsOnly="False" />
         <assembly assemblyPath="C:\Code\NModbus\src\Modbus\bin\Release\Modbus.dll" xmlCommentsPath="C:\Code\NModbus\src\Modbus\bin\Release\Modbus.xml" commentsOnly="False" />
     </assemblies>
     <namespaceSummaries>
         <namespaceSummaryItem name="" isDocumented="False" />
+        <namespaceSummaryItem name="FtdAdapter" isDocumented="True">.NET wrapper for Future Device Technologies USB driver. This assembly contains unsafe code and must be run with full trust.</namespaceSummaryItem>
         <namespaceSummaryItem name="Modbus" isDocumented="True">Modbus.</namespaceSummaryItem>
         <namespaceSummaryItem name="Modbus.Data" isDocumented="True">Modbus data.</namespaceSummaryItem>
         <namespaceSummaryItem name="Modbus.Device" isDocumented="True">Modbus device.</namespaceSummaryItem>
         <namespaceSummaryItem name="Modbus.IO" isDocumented="True">Modbus transport IO.</namespaceSummaryItem>
         <namespaceSummaryItem name="Modbus.Message" isDocumented="True">Modbus messages.</namespaceSummaryItem>
-        <namespaceSummaryItem name="Modbus.Util" isDocumented="True">Utility methods.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Modbus.Utility" isDocumented="True">Modbus utility methods.</namespaceSummaryItem>
     </namespaceSummaries>
-    <contentPlacement>AboveNamespaces</contentPlacement>
     <dependencies>
         <dependencyItem depPath="C:\Code\NModbus\lib\*.*" />
     </dependencies>
-    <projectSummary />
-    <sandcastlePath />
-    <hhcPath />
-    <hxcompPath />
-    <outputPath>.\docs\</outputPath>
-    <helpFileFormat>HtmlHelp1x</helpFileFormat>
-    <cleanIntermediates>True</cleanIntermediates>
-    <purgeDuplicateTopics>True</purgeDuplicateTopics>
-    <cppCommentsFixup>False</cppCommentsFixup>
-    <frameworkVersion>2.0.50727</frameworkVersion>
-    <binaryTOC>True</binaryTOC>
-    <includeFavorites>False</includeFavorites>
-    <preliminary>False</preliminary>
-    <rootNSContainer>False</rootNSContainer>
-    <helpTitle>NModbus</helpTitle>
-    <htmlHelpName>Documentation</htmlHelpName>
-    <language>en-US</language>
-    <copyrightHref />
-    <copyrightText />
-    <feedbackEMailAddress />
-    <headerText />
-    <projectLinks>Local</projectLinks>
-    <sdkLinks>Msdn</sdkLinks>
-    <presentationStyle>Prototype</presentationStyle>
-    <namingMethod>Guid</namingMethod>
-    <syntaxFilters>Standard</syntaxFilters>
-    <missingTags>AutoDocumentCtors</missingTags>
-    <visibleItems>InheritedMembers, InheritedFrameworkMembers, Protected, SealedProtected</visibleItems>
+    <ProjectSummary>NModbus is a C# 2.0 implementation of the Modbus protocol.</ProjectSummary>
+    <MissingTags>AutoDocumentCtors, Namespace</MissingTags>
+    <VisibleItems>InheritedMembers, InheritedFrameworkMembers, Protected, SealedProtected</VisibleItems>
+    <HtmlHelp1xCompilerPath path="" />
+    <HtmlHelp2xCompilerPath path="" />
+    <OutputPath>.\docs\</OutputPath>
+    <SandcastlePath path="" />
+    <WorkingPath path="" />
+    <CleanIntermediates>True</CleanIntermediates>
+    <HelpFileFormat>HtmlHelp1x</HelpFileFormat>
+    <PurgeDuplicateTopics>True</PurgeDuplicateTopics>
+    <CppCommentsFixup>False</CppCommentsFixup>
+    <FrameworkVersion>2.0.50727</FrameworkVersion>
+    <BinaryTOC>True</BinaryTOC>
+    <IncludeFavorites>False</IncludeFavorites>
+    <Preliminary>False</Preliminary>
+    <RootNamespaceContainer>False</RootNamespaceContainer>
+    <RootNamespaceTitle />
+    <HelpTitle>NModbus</HelpTitle>
+    <HtmlHelpName>Documentation</HtmlHelpName>
+    <Language>en-US</Language>
+    <CopyrightHref />
+    <CopyrightText />
+    <FeedbackEMailAddress />
+    <HeaderText />
+    <FooterText />
+    <ProjectLinkType>Local</ProjectLinkType>
+    <SdkLinkType>Msdn</SdkLinkType>
+    <PresentationStyle>Prototype</PresentationStyle>
+    <NamingMethod>Guid</NamingMethod>
+    <SyntaxFilters>Standard</SyntaxFilters>
+    <ContentPlacement>AboveNamespaces</ContentPlacement>
 </project>
