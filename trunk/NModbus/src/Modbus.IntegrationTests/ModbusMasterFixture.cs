@@ -230,7 +230,10 @@ namespace Modbus.IntegrationTests
 		[Test]
 		public virtual void SimpleReadRegistersPerformanceTest()
 		{
+			int retries = Master.Transport.Retries;
+			Master.Transport.Retries = 5;
 			double actualAverageReadTime = CalculateAverage(Master);
+			Master.Transport.Retries = retries;
 			log.InfoFormat("Average read time for {0} - {1}ms", GetType().FullName, actualAverageReadTime);
 			Assert.IsTrue(actualAverageReadTime < AverageReadTime, String.Format("Test failed, actual average read time {0} is greater than expected {1}", actualAverageReadTime, AverageReadTime));
 		}
@@ -250,7 +253,7 @@ namespace Modbus.IntegrationTests
 
 			Stopwatch stopwatch = new Stopwatch();
 			long sum = 0;
-			double numberOfReads = 1000;
+			double numberOfReads = 50;
 
 			for (int i = 0; i < numberOfReads; i++)
 			{
