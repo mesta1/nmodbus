@@ -51,7 +51,7 @@ namespace Modbus.Device
 		internal void ReceiveRequestCompleted(IAsyncResult ar)
 		{
 			IPEndPoint masterEndPoint = null;
-			byte[] frame = null;
+			byte[] frame;
 
 			try
 			{
