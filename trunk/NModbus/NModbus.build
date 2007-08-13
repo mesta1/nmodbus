@@ -158,6 +158,9 @@
       <fileset basedir="${path.bin}" prefix="bin">
         <include name="*.dll" />
       </fileset>
+      <fileset basedir="${path.ftd.bin}" prefix="bin">
+        <include name="FtdAdapter.dll" />
+      </fileset>
       <fileset basedir=".">
         <include name="README.txt" />
       </fileset>
