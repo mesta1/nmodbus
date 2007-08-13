@@ -1,15 +1,12 @@
 using System;
-using System.Diagnostics;
 using System.IO.Ports;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using FtdAdapter;
-using Modbus.Device;
-using Modbus.IntegrationTests;
-using Modbus.IO;
-using Modbus.Utility;
 using Modbus.Data;
+using Modbus.Device;
+using Modbus.Utility;
 
 namespace MySample
 {
@@ -49,7 +46,7 @@ namespace MySample
 		/// </summary>
 		public static void ModbusSerialRtuMasterWriteRegisters()
 		{
-			using (SerialPort port = new SerialPort(ModbusMasterFixture.DefaultMasterSerialPortName))
+			using (SerialPort port = new SerialPort("COM1"))
 			{
 				// configure serial port
 				port.BaudRate = 9600;
@@ -75,7 +72,7 @@ namespace MySample
 		/// </summary>
 		public static void ModbusSerialAsciiMasterReadRegisters()
 		{
-			using (SerialPort port = new SerialPort(ModbusMasterFixture.DefaultMasterSerialPortName))
+			using (SerialPort port = new SerialPort("COM1"))
 			{
 				// configure serial port
 				port.BaudRate = 9600;
@@ -107,11 +104,11 @@ namespace MySample
 		}
 
 		/// <summary>
-		/// Simple Modbus serial USB ASCII master write multiple coils example.
+		/// Simple Modbus serial USB RTU master write multiple coils example.
 		/// </summary>
 		public static void ModbusSerialUsbRtuMasterWriteCoils()
 		{
-			using (FtdUsbPort port = new FtdUsbPort(ModbusMasterFixture.DefaultMasterUsbPortID))
+			using (FtdUsbPort port = new FtdUsbPort(0))
 			{
 				// configure usb port
 				port.BaudRate = 9600;
@@ -132,11 +129,11 @@ namespace MySample
 		}
 
 		/// <summary>
-		/// Simple Modbus serial USB RTU master write multiple coils example.
+		/// Simple Modbus serial USB ASCII master write multiple coils example.
 		/// </summary>
 		public static void ModbusSerialUsbAsciiMasterWriteCoils()
 		{
-			using (FtdUsbPort port = new FtdUsbPort(ModbusMasterFixture.DefaultMasterUsbPortID))
+			using (FtdUsbPort port = new FtdUsbPort(0))
 			{
 				// configure usb port
 				port.BaudRate = 9600;
@@ -206,7 +203,7 @@ namespace MySample
 		/// </summary>
 		public static void StartModbusSerialAsciiSlave()
 		{
-			using (SerialPort slavePort = new SerialPort(ModbusMasterFixture.DefaultSlaveSerialPortName))
+			using (SerialPort slavePort = new SerialPort("COM2"))
 			{
 				// configure serial port
 				slavePort.BaudRate = 9600;
@@ -230,7 +227,7 @@ namespace MySample
 		/// </summary>
 		public static void StartModbusSerialRtuSlave()
 		{
-			using (SerialPort slavePort = new SerialPort(ModbusMasterFixture.DefaultSlaveSerialPortName))
+			using (SerialPort slavePort = new SerialPort("COM2"))
 			{
 				// configure serial port
 				slavePort.BaudRate = 9600;
@@ -288,7 +285,7 @@ namespace MySample
 		}
 
 		/// <summary>
-		/// Simple Modbus UDP slave example
+		/// Simple Modbus UDP slave example.
 		/// </summary>
 		public static void StartModbusUdpSlave()
 		{
@@ -350,10 +347,8 @@ namespace MySample
 		/// </summary>
 		public static void ModbusSerialAsciiMasterReadRegistersFromModbusSlave()
 		{
-			Thread slaveThread;
-
-			using (SerialPort masterPort = new SerialPort(ModbusMasterFixture.DefaultMasterSerialPortName))
-			using (SerialPort slavePort = new SerialPort(ModbusMasterFixture.DefaultSlaveSerialPortName))
+			using (SerialPort masterPort = new SerialPort("COM1"))
+			using (SerialPort slavePort = new SerialPort("COM2"))
 			{
 				// configure serial ports
 				masterPort.BaudRate = slavePort.BaudRate = 9600;
@@ -366,7 +361,7 @@ namespace MySample
 				// create modbus slave on seperate thread
 				byte slaveID = 1;
 				ModbusSlave slave = ModbusSerialSlave.CreateAscii(slaveID, slavePort);
-				slaveThread = new Thread(new ThreadStart(slave.Listen));
+				Thread slaveThread = new Thread(new ThreadStart(slave.Listen));
 				slaveThread.Start();
 
 				// create modbus master
@@ -396,7 +391,7 @@ namespace MySample
 		/// </summary>
 		public static void ReadWrite32BitValue()
 		{
-			using (SerialPort port = new SerialPort(ModbusMasterFixture.DefaultMasterSerialPortName))
+			using (SerialPort port = new SerialPort("COM1"))
 			{
 				// configure serial port
 				port.BaudRate = 9600;
