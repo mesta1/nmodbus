@@ -20,7 +20,7 @@ namespace MySample
 	{
 		static void Main(string[] args)
 		{
-			//log4net.Config.XmlConfigurator.Configure();
+			log4net.Config.XmlConfigurator.Configure();
 
 			try
 			{
@@ -33,6 +33,7 @@ namespace MySample
 				//ModbusTcpMasterReadInputsFromModbusSlave();
 				//ModbusSerialAsciiMasterReadRegistersFromModbusSlave();
 				//StartModbusTcpSlave();
+				//StartModbusUdpSlave();
 				//StartModbusAsciiSlave();
 			}
 			catch (Exception e)
@@ -58,7 +59,7 @@ namespace MySample
 				port.Open();
 
 				// create modbus master
-				ModbusSerialMaster master = ModbusSerialMaster.CreateRtu(port);
+				IModbusSerialMaster master = ModbusSerialMaster.CreateRtu(port);
 
 				byte slaveID = 1;
 				ushort startAddress = 100;
@@ -84,7 +85,7 @@ namespace MySample
 				port.Open();
 
 				// create modbus master
-				ModbusSerialMaster master = ModbusSerialMaster.CreateAscii(port);
+				IModbusSerialMaster master = ModbusSerialMaster.CreateAscii(port);
 
 				byte slaveID = 1;
 				ushort startAddress = 1;
@@ -106,13 +107,62 @@ namespace MySample
 		}
 
 		/// <summary>
+		/// Simple Modbus serial USB ASCII master write multiple coils example.
+		/// </summary>
+		public static void ModbusSerialUsbRtuMasterWriteCoils()
+		{
+			using (FtdUsbPort port = new FtdUsbPort(ModbusMasterFixture.DefaultMasterUsbPortID))
+			{
+				// configure usb port
+				port.BaudRate = 9600;
+				port.DataBits = 8;
+				port.Parity = FtdParity.None;
+				port.StopBits = FtdStopBits.One;
+				port.Open();
+
+				// create modbus master
+				IModbusSerialMaster master = ModbusSerialMaster.CreateRtu(port);
+
+				byte slaveID = 1;
+				ushort startAddress = 1;
+
+				// write three coils
+				master.WriteMultipleCoils(slaveID, startAddress, new bool[] { true, false, true });
+			}
+		}
+
+		/// <summary>
+		/// Simple Modbus serial USB RTU master write multiple coils example.
+		/// </summary>
+		public static void ModbusSerialUsbAsciiMasterWriteCoils()
+		{
+			using (FtdUsbPort port = new FtdUsbPort(ModbusMasterFixture.DefaultMasterUsbPortID))
+			{
+				// configure usb port
+				port.BaudRate = 9600;
+				port.DataBits = 8;
+				port.Parity = FtdParity.None;
+				port.StopBits = FtdStopBits.One;
+				port.Open();
+
+				// create modbus master
+				IModbusSerialMaster master = ModbusSerialMaster.CreateAscii(port);
+
+				byte slaveID = 1;
+				ushort startAddress = 1;
+
+				// write three coils
+				master.WriteMultipleCoils(slaveID, startAddress, new bool[] { true, false, true });
+			}
+		}
+
+		/// <summary>
 		/// Simple Modbus TCP master read inputs example.
 		/// </summary>
 		public static void ModbusTcpMasterReadInputs()
 		{
 			using (TcpClient client = new TcpClient("127.0.0.1", 502))
 			{
-				client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
 				ModbusIpMaster master = ModbusIpMaster.CreateTcp(client);
 
 				// read five input values
@@ -122,10 +172,6 @@ namespace MySample
 
 				for (int i = 0; i < numInputs; i++)
 					Console.WriteLine("Input {0}={1}", startAddress + i, inputs[i] ? 1 : 0);
-
-				while (true)
-				{
-				}
 			}
 
 			// output: 
@@ -137,9 +183,28 @@ namespace MySample
 		}
 
 		/// <summary>
-		/// Simple Modbus Serial ASCII slave example.
+		/// Simple Modbus UDP master write coils example.
 		/// </summary>
-		public static void StartModbusAsciiSlave()
+		public static void ModbusUdpMasterWriteCoils()
+		{			
+			using (UdpClient client = new UdpClient())
+			{
+				IPEndPoint endPoint = new IPEndPoint(new IPAddress(new byte[] { 127, 0, 0, 1 }), 502);
+				client.Connect(endPoint);
+
+				ModbusIpMaster master = ModbusIpMaster.CreateUdp(client);
+
+				ushort startAddress = 1;
+
+				// write three coils
+				master.WriteMultipleCoils(startAddress, new bool[] { true, false, true });
+			}
+		}
+
+		/// <summary>
+		/// Simple Modbus serial ASCII slave example.
+		/// </summary>
+		public static void StartModbusSerialAsciiSlave()
 		{
 			using (SerialPort slavePort = new SerialPort(ModbusMasterFixture.DefaultSlaveSerialPortName))
 			{
@@ -154,9 +219,50 @@ namespace MySample
 
 				// create modbus slave
 				ModbusSlave slave = ModbusSerialSlave.CreateAscii(unitID, slavePort);
+				slave.DataStore = DataStoreFactory.CreateDefaultDataStore();
 
 				slave.Listen();
 			}
+		}
+
+		/// <summary>
+		/// Simple Modbus serial RTU slave example.
+		/// </summary>
+		public static void StartModbusSerialRtuSlave()
+		{
+			using (SerialPort slavePort = new SerialPort(ModbusMasterFixture.DefaultSlaveSerialPortName))
+			{
+				// configure serial port
+				slavePort.BaudRate = 9600;
+				slavePort.DataBits = 8;
+				slavePort.Parity = Parity.None;
+				slavePort.StopBits = StopBits.One;
+				slavePort.Open();
+
+				byte unitID = 1;
+
+				// create modbus slave
+				ModbusSlave slave = ModbusSerialSlave.CreateRtu(unitID, slavePort);
+				slave.DataStore = DataStoreFactory.CreateDefaultDataStore();
+
+				slave.Listen();
+			}
+		}
+
+		/// <summary>
+		/// Simple Modbus serial USB ASCII slave example.
+		/// </summary>
+		public static void StartModbusSerialUsbAsciiSlave()
+		{
+			// TODO
+		}
+
+		/// <summary>
+		/// Simple Modbus serial USB RTU slave example.
+		/// </summary>
+		public static void StartModbusSerialUsbRtuSlave()
+		{
+			// TODO
 		}
 
 		/// <summary>
@@ -171,8 +277,31 @@ namespace MySample
 			// create and start the TCP slave
 			TcpListener slaveTcpListener = new TcpListener(address, port);
 			slaveTcpListener.Start();
+
 			ModbusSlave slave = ModbusTcpSlave.CreateTcp(slaveID, slaveTcpListener);
+			slave.DataStore = DataStoreFactory.CreateDefaultDataStore();
+
 			slave.Listen();
+
+			// prevent the main thread from exiting
+			Thread.Sleep(Timeout.Infinite);
+		}
+
+		/// <summary>
+		/// Simple Modbus UDP slave example
+		/// </summary>
+		public static void StartModbusUdpSlave()
+		{
+			using (UdpClient client = new UdpClient(502))
+			{
+				ModbusUdpSlave slave = ModbusUdpSlave.CreateUdp(client);
+				slave.DataStore = DataStoreFactory.CreateDefaultDataStore();
+
+				slave.Listen();
+
+				// prevent the main thread from exiting
+				Thread.Sleep(Timeout.Infinite);
+			}
 		}
 
 		/// <summary>
@@ -262,6 +391,9 @@ namespace MySample
 			// Register 104=0
 		}
 
+		/// <summary>
+		/// Write a 32 bit value.
+		/// </summary>
 		public static void ReadWrite32BitValue()
 		{
 			using (SerialPort port = new SerialPort(ModbusMasterFixture.DefaultMasterSerialPortName))
