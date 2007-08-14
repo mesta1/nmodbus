@@ -182,7 +182,7 @@ namespace FtdAdapter
 					InvokeFtdMethod(delegate { return FT_SetBaudRate(_deviceHandle, (uint) _baudRate); });
 			}
 		}
-			
+
 		/// <summary>
 		/// Gets or sets the standard length of data bits per byte. 
 		/// </summary>
@@ -323,6 +323,9 @@ namespace FtdAdapter
 		/// </summary>
 		public void Open()
 		{
+			if (!IsOpen)
+				throw new InvalidOperationException("Port is already open.");
+
 			InvokeFtdMethod(delegate { return FT_Open(_deviceID, ref _deviceHandle); });
 			BaudRate = _baudRate;
 			InvokeFtdMethod(delegate { return FT_SetDataCharacteristics(_deviceHandle, (byte) _dataBits, _stopBits, _parity); });
@@ -358,14 +361,31 @@ namespace FtdAdapter
 		/// </summary>
 		/// <param name="buffer">The byte array that contains the data to write to the port.</param>
 		/// <param name="offset">The offset in the buffer array to begin writing.</param>
-		/// <param name="size">The number of bytes to write.</param>
-		public unsafe void Write(byte[] buffer, int offset, int size)
+		/// <param name="count">The number of bytes to write.</param>
+		public unsafe void Write(byte[] buffer, int offset, int count)
 		{
+			if (!IsOpen)
+				throw new InvalidOperationException("Port not open.");
+
+			if (buffer == null)
+				throw new ArgumentNullException("buffer", "Argument buffer cannot be null.");
+
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException("offset", "Argument offset must be greater than 0.");
+
+			if (count < 0)
+				throw new ArgumentOutOfRangeException("count", "Argument count must be greater than 0.");
+
+			if ((buffer.Length - offset) < count)
+			{
+				throw new ArgumentException("Invalid buffer size.");
+			}
+
 			uint numBytesReturned = 0;
 
 			fixed (byte* pBuf = buffer)
 			{
-				InvokeFtdMethod(delegate { return FT_Write(_deviceHandle, pBuf, (uint) size, ref numBytesReturned); });
+				InvokeFtdMethod(delegate { return FT_Write(_deviceHandle, (pBuf + offset), (uint) count, ref numBytesReturned); });
 			}
 		}
 
@@ -374,6 +394,9 @@ namespace FtdAdapter
 		/// </summary>
 		public string ReadLine()
 		{
+			if (!IsOpen)
+				throw new InvalidOperationException("Port not open.");
+
 			StringBuilder result = new StringBuilder();
 			byte[] singleByteBuffer = new byte[1];
 
@@ -394,16 +417,32 @@ namespace FtdAdapter
 		/// </summary>
 		/// <param name="buffer">The byte array to write the input to.</param>
 		/// <param name="offset">The offset in the buffer array to begin writing.</param>
-		/// <param name="size">The number of bytes to read.</param>
+		/// <param name="count">The number of bytes to read.</param>
 		/// <returns>The number of bytes read.</returns>
-		public unsafe int Read(byte[] buffer, int offset, int size)
+		public unsafe int Read(byte[] buffer, int offset, int count)
 		{
-			// TODO implement offset
+			if (!IsOpen)
+				throw new InvalidOperationException("Port not open.");
+
+			if (buffer == null)
+				throw new ArgumentNullException("buffer", "Argument buffer cannot be null.");
+
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException("offset", "Argument offset must be greater than 0.");
+
+			if (count < 0)
+				throw new ArgumentOutOfRangeException("count", "Argument count must be greater than 0.");
+
+			if ((buffer.Length - offset) < count)
+			{
+				throw new ArgumentException("Invalid buffer size.");
+			}
+
 			uint numBytesReturned = 0;
 
 			fixed (byte* pBuf = buffer)
 			{
-				InvokeFtdMethod(delegate { return FT_Read(_deviceHandle, pBuf, (uint) size, ref numBytesReturned); });
+				InvokeFtdMethod(delegate { return FT_Read(_deviceHandle, (pBuf + offset), (uint) count, ref numBytesReturned); });
 			}
 
 			return (int) numBytesReturned;
@@ -414,6 +453,9 @@ namespace FtdAdapter
 		/// </summary>
 		public void DiscardInBuffer()
 		{
+			if (!IsOpen)
+				throw new InvalidOperationException("Port is not open.");
+
 			InvokeFtdMethod(delegate { return FT_Purge(_deviceHandle, PurgeRx); });
 		}
 

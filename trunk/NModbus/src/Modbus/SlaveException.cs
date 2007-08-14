@@ -7,6 +7,7 @@ namespace Modbus
 	/// <summary>
 	/// Represents slave errors that occur during communication.
 	/// </summary>
+	[Serializable]
 	public class SlaveException : Exception
 	{
 		private readonly SlaveExceptionResponse _slaveExceptionResponse;
