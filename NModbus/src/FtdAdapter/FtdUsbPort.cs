@@ -323,7 +323,7 @@ namespace FtdAdapter
 		/// </summary>
 		public void Open()
 		{
-			if (!IsOpen)
+			if (IsOpen)
 				throw new InvalidOperationException("Port is already open.");
 
 			InvokeFtdMethod(delegate { return FT_Open(_deviceID, ref _deviceHandle); });
