@@ -13,7 +13,7 @@ namespace Modbus.Message
 		}
 
 		public SlaveExceptionResponse(byte slaveAddress, byte functionCode, byte exceptionCode)
-			: base(slaveAddress, functionCode)
+			: base(slaveAddress, functionCode)	
 		{
 			SlaveExceptionCode = exceptionCode;
 		}
@@ -65,7 +65,5 @@ namespace Modbus.Message
 
 			SlaveExceptionCode = frame[2];
 		}
-
-
 	}
 }

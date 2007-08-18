@@ -12,6 +12,10 @@ namespace Modbus
 	{
 		private readonly SlaveExceptionResponse _slaveExceptionResponse;
 
+		private const string slaveAddressPropertyName = "SlaveAdress";
+		private const string functionCodePropertyName = "FunctionCode";
+		private const string slaveExceptionCodePropertyName = "SlaveExceptionCode";
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SlaveException"/> class.
 		/// </summary>
@@ -48,7 +52,10 @@ namespace Modbus
 		protected SlaveException(SerializationInfo info, StreamingContext context)
 			: base(info, context)
 		{
-			// TODO: Implement type-specific serialization constructor logic.
+			if (info != null)
+			{
+				_slaveExceptionResponse = new SlaveExceptionResponse(info.GetByte(slaveAddressPropertyName), info.GetByte(functionCodePropertyName), info.GetByte(slaveExceptionCodePropertyName));
+			}
 		}
 
 		internal SlaveException(SlaveExceptionResponse slaveExceptionResponse)
@@ -96,6 +103,37 @@ namespace Modbus
 			get
 			{
 				return _slaveExceptionResponse != null ? _slaveExceptionResponse.SlaveExceptionCode : (byte) 0;
+			}
+		}
+
+		/// <summary>
+		/// Gets the slave address, or 0.
+		/// </summary>
+		/// <value>The slave address.</value>
+		public byte SlaveAddress
+		{
+			get
+			{
+				return _slaveExceptionResponse != null ? _slaveExceptionResponse.SlaveAddress : (byte) 0;
+			}
+		}
+
+		/// <summary>
+		/// When overridden in a derived class, sets the <see cref="T:System.Runtime.Serialization.SerializationInfo"></see> with information about the exception.
+		/// </summary>
+		/// <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo"></see> that holds the serialized object data about the exception being thrown.</param>
+		/// <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext"></see> that contains contextual information about the source or destination.</param>
+		/// <exception cref="T:System.ArgumentNullException">The info parameter is a null reference (Nothing in Visual Basic). </exception>
+		/// <PermissionSet><IPermission class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Read="*AllFiles*" PathDiscovery="*AllFiles*"/><IPermission class="System.Security.Permissions.SecurityPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Flags="SerializationFormatter"/></PermissionSet>
+		public override void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			base.GetObjectData(info, context);
+
+			if (info != null && _slaveExceptionResponse != null)
+			{
+				info.AddValue(slaveAddressPropertyName, _slaveExceptionResponse.SlaveAddress);
+				info.AddValue(functionCodePropertyName, _slaveExceptionResponse.FunctionCode);
+				info.AddValue(slaveExceptionCodePropertyName, _slaveExceptionResponse.SlaveExceptionCode);
 			}
 		}
 	}
