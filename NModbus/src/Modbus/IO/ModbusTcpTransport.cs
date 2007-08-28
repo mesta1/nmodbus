@@ -78,9 +78,15 @@ namespace Modbus.IO
 
 		internal static void WriteCompleted(IAsyncResult ar)
 		{
-			_log.Debug("Write completed.");
-			TcpStreamAdapter stream = (TcpStreamAdapter) ar.AsyncState;
-			stream.EndWrite(ar);
+			try
+			{
+				TcpStreamAdapter stream = (TcpStreamAdapter) ar.AsyncState;
+				stream.EndWrite(ar);
+			}
+			catch (ObjectDisposedException)
+			{
+				// stream has already been closed 
+			}
 		}
 	}
 }
