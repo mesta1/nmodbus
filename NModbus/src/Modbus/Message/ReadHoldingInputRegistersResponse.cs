@@ -5,17 +5,20 @@ using Modbus.Utility;
 namespace Modbus.Message
 {
 	class ReadHoldingInputRegistersResponse : ModbusMessageWithData<RegisterCollection>, IModbusMessage
-	{	
+	{
 		private const int _minimumFrameSize = 3;
 
 		public ReadHoldingInputRegistersResponse()
 		{
 		}
 
-		public ReadHoldingInputRegistersResponse(byte functionCode, byte slaveAddress, byte byteCount, RegisterCollection data)
+		public ReadHoldingInputRegistersResponse(byte functionCode, byte slaveAddress, RegisterCollection data)
 			: base(slaveAddress, functionCode)
 		{
-			ByteCount = byteCount;
+			if (data == null)
+				throw new ArgumentNullException("data");
+
+			ByteCount = data.ByteCount;
 			Data = data;
 		}
 
@@ -28,6 +31,11 @@ namespace Modbus.Message
 		public override int MinimumFrameSize
 		{
 			get { return _minimumFrameSize; }
+		}
+
+		public override string ToString()
+		{
+			return String.Format("Read {0} {1} registers.", Data.Count, FunctionCode == Modbus.ReadHoldingRegisters ? "holding" : "input");
 		}
 
 		protected override void InitializeUnique(byte[] frame)

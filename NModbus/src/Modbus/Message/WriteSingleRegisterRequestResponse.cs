@@ -30,6 +30,11 @@ namespace Modbus.Message
 			set { MessageImpl.StartAddress = value; }
 		}
 
+		public override string ToString()
+		{
+			return String.Format("Write single holding register at address {0}.", StartAddress);
+		}
+
 		protected override void InitializeUnique(byte[] frame)
 		{
 			StartAddress = (ushort)IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 2));

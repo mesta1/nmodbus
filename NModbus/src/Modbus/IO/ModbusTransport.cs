@@ -22,6 +22,7 @@ namespace Modbus.IO
 			set { _retries = value; }
 		}
 
+		// TODO catch socket exception
 		internal virtual T UnicastMessage<T>(IModbusMessage message) where T : IModbusMessage, new()
 		{
 			IModbusMessage response = null;

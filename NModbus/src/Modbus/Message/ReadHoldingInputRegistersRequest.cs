@@ -46,7 +46,7 @@ namespace Modbus.Message
 
 		public override string ToString()
 		{
-			return String.Format("Read {0} Registers {1} beginning at address {2}.", NumberOfPoints, FunctionCode == Modbus.ReadHoldingRegisters ? "Holding" : "Input", StartAddress);
+			return String.Format("Read {0} {1} registers at address {2}.", NumberOfPoints, FunctionCode == Modbus.ReadHoldingRegisters ? "holding" : "input", StartAddress);
 		}
 
 		protected override void InitializeUnique(byte[] frame)

@@ -15,5 +15,12 @@ namespace Modbus.UnitTests.Message
 			Assert.AreEqual(1, message.Data.Count);
 			Assert.AreEqual(1200, message.Data[0]);
 		}
+
+		[Test]
+		public void ToString()
+		{
+			WriteSingleRegisterRequestResponse message = new WriteSingleRegisterRequestResponse(12, 5, 1200);
+			Assert.AreEqual("Write single holding register at address 5.", message.ToString());
+		}
 	}
 }

@@ -14,7 +14,7 @@ namespace Modbus.Utility
 		public static IList<T> ToList<T>(IEnumerable<T> sequence)
 		{
 			if (sequence == null)
-				throw new ArgumentException("sequence");
+				throw new ArgumentNullException("sequence");
 
 			List<T> list = new List<T>();
 			foreach (T item in sequence)

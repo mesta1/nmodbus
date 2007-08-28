@@ -3,10 +3,10 @@ using Modbus.Message;
 using Modbus.Utility;
 using NUnit.Framework;
 
-namespace Modbus.UnitTests.Util
+namespace Modbus.UnitTests.Utility
 {
 	[TestFixture]
-	public class ModbusUtilFixture
+	public class ModbusUtilityFixture
 	{
 		[Test]
 		public void GetAsciiBytesFromEmpty()

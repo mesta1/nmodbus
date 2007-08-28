@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Reflection;
 using Modbus.Message;
 using NUnit.Framework;
 
@@ -22,12 +25,37 @@ namespace Modbus.UnitTests.Message
 			Assert.AreEqual(expectedMessageFrame, message.MessageFrame);
 		}
 
-		internal void AssertModbusMessagePropertiesAreEqual(IModbusMessage obj1, IModbusMessage obj2)
+		[Test, Ignore("TODO: implement ToString")]
+		public void ModbusMessageToStringOverriden()
+		{
+			foreach (Type messageType in GetConcreteSubClasses("Modbus.dll", typeof(ModbusMessage)))
+			{
+				Assert.AreEqual(messageType, messageType.GetMethod("ToString").DeclaringType, String.Concat("No ToString override in message ", messageType.FullName));
+			}
+		}
+
+		internal static void AssertModbusMessagePropertiesAreEqual(IModbusMessage obj1, IModbusMessage obj2)
 		{
 			Assert.AreEqual(obj1.FunctionCode, obj2.FunctionCode);
 			Assert.AreEqual(obj1.SlaveAddress, obj2.SlaveAddress);
 			Assert.AreEqual(obj1.MessageFrame, obj2.MessageFrame);
 			Assert.AreEqual(obj1.ProtocolDataUnit, obj2.ProtocolDataUnit);
+		}
+
+		private static Type[] GetConcreteSubClasses(string assemblyPath, Type baseClassType)
+		{
+			Assembly assembly = Assembly.LoadFrom(assemblyPath);
+			List<Type> subClasses = new List<Type>();
+
+			foreach (Type type in assembly.GetTypes())
+			{
+				if (type.IsSubclassOf(baseClassType) && !type.IsAbstract)
+				{
+					subClasses.Add(type);
+				}
+			}
+
+			return (subClasses.ToArray());
 		}
 	}
 }

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Net.Sockets;
 using Modbus.Message;
 using Modbus.Utility;
 
