@@ -4,10 +4,10 @@ using System.Collections.ObjectModel;
 using Modbus.Utility;
 using NUnit.Framework;
 
-namespace Modbus.UnitTests.Util
+namespace Modbus.UnitTests.Utility
 {
 	[TestFixture]
-	public class StringUtilFixture
+	public class StringUtilityFixture
 	{
 		[Test]
 		public void JoinArray()

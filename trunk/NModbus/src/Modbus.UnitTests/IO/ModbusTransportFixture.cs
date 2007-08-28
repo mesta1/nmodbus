@@ -87,12 +87,12 @@ namespace Modbus.UnitTests.IO
 				.Repeat.Times(8);
 
 			Expect.Call(transport.ReadResponse<ReadHoldingInputRegistersResponse>())
-				.Return(new ReadHoldingInputRegistersResponse(Modbus.ReadHoldingRegisters, 1, 1, new RegisterCollection(1)));
+				.Return(new ReadHoldingInputRegistersResponse(Modbus.ReadHoldingRegisters, 1, new RegisterCollection(1)));
 
 			mocks.ReplayAll();
 
 			ReadHoldingInputRegistersRequest request = new ReadHoldingInputRegistersRequest(Modbus.ReadHoldingRegisters, 1, 1, 1);
-			ReadHoldingInputRegistersResponse expectedResponse = new ReadHoldingInputRegistersResponse(Modbus.ReadHoldingRegisters, 1, 1, new RegisterCollection(1));
+			ReadHoldingInputRegistersResponse expectedResponse = new ReadHoldingInputRegistersResponse(Modbus.ReadHoldingRegisters, 1, new RegisterCollection(1));
 			ReadHoldingInputRegistersResponse response = transport.UnicastMessage<ReadHoldingInputRegistersResponse>(request);
 			Assert.AreEqual(expectedResponse.MessageFrame, response.MessageFrame);
 
@@ -154,7 +154,7 @@ namespace Modbus.UnitTests.IO
 			ModbusTransport transport = mocks.PartialMock<ModbusTransport>();
 
 			IModbusMessage request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 1, 1);
-			IModbusMessage response = new ReadHoldingInputRegistersResponse(Modbus.ReadHoldingRegisters, 1, 1, null);
+			IModbusMessage response = new ReadHoldingInputRegistersResponse(Modbus.ReadHoldingRegisters, 1, new RegisterCollection());
 
 			mocks.ReplayAll();
 			transport.ValidateResponse(request, response);

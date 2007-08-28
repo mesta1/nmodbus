@@ -6,10 +6,10 @@ using Modbus.Data;
 using Modbus.Utility;
 using NUnit.Framework;
 
-namespace Modbus.UnitTests.Util
+namespace Modbus.UnitTests.Utility
 {
 	[TestFixture]
-	public class CollectionUtilFixture
+	public class CollectionUtilityFixture
 	{
 		[Test]
 		public void SliceMiddle()

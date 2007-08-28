@@ -76,7 +76,7 @@ namespace Modbus.UnitTests.Message
 		public void CreateModbusMessageReadHoldingRegistersResponse()
 		{
 			ReadHoldingInputRegistersResponse response = ModbusMessageFactory.CreateModbusMessage<ReadHoldingInputRegistersResponse>(new byte[] { 11, Modbus.ReadHoldingRegisters, 4, 0, 3, 0, 4 });
-			ReadHoldingInputRegistersResponse expectedResponse = new ReadHoldingInputRegistersResponse(Modbus.ReadHoldingRegisters, 11, 4, new RegisterCollection(3, 4));
+			ReadHoldingInputRegistersResponse expectedResponse = new ReadHoldingInputRegistersResponse(Modbus.ReadHoldingRegisters, 11, new RegisterCollection(3, 4));
 			AssertModbusMessagePropertiesAreEqual(expectedResponse, response);
 		}
 

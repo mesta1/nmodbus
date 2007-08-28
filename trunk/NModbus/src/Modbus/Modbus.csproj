@@ -74,7 +74,6 @@
     <Compile Include="IO\ModbusTcpTransport.cs" />
     <Compile Include="IO\ModbusTransport.cs" />
     <Compile Include="IO\ModbusUdpTransport.cs" />
-    <Compile Include="IO\ModbusUsbTransport.cs" />
     <Compile Include="IO\CommPortAdapter.cs" />
     <Compile Include="IO\TcpStreamAdapter.cs" />
     <Compile Include="Message\ReadCoilsInputsRequest.cs" />

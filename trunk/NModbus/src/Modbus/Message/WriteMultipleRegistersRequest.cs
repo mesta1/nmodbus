@@ -56,7 +56,7 @@ namespace Modbus.Message
 
 		public override string ToString()
 		{
-			return String.Format("Write {0} Holding Registers beginning at address {1}.", NumberOfPoints, StartAddress);
+			return String.Format("Write {0} holding registers at address {1}.", NumberOfPoints, StartAddress);
 		}
 
 		protected override void InitializeUnique(byte[] frame)

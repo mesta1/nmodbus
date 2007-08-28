@@ -48,7 +48,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\DataStoreFixture.cs" />
@@ -81,9 +81,10 @@
     <Compile Include="Message\WriteSingleRegisterRequestResponseFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SlaveExceptionFixture.cs" />
-    <Compile Include="Util\CollectionUtilFixture.cs" />
-    <Compile Include="Util\ModbusUtilFixture.cs" />
-    <Compile Include="Util\StringUtilFixture.cs" />
+    <Compile Include="Utility\CollectionUtilityFixture.cs" />
+    <Compile Include="Utility\ModbusUtilityFixture.cs" />
+    <Compile Include="Utility\SequenceUtilityFixture.cs" />
+    <Compile Include="Utility\StringUtilityFixture.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Modbus\Modbus.csproj">

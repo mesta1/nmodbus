@@ -23,7 +23,7 @@ namespace Modbus.Message
 
 		public override string ToString()
 		{
-			return String.Format("Write {0} Holding Registers beginning at address {1}, and read {2} Holding Registers beginning at address {3}.", 
+			return String.Format("Write {0} holding registers at address {1}, and read {2} registers at address {3}.", 
 				_writeRequest.NumberOfPoints, _writeRequest.StartAddress, _readRequest.NumberOfPoints, _readRequest.StartAddress);
 		}
 
