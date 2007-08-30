@@ -25,13 +25,11 @@ namespace Modbus.UnitTests.Message
 			Assert.AreEqual(expectedMessageFrame, message.MessageFrame);
 		}
 
-		[Test, Ignore("TODO: implement ToString")]
+		[Test, Ignore("TODO: implement ToString for all messages.")]
 		public void ModbusMessageToStringOverriden()
 		{
 			foreach (Type messageType in GetConcreteSubClasses("Modbus.dll", typeof(ModbusMessage)))
-			{
-				Assert.AreEqual(messageType, messageType.GetMethod("ToString").DeclaringType, String.Concat("No ToString override in message ", messageType.FullName));
-			}
+				Assert.IsNotNull(messageType.GetMethod("ToString", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly), String.Concat("No ToString override in message ", messageType.FullName));
 		}
 
 		internal static void AssertModbusMessagePropertiesAreEqual(IModbusMessage obj1, IModbusMessage obj2)
