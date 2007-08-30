@@ -23,6 +23,7 @@ namespace Modbus.IO
 		}
 
 		// TODO catch socket exception
+		// TODO implement asynch calls
 		internal virtual T UnicastMessage<T>(IModbusMessage message) where T : IModbusMessage, new()
 		{
 			IModbusMessage response = null;

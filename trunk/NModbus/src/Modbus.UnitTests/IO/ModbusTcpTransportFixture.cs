@@ -40,7 +40,7 @@ namespace Modbus.UnitTests.IO
 		{
 			MockRepository mocks = new MockRepository();
 			TcpStreamAdapter mockTcpStreamAdapter = mocks.CreateMock<TcpStreamAdapter>();
-			Expect.Call(mockTcpStreamAdapter.BeginWrite(new byte[] { 255, 255, 0, 0, 0, 6, 1, 1, 0, 1, 0, 3 }, 0, 12, ModbusTcpTransport.WriteCompleted, mockTcpStreamAdapter)).Return(null);
+			mockTcpStreamAdapter.Write(new byte[] { 255, 255, 0, 0, 0, 6, 1, 1, 0, 1, 0, 3 }, 0, 12);
 			ModbusTcpTransport mockModbusTcpTransport = mocks.PartialMock<ModbusTcpTransport>(mockTcpStreamAdapter);
 			Expect.Call(mockModbusTcpTransport.GetNewTransactionID()).Return(UInt16.MaxValue);
 			mocks.ReplayAll();

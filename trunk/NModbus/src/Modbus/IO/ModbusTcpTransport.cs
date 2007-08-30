@@ -63,7 +63,7 @@ namespace Modbus.IO
 		{			
 			byte[] frame = BuildMessageFrame(message);
 			_log.InfoFormat("TX: {0}", StringUtility.Join(", ", frame));			
-			_tcpStreamAdapter.BeginWrite(frame, 0, frame.Length, WriteCompleted, _tcpStreamAdapter);
+			_tcpStreamAdapter.Write(frame, 0, frame.Length);
 		}
 
 		internal override byte[] ReadRequest()
@@ -74,19 +74,6 @@ namespace Modbus.IO
 		internal override IModbusMessage ReadResponse<T>()
 		{
 			return CreateMessageAndInitializeTransactionID<T>(ReadRequestResponse(_tcpStreamAdapter));
-		}
-
-		internal static void WriteCompleted(IAsyncResult ar)
-		{
-			try
-			{
-				TcpStreamAdapter stream = (TcpStreamAdapter) ar.AsyncState;
-				stream.EndWrite(ar);
-			}
-			catch (ObjectDisposedException)
-			{
-				// stream has already been closed 
-			}
 		}
 	}
 }
