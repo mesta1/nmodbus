@@ -128,7 +128,30 @@ namespace Modbus.Device
 			ReadWriteMultipleRegistersRequest request = new ReadWriteMultipleRegistersRequest(slaveAddress, startReadAddress, numberOfPointsToRead, startWriteAddress, new RegisterCollection(writeData));			
 			ReadHoldingInputRegistersResponse response = Transport.UnicastMessage<ReadHoldingInputRegistersResponse>(request);
 
-			return CollectionUtility.ToArray<ushort>(response.Data);
+			return CollectionUtility.ToArray(response.Data);
+		}
+
+		/// <summary>
+		/// Executes the custom message.
+		/// </summary>
+		/// <typeparam name="TResponse">The type of the response.</typeparam>
+		/// <typeparam name="TData">The type of the data.</typeparam>
+		/// <param name="request">The request.</param>
+		/// <returns></returns>
+		public TData[] ExecuteCustomMessage<TResponse, TData>(IModbusMessage request) where TResponse : IModbusMessageWithData<TData>, new()
+		{
+			TResponse response = Transport.UnicastMessage<TResponse>(request);
+			return response.Data;
+		}
+
+		/// <summary>
+		/// Executes the custom message.
+		/// </summary>
+		/// <typeparam name="TResponse">The type of the response.</typeparam>
+		/// <param name="request">The request.</param>
+		public void ExecuteCustomMessage<TResponse>(IModbusMessage request) where TResponse : IModbusMessage, new()
+		{
+			Transport.UnicastMessage<TResponse>(request);
 		}
 
 		internal ushort[] ReadRegisters(byte functionCode, byte slaveAddress, ushort startAddress, ushort numberOfPoints)
@@ -136,7 +159,7 @@ namespace Modbus.Device
 			ReadHoldingInputRegistersRequest request = new ReadHoldingInputRegistersRequest(functionCode, slaveAddress, startAddress, numberOfPoints);
 			ReadHoldingInputRegistersResponse response = Transport.UnicastMessage<ReadHoldingInputRegistersResponse>(request);
 
-			return CollectionUtility.ToArray<ushort>(response.Data);
+			return CollectionUtility.ToArray(response.Data);
 		}
 
 		internal bool[] ReadDiscretes(byte functionCode, byte slaveAddress, ushort startAddress, ushort numberOfPoints)
@@ -144,7 +167,7 @@ namespace Modbus.Device
 			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(functionCode, slaveAddress, startAddress, numberOfPoints);
 			ReadCoilsInputsResponse response = Transport.UnicastMessage<ReadCoilsInputsResponse>(request);
 
-			return CollectionUtility.Slice<bool>(response.Data, 0, request.NumberOfPoints);
+			return CollectionUtility.Slice(response.Data, 0, request.NumberOfPoints);
 		}
 	}
 }

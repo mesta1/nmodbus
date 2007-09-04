@@ -95,5 +95,17 @@ namespace Modbus.IntegrationTests
 		{
 			base.SimpleReadRegistersPerformanceTest();
 		}
+
+		[Test]
+		public override void ExecuteCustomMessage_ReadHoldingRegisters()
+		{
+			base.ExecuteCustomMessage_ReadHoldingRegisters();
+		}
+
+		[Test]
+		public override void ExecuteCustomMessage_WriteMultipleRegisters()
+		{
+			base.ExecuteCustomMessage_WriteMultipleRegisters();
+		}
 	}
 }

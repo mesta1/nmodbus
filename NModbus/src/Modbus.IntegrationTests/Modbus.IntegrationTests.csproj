@@ -55,6 +55,10 @@
     <Reference Include="WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomMessages\CustomReadHoldingRegistersRequest.cs" />
+    <Compile Include="CustomMessages\CustomReadHoldingRegistersResponse.cs" />
+    <Compile Include="CustomMessages\CustomWriteMultipleRegistersRequest.cs" />
+    <Compile Include="CustomMessages\CustomWriteMultipleRegistersResponse.cs" />
     <Compile Include="ModbusUdpSlaveFixture.cs" />
     <Compile Include="NModbusSerialAsciiMasterNModbusSerialAsciiSlaveFixture.cs" />
     <Compile Include="NModbusSerialAsciiMasterJamodSerialAsciiSlaveFixture.cs" />

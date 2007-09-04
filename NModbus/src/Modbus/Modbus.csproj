@@ -76,6 +76,7 @@
     <Compile Include="IO\ModbusUdpTransport.cs" />
     <Compile Include="IO\CommPortAdapter.cs" />
     <Compile Include="IO\TcpStreamAdapter.cs" />
+    <Compile Include="Message\IModbusMessageWithData.cs" />
     <Compile Include="Message\ReadCoilsInputsRequest.cs" />
     <Compile Include="Message\ReadHoldingInputRegistersRequest.cs" />
     <Compile Include="Message\ReadWriteMultipleRegistersRequest.cs" />

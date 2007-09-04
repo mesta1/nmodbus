@@ -16,4 +16,3 @@ namespace Modbus.Data
 		byte ByteCount { get; }
 	}
 }
-	
