@@ -7,7 +7,9 @@ using System.Net.Sockets;
 using System.Threading;
 using FtdAdapter;
 using log4net;
+using Modbus.Data;
 using Modbus.Device;
+using Modbus.IntegrationTests.CustomMessages;
 using NUnit.Framework;
 
 namespace Modbus.IntegrationTests
@@ -242,6 +244,31 @@ namespace Modbus.IntegrationTests
 			Master.Transport.Retries = retries;
 			log.InfoFormat("Average read time for {0} - {1}ms", GetType().FullName, actualAverageReadTime);
 			Assert.IsTrue(actualAverageReadTime < AverageReadTime, String.Format("Test failed, actual average read time {0} is greater than expected {1}", actualAverageReadTime, AverageReadTime));
+		}
+
+		[Test]
+		public virtual void ExecuteCustomMessage_ReadHoldingRegisters()
+		{
+			CustomReadHoldingRegistersRequest request = new CustomReadHoldingRegistersRequest(3, SlaveAddress, 104, 2);
+			ushort[] registers = Master.ExecuteCustomMessage<CustomReadHoldingRegistersResponse, ushort>(request);
+			Assert.AreEqual(new ushort[] { 0, 0 }, registers);
+		}
+
+		[Test]
+		public virtual void ExecuteCustomMessage_WriteMultipleRegisters()
+		{
+			
+			ushort testAddress = 120;
+			ushort[] testValues = new ushort[] { 10, 20, 30, 40, 50 };
+			CustomReadHoldingRegistersRequest readRequest = new CustomReadHoldingRegistersRequest(3, SlaveAddress, testAddress, (ushort) testValues.Length);
+			CustomWriteMultipleRegistersRequest writeRequest = new CustomWriteMultipleRegistersRequest(16, SlaveAddress, testAddress, new RegisterCollection(testValues));
+
+			ushort[] originalValues = Master.ExecuteCustomMessage<CustomReadHoldingRegistersResponse, ushort>(readRequest);
+			Master.ExecuteCustomMessage<CustomWriteMultipleRegistersResponse>(writeRequest);
+			ushort[] newValues = Master.ExecuteCustomMessage<CustomReadHoldingRegistersResponse, ushort>(readRequest);
+			Assert.AreEqual(testValues, newValues);
+			writeRequest = new CustomWriteMultipleRegistersRequest(16, SlaveAddress, testAddress, new RegisterCollection(originalValues));
+			Master.ExecuteCustomMessage<CustomWriteMultipleRegistersResponse>(writeRequest);
 		}
 
 		/// <summary>
