@@ -19,7 +19,6 @@ namespace Modbus.IntegrationTests
 
 			MasterTcp = new TcpClient(TcpHost.ToString(), Port);
 			Master = ModbusIpMaster.CreateTcp(MasterTcp);
-			Master.Transport.Retries = 0;
 		}
 
 		[TestFixtureTearDown]
