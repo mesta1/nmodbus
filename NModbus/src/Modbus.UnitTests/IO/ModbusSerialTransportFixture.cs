@@ -51,7 +51,6 @@ namespace Modbus.UnitTests.IO
 			ISerialResource serialResource = mocks.CreateMock<ISerialResource>();
 			ModbusSerialTransport transport = new ModbusRtuTransport(serialResource);
 
-			//transport.Write(null);
 			serialResource.DiscardInBuffer();
 			serialResource.Write(null, 0, 0);
 			LastCall.IgnoreArguments();
@@ -59,24 +58,31 @@ namespace Modbus.UnitTests.IO
 			// mangled response
 			Expect.Call(serialResource.Read(new byte[] { 0, 0, 0, 0 }, 0, 4)).Return(4);
 
-			//transport.Write(null);
 			serialResource.DiscardInBuffer();
 			serialResource.Write(null, 0, 0);
 			LastCall.IgnoreArguments();
 
-			// read 4 coils from slave id 2
-			//Expect.Call(transport.ReadResponse<ReadCoilsInputsResponse>())
-			//    .Return(new ReadCoilsInputsResponse(Modbus.ReadCoils, 2, 1, new DiscreteCollection(true, false, true, false, false, false, false, false)));
+			// normal response
+			ReadCoilsInputsResponse response = new ReadCoilsInputsResponse(Modbus.ReadCoils, 2, 1, new DiscreteCollection(true, false, true, false, false, false, false, false));
 
-			// mangled response
-			Expect.Call(serialResource.Read(new byte[] { 0, 0, 0, 0 }, 0, 4)).Return(4);
+			// read header
+			Expect.Call(serialResource.Read(new byte[] { 0, 0, 0, 0 }, 0, 4)).Do(((StreamReadWriteDelegate) delegate(byte[] buf, int offset, int count)
+			{
+				Array.Copy(response.MessageFrame, 0, buf, 0, 4);
+				return 4;
+			}));
+
+			// read remainder
+			Expect.Call(serialResource.Read(new byte[] { 0, 0 }, 0, 2)).Do(((StreamReadWriteDelegate) delegate(byte[] buf, int offset, int count)
+			{
+				Array.Copy(ModbusUtility.CalculateCrc(response.MessageFrame), 0, buf, 0, 2);
+				return 2;
+			}));
 
 			mocks.ReplayAll();
 
 			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 2, 3, 4);
-			ReadCoilsInputsResponse expectedResponse = new ReadCoilsInputsResponse(Modbus.ReadCoils, 2, 1, new DiscreteCollection(true, false, true, false, false, false, false, false));
-			ReadCoilsInputsResponse response = transport.UnicastMessage<ReadCoilsInputsResponse>(request);
-			//Assert.AreEqual(expectedResponse.MessageFrame, response.MessageFrame);
+			transport.UnicastMessage<ReadCoilsInputsResponse>(request);
 
 			mocks.VerifyAll();
 		}
