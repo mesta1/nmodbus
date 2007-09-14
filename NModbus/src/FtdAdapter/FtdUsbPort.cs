@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using log4net;
 using Modbus.Utility;
 using Modbus.IO;
 
@@ -83,8 +84,6 @@ namespace FtdAdapter
 	/// </summary>
 	public class FtdUsbPort : ISerialResource, IDisposable
 	{
-		internal const string FtdAssemblyName = "FTD2XX.dll";
-
 		[DllImport(FtdAssemblyName)]
 		static extern FtdStatus FT_Close(uint deviceHandle);
 		[DllImport(FtdAssemblyName)]
@@ -104,8 +103,10 @@ namespace FtdAdapter
 		[DllImport(FtdAssemblyName)]
 		static extern FtdStatus FT_CreateDeviceInfoList(ref uint deviceCount);
 
+		private const string FtdAssemblyName = "FTD2XX.dll";
 		private const byte PurgeRx = 1;
 		private const uint _infiniteTimeout = 0;
+		private static readonly ILog _log = LogManager.GetLogger(typeof(FtdUsbPort));
 		private uint _deviceID;
 		private string _newLine = Environment.NewLine;
 		private uint _deviceHandle;
@@ -440,9 +441,13 @@ namespace FtdAdapter
 
 			uint numBytesReturned = 0;
 
-			fixed (byte* pBuf = buffer)
+			while (numBytesRead != count)
 			{
-				InvokeFtdMethod(delegate { return FT_Read(_deviceHandle, (pBuf + offset), (uint) count, ref numBytesReturned); });
+				fixed (byte* pBuf = buffer)
+				{
+					InvokeFtdMethod(delegate { return FT_Read(_deviceHandle, (pBuf + offset), (uint) count, ref numBytesReturned); });					
+					_log.DebugFormat("Invoke FtdMethod, {0} bytes returned", numBytesReturned);
+				}
 			}
 
 			return (int) numBytesReturned;
