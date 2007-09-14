@@ -45,16 +45,11 @@ namespace Modbus.IO
 
 		internal override void Write(IModbusMessage message)
 		{
+			_serialResource.DiscardInBuffer();
+
 			byte[] frame = BuildMessageFrame(message);
 			_log.InfoFormat("TX: {0}", StringUtility.Join(", ", frame));
 			_serialResource.Write(frame, 0, frame.Length);
-		}
-
-		internal override T UnicastMessage<T>(IModbusMessage message)
-		{
-			_serialResource.DiscardInBuffer();
-
-			return base.UnicastMessage<T>(message);
 		}
 
 		internal override IModbusMessage CreateResponse<T>(byte[] frame)

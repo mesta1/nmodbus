@@ -60,6 +60,13 @@ namespace Modbus.IO
 					ValidateResponse(message, response);
 					success = true;
 				}
+				catch (NotImplementedException nie)
+				{
+					_log.ErrorFormat("Not Implemented Exception, {0} retries remaining - {1}", _retries + 1 - attempt, nie.Message);
+
+					if (attempt++ > _retries)
+						throw;
+				}
 				catch (TimeoutException te)
 				{
 					_log.ErrorFormat("Timeout, {0} retries remaining - {1}", _retries + 1 - attempt, te.Message);

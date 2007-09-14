@@ -9,11 +9,11 @@ using Rhino.Mocks;
 
 namespace Modbus.UnitTests.IO
 {
+	delegate ReadCoilsInputsResponse ThrowExceptionDelegate();
+
 	[TestFixture]
 	public class ModbusTransportFixture
 	{
-		delegate ReadCoilsInputsResponse ThrowExceptionDelegate();
-
 		[Test]
 		public void UnicastMessage()
 		{
