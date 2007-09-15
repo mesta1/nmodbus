@@ -106,7 +106,7 @@ namespace FtdAdapter
 		private const string FtdAssemblyName = "FTD2XX.dll";
 		private const byte PurgeRx = 1;
 		private const uint _infiniteTimeout = 0;
-		private static readonly ILog _log = LogManager.GetLogger(typeof(FtdUsbPort));
+		//private static readonly ILog _log = LogManager.GetLogger(typeof(FtdUsbPort));
 		private uint _deviceID;
 		private string _newLine = Environment.NewLine;
 		private uint _deviceHandle;
