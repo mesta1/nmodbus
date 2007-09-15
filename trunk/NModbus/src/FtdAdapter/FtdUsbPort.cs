@@ -444,7 +444,7 @@ namespace FtdAdapter
 			fixed (byte* pBuf = buffer)
 			{
 				InvokeFtdMethod(delegate { return FT_Read(_deviceHandle, (pBuf + offset), (uint) count, ref numBytesReturned); });
-				_log.DebugFormat("Invoke FtdMethod, {0} bytes returned", numBytesReturned);
+				//_log.DebugFormat("Invoke FtdMethod, {0} bytes returned", numBytesReturned);
 			}
 
 			return (int) numBytesReturned;
