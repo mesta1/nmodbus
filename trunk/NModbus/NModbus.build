@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <project default="all">
+  <include buildfile="NModbus.build.private" if="${file::exists('NModbus.build.private')}" />
 
-  <!-- tools paths -->
   <property name="path.shfb" value="${environment::get-variable('SHFB_HOME')}\SandcastleBuilderConsole.exe" />
   <property name="nantcontrib" value="${environment::get-variable('NANTCONTRIB_HOME')}\bin\NAnt.Contrib.Tasks.dll" />
   <property name="path.ncoverconsole" value="${environment::get-variable('NCOVER_HOME')}\NCover.Console.exe" />
@@ -14,6 +14,7 @@
   <property name="path.output" value="testOutput" />
   <property name="path.lib" value="lib" />
   <property name="path.tools" value="tools" />
+  <property name="path.gcupload" value="${path.tools}\nant\NantGoogleCode.dll" />
   <property name="path.jamod" value="${path.tools}\jamod" />
   <property name="path.nmodbus" value="${path.tools}\nmodbus" />
   <property name="path.nunit" value="${path.tools}\nunit" />
@@ -212,6 +213,15 @@
         <include name="System.EnterpriseServices.dll" />
       </references>
     </asminfo>
+  </target>
+
+  <target name="upload" description="Uploads distribution to google code downloads page">
+    <loadtasks assembly="${path.gcupload}" />
+    
+	<gcupload username="${gc.username}" password="${gc.password}" verbose="true" projectname="MiscBits"
+			  filename="${path.dist}\NModbus_${version}.zip" targetfilename="NModbus_${version}.zip" summary="NModbus ${version} Binaries" />
+    <gcupload username="${gc.username}" password="${gc.password}" verbose="true" projectname="MiscBits"
+			  filename="${path.dist}\NModbus_${version}-source.zip" targetfilename="NModbus_${version}-source.zip" summary="NModbus ${version} Source" />
   </target>
 
 </project>
