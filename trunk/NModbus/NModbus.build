@@ -216,9 +216,13 @@
   </target>
 
   <target name="upload" description="Uploads distribution to google code downloads page">
+    <if test="${not property::exists('gc.username') or not property::exists('gc.password')}">
+      <fail message="Private buildfile is missing or does not contain neccessary properties." />
+    </if>
+    
     <loadtasks assembly="${path.gcupload}" />
     
-	<gcupload username="${gc.username}" password="${gc.password}" verbose="true" projectname="MiscBits"
+	  <gcupload username="${gc.username}" password="${gc.password}" verbose="true" projectname="MiscBits"
 			  filename="${path.dist}\NModbus_${version}.zip" targetfilename="NModbus_${version}.zip" summary="NModbus ${version} Binaries" />
     <gcupload username="${gc.username}" password="${gc.password}" verbose="true" projectname="MiscBits"
 			  filename="${path.dist}\NModbus_${version}-source.zip" targetfilename="NModbus_${version}-source.zip" summary="NModbus ${version} Source" />
