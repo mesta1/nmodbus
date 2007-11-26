@@ -16,7 +16,7 @@ namespace Modbus.IntegrationTests
 			
 			StartJamodSlave(program);
 
-			SetupMasterSerialPort(ModbusMasterFixture.DefaultMasterSerialPortName);
+			MasterSerialPort = CreateAndOpenSerialPort(DefaultMasterSerialPortName);
 			Master = ModbusSerialMaster.CreateAscii(MasterSerialPort);
 		}
 
