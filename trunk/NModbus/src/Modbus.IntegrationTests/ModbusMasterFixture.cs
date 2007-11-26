@@ -57,19 +57,21 @@ namespace Modbus.IntegrationTests
 			SlaveSerialPort.Open();
 		}
 
-		public void SetupMasterSerialPort(string portName)
+		public static SerialPort CreateAndOpenSerialPort(string portName)
 		{
-			log.DebugFormat("Configure and open master serial port {0}.", portName);
-			MasterSerialPort = new SerialPort(portName);
-			MasterSerialPort.Parity = Parity.None;
-			MasterSerialPort.Open();
+			SerialPort port = new SerialPort(portName);
+			port.Parity = Parity.None;
+			port.Open();
+
+			return port;
 		}
 
-		public void SetupMasterUsbPort(uint portID)
+		public static FtdUsbPort CreateAndOpenUsbPort(uint portID)
 		{
-			log.DebugFormat("Configure and open master serial port {0}.", portID);
-			MasterUsbPort = new FtdUsbPort(portID);
-			MasterUsbPort.Open();
+			FtdUsbPort port = new FtdUsbPort(portID);
+			port.Open();
+
+			return port;
 		}
 
 		public void StartSlave()

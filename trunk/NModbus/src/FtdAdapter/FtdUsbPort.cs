@@ -2,9 +2,8 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using log4net;
-using Modbus.Utility;
 using Modbus.IO;
+using Modbus.Utility;
 
 namespace FtdAdapter
 {
@@ -382,12 +381,15 @@ namespace FtdAdapter
 				throw new ArgumentException("Invalid buffer size.");
 			}
 
-			uint numBytesReturned = 0;
+			uint bytesWritten = 0;
 
 			fixed (byte* pBuf = buffer)
 			{
-				InvokeFtdMethod(delegate { return FT_Write(_deviceHandle, (pBuf + offset), (uint) count, ref numBytesReturned); });
+				InvokeFtdMethod(delegate { return FT_Write(_deviceHandle, (pBuf + offset), (uint) count, ref bytesWritten); });
 			}
+
+			if (count != 0 && bytesWritten == 0)
+				throw new TimeoutException("The operation has timed out.");
 		}
 
 		/// <summary>
@@ -403,11 +405,8 @@ namespace FtdAdapter
 
 			do
 			{
-				if (Read(singleByteBuffer, 0, 1) == 0)
-					throw new IOException("0 read in input buffer before NewLine encountered.");
-
+				Read(singleByteBuffer, 0, 1);
 				result.Append(Encoding.ASCII.GetChars(singleByteBuffer)[0]);
-
 			} while (!result.ToString().EndsWith(NewLine));
 
 			return result.ToString().Substring(0, result.Length - NewLine.Length);
@@ -429,10 +428,10 @@ namespace FtdAdapter
 				throw new ArgumentNullException("buffer", "Argument buffer cannot be null.");
 
 			if (offset < 0)
-				throw new ArgumentOutOfRangeException("offset", "Argument offset must be greater than 0.");
+				throw new ArgumentOutOfRangeException("offset", "Argument offset cannot be less than 0.");
 
 			if (count < 0)
-				throw new ArgumentOutOfRangeException("count", "Argument count must be greater than 0.");
+				throw new ArgumentOutOfRangeException("count", "Argument count cannot be less than 0.");
 
 			if ((buffer.Length - offset) < count)
 			{
@@ -444,8 +443,10 @@ namespace FtdAdapter
 			fixed (byte* pBuf = buffer)
 			{
 				InvokeFtdMethod(delegate { return FT_Read(_deviceHandle, (pBuf + offset), (uint) count, ref numBytesReturned); });
-				//_log.DebugFormat("Invoke FtdMethod, {0} bytes returned", numBytesReturned);
 			}
+
+			if (count != 0 && numBytesReturned == 0)
+				throw new TimeoutException("The operation has timed out.");
 
 			return (int) numBytesReturned;
 		}
