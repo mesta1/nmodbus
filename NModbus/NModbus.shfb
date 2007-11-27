@@ -1,7 +1,7 @@
-﻿<project schemaVersion="1.4.0.2">
+<project schemaVersion="1.4.0.2">
     <assemblies>
         <assembly assemblyPath=".\src\FtdAdapter\bin\Release\FtdAdapter.dll" xmlCommentsPath=".\src\FtdAdapter\bin\Release\FtdAdapter.xml" commentsOnly="False" />
-        <assembly assemblyPath="C:\Code\NModbus\src\Modbus\bin\Release\Modbus.dll" xmlCommentsPath="C:\Code\NModbus\src\Modbus\bin\Release\Modbus.xml" commentsOnly="False" />
+        <assembly assemblyPath=".\src\Modbus\bin\Release\Modbus.dll" xmlCommentsPath=".\src\Modbus\bin\Release\Modbus.xml" commentsOnly="False" />
     </assemblies>
     <namespaceSummaries>
         <namespaceSummaryItem name="" isDocumented="False" />
@@ -14,7 +14,7 @@
         <namespaceSummaryItem name="Modbus.Utility" isDocumented="True">Modbus utility methods.</namespaceSummaryItem>
     </namespaceSummaries>
     <dependencies>
-        <dependencyItem depPath="C:\Code\NModbus\lib\*.*" />
+        <dependencyItem depPath=".\lib\*.*" />
     </dependencies>
     <ProjectSummary>NModbus is a C# 2.0 implementation of the Modbus protocol.</ProjectSummary>
     <MissingTags>AutoDocumentCtors, Namespace</MissingTags>
