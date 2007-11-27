@@ -222,9 +222,9 @@
     
     <loadtasks assembly="${path.gcupload}" />
     
-	  <gcupload username="${gc.username}" password="${gc.password}" verbose="true" projectname="MiscBits"
+	  <gcupload username="${gc.username}" password="${gc.password}" verbose="true" projectname="NModbus"
 			  filename="${path.dist}\NModbus_${version}.zip" targetfilename="NModbus_${version}.zip" summary="NModbus ${version} Binaries" />
-    <gcupload username="${gc.username}" password="${gc.password}" verbose="true" projectname="MiscBits"
+    <gcupload username="${gc.username}" password="${gc.password}" verbose="true" projectname="NModbus"
 			  filename="${path.dist}\NModbus_${version}-source.zip" targetfilename="NModbus_${version}-source.zip" summary="NModbus ${version} Source" />
   </target>
 
