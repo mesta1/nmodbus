@@ -2,6 +2,7 @@
 <project default="all">
   <include buildfile="NModbus.build.private" if="${file::exists('NModbus.build.private')}" />
 
+  <property name="path.framework" value="${environment::get-variable('SYSTEMROOT')}\Microsoft.NET\Framework\v3.5" />
   <property name="path.shfb" value="${environment::get-variable('SHFB_HOME')}\SandcastleBuilderConsole.exe" />
   <property name="nantcontrib" value="${environment::get-variable('NANTCONTRIB_HOME')}\bin\NAnt.Contrib.Tasks.dll" />
   <property name="path.ncoverconsole" value="${environment::get-variable('NCOVER_HOME')}\NCover.Console.exe" />
@@ -23,11 +24,10 @@
   <property name="version" value="1.4.0.3" />
 
   <target name="build">
-    <loadtasks assembly="${nantcontrib}"/>
-
-    <msbuild project="src\NModbus.sln">
-      <arg value="/p:Configuration=Release"/>
-    </msbuild>
+    <exec program="${path.framework}\msbuild.exe" output="msbuild_log.xml" failonerror="true">
+      <arg value="src\NModbus.sln"/>
+      <arg line="/p:Configuration=Release"/>
+    </exec>
   </target>
 
   <target name="clean">
