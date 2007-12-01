@@ -15,6 +15,7 @@
   <property name="path.output" value="testOutput" />
   <property name="path.lib" value="lib" />
   <property name="path.tools" value="tools" />
+  <property name="path.ncoverexplorer.tasks" value="${path.tools}\ncover\NCoverExplorer.NAntTasks.dll" />
   <property name="path.gcupload" value="${path.tools}\nant\NantGoogleCode.dll" />
   <property name="path.jamod" value="${path.tools}\jamod" />
   <property name="path.nmodbus" value="${path.tools}\nmodbus" />
@@ -83,6 +84,7 @@
   </target>
 
   <target name="run-code-coverage" depends="build">
+    <loadtasks assembly="${path.ncoverexplorer.tasks}"/>
     <mkdir dir="${path.output}" failonerror="false"/>
 
     <foreach item="Folder" property="foldername">
