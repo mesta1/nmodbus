@@ -2,6 +2,7 @@
 <project default="all">
   <include buildfile="NModbus.build.private" if="${file::exists('NModbus.build.private')}" />
 
+  <property name="path.fxcop" value="${environment::get-variable('FXCOP_HOME')}" />
   <property name="path.framework" value="${environment::get-variable('SYSTEMROOT')}\Microsoft.NET\Framework\v3.5" />
   <property name="path.shfb" value="${environment::get-variable('SHFB_HOME')}\SandcastleBuilderConsole.exe" />
   <property name="nantcontrib" value="${environment::get-variable('NANTCONTRIB_HOME')}\bin\NAnt.Contrib.Tasks.dll" />
@@ -23,6 +24,9 @@
   <property name="path.docs" value="docs" />
   <property name="path.dist" value="dist" />
   <property name="version" value="1.4.0.3" />
+
+  <setenv name="PATH" value="%PATH%;${path.fxcop}" />
+  <echo message="${environment::get-variable('PATH')}" />
 
   <target name="build">
     <exec program="${path.framework}\msbuild.exe" output="msbuild_log.xml" failonerror="true">
@@ -123,7 +127,7 @@
 
   <target name="run-fxcop" depends="build">
     <loadtasks assembly="${nantcontrib}"/>
-    <fxcop analysisReportFilename="${path.output}\fxcop.xml">
+    <fxcop analysisReportFilename="${path.output}\fxcop.xml"> 
       <targets>
         <include name="${path.bin}\Modbus.dll" />
       </targets>
