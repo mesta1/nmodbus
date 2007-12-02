@@ -4,6 +4,7 @@ using System.IO.Ports;
 using log4net;
 using Modbus.IO;
 using Modbus.Message;
+using Modbus.Utility;
 
 namespace Modbus.Device
 {
@@ -40,13 +41,23 @@ namespace Modbus.Device
 		/// </summary>
 		public override void Listen()
 		{
-			try
+			// TODO consider implementing bridge pattern for Devce <-> Transport mappings
+			ModbusSerialTransport serialTransport = (ModbusSerialTransport) Transport;					
+
+			while (true)
 			{
-				while (true)
+				try
 				{
 					// read request and build message
 					byte[] frame = Transport.ReadRequest();
 					IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(frame);
+
+					if (serialTransport.CheckFrame && !serialTransport.ChecksumsMatch(request, frame))
+					{
+						string errorMessage = String.Format("Checksums failed to match {0} != {1}", StringUtility.Join(", ", request.MessageFrame), StringUtility.Join(", ", frame));
+						_log.Error(errorMessage);
+						throw new IOException(errorMessage);
+					}
 
 					// only service requests addressed to this particular slave
 					if (request.SlaveAddress != UnitID)
@@ -61,14 +72,16 @@ namespace Modbus.Device
 					// write response
 					Transport.Write(response);
 				}
-			}
-			catch (IOException ioe)
-			{
-				_log.ErrorFormat("IO Exception encountered while listening for requests - {0}", ioe.Message);
-			}
-			catch (TimeoutException te)
-			{
-				_log.ErrorFormat("Timeout Exception encountered while listening for requests - {0}", te.Message);
+				catch (IOException ioe)
+				{
+					_log.ErrorFormat("IO Exception encountered while listening for requests - {0}", ioe.Message);
+					serialTransport.DiscardInBuffer();
+				}
+				catch (TimeoutException te)
+				{
+					_log.ErrorFormat("Timeout Exception encountered while listening for requests - {0}", te.Message);
+					serialTransport.DiscardInBuffer();
+				}
 			}
 		}
 	}

@@ -43,9 +43,14 @@ namespace Modbus.IO
 			_serialResource = serialResource;		
 		}
 
-		internal override void Write(IModbusMessage message)
+		internal void DiscardInBuffer()
 		{
 			_serialResource.DiscardInBuffer();
+		}
+
+		internal override void Write(IModbusMessage message)
+		{
+			DiscardInBuffer();
 
 			byte[] frame = BuildMessageFrame(message);
 			_log.InfoFormat("TX: {0}", StringUtility.Join(", ", frame));
