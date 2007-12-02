@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Modbus.Utility;
+using System.Linq;
 
 namespace Modbus.Data
 {
@@ -29,7 +29,7 @@ namespace Modbus.Data
 		/// Initializes a new instance of the <see cref="DiscreteCollection"/> class.
 		/// </summary>
 		public DiscreteCollection(params byte[] bytes)
-			: this((IList<bool>)CollectionUtility.ToBoolArray(new BitArray(bytes)))
+			: this((IList<bool>)(new BitArray(bytes)).Cast<bool>().ToArray())
 		{
 		}
 

@@ -2,13 +2,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{1AA055F2-68E1-409F-A744-6081D7A27A57}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Modbus.IntegrationTests</RootNamespace>
     <AssemblyName>Modbus.IntegrationTests</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -47,6 +48,9 @@
       <HintPath>..\..\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -55,12 +59,12 @@
     <Compile Include="CustomMessages\CustomReadHoldingRegistersResponse.cs" />
     <Compile Include="CustomMessages\CustomWriteMultipleRegistersRequest.cs" />
     <Compile Include="CustomMessages\CustomWriteMultipleRegistersResponse.cs" />
-    <Compile Include="ModbusUdpSlaveFixture.cs" />
-    <Compile Include="NModbusSerialAsciiMaster.cs" />
+    <Compile Include="NModbusUdpSlaveFixture.cs" />
+    <Compile Include="NModbusSerialAsciiMasterFixture.cs" />
     <Compile Include="NModbusSerialAsciiMasterNModbusSerialAsciiSlaveFixture.cs" />
     <Compile Include="NModbusSerialAsciiMasterJamodSerialAsciiSlaveFixture.cs" />
     <Compile Include="ModbusMasterFixture.cs" />
-    <Compile Include="NModbusSerialRtuMaster.cs" />
+    <Compile Include="NModbusSerialRtuMasterFixture.cs" />
     <Compile Include="NModbusSerialRtuMasterDl06SlaveFixture.cs" />
     <Compile Include="NModbusSerialRtuMasterNModbusSerialRtuSlaveFixture.cs" />
     <Compile Include="ModbusSerialMasterFixture.cs" />

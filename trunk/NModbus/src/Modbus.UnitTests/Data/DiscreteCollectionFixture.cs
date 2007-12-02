@@ -1,6 +1,6 @@
 using Modbus.Data;
-using Modbus.Utility;
 using NUnit.Framework;
+using System.Linq;
 
 namespace Modbus.UnitTests.Data
 {
@@ -54,14 +54,14 @@ namespace Modbus.UnitTests.Data
 		public void CreateNewDiscreteCollectionFromBytesParamsOrder()
 		{
 			DiscreteCollection col = new DiscreteCollection(194);
-			Assert.AreEqual(new bool[] { false, true, false, false, false, false, true, true }, CollectionUtility.ToArray(col));
+			Assert.AreEqual(new bool[] { false, true, false, false, false, false, true, true }, col.ToArray());
 		}
 
 		[Test]
 		public void CreateNewDiscreteCollectionFromBytesParamsOrder2()
 		{
 			DiscreteCollection col = new DiscreteCollection(157, 7);
-			Assert.AreEqual(new bool[] { true, false, true, true, true, false, false, true, true, true, true, false, false, false, false, false }, CollectionUtility.ToArray(col));
+			Assert.AreEqual(new bool[] { true, false, true, true, true, false, false, true, true, true, true, false, false, false, false, false }, col.ToArray());
 		}
 
 		[Test]

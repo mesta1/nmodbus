@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.IO;
 using Modbus.Data;
 using Modbus.IO;
@@ -143,7 +144,7 @@ namespace Modbus.UnitTests.IO
 		{
 			ModbusTransport transport = new ModbusAsciiTransport();
 			byte[] frame = { 2, 129, 2 };
-			IModbusMessage message = transport.CreateResponse<ReadCoilsInputsResponse>(CollectionUtility.Concat(frame, new byte[] { ModbusUtility.CalculateLrc(frame) }));
+			IModbusMessage message = transport.CreateResponse<ReadCoilsInputsResponse>(frame.Concat(ModbusUtility.CalculateLrc(frame).ToSequence()).ToArray());
 			Assert.IsTrue(message is SlaveExceptionResponse);
 		}
 

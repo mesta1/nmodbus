@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Modbus.Data;
 using Modbus.Message;
 using Modbus.Utility;
+using System.Linq;
 
 namespace Modbus.IntegrationTests.CustomMessages
 {
@@ -18,7 +19,7 @@ namespace Modbus.IntegrationTests.CustomMessages
 		{
 			get
 			{
-				return CollectionUtility.ToArray(_data);
+				return _data.ToArray();
 			}
 		}
 
@@ -86,7 +87,7 @@ namespace Modbus.IntegrationTests.CustomMessages
 			SlaveAddress = frame[0];
 			FunctionCode = frame[1];
 			ByteCount = frame[2];
-			_data = new RegisterCollection(CollectionUtility.Slice(frame, 3, ByteCount));
+			_data = new RegisterCollection(frame.Slice(3, ByteCount).ToArray());
 		}
 	}
 }

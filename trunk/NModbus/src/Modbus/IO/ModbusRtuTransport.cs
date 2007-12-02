@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using log4net;
 using Modbus.Message;
 using Modbus.Utility;
+using System.Linq;
 
 namespace Modbus.IO
 {
@@ -41,8 +42,8 @@ namespace Modbus.IO
 		{
 			byte[] frameStart = Read(ResponseFrameStartLength);
 			byte[] frameEnd = Read(ResponseBytesToRead(frameStart));
-			byte[] frame = CollectionUtility.Concat(frameStart, frameEnd);
-			_log.InfoFormat("RX: {0}", StringUtility.Join(", ", frame));
+			byte[] frame = frameStart.Concat(frameEnd).ToArray();
+			_log.InfoFormat("RX: {0}", frame.Join(", "));
 
 			return CreateResponse<T>(frame);
 		}
@@ -51,8 +52,8 @@ namespace Modbus.IO
 		{
 			byte[] frameStart = Read(RequestFrameStartLength);
 			byte[] frameEnd = Read(RequestBytesToRead(frameStart));
-			byte[] frame = CollectionUtility.Concat<byte>(frameStart, frameEnd);
-			_log.InfoFormat("RX: {0}", StringUtility.Join(", ", frame));
+			byte[] frame = frameStart.Concat(frameEnd).ToArray();
+			_log.InfoFormat("RX: {0}", frame.Join(", "));
 
 			return frame;
 		}

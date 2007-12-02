@@ -8,6 +8,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using Modbus.Utility;
+using System.Linq;
 
 namespace Modbus.Device
 {
@@ -35,7 +36,7 @@ namespace Modbus.Device
 			get
 			{
 				lock (_mastersLock)
-					return new ReadOnlyCollection<TcpClient>(SequenceUtility.ToList(_masters.Values));
+					return new ReadOnlyCollection<TcpClient>(_masters.Values.ToList());
 			}
 		}
 
@@ -147,7 +148,7 @@ namespace Modbus.Device
 					throw;
 				}
 
-				_log.DebugFormat("MBAP header: {0}", StringUtility.Join(", ", _mbapHeader));
+				_log.DebugFormat("MBAP header: {0}", _mbapHeader.Join(", "));
 				ushort frameLength = (ushort) (IPAddress.HostToNetworkOrder(BitConverter.ToInt16(_mbapHeader, 4)));
 				_log.DebugFormat("{0} bytes in PDU.", frameLength);
 				_messageFrame = new byte[frameLength];
@@ -158,10 +159,10 @@ namespace Modbus.Device
 			internal void ReadFrameCompleted(IAsyncResult ar)
 			{
 				_log.DebugFormat("Read Frame completed {0} bytes", _stream.EndRead(ar));
-				byte[] frame = CollectionUtility.Concat(_mbapHeader, _messageFrame);
-				_log.InfoFormat("RX: {0}", StringUtility.Join(", ", frame));
+				byte[] frame = _mbapHeader.Concat(_messageFrame).ToArray();
+				_log.InfoFormat("RX: {0}", frame.Join(", "));
 
-				IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(CollectionUtility.Slice(frame, 6, frame.Length - 6));
+				IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(frame.Slice(6, frame.Length - 6).ToArray());
 				request.TransactionID = (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 0));
 
 				// TODO refactor
@@ -172,7 +173,7 @@ namespace Modbus.Device
 
 				// write response
 				byte[] responseFrame = transport.BuildMessageFrame(response);
-				_log.InfoFormat("TX: {0}", StringUtility.Join(", ", responseFrame));
+				_log.InfoFormat("TX: {0}", responseFrame.Join(", "));
 				_stream.BeginWrite(responseFrame, 0, responseFrame.Length, WriteCompleted, null);
 			}
 

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using log4net;
@@ -66,9 +67,9 @@ namespace Modbus.Device
 			ModbusUdpSlave slave = (ModbusUdpSlave) ar.AsyncState;
 
 			_log.DebugFormat("Read Frame completed {0} bytes", frame.Length);
-			_log.InfoFormat("RX: {0}", StringUtility.Join(", ", frame));
+			_log.InfoFormat("RX: {0}", frame.Join(", "));
 
-			IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(CollectionUtility.Slice(frame, 6, frame.Length - 6));
+			IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(frame.Slice(6, frame.Length - 6).ToArray());
 			request.TransactionID = (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 0));
 
 			// TODO refactor
@@ -79,7 +80,7 @@ namespace Modbus.Device
 
 			// write response
 			byte[] responseFrame = transport.BuildMessageFrame(response);
-			_log.InfoFormat("TX: {0}", StringUtility.Join(", ", responseFrame));
+			_log.InfoFormat("TX: {0}", responseFrame.Join(", "));
 			_client.BeginSend(responseFrame, responseFrame.Length, masterEndPoint, WriteResponseCompleted, null);
 		}
 

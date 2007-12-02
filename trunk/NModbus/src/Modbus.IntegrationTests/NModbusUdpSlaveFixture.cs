@@ -9,9 +9,9 @@ using log4net;
 namespace Modbus.IntegrationTests
 {
 	[TestFixture]
-	public class ModbusUdpSlaveFixture
+	public class NModbusUdpSlaveFixture
 	{
-		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusUdpSlaveFixture));
+		private static readonly ILog _log = LogManager.GetLogger(typeof(NModbusUdpSlaveFixture));
 
 		[TestFixtureSetUp]
 		public void TestFixtureSetup()
@@ -58,12 +58,8 @@ namespace Modbus.IntegrationTests
 			masterClient2.Connect(ModbusMasterFixture.DefaultModbusIPEndPoint);
 			ModbusIpMaster master2 = ModbusIpMaster.CreateUdp(masterClient2);
 
-			UdpClient slaveClient = new UdpClient(ModbusMasterFixture.Port);
-			ModbusSlave slave = ModbusUdpSlave.CreateUdp(slaveClient);
-			slave.DataStore = DataStoreFactory.CreateTestDataStore();
-			Thread slaveThread = new Thread(slave.Listen);
-			slaveThread.Start();
-
+			UdpClient slaveClient = CreateAndStartUdpSlave(ModbusMasterFixture.Port, DataStoreFactory.CreateTestDataStore());
+			
 			Thread master1Thread = new Thread(delegate() 
 			{
 				for (int i = 0; i < 5; i++)
@@ -97,6 +93,39 @@ namespace Modbus.IntegrationTests
 			slaveClient.Close();
 			masterClient1.Close();
 			masterClient2.Close();
+		}
+
+		[Test, Ignore("TODO consider supporting this scenario")]
+		public void ModbusUdpSlave_SingleMasterPollingMultipleSlaves()
+		{			
+			DataStore slave1DataStore = new DataStore { CoilDiscretes = new ModbusDataCollection<bool>(true) };
+			DataStore slave2DataStore = new DataStore { CoilDiscretes = new ModbusDataCollection<bool>(false) };
+
+			using (UdpClient slave1 = CreateAndStartUdpSlave(502, slave1DataStore))
+			using (UdpClient slave2 = CreateAndStartUdpSlave(503, slave2DataStore))
+			using (UdpClient masterClient = new UdpClient())
+			{			
+				masterClient.Connect(ModbusMasterFixture.DefaultModbusIPEndPoint);
+				ModbusIpMaster master = ModbusIpMaster.CreateUdp(masterClient);
+
+				for (int i = 0; i < 5; i++)
+				{
+					// we would need to create an overload taking in a port argument
+					Assert.IsTrue(master.ReadCoils(0, 1)[0]);
+					Assert.IsFalse(master.ReadCoils(1, 1)[0]);
+				}
+			}
+		}
+
+		private UdpClient CreateAndStartUdpSlave(int port, DataStore dataStore)
+		{
+			UdpClient slaveClient = new UdpClient(port);
+			ModbusSlave slave = ModbusUdpSlave.CreateUdp(slaveClient);
+			slave.DataStore = dataStore;
+			Thread slaveThread = new Thread(slave.Listen);
+			slaveThread.Start();
+
+			return slaveClient;
 		}
 	}
 }

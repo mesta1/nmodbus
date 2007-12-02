@@ -7,42 +7,44 @@ using Modbus.Message;
 namespace Modbus.Device
 {
 	/// <summary>
+	/// Represents the method that will handle the ModbusSlaveRequestReceived event of a ModbusSlave object.
+	/// </summary>
+	public delegate void ModbusSlaveRequestReceivedEventHandler(object sender, ModbusSlaveRequestEventArgs e);
+
+	/// <summary>
 	/// Modbus slave device.
 	/// </summary>
 	public abstract class ModbusSlave : ModbusDevice
 	{
-		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusSlave));
-		private byte _unitID;
-		private DataStore _dataStore;
-
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ModbusSlave"/> class.
+		/// Occurs when a modbus slave receives a request.
 		/// </summary>
-		public ModbusSlave(byte unitID, ModbusTransport transport)
+		public event ModbusSlaveRequestReceivedEventHandler ModbusSlaveRequestReceived;
+
+		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusSlave));
+
+		internal ModbusSlave(byte unitID, ModbusTransport transport)
 			: base(transport)
 		{
-			_dataStore = DataStoreFactory.CreateDefaultDataStore();
-			_unitID = unitID;
+			DataStore = DataStoreFactory.CreateDefaultDataStore();
+			UnitID = unitID;
 		}
 
 		/// <summary>
 		/// Gets or sets the data store.
 		/// </summary>
-		public DataStore DataStore
-		{
-			get { return _dataStore; }
-			set { _dataStore = value; }
-		}
-
+		public DataStore DataStore { get; set; }
+	
 		/// <summary>
 		/// Gets or sets the unit ID.
 		/// </summary>
-		public byte UnitID
-		{
-			get { return _unitID; }
-			set { _unitID = value; }
-		}		
+		public byte UnitID { get; set; }
 
+		/// <summary>
+		/// Start slave listening for requests.
+		/// </summary>
+		public abstract void Listen();
+		
 		internal static ReadCoilsInputsResponse ReadDiscretes(ReadCoilsInputsRequest request, ModbusDataCollection<bool> dataSource)
 		{
 			DiscreteCollection data = DataStore.ReadData<DiscreteCollection, bool>(dataSource, request.StartAddress, request.NumberOfPoints);
@@ -91,10 +93,11 @@ namespace Modbus.Device
 
 		// TODO unit test
 		internal IModbusMessage ApplyRequest(IModbusMessage request)
-		{
-			IModbusMessage response;
+		{			
 			_log.Info(request.ToString());
+			FireModbusSlaveRequestReceived(request);
 
+			IModbusMessage response;
 			switch (request.FunctionCode)
 			{
 				case Modbus.ReadCoils:
@@ -109,14 +112,14 @@ namespace Modbus.Device
 				case Modbus.ReadInputRegisters:
 					response = ReadRegisters((ReadHoldingInputRegistersRequest) request, DataStore.InputRegisters);
 					break;
+				case Modbus.Diagnostics:
+					response = request;
+					break;
 				case Modbus.WriteSingleCoil:
 					response = WriteSingleCoil((WriteSingleCoilRequestResponse) request, DataStore.CoilDiscretes);
 					break;
 				case Modbus.WriteSingleRegister:
 					response = WriteSingleRegister((WriteSingleRegisterRequestResponse) request, DataStore.HoldingRegisters);
-					break;
-				case Modbus.Diagnostics:
-					response = request;
 					break;
 				case Modbus.WriteMultipleCoils:
 					response = WriteMultipleCoils((WriteMultipleCoilsRequest) request, DataStore.CoilDiscretes);
@@ -126,21 +129,22 @@ namespace Modbus.Device
 					break;
 				case Modbus.ReadWriteMultipleRegisters:
 					ReadWriteMultipleRegistersRequest readWriteRequest = (ReadWriteMultipleRegistersRequest) request;
-					WriteMultipleRegisters(readWriteRequest.WriteRequest, DataStore.HoldingRegisters);
 					response = ReadRegisters(readWriteRequest.ReadRequest, DataStore.HoldingRegisters);
+					WriteMultipleRegisters(readWriteRequest.WriteRequest, DataStore.HoldingRegisters);
 					break;
 				default:
 					string errorMessage = String.Format("Unsupported function code {0}", request.FunctionCode);
 					_log.Error(errorMessage);
 					throw new ArgumentException(errorMessage, "request");
-			}
+			}			
 
 			return response;
 		}
 
-		/// <summary>
-		/// Start slave listening for requests.
-		/// </summary>
-		public abstract void Listen();
+		internal void FireModbusSlaveRequestReceived(IModbusMessage message)
+		{
+			if (ModbusSlaveRequestReceived != null)
+				ModbusSlaveRequestReceived(this, new ModbusSlaveRequestEventArgs(message));
+		}		
 	}
 }

@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace Modbus.IntegrationTests
 {
 	[TestFixture]
-	public class NModbusSerialRtuMaster
+	public class NModbusSerialRtuMasterFixture
 	{
 		[Test, ExpectedException(typeof(TimeoutException))]
 		public void NModbusRtuMaster_ReadTimeout()

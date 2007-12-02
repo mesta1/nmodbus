@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Modbus.Data;
 using Modbus.IO;
 using Modbus.Message;
@@ -6,6 +7,7 @@ using Modbus.Utility;
 using NUnit.Framework;
 using Rhino.Mocks;
 using System.IO;
+using System.Collections.Generic;
 
 namespace Modbus.UnitTests.IO
 {
@@ -15,30 +17,30 @@ namespace Modbus.UnitTests.IO
 		[Test]
 		public void BuildMessageFrame()
 		{
-		    byte[] message = { 17, Modbus.ReadCoils, 0, 19, 0, 37, 14, 132 };
-		    ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 17, 19, 37);
-		    Assert.AreEqual(message, new ModbusRtuTransport().BuildMessageFrame(request));
+			byte[] message = { 17, Modbus.ReadCoils, 0, 19, 0, 37, 14, 132 };
+			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 17, 19, 37);
+			Assert.AreEqual(message, new ModbusRtuTransport().BuildMessageFrame(request));
 		}
 
 		[Test]
 		public void ResponseBytesToReadCoils()
 		{
-		    byte[] frameStart = { 0x11, 0x01, 0x05, 0xCD, 0x6B, 0xB2, 0x0E, 0x1B };
-		    Assert.AreEqual(6, ModbusRtuTransport.ResponseBytesToRead(frameStart));
+			byte[] frameStart = { 0x11, 0x01, 0x05, 0xCD, 0x6B, 0xB2, 0x0E, 0x1B };
+			Assert.AreEqual(6, ModbusRtuTransport.ResponseBytesToRead(frameStart));
 		}
 
 		[Test]
 		public void ResponseBytesToReadCoilsNoData()
 		{
-		    byte[] frameStart = { 0x11, 0x01, 0x00, 0x00, 0x00 };
-		    Assert.AreEqual(1, ModbusRtuTransport.ResponseBytesToRead(frameStart));
+			byte[] frameStart = { 0x11, 0x01, 0x00, 0x00, 0x00 };
+			Assert.AreEqual(1, ModbusRtuTransport.ResponseBytesToRead(frameStart));
 		}
 
 		[Test]
 		public void ResponseBytesToReadWriteCoilsResponse()
 		{
-		    byte[] frameStart = { 0x11, 0x0F, 0x00, 0x13, 0x00, 0x0A, 0, 0 };
-		    Assert.AreEqual(4, ModbusRtuTransport.ResponseBytesToRead(frameStart));
+			byte[] frameStart = { 0x11, 0x0F, 0x00, 0x13, 0x00, 0x0A, 0, 0 };
+			Assert.AreEqual(4, ModbusRtuTransport.ResponseBytesToRead(frameStart));
 		}
 
 		[Test]
@@ -51,7 +53,7 @@ namespace Modbus.UnitTests.IO
 		[Test]
 		public void ResponseBytesToReadSlaveException()
 		{
-			byte[] frameStart = { 0x01, Modbus.ExceptionOffset + 1, 0x01};
+			byte[] frameStart = { 0x01, Modbus.ExceptionOffset + 1, 0x01 };
 			Assert.AreEqual(1, ModbusRtuTransport.ResponseBytesToRead(frameStart));
 		}
 
@@ -97,24 +99,24 @@ namespace Modbus.UnitTests.IO
 			byte[] frame = { 0x11, 0xFF, 0x00, 0x01, 0x00, 0x02, 0x04 };
 			ModbusRtuTransport.RequestBytesToRead(frame);
 			Assert.Fail();
-		}		
+		}
 
 		[Test]
 		public void ChecksumsMatchSucceed()
 		{
-		    ModbusRtuTransport transport = new ModbusRtuTransport();
-		    ReadCoilsInputsRequest message = new ReadCoilsInputsRequest(Modbus.ReadCoils, 17, 19, 37);
-		    byte[] frame = { 17, Modbus.ReadCoils, 0, 19, 0, 37, 14, 132};
-		    Assert.IsTrue(transport.ChecksumsMatch(message, frame));
+			ModbusRtuTransport transport = new ModbusRtuTransport();
+			ReadCoilsInputsRequest message = new ReadCoilsInputsRequest(Modbus.ReadCoils, 17, 19, 37);
+			byte[] frame = { 17, Modbus.ReadCoils, 0, 19, 0, 37, 14, 132 };
+			Assert.IsTrue(transport.ChecksumsMatch(message, frame));
 		}
 
 		[Test]
 		public void ChecksumsMatchFail()
 		{
-		    ModbusRtuTransport transport = new ModbusRtuTransport();
-		    ReadCoilsInputsRequest message = new ReadCoilsInputsRequest(Modbus.ReadCoils, 17, 19, 38);
-		    byte[] frame = { 17, Modbus.ReadCoils, 0, 19, 0, 37, 14, 132 };
-		    Assert.IsFalse(transport.ChecksumsMatch(message, frame));
+			ModbusRtuTransport transport = new ModbusRtuTransport();
+			ReadCoilsInputsRequest message = new ReadCoilsInputsRequest(Modbus.ReadCoils, 17, 19, 38);
+			byte[] frame = { 17, Modbus.ReadCoils, 0, 19, 0, 37, 14, 132 };
+			Assert.IsFalse(transport.ChecksumsMatch(message, frame));
 		}
 
 		[Test]
@@ -149,7 +151,7 @@ namespace Modbus.UnitTests.IO
 			byte[] crc = ModbusUtility.CalculateCrc(messageFrame);
 
 			Expect.Call(transport.Read(ModbusRtuTransport.ResponseFrameStartLength))
-				.Return(CollectionUtility.Concat(messageFrame, new byte[] { crc[0] }));
+				.Return(messageFrame.Concat(crc[0].ToSequence()).ToArray());
 
 			Expect.Call(transport.Read(1))
 				.Return(new byte[] { crc[1] });
@@ -157,7 +159,7 @@ namespace Modbus.UnitTests.IO
 			mocks.ReplayAll();
 
 			Assert.IsTrue(transport.ReadResponse<ReadCoilsInputsResponse>() is SlaveExceptionResponse);
-		
+
 			mocks.VerifyAll();
 		}
 
@@ -176,7 +178,7 @@ namespace Modbus.UnitTests.IO
 			byte[] crc = { 0x9, 0x9 };
 
 			Expect.Call(transport.Read(ModbusRtuTransport.ResponseFrameStartLength))
-				.Return(CollectionUtility.Concat(messageFrame, new byte[] { crc[0] }));
+				.Return(messageFrame.Concat(crc[0].ToSequence()).ToArray());
 
 			Expect.Call(transport.Read(1))
 				.Return(new byte[] { crc[1] });
@@ -211,7 +213,7 @@ namespace Modbus.UnitTests.IO
 		{
 			MockRepository mocks = new MockRepository();
 			ISerialResource mockSerialResource = mocks.CreateMock<ISerialResource>();
-			
+
 			Expect.Call(mockSerialResource.Read(new byte[5], 0, 5)).Do(((StreamReadWriteDelegate) delegate(byte[] buf, int offset, int count)
 			{
 				Array.Copy(new byte[] { 2, 2, 2 }, buf, 3);

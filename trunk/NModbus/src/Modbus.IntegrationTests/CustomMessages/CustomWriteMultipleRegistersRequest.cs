@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using Modbus.Message;
 using Modbus.Data;
@@ -110,7 +111,7 @@ namespace Modbus.IntegrationTests.CustomMessages
 			StartAddress = (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 2));
 			NumberOfPoints = (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 4));
 			ByteCount = frame[6];
-			Data = new RegisterCollection(CollectionUtility.Slice(frame, 7, ByteCount));
+			Data = new RegisterCollection(frame.Slice(7, ByteCount).ToArray());
 		}
 	}
 }

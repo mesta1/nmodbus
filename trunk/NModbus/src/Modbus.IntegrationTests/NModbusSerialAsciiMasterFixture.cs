@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace Modbus.IntegrationTests
 {
 	[TestFixture]
-	public class NModbusSerialAsciiMaster
+	public class NModbusSerialAsciiMasterFixture
 	{
 		[Test, ExpectedException(typeof(TimeoutException))]
 		public void NModbusAsciiMaster_ReadTimeout()

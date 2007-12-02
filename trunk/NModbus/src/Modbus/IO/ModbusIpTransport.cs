@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using Modbus.Message;
 using Modbus.Utility;
@@ -28,8 +29,8 @@ namespace Modbus.IO
 
 		internal IModbusMessage CreateMessageAndInitializeTransactionID<T>(byte[] fullFrame) where T : IModbusMessage, new()
 		{
-			byte[] mbapHeader = CollectionUtility.Slice(fullFrame, 0, 6);
-			byte[] messageFrame = CollectionUtility.Slice(fullFrame, 6, fullFrame.Length - 6);
+			byte[] mbapHeader = fullFrame.Slice(0, 6).ToArray();
+			byte[] messageFrame = fullFrame.Slice(6, fullFrame.Length - 6).ToArray();
 
 			IModbusMessage response = base.CreateResponse<T>(messageFrame);
 			response.TransactionID = (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(mbapHeader, 0));
@@ -42,8 +43,8 @@ namespace Modbus.IO
 			byte[] transactionID = BitConverter.GetBytes((short) IPAddress.HostToNetworkOrder((short) (message.TransactionID)));
 			byte[] protocol = { 0, 0 };
 			byte[] length = BitConverter.GetBytes((short) IPAddress.HostToNetworkOrder((short) (message.ProtocolDataUnit.Length + 1)));
-
-			return CollectionUtility.Concat(transactionID, protocol, length, new byte[] { message.SlaveAddress });
+				
+			return transactionID.Concat(protocol, length, new byte[] { message.SlaveAddress }).ToArray();
 		}
 
 		internal override byte[] BuildMessageFrame(IModbusMessage message)
