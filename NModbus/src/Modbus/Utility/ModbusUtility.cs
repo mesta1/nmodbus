@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net;
 using System.Text;
 using Modbus.Utility;
@@ -53,7 +54,7 @@ namespace Modbus.Utility
 		/// <returns>IEEE 32 floating point value</returns>
 		public static float GetSingle(ushort highOrderValue, ushort lowOrderValue)
 		{
-			return BitConverter.ToSingle(CollectionUtility.Concat(BitConverter.GetBytes(lowOrderValue), BitConverter.GetBytes(highOrderValue)), 0);
+			return BitConverter.ToSingle(BitConverter.GetBytes(lowOrderValue).Concat(BitConverter.GetBytes(highOrderValue)).ToArray(), 0);
 		}
 
 		/// <summary>
@@ -64,7 +65,7 @@ namespace Modbus.Utility
 		/// <returns></returns>
 		public static uint GetUInt32(ushort highOrderValue, ushort lowOrderValue)
 		{
-			return BitConverter.ToUInt32(CollectionUtility.Concat(BitConverter.GetBytes(lowOrderValue), BitConverter.GetBytes(highOrderValue)), 0);
+			return BitConverter.ToUInt32(BitConverter.GetBytes(lowOrderValue).Concat(BitConverter.GetBytes(highOrderValue)).ToArray(), 0);
 		}
 
 		/// <summary>
@@ -159,11 +160,10 @@ namespace Modbus.Utility
 				throw new ArgumentNullException("data");
 
 			ushort crc = ushort.MaxValue;
-			byte tableIndex;
 
 			foreach (byte b in data)
 			{
-				tableIndex = (byte) (crc ^ b);
+				byte tableIndex = (byte) (crc ^ b);
 				crc >>= 8;
 				crc ^= crcTable[tableIndex];
 			}

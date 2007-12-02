@@ -1,7 +1,7 @@
 using System;
 using Modbus.Data;
-using Modbus.Utility;
 using NUnit.Framework;
+using System.Linq;
 	
 namespace Modbus.UnitTests.Data
 {
@@ -34,7 +34,7 @@ namespace Modbus.UnitTests.Data
 		{
 			ModbusDataCollection<bool> col = new ModbusDataCollection<bool>(true, true);
 			Assert.AreEqual(3, col.Count);
-			Assert.AreEqual(new bool[] { false, true, true }, CollectionUtility.ToArray(col));
+			Assert.AreEqual(new bool[] { false, true, true }, col.ToArray());
 		}
 
 		[Test]
@@ -42,7 +42,7 @@ namespace Modbus.UnitTests.Data
 		{
 			ModbusDataCollection<ushort> col = new ModbusDataCollection<ushort>(1, 1);
 			Assert.AreEqual(3, col.Count);
-			Assert.AreEqual(new ushort[] { 0, 1, 1 }, CollectionUtility.ToArray(col));
+			Assert.AreEqual(new ushort[] { 0, 1, 1 }, col.ToArray());
 		}
 
 		[Test, ExpectedException(typeof(ArgumentOutOfRangeException))]

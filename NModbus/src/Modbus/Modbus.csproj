@@ -2,13 +2,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{FF96B252-2B24-44A1-A09C-6401B5D7ED23}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Modbus</RootNamespace>
     <AssemblyName>Modbus</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -46,6 +47,9 @@
       <HintPath>..\..\lib\log4net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -63,6 +67,7 @@
     <Compile Include="Device\ModbusMaster.cs" />
     <Compile Include="Device\ModbusSerialSlave.cs" />
     <Compile Include="Device\ModbusSlave.cs" />
+    <Compile Include="Device\ModbusSlaveRequestEventArgs.cs" />
     <Compile Include="Device\ModbusTcpSlave.cs" />
     <Compile Include="Device\ModbusUdpSlave.cs" />
     <Compile Include="IO\ISerialResource.cs" />
@@ -103,11 +108,10 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SlaveException.cs" />
-    <Compile Include="Utility\SequenceUtility.cs" />
     <Compile Include="Utility\CollectionUtility.cs" />
-    <Compile Include="Utility\DelegateDefinitions.cs" />
+    <Compile Include="Utility\Enumerable.cs" />
     <Compile Include="Utility\ModbusUtility.cs" />
-    <Compile Include="Utility\StringUtility.cs" />
+    <Compile Include="Utility\UtilityExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources.resx">

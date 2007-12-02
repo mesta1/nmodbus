@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net;
 using Modbus.Data;
 using Modbus.Utility;
@@ -34,7 +35,7 @@ namespace Modbus.Message
 		protected override void InitializeUnique(byte[] frame)
 		{
 			StartAddress = (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 2));
-			Data = new RegisterCollection(CollectionUtility.Slice<byte>(frame, 4, 2));
+			Data = new RegisterCollection(frame.Slice(4, 2).ToArray());
 		}
 	}
 }

@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using log4net;
 using Modbus.Message;
 using Modbus.Utility;
+using System.Linq;
 
 namespace Modbus.IO
 {
@@ -36,7 +37,7 @@ namespace Modbus.IO
 				if (numBytesRead == 0)
 					throw new SocketException(Modbus.ConnectionAborted);
 			}
-			_log.DebugFormat("MBAP header: {0}", StringUtility.Join(", ", mbapHeader));
+			_log.DebugFormat("MBAP header: {0}", mbapHeader.Join(", "));
 
 			ushort frameLength = (ushort) (IPAddress.HostToNetworkOrder(BitConverter.ToInt16(mbapHeader, 4)));
 			_log.DebugFormat("{0} bytes in PDU.", frameLength);
@@ -53,8 +54,8 @@ namespace Modbus.IO
 			}
 			_log.DebugFormat("PDU: {0}", frameLength);
 
-			byte[] frame = CollectionUtility.Concat(mbapHeader, messageFrame);
-			_log.InfoFormat("RX: {0}", StringUtility.Join(", ", frame));
+			byte[] frame = mbapHeader.Concat(messageFrame).ToArray();
+			_log.InfoFormat("RX: {0}", frame.Join(", "));
 
 			return frame;
 		}
@@ -62,7 +63,7 @@ namespace Modbus.IO
 		internal override void Write(IModbusMessage message)
 		{			
 			byte[] frame = BuildMessageFrame(message);
-			_log.InfoFormat("TX: {0}", StringUtility.Join(", ", frame));			
+			_log.InfoFormat("TX: {0}", frame.Join(", "));			
 			_tcpStreamAdapter.Write(frame, 0, frame.Length);
 		}
 

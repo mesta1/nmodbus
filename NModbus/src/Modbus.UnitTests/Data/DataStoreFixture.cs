@@ -1,6 +1,6 @@
 using System;
 using Modbus.Data;
-using Modbus.Utility;
+using System.Linq;
 using NUnit.Framework;
 
 namespace Modbus.UnitTests.Data
@@ -13,7 +13,7 @@ namespace Modbus.UnitTests.Data
 		{
 			ModbusDataCollection<ushort> slaveCol = new ModbusDataCollection<ushort>(0, 1, 2, 3, 4, 5, 6);
 			RegisterCollection result = DataStore.ReadData<RegisterCollection, ushort>(slaveCol, 1, 3);
-			Assert.AreEqual(new ushort[] { 1, 2, 3 }, CollectionUtility.ToArray(result));
+			Assert.AreEqual(new ushort[] { 1, 2, 3 }, result.ToArray());
 		}
 
 		[Test, ExpectedException(typeof(ArgumentOutOfRangeException))]
@@ -49,7 +49,7 @@ namespace Modbus.UnitTests.Data
 			ModbusDataCollection<bool> destination = new ModbusDataCollection<bool>(false, false, false, false, false, false, true);
 			DiscreteCollection newValues = new DiscreteCollection(true, true, true, true);
 			DataStore.WriteData(newValues, destination, 0);
-			Assert.AreEqual(new bool[] { false, true, true, true, true, false, false, true }, CollectionUtility.ToArray(destination));
+			Assert.AreEqual(new bool[] { false, true, true, true, true, false, false, true }, destination.ToArray());
 		}
 
 		[Test, ExpectedException(typeof(ArgumentOutOfRangeException))]

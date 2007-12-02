@@ -12,14 +12,10 @@ namespace Modbus.Message
 	class ModbusMessageImpl
 	{
 		private byte? _exceptionCode;
-		private ushort _transactionID;
-		private byte _functionCode;
 		private ushort? _subFunctionCode;
-		private byte _slaveAddress;
 		private ushort? _startAddress;
 		private ushort? _numberOfPoints;
 		private byte? _byteCount;
-		private IModbusMessageDataCollection _data;
 
 		public ModbusMessageImpl()
 		{
@@ -27,8 +23,8 @@ namespace Modbus.Message
 
 		public ModbusMessageImpl(byte slaveAddress, byte functionCode)
 		{
-			_slaveAddress = slaveAddress;
-			_functionCode = functionCode;
+			SlaveAddress = slaveAddress;
+			FunctionCode = functionCode;
 		}
 
 		public byte ByteCount
@@ -43,17 +39,9 @@ namespace Modbus.Message
 			set { _exceptionCode = value; }
 		}
 
-		public ushort TransactionID
-		{
-			get { return _transactionID; }
-			set { _transactionID = value; }
-		}
-
-		public byte FunctionCode
-		{
-			get { return _functionCode; }
-			set { _functionCode = value; }
-		}
+		public ushort TransactionID { get; set; }
+		
+		public byte FunctionCode { get; set; }
 
 		public ushort NumberOfPoints
 		{
@@ -61,11 +49,7 @@ namespace Modbus.Message
 			set { _numberOfPoints = value; }
 		}
 
-		public byte SlaveAddress
-		{
-			get { return _slaveAddress; }
-			set { _slaveAddress = value; }
-		}
+		public byte SlaveAddress { get; set; }
 
 		public ushort StartAddress
 		{
@@ -79,11 +63,7 @@ namespace Modbus.Message
 			set { _subFunctionCode = value; }
 		}
 
-		public IModbusMessageDataCollection Data
-		{
-			get { return _data; }
-			set { _data = value; }
-		}
+		public IModbusMessageDataCollection Data { get; set; }
 
 		public byte[] MessageFrame
 		{
@@ -103,7 +83,7 @@ namespace Modbus.Message
 			{
 				List<byte> pdu = new List<byte>();
 
-				pdu.Add(_functionCode);
+				pdu.Add(FunctionCode);
 
 				if (_exceptionCode.HasValue)
 					pdu.Add(_exceptionCode.Value);
@@ -120,8 +100,8 @@ namespace Modbus.Message
 				if (_byteCount.HasValue)
 					pdu.Add(_byteCount.Value);
 
-				if (_data != null)
-					pdu.AddRange(_data.NetworkBytes);
+				if (Data != null)
+					pdu.AddRange(Data.NetworkBytes);
 
 				return pdu.ToArray();
 			}

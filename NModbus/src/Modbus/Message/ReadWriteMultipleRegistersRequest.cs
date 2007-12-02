@@ -1,6 +1,7 @@
 using System;
 using Modbus.Data;
 using Modbus.Utility;
+using System.Linq;
 
 namespace Modbus.Message
 {
@@ -32,10 +33,10 @@ namespace Modbus.Message
 			get
 			{
 				// read and write PDUs without function codes
-				byte[] read = CollectionUtility.Slice(_readRequest.ProtocolDataUnit, 1, _readRequest.ProtocolDataUnit.Length - 1);
-				byte[] write = CollectionUtility.Slice(_writeRequest.ProtocolDataUnit, 1, _writeRequest.ProtocolDataUnit.Length - 1);
-
-				return CollectionUtility.Concat(new byte[] { this.FunctionCode }, read, write);
+				byte[] read = _readRequest.ProtocolDataUnit.Slice(1, _readRequest.ProtocolDataUnit.Length - 1).ToArray();
+				byte[] write = _writeRequest.ProtocolDataUnit.Slice(1, _writeRequest.ProtocolDataUnit.Length - 1).ToArray();
+				
+				return FunctionCode.ToSequence().Concat(read, write).ToArray();
 			}
 		}
 
@@ -59,12 +60,12 @@ namespace Modbus.Message
 			if (frame.Length < _minimumFrameSize + frame[10])
 				throw new FormatException("Message frame does not contain enough bytes.");
 
-			byte[] readFrame = CollectionUtility.Slice(frame, 2, 4);
-			byte[] writeFrame = CollectionUtility.Slice(frame, 6, frame.Length - 6);
+			byte[] readFrame = frame.Slice(2, 4).ToArray();
+			byte[] writeFrame = frame.Slice(6, frame.Length - 6).ToArray();
 			byte[] header = { SlaveAddress, FunctionCode };
 
-			_readRequest = ModbusMessageFactory.CreateModbusMessage<ReadHoldingInputRegistersRequest>(CollectionUtility.Concat(header, readFrame));
-			_writeRequest = ModbusMessageFactory.CreateModbusMessage<WriteMultipleRegistersRequest>(CollectionUtility.Concat(header, writeFrame));
+			_readRequest = ModbusMessageFactory.CreateModbusMessage<ReadHoldingInputRegistersRequest>(header.Concat(readFrame).ToArray());
+			_writeRequest = ModbusMessageFactory.CreateModbusMessage<WriteMultipleRegistersRequest>(header.Concat(writeFrame).ToArray());
 		}
 	}
 }

@@ -1,9 +1,11 @@
+using System.Linq;
 using Modbus.Data;
 using Modbus.Device;
 using Modbus.Message;
 using Modbus.UnitTests.Message;
 using Modbus.Utility;
 using NUnit.Framework;
+using System.IO.Ports;
 
 namespace Modbus.UnitTests.Device
 {
@@ -74,7 +76,7 @@ namespace Modbus.UnitTests.Device
 			WriteMultipleCoilsResponse expectedResponse = new WriteMultipleCoilsResponse(1, startAddress, numberOfPoints);
 			WriteMultipleCoilsResponse response = ModbusSlave.WriteMultipleCoils(new WriteMultipleCoilsRequest(1, startAddress, new DiscreteCollection(val, val, val, val, val, val, val, val, val, val)), _testDataStore.CoilDiscretes);
 			AssertModbusMessagePropertiesAreEqual(expectedResponse, response);
-			Assert.AreEqual(new bool[] { val, val, val, val, val, val, val, val, val, val }, CollectionUtility.Slice<bool>(_testDataStore.CoilDiscretes, startAddress + 1, numberOfPoints));
+			Assert.AreEqual(new bool[] { val, val, val, val, val, val, val, val, val, val }, _testDataStore.CoilDiscretes.Slice(startAddress + 1, numberOfPoints).ToArray());
 		}
 
 		[Test]
@@ -93,10 +95,22 @@ namespace Modbus.UnitTests.Device
 		{
 			ushort startAddress = 35;
 			ushort[] valuesToWrite = new ushort[] { 1, 2, 3, 4, 5 };
-			Assert.AreNotEqual(valuesToWrite, CollectionUtility.Slice<ushort>(_testDataStore.HoldingRegisters, startAddress - 1, valuesToWrite.Length));
+			Assert.AreNotEqual(valuesToWrite, _testDataStore.HoldingRegisters.Slice(startAddress - 1, valuesToWrite.Length).ToArray());
 			WriteMultipleRegistersResponse expectedResponse = new WriteMultipleRegistersResponse (1, startAddress, (ushort) valuesToWrite.Length);
 			WriteMultipleRegistersResponse response = ModbusSlave.WriteMultipleRegisters(new WriteMultipleRegistersRequest(1, startAddress, new RegisterCollection(valuesToWrite)), _testDataStore.HoldingRegisters);
 			AssertModbusMessagePropertiesAreEqual(expectedResponse, response);
+		}
+
+		[Test]
+		public void ApplyRequest_VerifyModbusRequestReceivedEventIsFired()
+		{
+			bool eventFired = false;
+			ModbusSlave slave = ModbusSerialSlave.CreateAscii(1, new SerialPort());
+			WriteSingleRegisterRequestResponse request = new WriteSingleRegisterRequestResponse(1, 1, 1);
+			slave.ModbusSlaveRequestReceived += (obj, args) => { eventFired = true; Assert.AreEqual(request, args.Message); };
+			
+			slave.ApplyRequest(request);			
+			Assert.IsTrue(eventFired);
 		}
 	}
 }

@@ -2,6 +2,7 @@ using Modbus.Data;
 using Modbus.IO;
 using Modbus.Message;
 using Modbus.Utility;
+using System.Linq;
 
 namespace Modbus.Device
 {
@@ -10,10 +11,7 @@ namespace Modbus.Device
 	/// </summary>
 	public abstract class ModbusMaster : ModbusDevice, IModbusMaster
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ModbusMaster"/> class.
-		/// </summary>
-		public ModbusMaster(ModbusTransport transport)
+		internal ModbusMaster(ModbusTransport transport)
 			: base(transport)
 		{
 		}
@@ -128,7 +126,7 @@ namespace Modbus.Device
 			ReadWriteMultipleRegistersRequest request = new ReadWriteMultipleRegistersRequest(slaveAddress, startReadAddress, numberOfPointsToRead, startWriteAddress, new RegisterCollection(writeData));			
 			ReadHoldingInputRegistersResponse response = Transport.UnicastMessage<ReadHoldingInputRegistersResponse>(request);
 
-			return CollectionUtility.ToArray(response.Data);
+			return response.Data.ToArray();
 		}
 
 		/// <summary>
@@ -159,7 +157,7 @@ namespace Modbus.Device
 			ReadHoldingInputRegistersRequest request = new ReadHoldingInputRegistersRequest(functionCode, slaveAddress, startAddress, numberOfPoints);
 			ReadHoldingInputRegistersResponse response = Transport.UnicastMessage<ReadHoldingInputRegistersResponse>(request);
 
-			return CollectionUtility.ToArray(response.Data);
+			return response.Data.ToArray();
 		}
 
 		internal bool[] ReadDiscretes(byte functionCode, byte slaveAddress, ushort startAddress, ushort numberOfPoints)
@@ -167,7 +165,7 @@ namespace Modbus.Device
 			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(functionCode, slaveAddress, startAddress, numberOfPoints);
 			ReadCoilsInputsResponse response = Transport.UnicastMessage<ReadCoilsInputsResponse>(request);
 
-			return CollectionUtility.Slice(response.Data, 0, request.NumberOfPoints);
+			return response.Data.Slice(0, request.NumberOfPoints).ToArray();
 		}
 	}
 }

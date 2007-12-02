@@ -53,7 +53,7 @@ namespace Modbus.IO
 			DiscardInBuffer();
 
 			byte[] frame = BuildMessageFrame(message);
-			_log.InfoFormat("TX: {0}", StringUtility.Join(", ", frame));
+			_log.InfoFormat("TX: {0}", frame.Join(", "));
 			_serialResource.Write(frame, 0, frame.Length);
 		}
 
@@ -64,7 +64,7 @@ namespace Modbus.IO
 			// compare checksum
 			if (CheckFrame && !ChecksumsMatch(response, frame))
 			{
-				string errorMessage = String.Format("Checksums failed to match {0} != {1}", StringUtility.Join(", ", response.MessageFrame), StringUtility.Join(", ", frame));
+				string errorMessage = String.Format("Checksums failed to match {0} != {1}", response.MessageFrame.Join(", "), frame.Join(", "));
 				_log.Error(errorMessage);
 				throw new IOException(errorMessage);
 			}

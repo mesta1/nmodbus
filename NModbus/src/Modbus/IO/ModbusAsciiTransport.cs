@@ -56,7 +56,7 @@ namespace Modbus.IO
 
 			// convert hex to bytes
 			byte[] frame = ModbusUtility.HexToBytes(frameHex);
-			_log.InfoFormat("RX: {0}", StringUtility.Join(", ", frame));
+			_log.InfoFormat("RX: {0}", frame.Join(", "));
 
 			if (frame.Length < 3)
 				throw new IOException("Premature end of stream, message truncated.");

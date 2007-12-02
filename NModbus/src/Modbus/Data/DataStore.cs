@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using Modbus.Utility;
 
 namespace Modbus.Data
@@ -65,7 +66,7 @@ namespace Modbus.Data
 			if (dataSource.Count < startIndex + count)
 				throw new ArgumentOutOfRangeException("Read is outside valid range.");
 
-			U[] dataToRetrieve = CollectionUtility.Slice(dataSource, startIndex, count);
+			U[] dataToRetrieve = dataSource.Slice(startIndex, count).ToArray();
 			T result = new T();
 
 			for (int i = 0; i < count; i++)

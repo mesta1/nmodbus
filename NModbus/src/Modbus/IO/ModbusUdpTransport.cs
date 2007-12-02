@@ -31,7 +31,7 @@ namespace Modbus.IO
 
 			IPEndPoint remoteIpEndPoint = null;
 			byte[] frame = udpClient.Receive(ref remoteIpEndPoint);
-			_log.InfoFormat("RX: {0}", StringUtility.Join(", ", frame));
+			_log.InfoFormat("RX: {0}", frame.Join(", "));
 
 			return frame;
 		}
@@ -42,7 +42,7 @@ namespace Modbus.IO
 				throw new InvalidOperationException("UdpClient must be bound to a default remote host. Call the Connect method.");
 
 			byte[] frame = BuildMessageFrame(message);
-			_log.InfoFormat("TX: {0}", StringUtility.Join(", ", frame));
+			_log.InfoFormat("TX: {0}", frame.Join(", "));
 			_udpClient.Send(frame, frame.Length);
 		}
 
