@@ -64,6 +64,7 @@
     <Compile Include="NModbusSerialRtuMasterDl06SlaveFixture.cs" />
     <Compile Include="NModbusSerialRtuMasterNModbusSerialRtuSlaveFixture.cs" />
     <Compile Include="ModbusSerialMasterFixture.cs" />
+    <Compile Include="NModbusSerialRtuSlaveFixture.cs" />
     <Compile Include="NModbusTcpMasterNModbusTcpSlaveFixture.cs" />
     <Compile Include="NModbusTcpMasterJamodTcpSlaveFixture.cs" />
     <Compile Include="NModbusTcpSlaveFixture.cs" />
