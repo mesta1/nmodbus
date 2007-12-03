@@ -6,7 +6,7 @@ using System.Text;
 namespace Modbus.Utility
 {
 	/// <summary>
-	/// Provides a set of static (Shared in Visual Basic) methods for querying or modifying objects that implement IEnumerable<T>.
+	/// Provides a set of static (Shared in Visual Basic) methods for querying or modifying objects that implement IEnumerable&lt;T&gt;.
 	/// </summary>
 	public static class Enumerable
 	{
@@ -51,6 +51,12 @@ namespace Modbus.Utility
 				action(item);
 		}
 
+		/// <summary>
+		/// Iterates the source applying the action with an index.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="source">The source.</param>
+		/// <param name="action">The action.</param>
 		public static void ForEachWithIndex<T>(this IEnumerable<T> source, Action<T, int> action)
 		{
 			if (source == null)
@@ -61,7 +67,13 @@ namespace Modbus.Utility
 
 			WithIndex(source).ForEach(pair => action(pair.Value, pair.Index));
 		}
-		
+
+		/// <summary>
+		/// Iterates the source returning values with an index.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="source">The source.</param>
+		/// <returns></returns>
 		public static IEnumerable<IndexValuePair<T>> WithIndex<T>(this IEnumerable<T> source)
 		{
 			if (source == null)
@@ -116,26 +128,5 @@ namespace Modbus.Utility
 
 			return String.Join(separator, Array.ConvertAll(sequence.ToArray(), conversion));
 		}
-	}
-
-	public struct IndexValuePair<T>
-	{
-		public IndexValuePair(int index, T value)
-		{
-			m_index = index;
-			m_value = value;
-		}
-
-		public int Index
-		{
-			get { return m_index; }
-		}
-		public T Value
-		{
-			get { return m_value; }
-		}
-
-		readonly int m_index;
-		readonly T m_value;
 	}
 }
