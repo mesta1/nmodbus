@@ -114,7 +114,7 @@
       outputDir="${path.output}"
       reportType="4"
       xmlReportName="CoverageSummary.xml"
-      satisfactoryCoverage="80"
+      satisfactoryCoverage="10"
     >
       <fileset>
         <include name="${path.output}\*.NCover.xml"/>
