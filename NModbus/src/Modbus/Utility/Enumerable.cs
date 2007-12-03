@@ -51,6 +51,27 @@ namespace Modbus.Utility
 				action(item);
 		}
 
+		public static void ForEachWithIndex<T>(this IEnumerable<T> source, Action<T, int> action)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			if (action == null)
+				throw new ArgumentNullException("action");
+
+			WithIndex(source).ForEach(pair => action(pair.Value, pair.Index));
+		}
+		
+		public static IEnumerable<IndexValuePair<T>> WithIndex<T>(this IEnumerable<T> source)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			int position = 0;
+			foreach (T value in source)
+				yield return new IndexValuePair<T>(position++, value);
+		}
+
 		/// <summary>
 		/// Returns a slice of the given source.
 		/// </summary>
@@ -67,7 +88,7 @@ namespace Modbus.Utility
 				throw new ArgumentOutOfRangeException("startIndex");
 
 			if (size < 0 || startIndex + size > count)
-				throw new ArgumentOutOfRangeException("count");			
+				throw new ArgumentOutOfRangeException("count");
 
 			return source.Skip(startIndex).Take(size);
 		}
@@ -90,13 +111,31 @@ namespace Modbus.Utility
 			if (separator == null)
 				throw new ArgumentNullException("separator");
 
-			if (separator == String.Empty)
-				throw new ArgumentException("Argument separator cannot be the empty string");
-
 			if (conversion == null)
 				throw new ArgumentNullException("conversion");
 
 			return String.Join(separator, Array.ConvertAll(sequence.ToArray(), conversion));
 		}
+	}
+
+	public struct IndexValuePair<T>
+	{
+		public IndexValuePair(int index, T value)
+		{
+			m_index = index;
+			m_value = value;
+		}
+
+		public int Index
+		{
+			get { return m_index; }
+		}
+		public T Value
+		{
+			get { return m_value; }
+		}
+
+		readonly int m_index;
+		readonly T m_value;
 	}
 }
