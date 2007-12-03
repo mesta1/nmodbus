@@ -146,6 +146,8 @@
         <exclude name="**/bin/**" />
         <exclude name="**/docs/**" />
         <exclude name="README.txt" />
+        <exclude name="*.private" />
+        <exclude name="msbuild_log.xml" />
       </fileset>
       <fileset basedir="${path.bin}" prefix="bin">
         <include name="*.dll" />
