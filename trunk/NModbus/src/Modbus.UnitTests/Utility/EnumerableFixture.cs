@@ -158,7 +158,7 @@ namespace Modbus.UnitTests.Utility
 		}
 
 		[Test, ExpectedException(typeof(ArgumentNullException))]
-		public void JoinCollectionNull()
+		public void Join_CollectionNull()
 		{
 			ICollection<bool> col = null;
 			col.Join(", ");
@@ -166,9 +166,21 @@ namespace Modbus.UnitTests.Utility
 		}
 
 		[Test, ExpectedException(typeof(ArgumentNullException))]
-		public void JoinCollectionConverterNull()
+		public void Join_CollectionConverterNull()
 		{
 			new Collection<ushort>(new ushort[] { 1 }).Join(", ", null);
+		}
+
+		[Test, ExpectedException(typeof(ArgumentNullException))]
+		public void Join_SeparatorNull()
+		{
+			new int[] { }.Join(null);
+		}
+
+		[Test]
+		public void Join_SeparatorEmpty()
+		{
+			Assert.AreEqual("12", new int[] { 1, 2 }.Join(""));
 		}
 
 		[Test]
@@ -183,6 +195,63 @@ namespace Modbus.UnitTests.Utility
 		{
 			Collection<ushort> registers = new Collection<ushort>(new ushort[] { 1, 2, 3 });
 			Assert.AreEqual("number: 1, number: 2, number: 3", registers.Join(", ", delegate(ushort number) { return String.Format("number: {0}", number); }));
+		}
+
+		[Test]
+		public void ForEach()
+		{
+			var array = new int[] { 1, 2, 3 };
+			int sum = 0;
+			array.ForEach((n) => sum += n);
+
+			Assert.AreEqual(6, sum);
+		}
+
+		[Test, ExpectedException(typeof(ArgumentNullException))]
+		public void ForEach_ActionNull()
+		{
+			new int[] { 1, 2, 3 }.ForEach(null);
+		}
+
+		[Test]
+		public void ForEachWithIndex()
+		{
+			var array = new string[] { "one", "two", "three" };
+			int expectedIndex = 0;
+			array.ForEachWithIndex((value, index) => Assert.AreEqual(expectedIndex++, index));
+		}
+
+		[Test, ExpectedException(typeof(ArgumentNullException))]
+		public void ForEachWithIndex_SourceNull()
+		{
+			string[] array = null;
+			array.ForEachWithIndex((value, index) => Assert.Fail());
+		}
+
+		[Test, ExpectedException(typeof(ArgumentNullException))]
+		public void ForEachWithIndex_ActionNull()
+		{
+			new string[] { }.ForEachWithIndex(null);
+		}
+
+		[Test]
+		public void WithIndex()
+		{
+			var array = new string[] { "one", "two", "three" };
+			int expectedIndex = 0;
+
+			foreach (var pair in array.WithIndex())
+			{
+				Assert.AreEqual(pair.Value, array[expectedIndex]);
+				Assert.AreEqual(pair.Index, expectedIndex++);
+			}
+		}
+
+		[Test, ExpectedException(typeof(ArgumentNullException))]
+		public void WithIndex_SourceNull()
+		{
+			string[] array = null;
+			array.WithIndex().ToArray();
 		}
 	}
 }
