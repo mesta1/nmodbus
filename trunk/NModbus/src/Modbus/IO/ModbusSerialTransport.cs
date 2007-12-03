@@ -40,7 +40,7 @@ namespace Modbus.IO
 			if (serialResource == null)
 				throw new ArgumentNullException("serialResource");
 
-			_serialResource = serialResource;		
+			_serialResource = serialResource;
 		}
 
 		internal void DiscardInBuffer()

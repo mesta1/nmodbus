@@ -48,39 +48,47 @@ namespace Modbus.Device
 			{
 				try
 				{
-					// read request and build message
-					byte[] frame = Transport.ReadRequest();
-					IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(frame);
-
-					if (serialTransport.CheckFrame && !serialTransport.ChecksumsMatch(request, frame))
+					try
 					{
-						string errorMessage = String.Format("Checksums failed to match {0} != {1}", request.MessageFrame.Join(", "), frame.Join(", "));
-						_log.Error(errorMessage);
-						throw new IOException(errorMessage);
-					}
+						// read request and build message
+						byte[] frame = Transport.ReadRequest();
+						IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(frame);
 
-					// only service requests addressed to this particular slave
-					if (request.SlaveAddress != UnitID)
+						if (serialTransport.CheckFrame && !serialTransport.ChecksumsMatch(request, frame))
+						{
+							string errorMessage = String.Format("Checksums failed to match {0} != {1}", request.MessageFrame.Join(", "), frame.Join(", "));
+							_log.Error(errorMessage);
+							throw new IOException(errorMessage);
+						}
+
+						// only service requests addressed to this particular slave
+						if (request.SlaveAddress != UnitID)
+						{
+							_log.DebugFormat("NModbus Slave {0} ignoring request intended for NModbus Slave {1}", UnitID, request.SlaveAddress);
+							continue;
+						}
+
+						// perform action
+						IModbusMessage response = ApplyRequest(request);
+
+						// write response
+						Transport.Write(response);
+					}
+					catch (IOException ioe)
 					{
-						_log.DebugFormat("NModbus Slave {0} ignoring request intended for NModbus Slave {1}", UnitID, request.SlaveAddress);
-						continue;
+						_log.ErrorFormat("IO Exception encountered while listening for requests - {0}", ioe.Message);
+						serialTransport.DiscardInBuffer();
 					}
-
-					// perform action
-					IModbusMessage response = ApplyRequest(request);
-
-					// write response
-					Transport.Write(response);
+					catch (TimeoutException te)
+					{
+						_log.ErrorFormat("Timeout Exception encountered while listening for requests - {0}", te.Message);
+						serialTransport.DiscardInBuffer();
+					}
 				}
-				catch (IOException ioe)
+				catch (InvalidOperationException)
 				{
-					_log.ErrorFormat("IO Exception encountered while listening for requests - {0}", ioe.Message);
-					serialTransport.DiscardInBuffer();
-				}
-				catch (TimeoutException te)
-				{
-					_log.ErrorFormat("Timeout Exception encountered while listening for requests - {0}", te.Message);
-					serialTransport.DiscardInBuffer();
+					// when the underlying port is closed
+					break;
 				}
 			}
 		}
