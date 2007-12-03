@@ -15,7 +15,6 @@ namespace Modbus.IO
 		/// </summary>
 		int ReadTimeout { get; set; }
 
-
 		/// <summary>
 		/// Gets or sets the number of milliseconds before a time-out occurs when a write operation does not finish.
 		/// </summary>
