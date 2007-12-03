@@ -111,6 +111,7 @@
     <Compile Include="SlaveException.cs" />
     <Compile Include="Utility\CollectionUtility.cs" />
     <Compile Include="Utility\Enumerable.cs" />
+    <Compile Include="Utility\IndexValuePair.cs" />
     <Compile Include="Utility\ModbusUtility.cs" />
     <Compile Include="Utility\UtilityExtensions.cs" />
   </ItemGroup>
