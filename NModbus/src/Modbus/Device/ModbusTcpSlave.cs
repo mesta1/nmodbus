@@ -1,14 +1,15 @@
-using log4net;
-using Modbus.IO;
-using Modbus.Message;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using log4net;
+using Modbus.IO;
+using Modbus.Message;
 using Modbus.Utility;
-using System.Linq;
+using Wintellect.Threading.AsyncProgModel.AsyncEnumeratorSimple;
 
 namespace Modbus.Device
 {
@@ -116,21 +117,23 @@ namespace Modbus.Device
 				_endPoint = endPoint;
 				_stream = stream;
 
-				_log.Debug("Begin reading header.");
-				_stream.BeginRead(_mbapHeader, 0, 6, ReadHeaderCompleted, null);
+				_log.Debug("Begin reading header.");			
+				var ae = new AsyncEnumerator();
+				ae.BeginExecute(ReadRequest(ae), null, null);
 			}
 
-			internal void ReadHeaderCompleted(IAsyncResult ar)
+			internal IEnumerable<int> ReadRequest(AsyncEnumerator ae)
 			{
-				_log.Debug("Read header completed.");
-
+				_stream.BeginRead(_mbapHeader, 0, 6, ae.End(), null);
+				yield return 1;
+				
 				try
 				{
-					if (_stream.EndRead(ar) == 0)
+					if (_stream.EndRead(ae.DequeueAsyncResult()) == 0)
 					{
 						_log.Debug("0 bytes read, Master has closed Socket connection.");
 						RemoveMaster(_endPoint);
-						return;
+						yield break;
 					}
 				}
 				catch (IOException ioe)
@@ -142,23 +145,21 @@ namespace Modbus.Device
 					if (socketException != null && socketException.ErrorCode == Modbus.ConnectionResetByPeer)
 					{
 						_log.Debug("Socket Exceptiong ConnectionResetByPeer, Master closed connection.");
-						return;
+						yield break;
 					}
 
 					throw;
 				}
-
+				
 				_log.DebugFormat("MBAP header: {0}", _mbapHeader.Join(", "));
 				ushort frameLength = (ushort) (IPAddress.HostToNetworkOrder(BitConverter.ToInt16(_mbapHeader, 4)));
 				_log.DebugFormat("{0} bytes in PDU.", frameLength);
 				_messageFrame = new byte[frameLength];
 
-				_stream.BeginRead(_messageFrame, 0, frameLength, ReadFrameCompleted, null);
-			}
+				_stream.BeginRead(_messageFrame, 0, frameLength, ae.End(), null);
+				yield return 1;
 
-			internal void ReadFrameCompleted(IAsyncResult ar)
-			{
-				_log.DebugFormat("Read Frame completed {0} bytes", _stream.EndRead(ar));
+				_log.DebugFormat("Read Frame completed {0} bytes", _stream.EndRead(ae.DequeueAsyncResult()));
 				byte[] frame = _mbapHeader.Concat(_messageFrame).ToArray();
 				_log.InfoFormat("RX: {0}", frame.Join(", "));
 
@@ -174,23 +175,12 @@ namespace Modbus.Device
 				// write response
 				byte[] responseFrame = transport.BuildMessageFrame(response);
 				_log.InfoFormat("TX: {0}", responseFrame.Join(", "));
-				_stream.BeginWrite(responseFrame, 0, responseFrame.Length, WriteCompleted, null);
-			}
+				_stream.BeginWrite(responseFrame, 0, responseFrame.Length, ae.End(), null);
+				yield return 1;
 
-			internal void WriteCompleted(IAsyncResult ar)
-			{
-				_log.Debug("End write.");
-				_stream.EndWrite(ar);
+				_stream.EndWrite(ae.DequeueAsyncResult());
 
-				try
-				{
-					_stream.BeginRead(_mbapHeader, 0, 6, ReadHeaderCompleted, null);
-				}
-				catch (IOException)
-				{
-					_log.Debug("Master has closed Socket connection.");
-					RemoveMaster(_endPoint);
-				}
+				ae.BeginExecute(ReadRequest(ae), null, null);
 			}
 		}
 	}
