@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 namespace Modbus.Data
 {
 	/// <summary>
-	/// Modbus Data sections support addresses 1-n so we always pad the 0 element with a default value in a ModbusDataCollection.
+	/// A 1 origin collection represetative of the Modbus Data Model.
 	/// </summary>
 	public class ModbusDataCollection<TData> : Collection<TData>
 	{
