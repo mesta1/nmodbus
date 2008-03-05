@@ -55,6 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\DataStoreEventArgsFixture.cs" />
     <Compile Include="Data\DataStoreFixture.cs" />
     <Compile Include="Data\DiscreteCollectionFixture.cs" />
     <Compile Include="Data\ModbusDataCollectionFixture.cs" />
@@ -86,7 +87,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SlaveExceptionFixture.cs" />
     <Compile Include="Utility\CollectionUtilityFixture.cs" />
-    <Compile Include="Utility\EnumerableFixture.cs" />
+    <Compile Include="Utility\DiscriminatedUnionFixture.cs" />
     <Compile Include="Utility\ModbusUtilityFixture.cs" />
     <Compile Include="Utility\UtilityExtensionsFixture.cs" />
   </ItemGroup>

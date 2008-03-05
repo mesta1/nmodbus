@@ -98,8 +98,11 @@ namespace Modbus.IntegrationTests
 		[Test, Ignore("TODO consider supporting this scenario")]
 		public void ModbusUdpSlave_SingleMasterPollingMultipleSlaves()
 		{			
-			DataStore slave1DataStore = new DataStore { CoilDiscretes = new ModbusDataCollection<bool>(true) };
-			DataStore slave2DataStore = new DataStore { CoilDiscretes = new ModbusDataCollection<bool>(false) };
+			DataStore slave1DataStore = new DataStore();
+			slave1DataStore.CoilDiscretes.Add(true);
+
+			DataStore slave2DataStore = new DataStore();
+			slave2DataStore.CoilDiscretes.Add(false);
 
 			using (UdpClient slave1 = CreateAndStartUdpSlave(502, slave1DataStore))
 			using (UdpClient slave2 = CreateAndStartUdpSlave(503, slave2DataStore))
