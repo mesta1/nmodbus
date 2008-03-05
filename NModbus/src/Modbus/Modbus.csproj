@@ -63,7 +63,9 @@
     <Compile Include="Data\DataStoreFactory.cs" />
     <Compile Include="Data\DiscreteCollection.cs" />
     <Compile Include="Data\ModbusDataCollection.cs" />
+    <Compile Include="Data\ModbusDataType.cs" />
     <Compile Include="Data\RegisterCollection.cs" />
+    <Compile Include="Data\DataStoreEventArgs.cs" />
     <Compile Include="Device\IModbusMaster.cs" />
     <Compile Include="Device\IModbusSerialMaster.cs" />
     <Compile Include="Device\ModbusIpMaster.cs" />
@@ -114,7 +116,7 @@
     </Compile>
     <Compile Include="SlaveException.cs" />
     <Compile Include="Utility\CollectionUtility.cs" />
-    <Compile Include="Utility\Enumerable.cs" />
+    <Compile Include="Utility\DiscriminatedUnion.cs" />
     <Compile Include="Utility\IndexValuePair.cs" />
     <Compile Include="Utility\ModbusUtility.cs" />
     <Compile Include="Utility\UtilityExtensions.cs" />
