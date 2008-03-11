@@ -18,6 +18,6 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleToAttribute("DynamicProxyGenAssembly2")]
 [assembly: ComVisibleAttribute(false)]
 [assembly: GuidAttribute("a2ec5378-e1b7-4bb0-b696-1c657407eeb9")]
-[assembly: AssemblyVersionAttribute("1.5.0.0")]
-[assembly: AssemblyFileVersionAttribute("1.5.0.0")]
+[assembly: AssemblyVersionAttribute("1.6.0.0")]
+[assembly: AssemblyFileVersionAttribute("1.6.0.0")]
 
