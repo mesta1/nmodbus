@@ -2,6 +2,7 @@ using System;
 using Modbus.Data;
 using System.Linq;
 using NUnit.Framework;
+using System.Diagnostics;
 
 namespace Modbus.UnitTests.Data
 {
@@ -75,7 +76,8 @@ namespace Modbus.UnitTests.Data
 		/// <summary>
 		/// http://modbus.org/docs/Modbus_Application_Protocol_V1_1b.pdf
 		/// In the PDU Coils are addressed starting at zero. Therefore coils numbered 1-16 are addressed as 0-15.
-		/// So reading address 0 should get you 
+		/// So reading Modbus address 0 should get you array index 1 in the DataStore.
+		/// This implies that the DataStore array index 0 can never be used.
 		/// </summary>
 		[Test]
 		public void TestReadMapping()
