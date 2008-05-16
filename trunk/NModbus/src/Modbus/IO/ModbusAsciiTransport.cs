@@ -5,6 +5,7 @@ using System.Text;
 using log4net;
 using Modbus.Message;
 using Modbus.Utility;
+using Unme.Common;
 
 namespace Modbus.IO
 {

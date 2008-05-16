@@ -41,7 +41,7 @@ namespace Modbus.IntegrationTests
 			}
 
 			Thread.Sleep(2000);
-			Assert.AreEqual(0, ModbusTcpSlave.Masters.Count);
+			Assert.AreEqual(0, slave.Masters.Count);
 			slaveListener.Stop();
 		}
 
@@ -67,13 +67,13 @@ namespace Modbus.IntegrationTests
 				bool[] coils = master.ReadCoils(1, 1);
 				Assert.AreEqual(1, coils.Length);
 
-				Assert.AreEqual(1, ModbusTcpSlave.Masters.Count);
+				Assert.AreEqual(1, slave.Masters.Count);
 			}
 
 			// give the slave some time to remove the master
 			Thread.Sleep(50);
 
-			Assert.AreEqual(0, ModbusTcpSlave.Masters.Count);
+			Assert.AreEqual(0, slave.Masters.Count);
 
 			slaveListener.Stop();
 		}
@@ -99,14 +99,14 @@ namespace Modbus.IntegrationTests
 				bool[] coils = master.ReadCoils(1, 1);
 				Assert.AreEqual(1, coils.Length);
 
-				Assert.AreEqual(1, ModbusTcpSlave.Masters.Count);
+				Assert.AreEqual(1, slave.Masters.Count);
 				// wait a bit to let slave move on to read header
 				Thread.Sleep(50);
 			}
 
 			// give the slave some time to remove the master
 			Thread.Sleep(50);
-			Assert.AreEqual(0, ModbusTcpSlave.Masters.Count);
+			Assert.AreEqual(0, slave.Masters.Count);
 			slaveListener.Stop();
 		}
 	}

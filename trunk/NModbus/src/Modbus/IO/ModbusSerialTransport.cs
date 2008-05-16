@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using log4net;
 using Modbus.Message;
-using Modbus.Utility;
+using Unme.Common;
 
 namespace Modbus.IO
 {

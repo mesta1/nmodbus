@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using log4net;
 using Modbus.Message;
 using Modbus.Utility;
-using System.Linq;
+using Unme.Common;
 
 namespace Modbus.IO
 {

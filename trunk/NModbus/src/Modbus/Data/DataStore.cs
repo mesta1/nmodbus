@@ -2,11 +2,15 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Modbus.Utility;
+using Unme.Common;
+using Unme.Common.NullReferenceExtension;
 
 namespace Modbus.Data
 {
 	/// <summary>
 	/// Object simulation of device memory map.
+	/// The underlying collections are thread safe when using the ModbusMaster API to read/write values.
+	/// You can use the SyncRoot property to synchronize direct access to the DataStore collections.
 	/// </summary>
 	public class DataStore
 	{
@@ -25,6 +29,8 @@ namespace Modbus.Data
 		/// </summary>
 		public event DataStoreReadWriteEventHandler DataStoreWrittenTo;
 
+		private readonly object _syncRoot = new object();
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DataStore"/> class.
 		/// </summary>
@@ -39,7 +45,7 @@ namespace Modbus.Data
 		/// <summary>
 		/// Gets the coil discretes.
 		/// </summary>
-		public ModbusDataCollection<bool> CoilDiscretes{ get; private set; }
+		public ModbusDataCollection<bool> CoilDiscretes { get; private set; }
 
 		/// <summary>
 		/// Gets the input discretes.
@@ -57,11 +63,22 @@ namespace Modbus.Data
 		public ModbusDataCollection<ushort> InputRegisters { get; private set; }
 
 		/// <summary>
+		/// An object that can be used to synchronize direct access to the DataStore collections.
+		/// </summary>
+		public Object SyncRoot
+		{
+			get
+			{
+				return _syncRoot;
+			}
+		}
+
+		/// <summary>
 		/// Retrieves subset of data from collection.
 		/// </summary>
 		/// <typeparam name="T">The collection type.</typeparam>
 		/// <typeparam name="U">The type of elements in the collection.</typeparam>
-		internal static T ReadData<T, U>(DataStore dataStore, ModbusDataCollection<U> dataSource, ushort startAddress, ushort count) where T : Collection<U>, new()
+		internal static T ReadData<T, U>(DataStore dataStore, ModbusDataCollection<U> dataSource, ushort startAddress, ushort count, object syncRoot) where T : Collection<U>, new()
 		{
 			int startIndex = startAddress + 1;
 
@@ -70,10 +87,12 @@ namespace Modbus.Data
 
 			if (dataSource.Count < startIndex + count)
 				throw new ArgumentOutOfRangeException("Read is outside valid range.");
-
-			U[] dataToRetrieve = dataSource.Slice(startIndex, count).ToArray();
+			
+			U[] dataToRetrieve;
+			lock(syncRoot)
+				dataToRetrieve = dataSource.Slice(startIndex, count).ToArray();
+			
 			T result = new T();
-
 			for (int i = 0; i < count; i++)
 				result.Add(dataToRetrieve[i]);
 
@@ -86,17 +105,18 @@ namespace Modbus.Data
 		/// Write data to data store.
 		/// </summary>
 		/// <typeparam name="TData">The type of the data.</typeparam>
-		internal static void WriteData<TData>(DataStore dataStore, Collection<TData> items, ModbusDataCollection<TData> destination, ushort startAddress)
+		internal static void WriteData<TData>(DataStore dataStore, Collection<TData> items, ModbusDataCollection<TData> destination, ushort startAddress, object syncRoot)
 		{
 			int startIndex = startAddress + 1;
 
 			if (startIndex < 0 || startIndex >= destination.Count)
 				throw new ArgumentOutOfRangeException("Start address was out of range. Must be non-negative and <= the size of the collection.");
-			
+
 			if (destination.Count < startIndex + items.Count)
 				throw new ArgumentOutOfRangeException("Items collection is too large to write at specified start index.");
 
-			CollectionUtility.Update(items, destination, startIndex);
+			lock (syncRoot)
+				CollectionUtility.Update(items, destination, startIndex);
 
 			dataStore.DataStoreWrittenTo.IfNotNull(e => e(dataStore, DataStoreEventArgs.CreateDataStoreEventArgs(startAddress, destination.ModbusDataType, items)));
 		}

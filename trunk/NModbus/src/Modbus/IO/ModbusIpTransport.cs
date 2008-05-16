@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using Modbus.Message;
-using Modbus.Utility;
+using Unme.Common;
 
 namespace Modbus.IO
 {

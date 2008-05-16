@@ -2,8 +2,8 @@ using System;
 using System.Linq;
 using Modbus.Data;
 using Modbus.Message;
-using Modbus.Utility;
 using NUnit.Framework;
+using Unme.Common;
 
 namespace Modbus.UnitTests.Message
 {
@@ -241,7 +241,7 @@ namespace Modbus.UnitTests.Message
 		{
 			byte slaveAddress = 5;
 			RegisterCollection data = new RegisterCollection(50);
-			byte[] frame = slaveAddress.ToSequence<byte>(8, 0, 0).Concat(data.NetworkBytes).ToArray();
+			byte[] frame = SequenceUtility.ToSequence<byte>(slaveAddress, 8, 0, 0).Concat(data.NetworkBytes).ToArray();
 			DiagnosticsRequestResponse message = ModbusMessageFactory.CreateModbusMessage<DiagnosticsRequestResponse>(frame);
 			DiagnosticsRequestResponse expectedMessage = new DiagnosticsRequestResponse(Modbus.DiagnosticsReturnQueryData, slaveAddress, data);
 
