@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Modbus.Data;
 using Modbus.Message;
-using Modbus.Utility;
-using System.Linq;
+using Unme.Common;
 
 namespace Modbus.IntegrationTests.CustomMessages
 {

@@ -1,8 +1,8 @@
+using System.Linq;
 using Modbus.Data;
 using Modbus.IO;
 using Modbus.Message;
-using Modbus.Utility;
-using System.Linq;
+using Unme.Common;
 
 namespace Modbus.Device
 {

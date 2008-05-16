@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using Modbus.Data;
 using Modbus.Utility;
 using NUnit.Framework;
-using System.Linq;
+using Unme.Common;
 
 namespace Modbus.UnitTests.Utility
 {

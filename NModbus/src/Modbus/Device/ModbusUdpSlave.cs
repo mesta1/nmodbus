@@ -5,7 +5,7 @@ using System.Net.Sockets;
 using log4net;
 using Modbus.IO;
 using Modbus.Message;
-using Modbus.Utility;
+using Unme.Common;
 
 namespace Modbus.Device
 {

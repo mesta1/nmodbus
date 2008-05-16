@@ -33,13 +33,19 @@
     <DocumentationFile>bin\Release\Modbus.XML</DocumentationFile>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Test|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Test\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;TEST</DefineConstants>
-    <DebugType>full</DebugType>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'SignedRelease|AnyCPU' ">
+    <OutputPath>bin\SignedRelease\</OutputPath>
+    <DefineConstants>TRACE;SIGNED</DefineConstants>
+    <DocumentationFile>bin\Release\Modbus.XML</DocumentationFile>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
+		<SignAssembly>true</SignAssembly>
+		<AssemblyOriginatorKeyFile>..\..\NModbusPublic.snk</AssemblyOriginatorKeyFile>
+		<DelaySign>true</DelaySign>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
@@ -51,8 +57,10 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
       <Private>False</Private>
     </Reference>
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <Reference Include="Unme.Common, Version=0.0.0.0, Culture=neutral, PublicKeyToken=da57c01ae4598fdd, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Unme.Common.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\DataStore.cs" />
@@ -65,6 +73,7 @@
     <Compile Include="Device\IModbusMaster.cs" />
     <Compile Include="Device\IModbusSerialMaster.cs" />
     <Compile Include="Device\ModbusIpMaster.cs" />
+    <Compile Include="Device\ModbusMasterTcpConnection.cs" />
     <Compile Include="Device\ModbusSerialMaster.cs" />
     <Compile Include="Device\ModbusDevice.cs" />
     <Compile Include="Device\ModbusMaster.cs" />
@@ -115,7 +124,6 @@
     <Compile Include="Utility\DiscriminatedUnion.cs" />
     <Compile Include="Utility\IndexValuePair.cs" />
     <Compile Include="Utility\ModbusUtility.cs" />
-    <Compile Include="Utility\UtilityExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources.resx">
@@ -128,6 +136,11 @@
     <None Include="ModbusDevice.cd" />
     <None Include="ModbusTransport.cd" />
   </ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\NModbusPublic.snk">
+			<Link>NModbusPublic.snk</Link>
+		</None>
+	</ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

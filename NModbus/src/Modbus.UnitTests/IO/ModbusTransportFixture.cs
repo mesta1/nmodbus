@@ -1,12 +1,13 @@
 using System;
-using System.Linq;
 using System.IO;
+using System.Linq;
 using Modbus.Data;
 using Modbus.IO;
 using Modbus.Message;
 using Modbus.Utility;
 using NUnit.Framework;
 using Rhino.Mocks;
+using Unme.Common;
 
 namespace Modbus.UnitTests.IO
 {
@@ -144,7 +145,7 @@ namespace Modbus.UnitTests.IO
 		{
 			ModbusTransport transport = new ModbusAsciiTransport();
 			byte[] frame = { 2, 129, 2 };
-			IModbusMessage message = transport.CreateResponse<ReadCoilsInputsResponse>(frame.Concat(ModbusUtility.CalculateLrc(frame).ToSequence()).ToArray());
+			IModbusMessage message = transport.CreateResponse<ReadCoilsInputsResponse>(frame.Concat(SequenceUtility.ToSequence(ModbusUtility.CalculateLrc(frame))).ToArray());
 			Assert.IsTrue(message is SlaveExceptionResponse);
 		}
 

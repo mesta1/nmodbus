@@ -259,7 +259,6 @@ namespace Modbus.IntegrationTests
 		[Test]
 		public virtual void ExecuteCustomMessage_WriteMultipleRegisters()
 		{
-			
 			ushort testAddress = 120;
 			ushort[] testValues = new ushort[] { 10, 20, 30, 40, 50 };
 			CustomReadHoldingRegistersRequest readRequest = new CustomReadHoldingRegistersRequest(3, SlaveAddress, testAddress, (ushort) testValues.Length);

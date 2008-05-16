@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using Modbus.Data;
 using Modbus.IO;
@@ -6,8 +7,7 @@ using Modbus.Message;
 using Modbus.Utility;
 using NUnit.Framework;
 using Rhino.Mocks;
-using System.IO;
-using System.Collections.Generic;
+using Unme.Common;
 
 namespace Modbus.UnitTests.IO
 {
@@ -151,7 +151,7 @@ namespace Modbus.UnitTests.IO
 			byte[] crc = ModbusUtility.CalculateCrc(messageFrame);
 
 			Expect.Call(transport.Read(ModbusRtuTransport.ResponseFrameStartLength))
-				.Return(messageFrame.Concat(crc[0].ToSequence()).ToArray());
+				.Return(messageFrame.Concat(SequenceUtility.ToSequence(crc[0])).ToArray());
 
 			Expect.Call(transport.Read(1))
 				.Return(new byte[] { crc[1] });

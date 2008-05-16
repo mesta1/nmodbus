@@ -1,11 +1,11 @@
+using System.IO.Ports;
 using System.Linq;
 using Modbus.Data;
 using Modbus.Device;
 using Modbus.Message;
 using Modbus.UnitTests.Message;
-using Modbus.Utility;
 using NUnit.Framework;
-using System.IO.Ports;
+using Unme.Common;
 
 namespace Modbus.UnitTests.Device
 {
