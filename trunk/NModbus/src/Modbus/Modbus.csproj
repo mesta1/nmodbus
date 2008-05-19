@@ -43,9 +43,9 @@
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
-		<SignAssembly>true</SignAssembly>
-		<AssemblyOriginatorKeyFile>..\..\NModbusPublic.snk</AssemblyOriginatorKeyFile>
-		<DelaySign>true</DelaySign>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\NModbusPublic.snk</AssemblyOriginatorKeyFile>
+    <DelaySign>true</DelaySign>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
@@ -55,7 +55,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Unme.Common, Version=0.0.0.0, Culture=neutral, PublicKeyToken=da57c01ae4598fdd, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -136,11 +136,11 @@
     <None Include="ModbusDevice.cd" />
     <None Include="ModbusTransport.cd" />
   </ItemGroup>
-	<ItemGroup>
-		<None Include="..\..\NModbusPublic.snk">
-			<Link>NModbusPublic.snk</Link>
-		</None>
-	</ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\NModbusPublic.snk">
+      <Link>NModbusPublic.snk</Link>
+    </None>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
