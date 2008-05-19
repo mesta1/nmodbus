@@ -108,10 +108,7 @@ namespace Modbus.IntegrationTests
 				SlaveSerialPort.Dispose();
 
 			if (Jamod != null)
-			{
-				Jamod.CloseMainWindow();
-				Jamod.Dispose();
-			}
+                Jamod.Kill();
 
 			if (MasterUdp != null)
 				MasterUdp.Close();
