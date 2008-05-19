@@ -18,7 +18,7 @@ namespace Modbus.IntegrationTests
 	{
 		public ModbusMaster Master;
 		public SerialPort MasterSerialPort;
-		public const string DefaultMasterSerialPortName = "COM5";
+		public const string DefaultMasterSerialPortName = "COM3";
 		public FtdUsbPort MasterUsbPort;
 		public const uint DefaultMasterUsbPortID = 0;
 		public TcpClient MasterTcp;
@@ -29,7 +29,7 @@ namespace Modbus.IntegrationTests
 		public SerialPort SlaveSerialPort;
 		public TcpListener SlaveTcp;
 		public UdpClient SlaveUdp;
-		public const string DefaultSlaveSerialPortName = "COM6";
+		public const string DefaultSlaveSerialPortName = "COM5";
 		public const byte SlaveAddress = 1;
 
 		public static readonly IPAddress TcpHost = new IPAddress(new byte[] { 127, 0, 0, 1 });
