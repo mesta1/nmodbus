@@ -17,8 +17,8 @@ namespace Modbus.Device
 		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusUdpSlave));
 		private readonly UdpClient _client;
 
-		private ModbusUdpSlave(byte unitID, UdpClient client)
-			: base(unitID, new ModbusUdpTransport())
+		private ModbusUdpSlave(byte unitId, UdpClient client)
+			: base(unitId, new ModbusUdpTransport())
 		{
 			_client = client;
 		}
@@ -26,9 +26,9 @@ namespace Modbus.Device
 		/// <summary>
 		/// Modbus UDP slave factory method.
 		/// </summary>
-		public static ModbusUdpSlave CreateUdp(byte unitID, UdpClient client)
+		public static ModbusUdpSlave CreateUdp(byte unitId, UdpClient client)
 		{
-			return new ModbusUdpSlave(unitID, client);
+			return new ModbusUdpSlave(unitId, client);
 		}
 
 		/// <summary>

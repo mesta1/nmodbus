@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using log4net;
 using Modbus.Message;
@@ -92,7 +93,7 @@ namespace Modbus.IO
 					numBytes = byteCount + 2;
 					break;
 				default:
-					string errorMessage = String.Format("Function code {0} not supported.", functionCode);
+					string errorMessage = String.Format(CultureInfo.InvariantCulture, "Function code {0} not supported.", functionCode);
 					_log.Error(errorMessage);
 					throw new NotImplementedException(errorMessage);
 			}
@@ -125,7 +126,7 @@ namespace Modbus.IO
 					numBytes = 4;
 					break;
 				default:
-					string errorMessage = String.Format("Function code {0} not supported.", functionCode);
+					string errorMessage = String.Format(CultureInfo.InvariantCulture, "Function code {0} not supported.", functionCode);
 					_log.Error(errorMessage);
 					throw new NotImplementedException(errorMessage);
 			}

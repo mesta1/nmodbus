@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 
 namespace Modbus.Message
 {
@@ -17,7 +18,7 @@ namespace Modbus.Message
 		public static IModbusMessage CreateModbusRequest(byte[] frame)
 		{
 			if (frame.Length < MinRequestFrameLength)
-				throw new FormatException(String.Format("Argument 'frame' must have a length of at least {0} bytes.", MinRequestFrameLength));
+				throw new FormatException(String.Format(CultureInfo.InvariantCulture, "Argument 'frame' must have a length of at least {0} bytes.", MinRequestFrameLength));
 
 			IModbusMessage request;
 			byte functionCode = frame[1];
@@ -51,7 +52,7 @@ namespace Modbus.Message
 					request = CreateModbusMessage<ReadWriteMultipleRegistersRequest>(frame);
 					break;
 				default:
-					throw new ArgumentException(String.Format("Unsupported function code {0}", functionCode), "frame");
+					throw new ArgumentException(String.Format(CultureInfo.InvariantCulture, "Unsupported function code {0}", functionCode), "frame");
 			}
 		
 			return request;

@@ -57,6 +57,8 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
     <Reference Include="Unme.Common, Version=0.0.0.0, Culture=neutral, PublicKeyToken=da57c01ae4598fdd, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Unme.Common.dll</HintPath>
@@ -82,6 +84,7 @@
     <Compile Include="Device\ModbusSlaveRequestEventArgs.cs" />
     <Compile Include="Device\ModbusTcpSlave.cs" />
     <Compile Include="Device\ModbusUdpSlave.cs" />
+    <Compile Include="Device\TcpConnectionEventArgs.cs" />
     <Compile Include="IO\ISerialResource.cs" />
     <Compile Include="IO\ModbusAsciiTransport.cs" />
     <Compile Include="IO\ModbusIpTransport.cs" />

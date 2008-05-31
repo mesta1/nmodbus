@@ -10,7 +10,7 @@ namespace Modbus.Data
 	/// <summary>
 	/// Event args for read write actions performed on the DataStore.
 	/// </summary>
-	public class DataStoreEventArgs
+	public class DataStoreEventArgs : EventArgs
 	{
 		private DataStoreEventArgs(ushort startAddress, ModbusDataType modbusDataType)
 		{

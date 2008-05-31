@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.IO;
 using System.IO.Ports;
 using log4net;
@@ -15,25 +16,25 @@ namespace Modbus.Device
 	{
 		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusSerialSlave));
 
-		private ModbusSerialSlave(byte unitID, ModbusTransport transport)
-			: base(unitID, transport)
+		private ModbusSerialSlave(byte unitId, ModbusTransport transport)
+			: base(unitId, transport)
 		{
 		}
 
 		/// <summary>
 		/// Modbus ASCII slave factory method.
 		/// </summary>
-		public static ModbusSerialSlave CreateAscii(byte unitID, SerialPort serialPort)
+		public static ModbusSerialSlave CreateAscii(byte unitId, SerialPort serialPort)
 		{
-			return new ModbusSerialSlave(unitID, new ModbusAsciiTransport(new CommPortAdapter(serialPort)));
+			return new ModbusSerialSlave(unitId, new ModbusAsciiTransport(new CommPortAdapter(serialPort)));
 		}
 
 		/// <summary>
 		/// Modbus RTU slave factory method.
 		/// </summary>
-		public static ModbusSerialSlave CreateRtu(byte unitID, SerialPort serialPort)
+		public static ModbusSerialSlave CreateRtu(byte unitId, SerialPort serialPort)
 		{
-			return new ModbusSerialSlave(unitID, new ModbusRtuTransport(new CommPortAdapter(serialPort)));
+			return new ModbusSerialSlave(unitId, new ModbusRtuTransport(new CommPortAdapter(serialPort)));
 		}
 
 		/// <summary>
@@ -56,7 +57,7 @@ namespace Modbus.Device
 
 						if (serialTransport.CheckFrame && !serialTransport.ChecksumsMatch(request, frame))
 						{
-							string errorMessage = String.Format("Checksums failed to match {0} != {1}", request.MessageFrame.Join(", "), frame.Join(", "));
+							string errorMessage = String.Format(CultureInfo.InvariantCulture, "Checksums failed to match {0} != {1}", request.MessageFrame.Join(", "), frame.Join(", "));
 							_log.Error(errorMessage);
 							throw new IOException(errorMessage);
 						}

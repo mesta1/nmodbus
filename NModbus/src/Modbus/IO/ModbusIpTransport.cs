@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -13,21 +14,21 @@ namespace Modbus.IO
 	/// </summary>
 	abstract class ModbusIpTransport : ModbusTransport
 	{
-		private ushort _transactionID;
-		private static readonly object _transactionIDLock = new object();
+		private ushort _transactionId;
+		private static readonly object _transactionIdLock = new object();
 
 		/// <summary>
 		/// Create a new transaction ID.
 		/// </summary>
-		internal virtual ushort GetNewTransactionID()
+		internal virtual ushort GetNewTransactionId()
 		{
-			lock (_transactionIDLock)
-				_transactionID = _transactionID == UInt16.MaxValue ? (ushort) 1 : ++_transactionID;
+			lock (_transactionIdLock)
+				_transactionId = _transactionId == UInt16.MaxValue ? (ushort) 1 : ++_transactionId;
 
-			return _transactionID;
+			return _transactionId;
 		}
 
-		internal IModbusMessage CreateMessageAndInitializeTransactionID<T>(byte[] fullFrame) where T : IModbusMessage, new()
+		internal IModbusMessage CreateMessageAndInitializeTransactionId<T>(byte[] fullFrame) where T : IModbusMessage, new()
 		{
 			byte[] mbapHeader = fullFrame.Slice(0, 6).ToArray();
 			byte[] messageFrame = fullFrame.Slice(6, fullFrame.Length - 6).ToArray();
@@ -40,17 +41,17 @@ namespace Modbus.IO
 
 		internal static byte[] GetMbapHeader(IModbusMessage message)
 		{
-			byte[] transactionID = BitConverter.GetBytes((short) IPAddress.HostToNetworkOrder((short) (message.TransactionID)));
+			byte[] transactionId = BitConverter.GetBytes((short) IPAddress.HostToNetworkOrder((short) (message.TransactionID)));
 			byte[] protocol = { 0, 0 };
 			byte[] length = BitConverter.GetBytes((short) IPAddress.HostToNetworkOrder((short) (message.ProtocolDataUnit.Length + 1)));
 				
-			return transactionID.Concat(protocol, length, new byte[] { message.SlaveAddress }).ToArray();
+			return transactionId.Concat(protocol, length, new byte[] { message.SlaveAddress }).ToArray();
 		}
 
 		internal override byte[] BuildMessageFrame(IModbusMessage message)
 		{
 			if (message.TransactionID == 0)
-				message.TransactionID = GetNewTransactionID();
+				message.TransactionID = GetNewTransactionId();
 
 			List<byte> messageBody = new List<byte>();
 			messageBody.AddRange(GetMbapHeader(message));
@@ -62,7 +63,7 @@ namespace Modbus.IO
 		internal override void ValidateResponse(IModbusMessage request, IModbusMessage response)
 		{
 			if (request.TransactionID != response.TransactionID)
-				throw new IOException(String.Format("Response was not of expected transaction ID. Expected {0}, received {1}.", request.TransactionID, response.TransactionID));
+				throw new IOException(String.Format(CultureInfo.InvariantCulture, "Response was not of expected transaction ID. Expected {0}, received {1}.", request.TransactionID, response.TransactionID));
 
 			base.ValidateResponse(request, response);
 		}

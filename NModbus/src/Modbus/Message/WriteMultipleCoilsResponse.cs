@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Net;
 
 namespace Modbus.Message
@@ -27,7 +28,7 @@ namespace Modbus.Message
 			set
 			{
 				if (value > Modbus.MaximumDiscreteRequestResponseSize)
-					throw new ArgumentOutOfRangeException("NumberOfPoints", String.Format("Maximum amount of data {0} coils.", Modbus.MaximumDiscreteRequestResponseSize));
+					throw new ArgumentOutOfRangeException("NumberOfPoints", String.Format(CultureInfo.InvariantCulture, "Maximum amount of data {0} coils.", Modbus.MaximumDiscreteRequestResponseSize));
 
 				MessageImpl.NumberOfPoints = value;
 			}

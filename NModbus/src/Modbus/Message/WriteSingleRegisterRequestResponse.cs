@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Net;
 using Modbus.Data;
 
@@ -32,7 +33,7 @@ namespace Modbus.Message
 
 		public override string ToString()
 		{
-			return String.Format("Write single holding register at address {0}.", StartAddress);
+			return String.Format(CultureInfo.InvariantCulture, "Write single holding register at address {0}.", StartAddress);
 		}
 
 		protected override void InitializeUnique(byte[] frame)

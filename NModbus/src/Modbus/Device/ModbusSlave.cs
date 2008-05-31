@@ -1,17 +1,14 @@
 using System;
+using System.Globalization;
 using log4net;
 using Modbus.Data;
 using Modbus.IO;
 using Modbus.Message;
+using Unme.Common;
 using Unme.Common.NullReferenceExtension;
 
 namespace Modbus.Device
 {
-	/// <summary>
-	/// Represents the method that will handle the ModbusSlaveRequestReceived event of a ModbusSlave object.
-	/// </summary>
-	public delegate void ModbusSlaveRequestReceivedEventHandler(object sender, ModbusSlaveRequestEventArgs e);
-
 	/// <summary>
 	/// Modbus slave device.
 	/// </summary>
@@ -20,15 +17,15 @@ namespace Modbus.Device
 		/// <summary>
 		/// Occurs when a modbus slave receives a request.
 		/// </summary>
-		public event ModbusSlaveRequestReceivedEventHandler ModbusSlaveRequestReceived;
+		public event EventHandler<ModbusSlaveRequestEventArgs> ModbusSlaveRequestReceived;
 
 		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusSlave));
 
-		internal ModbusSlave(byte unitID, ModbusTransport transport)
+		internal ModbusSlave(byte unitId, ModbusTransport transport)
 			: base(transport)
 		{
 			DataStore = DataStoreFactory.CreateDefaultDataStore();
-			UnitID = unitID;
+			UnitID = unitId;
 		}
 
 		/// <summary>
@@ -95,7 +92,7 @@ namespace Modbus.Device
 		internal IModbusMessage ApplyRequest(IModbusMessage request)
 		{			
 			_log.Info(request.ToString());
-			ModbusSlaveRequestReceived.IfNotNull((e) => e(this, new ModbusSlaveRequestEventArgs(request)));
+			ModbusSlaveRequestReceived.Raise(this, new ModbusSlaveRequestEventArgs(request));
 
 			IModbusMessage response;
 			switch (request.FunctionCode)
@@ -133,7 +130,7 @@ namespace Modbus.Device
 					WriteMultipleRegisters(readWriteRequest.WriteRequest, DataStore, DataStore.HoldingRegisters);
 					break;
 				default:
-					string errorMessage = String.Format("Unsupported function code {0}", request.FunctionCode);
+					string errorMessage = String.Format(CultureInfo.InvariantCulture, "Unsupported function code {0}", request.FunctionCode);
 					_log.Error(errorMessage);
 					throw new ArgumentException(errorMessage, "request");
 			}			

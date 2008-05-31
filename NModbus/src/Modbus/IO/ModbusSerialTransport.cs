@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.IO;
 using log4net;
 using Modbus.Message;
@@ -64,7 +65,7 @@ namespace Modbus.IO
 			// compare checksum
 			if (CheckFrame && !ChecksumsMatch(response, frame))
 			{
-				string errorMessage = String.Format("Checksums failed to match {0} != {1}", response.MessageFrame.Join(", "), frame.Join(", "));
+				string errorMessage = String.Format(CultureInfo.InvariantCulture, "Checksums failed to match {0} != {1}", response.MessageFrame.Join(", "), frame.Join(", "));
 				_log.Error(errorMessage);
 				throw new IOException(errorMessage);
 			}

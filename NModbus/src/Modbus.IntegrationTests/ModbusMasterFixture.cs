@@ -11,6 +11,7 @@ using Modbus.Data;
 using Modbus.Device;
 using Modbus.IntegrationTests.CustomMessages;
 using NUnit.Framework;
+using System.Globalization;
 
 namespace Modbus.IntegrationTests
 {
@@ -86,7 +87,7 @@ namespace Modbus.IntegrationTests
 		{
 			string pathToJamod = Path.Combine(Environment.CurrentDirectory, "../../../../tools/jamod");
 			string classpath = String.Format(@"-classpath ""{0};{1};{2}""", Path.Combine(pathToJamod, "jamod.jar"), Path.Combine(pathToJamod, "comm.jar"), Path.Combine(pathToJamod, "."));
-			ProcessStartInfo startInfo = new ProcessStartInfo("java", String.Format("{0} {1}", classpath, program));
+			ProcessStartInfo startInfo = new ProcessStartInfo("java", String.Format(CultureInfo.InvariantCulture, "{0} {1}", classpath, program));
 			Jamod = Process.Start(startInfo);
 
 			Thread.Sleep(4000);
@@ -242,7 +243,7 @@ namespace Modbus.IntegrationTests
 			double actualAverageReadTime = CalculateAverage(Master);
 			Master.Transport.Retries = retries;
 			log.InfoFormat("Average read time for {0} - {1}ms", GetType().FullName, actualAverageReadTime);
-			Assert.IsTrue(actualAverageReadTime < AverageReadTime, String.Format("Test failed, actual average read time {0} is greater than expected {1}", actualAverageReadTime, AverageReadTime));
+			Assert.IsTrue(actualAverageReadTime < AverageReadTime, String.Format(CultureInfo.InvariantCulture, "Test failed, actual average read time {0} is greater than expected {1}", actualAverageReadTime, AverageReadTime));
 		}
 
 		[Test]
