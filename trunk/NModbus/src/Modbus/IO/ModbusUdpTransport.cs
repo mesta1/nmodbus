@@ -53,7 +53,7 @@ namespace Modbus.IO
 
 		internal override IModbusMessage ReadResponse<T>()
 		{
-			return CreateMessageAndInitializeTransactionID<T>(ReadRequestResponse(_udpClient));
+			return CreateMessageAndInitializeTransactionId<T>(ReadRequestResponse(_udpClient));
 		}
 	}
 }

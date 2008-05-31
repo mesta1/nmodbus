@@ -74,7 +74,7 @@ namespace Modbus.IO
 
 		internal override IModbusMessage ReadResponse<T>()
 		{
-			return CreateMessageAndInitializeTransactionID<T>(ReadRequestResponse(_tcpStreamAdapter));
+			return CreateMessageAndInitializeTransactionId<T>(ReadRequestResponse(_tcpStreamAdapter));
 		}
 	}
 }

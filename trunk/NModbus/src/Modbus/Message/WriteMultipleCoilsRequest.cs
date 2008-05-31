@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using Modbus.Data;
@@ -38,7 +39,7 @@ namespace Modbus.Message
 			set 
 			{
 				if (value > Modbus.MaximumDiscreteRequestResponseSize)
-					throw new ArgumentOutOfRangeException("NumberOfPoints", String.Format("Maximum amount of data {0} coils.", Modbus.MaximumDiscreteRequestResponseSize));
+					throw new ArgumentOutOfRangeException("NumberOfPoints", String.Format(CultureInfo.InvariantCulture, "Maximum amount of data {0} coils.", Modbus.MaximumDiscreteRequestResponseSize));
 
 				MessageImpl.NumberOfPoints = value; 
 			}
@@ -57,7 +58,7 @@ namespace Modbus.Message
 
 		public override string ToString()
 		{
-			return String.Format("Write {0} coils at address {1}.", NumberOfPoints, StartAddress);
+			return String.Format(CultureInfo.InvariantCulture, "Write {0} coils at address {1}.", NumberOfPoints, StartAddress);
 		}
 
 		protected override void InitializeUnique(byte[] frame)

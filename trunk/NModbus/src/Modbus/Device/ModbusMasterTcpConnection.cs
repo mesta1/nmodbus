@@ -7,23 +7,16 @@ using System.Threading;
 using log4net;
 using Modbus.IO;
 using Modbus.Message;
-using Modbus.Utility;
 using Unme.Common;
-using Unme.Common.NullReferenceExtension;
 
 namespace Modbus.Device
 {
 	internal class ModbusMasterTcpConnection : IDisposable
 	{
 		/// <summary>
-		/// Represents the method that will handle the removal of a Modbus master TCP connection.
-		/// </summary>
-		public delegate void ModbusMasterTcpConnectionClosedEventHandler(string endPoint);
-
-		/// <summary>
 		/// Occurs when a Modbus master TCP connection is closed.
 		/// </summary>
-		public event ModbusMasterTcpConnectionClosedEventHandler ModbusMasterTcpConnectionClosed;
+		public event EventHandler<TcpConnectionEventArgs>  ModbusMasterTcpConnectionClosed;
 
 		private static int instanceCounter;
 
@@ -89,7 +82,7 @@ namespace Modbus.Device
 				if (Stream.EndRead(ar) == 0)
 				{
 					_log.Debug("0 bytes read, Master has closed Socket connection.");
-					ModbusMasterTcpConnectionClosed.IfNotNull(e => e(EndPoint));
+					ModbusMasterTcpConnectionClosed.Raise(this, new TcpConnectionEventArgs(EndPoint));
 					return;
 				}
 
@@ -156,7 +149,7 @@ namespace Modbus.Device
 			catch (IOException ioe)
 			{
 				_log.DebugFormat("IOException encountered in ReadHeaderCompleted - {0}", ioe.Message);
-				ModbusMasterTcpConnectionClosed.IfNotNull(e => e(EndPoint));
+				ModbusMasterTcpConnectionClosed.Raise(this, new TcpConnectionEventArgs(EndPoint));
 
 				SocketException socketException = ioe.InnerException as SocketException;
 				if (socketException != null && socketException.ErrorCode == Modbus.ConnectionResetByPeer)

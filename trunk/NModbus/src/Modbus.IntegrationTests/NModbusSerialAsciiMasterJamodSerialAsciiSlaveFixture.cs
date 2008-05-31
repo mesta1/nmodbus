@@ -1,13 +1,14 @@
 using System;
 using Modbus.Device;
 using NUnit.Framework;
+using System.Globalization;
 
 namespace Modbus.IntegrationTests
 {
 	[TestFixture]
 	public class NModbusSerialAsciiMasterJamodSerialAsciiSlaveFixture : ModbusMasterFixture
 	{		
-		private string program = String.Format("SerialSlave {0} ASCII", DefaultSlaveSerialPortName);
+		private string program = String.Format(CultureInfo.InvariantCulture, "SerialSlave {0} ASCII", DefaultSlaveSerialPortName);
 
 		[TestFixtureSetUp]
 		public override void Init()

@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Modbus.Utility;
 using Unme.Common;
-using Unme.Common.NullReferenceExtension;
 
 namespace Modbus.Data
 {
@@ -15,19 +14,14 @@ namespace Modbus.Data
 	public class DataStore
 	{
 		/// <summary>
-		/// Represents the method that will handle the DataStoreReadFrom and DataStoreWrittenTo events of a DataStore object.
-		/// </summary>
-		public delegate void DataStoreReadWriteEventHandler(object sender, DataStoreEventArgs e);
-
-		/// <summary>
 		/// Occurs when the DataStore is written to via a Modbus command.
 		/// </summary>
-		public event DataStoreReadWriteEventHandler DataStoreReadFrom;
+		public event EventHandler<DataStoreEventArgs> DataStoreReadFrom;
 
 		/// <summary>
 		/// Occurs when the DataStore is read from via a Modbus command.
 		/// </summary>
-		public event DataStoreReadWriteEventHandler DataStoreWrittenTo;
+		public event EventHandler<DataStoreEventArgs> DataStoreWrittenTo;
 
 		private readonly object _syncRoot = new object();
 
@@ -96,7 +90,7 @@ namespace Modbus.Data
 			for (int i = 0; i < count; i++)
 				result.Add(dataToRetrieve[i]);
 
-			dataStore.DataStoreReadFrom.IfNotNull(e => e(dataStore, DataStoreEventArgs.CreateDataStoreEventArgs(startAddress, dataSource.ModbusDataType, result)));
+			dataStore.DataStoreReadFrom.Raise(dataStore, DataStoreEventArgs.CreateDataStoreEventArgs(startAddress, dataSource.ModbusDataType, result));
 
 			return result;
 		}
@@ -118,7 +112,7 @@ namespace Modbus.Data
 			lock (syncRoot)
 				CollectionUtility.Update(items, destination, startIndex);
 
-			dataStore.DataStoreWrittenTo.IfNotNull(e => e(dataStore, DataStoreEventArgs.CreateDataStoreEventArgs(startAddress, destination.ModbusDataType, items)));
+			dataStore.DataStoreWrittenTo.Raise(dataStore, DataStoreEventArgs.CreateDataStoreEventArgs(startAddress, destination.ModbusDataType, items));
 		}
 	}
 }

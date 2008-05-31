@@ -62,6 +62,8 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
     <Reference Include="Unme.Common, Version=0.0.0.0, Culture=neutral, PublicKeyToken=da57c01ae4598fdd, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Unme.Common.dll</HintPath>
@@ -75,6 +77,7 @@
     <Compile Include="Data\RegisterCollectionFixture.cs" />
     <Compile Include="Device\ModbusSerialMasterFixture.cs" />
     <Compile Include="Device\ModbusSlaveFixture.cs" />
+    <Compile Include="Device\TcpConnectionEventArgsFixture.cs" />
     <Compile Include="IO\ModbusAsciiTransportFixture.cs" />
     <Compile Include="IO\ModbusRtuTransportFixture.cs" />
     <Compile Include="IO\ModbusSerialTransportFixture.cs" />

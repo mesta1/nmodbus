@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Modbus.Message
 {
@@ -38,7 +39,7 @@ namespace Modbus.Message
 		public override string ToString()
 		{
 			string message = _exceptionMessages.ContainsKey(SlaveExceptionCode) ? _exceptionMessages[SlaveExceptionCode] : Resources.Unknown;
-			return String.Format("Function Code: {1}{0}Exception Code: {2} - {3}", Environment.NewLine, FunctionCode, SlaveExceptionCode, message);
+			return String.Format(CultureInfo.InvariantCulture, "Function Code: {1}{0}Exception Code: {2} - {3}", Environment.NewLine, FunctionCode, SlaveExceptionCode, message);
 		}
 
 		internal static Dictionary<byte, string> CreateExceptionMessages()

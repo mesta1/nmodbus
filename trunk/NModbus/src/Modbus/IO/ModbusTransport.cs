@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.IO;
 using log4net;
 using Modbus.Message;
@@ -112,7 +113,7 @@ namespace Modbus.IO
 		internal virtual void ValidateResponse(IModbusMessage request, IModbusMessage response)
 		{
 			if (request.FunctionCode != response.FunctionCode)
-				throw new IOException(String.Format("Received response with unexpected Function Code. Expected {0}, received {1}.", request.FunctionCode, response.FunctionCode));
+				throw new IOException(String.Format(CultureInfo.InvariantCulture, "Received response with unexpected Function Code. Expected {0}, received {1}.", request.FunctionCode, response.FunctionCode));
 		}
 
 		internal abstract byte[] ReadRequest();

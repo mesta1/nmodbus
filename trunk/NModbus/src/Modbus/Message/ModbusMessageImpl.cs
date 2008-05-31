@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Net;
 using Modbus.Data;
 
@@ -113,7 +114,7 @@ namespace Modbus.Message
 				throw new ArgumentNullException("frame", "Argument frame cannot be null.");
 
 			if (frame.Length < Modbus.MinimumFrameSize)
-				throw new FormatException(String.Format("Message frame must contain at least {0} bytes of data.", Modbus.MinimumFrameSize));
+				throw new FormatException(String.Format(CultureInfo.InvariantCulture, "Message frame must contain at least {0} bytes of data.", Modbus.MinimumFrameSize));
 
 			SlaveAddress = frame[0];
 			FunctionCode = frame[1];

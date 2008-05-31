@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Linq;
 using Modbus.Data;
 using Unme.Common;
@@ -36,7 +37,7 @@ namespace Modbus.Message
 
 		public override string ToString()
 		{
-			return String.Format("Read {0} {1} registers.", Data.Count, FunctionCode == Modbus.ReadHoldingRegisters ? "holding" : "input");
+			return String.Format(CultureInfo.InvariantCulture, "Read {0} {1} registers.", Data.Count, FunctionCode == Modbus.ReadHoldingRegisters ? "holding" : "input");
 		}
 
 		protected override void InitializeUnique(byte[] frame)

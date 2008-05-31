@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Net.Sockets;
 using log4net;
@@ -20,8 +21,8 @@ namespace Modbus.Device
 		private readonly Dictionary<string, ModbusMasterTcpConnection> _masters = new Dictionary<string, ModbusMasterTcpConnection>();
 		private readonly TcpListener _server;
 
-		private ModbusTcpSlave(byte unitID, TcpListener tcpListener)
-			: base(unitID, new ModbusTcpTransport())
+		private ModbusTcpSlave(byte unitId, TcpListener tcpListener)
+			: base(unitId, new ModbusTcpTransport())
 		{
 			_server = tcpListener;
 		}		
@@ -29,9 +30,9 @@ namespace Modbus.Device
 		/// <summary>
 		/// Modbus TCP slave factory method.
 		/// </summary>
-		public static ModbusTcpSlave CreateTcp(byte unitID, TcpListener tcpListener)
+		public static ModbusTcpSlave CreateTcp(byte unitId, TcpListener tcpListener)
 		{
-			return new ModbusTcpSlave(unitID, tcpListener);
+			return new ModbusTcpSlave(unitId, tcpListener);
 		}
 
 		/// <summary>
@@ -70,7 +71,7 @@ namespace Modbus.Device
 			lock (_mastersLock)
 			{
 				if (!_masters.Remove(endPoint))
-					throw new ArgumentException(String.Format("EndPoint {0} cannot be removed, it does not exist.", endPoint));
+					throw new ArgumentException(String.Format(CultureInfo.InvariantCulture, "EndPoint {0} cannot be removed, it does not exist.", endPoint));
 			}
 
 			_log.InfoFormat("Removed Master {0}", endPoint);
@@ -84,7 +85,7 @@ namespace Modbus.Device
 			{
 				TcpClient client = _server.EndAcceptTcpClient(ar);
 				var masterConnection = new ModbusMasterTcpConnection(client, slave);
-				masterConnection.ModbusMasterTcpConnectionClosed += endPoint => RemoveMaster(endPoint);
+				masterConnection.ModbusMasterTcpConnectionClosed += (sender, eventArgs) => RemoveMaster(eventArgs.EndPoint);
 
 				lock (_mastersLock)
 					_masters.Add(client.Client.RemoteEndPoint.ToString(), masterConnection);
