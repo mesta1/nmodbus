@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Threading;
 using log4net;
 using Modbus.IO;
@@ -20,7 +22,8 @@ namespace Modbus.Device
 
 		private static int instanceCounter;
 
-		private readonly ILog _log = LogManager.GetLogger(String.Concat(typeof(ModbusMasterTcpConnection).Name, Interlocked.Add(ref instanceCounter, 1)));
+		private readonly ILog _log = LogManager.GetLogger(Assembly.GetCallingAssembly(), 
+			String.Format(CultureInfo.InvariantCulture, "{0}.Instance{1}", typeof(ModbusMasterTcpConnection).FullName, Interlocked.Add(ref instanceCounter, 1)));
 		private readonly Func<TcpClient, string> _endPointConverter = FunctionalUtility.Memoize<TcpClient, string>(client => client.Client.RemoteEndPoint.ToString());
 		private readonly Func<TcpClient, Stream> _streamConverter = FunctionalUtility.Memoize<TcpClient, Stream>(client => client.GetStream());
 		private TcpClient _client;
