@@ -144,6 +144,8 @@ namespace Modbus.Device
 				throw new ArgumentNullException("action");
 			if (endPoint == null)
 				throw new ArgumentNullException("endPoint");
+			if (endPoint == String.Empty)
+				throw new ArgumentException("Argument endPoint cannot be empty.");
 
 			try
 			{

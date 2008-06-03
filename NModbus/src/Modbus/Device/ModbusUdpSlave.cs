@@ -86,10 +86,17 @@ namespace Modbus.Device
 
 		internal void WriteResponseCompleted(IAsyncResult ar)
 		{
-			_client.EndSend(ar);
+			try
+			{
+				_client.EndSend(ar);
 
-			// Accept another request
-			_client.BeginReceive(ReceiveRequestCompleted, this);
+				// Accept another request
+				_client.BeginReceive(ReceiveRequestCompleted, this);
+			}
+			catch (ObjectDisposedException)
+			{
+				// this happens when the slave stops
+			}
 		}
 	}
 }
