@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Linq;
 using Modbus.Data;
 using Unme.Common;
@@ -29,6 +30,12 @@ namespace Modbus.Message
 		public override int MinimumFrameSize
 		{
 			get { return _minimumFrameSize; }
+		}
+
+		public override string ToString()
+		{
+			return String.Format(CultureInfo.InvariantCulture, "Read {0} {1} - {2}.", Data.Count(), 
+				FunctionCode == Modbus.ReadInputs ? "inputs" : "coils", Data);
 		}
 
 		protected override void InitializeUnique(byte[] frame)

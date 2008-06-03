@@ -15,5 +15,21 @@ namespace Modbus.UnitTests.Message
 			Assert.AreEqual(1, request.Data.Count);
 			Assert.AreEqual(Modbus.CoilOn, request.Data[0]);
 		}
+
+		[Test]
+		public void ToString_True()
+		{
+			WriteSingleCoilRequestResponse request = new WriteSingleCoilRequestResponse(11, 5, true);
+
+			Assert.AreEqual("Write single coil 1 at address 5.", request.ToString());
+		}
+
+		[Test]
+		public void ToString_False()
+		{
+			WriteSingleCoilRequestResponse request = new WriteSingleCoilRequestResponse(11, 5, false);
+
+			Assert.AreEqual("Write single coil 0 at address 5.", request.ToString());
+		}
 	}
 }

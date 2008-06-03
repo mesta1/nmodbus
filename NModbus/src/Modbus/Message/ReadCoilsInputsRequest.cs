@@ -47,7 +47,7 @@ namespace Modbus.Message
 
 		public override string ToString()
 		{
-			return String.Format(CultureInfo.InvariantCulture, "Read {0} {1} beginning at address {2}.", NumberOfPoints, FunctionCode == Modbus.ReadCoils ? "coils" : "inputs", StartAddress);
+			return String.Format(CultureInfo.InvariantCulture, "Read {0} {1} starting at address {2}.", NumberOfPoints, FunctionCode == Modbus.ReadCoils ? "coils" : "inputs", StartAddress);
 		}
 
 		protected override void InitializeUnique(byte[] frame)

@@ -47,7 +47,7 @@ namespace Modbus.Message
 
 		public override string ToString()
 		{
-			return String.Format(CultureInfo.InvariantCulture, "Read {0} {1} registers at address {2}.", NumberOfPoints, FunctionCode == Modbus.ReadHoldingRegisters ? "holding" : "input", StartAddress);
+			return String.Format(CultureInfo.InvariantCulture, "Read {0} {1} registers starting at address {2}.", NumberOfPoints, FunctionCode == Modbus.ReadHoldingRegisters ? "holding" : "input", StartAddress);
 		}
 
 		protected override void InitializeUnique(byte[] frame)

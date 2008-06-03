@@ -22,13 +22,7 @@ namespace Modbus.Message
 			_readRequest = new ReadHoldingInputRegistersRequest(Modbus.ReadHoldingRegisters, slaveAddress, startReadAddress, numberOfPointsToRead);
 			_writeRequest = new WriteMultipleRegistersRequest(slaveAddress, startWriteAddress, writeData);
 		}
-
-		public override string ToString()
-		{
-			return String.Format(CultureInfo.InvariantCulture, "Write {0} holding registers at address {1}, and read {2} registers at address {3}.", 
-				_writeRequest.NumberOfPoints, _writeRequest.StartAddress, _readRequest.NumberOfPoints, _readRequest.StartAddress);
-		}
-
+		
 		public override byte[] ProtocolDataUnit
 		{
 			get
@@ -54,6 +48,12 @@ namespace Modbus.Message
 		public override int MinimumFrameSize
 		{
 			get { return _minimumFrameSize; }
+		}
+
+		public override string ToString()
+		{
+			return String.Format(CultureInfo.InvariantCulture, "Write {0} holding registers starting at address {1}, and read {2} registers starting at address {3}.",
+				_writeRequest.NumberOfPoints, _writeRequest.StartAddress, _readRequest.NumberOfPoints, _readRequest.StartAddress);
 		}
 
 		protected override void InitializeUnique(byte[] frame)

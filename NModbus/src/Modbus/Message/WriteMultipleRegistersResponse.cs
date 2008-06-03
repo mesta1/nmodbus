@@ -28,7 +28,10 @@ namespace Modbus.Message
 			set
 			{
 				if (value > Modbus.MaximumRegisterRequestResponseSize)
-					throw new ArgumentOutOfRangeException("NumberOfPoints", String.Format(CultureInfo.InvariantCulture, "Maximum amount of data {0} registers.", Modbus.MaximumRegisterRequestResponseSize));
+				{
+					throw new ArgumentOutOfRangeException("NumberOfPoints", String.Format(CultureInfo.InvariantCulture,
+						"Maximum amount of data {0} registers.", Modbus.MaximumRegisterRequestResponseSize));
+				}
 
 				MessageImpl.NumberOfPoints = value;
 			}
@@ -43,6 +46,11 @@ namespace Modbus.Message
 		public override int MinimumFrameSize
 		{
 			get { return _minimumFrameSize; }
+		}
+
+		public override string ToString()
+		{
+			return String.Format(CultureInfo.InvariantCulture, "Wrote {0} holding registers starting at address {1}.", NumberOfPoints, StartAddress);
 		}
 
 		protected override void InitializeUnique(byte[] frame)
