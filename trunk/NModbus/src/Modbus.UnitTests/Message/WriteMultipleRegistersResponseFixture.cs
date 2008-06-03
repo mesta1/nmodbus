@@ -29,5 +29,13 @@ namespace Modbus.UnitTests.Message
 			WriteMultipleRegistersResponse response = new WriteMultipleRegistersResponse(1, 2, Modbus.MaximumRegisterRequestResponseSize);
 			Assert.AreEqual(Modbus.MaximumRegisterRequestResponseSize, response.NumberOfPoints);
 		}
+
+		[Test]
+		public void ToString()
+		{
+			var response = new WriteMultipleRegistersResponse(1, 2, 3);
+
+			Assert.AreEqual("Wrote 3 holding registers starting at address 2.", response.ToString());
+		}
 	}
 }

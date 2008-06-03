@@ -27,7 +27,15 @@ namespace Modbus.UnitTests.Message
 		public void CreateWriteMultipleCoilsResponseMaxSize()
 		{
 			WriteMultipleCoilsResponse response = new WriteMultipleCoilsResponse(1, 2, Modbus.MaximumDiscreteRequestResponseSize);
-			Assert.AreEqual(Modbus.MaximumDiscreteRequestResponseSize, response.NumberOfPoints);
+			Assert.AreEqual(Modbus.MaximumDiscreteRequestResponseSize, response.NumberOfPoints);	
+		}
+
+		[Test]
+		public void ToString()
+		{
+			var response = new WriteMultipleCoilsResponse(1, 2, 3);
+
+			Assert.AreEqual("Wrote 3 coils starting at address 2.", response.ToString());
 		}
 	}
 }

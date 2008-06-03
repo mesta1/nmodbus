@@ -45,6 +45,11 @@ namespace Modbus.Message
 			get { return _minimumFrameSize; }
 		}
 
+		public override string ToString()
+		{
+			return String.Format(CultureInfo.InvariantCulture, "Wrote {0} coils starting at address {1}.", NumberOfPoints, StartAddress);
+		}
+
 		protected override void InitializeUnique(byte[] frame)
 		{
 			StartAddress = (ushort)IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 2));

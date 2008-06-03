@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Net;
 using Modbus.Utility;
 
@@ -68,5 +69,15 @@ namespace Modbus.Data
 				return (byte) (Count * 2);
 			}
 		}
-	}
+
+		/// <summary>
+		/// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+		/// </summary>
+		/// <returns>
+		/// A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+		/// </returns>
+		public override string ToString()
+		{
+			return String.Concat("{", String.Join(", ", this.Select(v => v.ToString()).ToArray()), "}");
+		}	}
 }

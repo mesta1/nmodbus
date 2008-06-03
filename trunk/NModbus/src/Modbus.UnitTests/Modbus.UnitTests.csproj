@@ -83,6 +83,7 @@
     <Compile Include="IO\ModbusSerialTransportFixture.cs" />
     <Compile Include="IO\ModbusTcpTransportFixture.cs" />
     <Compile Include="IO\ModbusTransportFixture.cs" />
+    <Compile Include="Message\DiagnosticsRequestResponseFixture.cs" />
     <Compile Include="Message\ModbusMessageFactoryFixture.cs" />
     <Compile Include="Message\ModbusMessageFixture.cs" />
     <Compile Include="Message\ModbusMessageImplFixture.cs" />

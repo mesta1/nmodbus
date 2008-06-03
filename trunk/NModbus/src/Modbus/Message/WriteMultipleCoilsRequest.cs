@@ -58,7 +58,7 @@ namespace Modbus.Message
 
 		public override string ToString()
 		{
-			return String.Format(CultureInfo.InvariantCulture, "Write {0} coils at address {1}.", NumberOfPoints, StartAddress);
+			return String.Format(CultureInfo.InvariantCulture, "Write {0} coils starting at address {1}.", NumberOfPoints, StartAddress);
 		}
 
 		protected override void InitializeUnique(byte[] frame)

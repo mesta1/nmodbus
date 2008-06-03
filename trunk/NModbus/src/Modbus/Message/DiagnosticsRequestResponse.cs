@@ -3,6 +3,8 @@ using System.Linq;
 using System.Net;
 using Modbus.Data;
 using Unme.Common;
+using System.Globalization;
+using System.Diagnostics;
 
 namespace Modbus.Message
 {
@@ -30,6 +32,13 @@ namespace Modbus.Message
 		{
 			get { return MessageImpl.SubFunctionCode; }
 			set { MessageImpl.SubFunctionCode = value; }
+		}
+
+		public override string ToString()
+		{
+			Debug.Assert(SubFunctionCode == Modbus.DiagnosticsReturnQueryData, "Need to add support for additional sub-function.");
+
+			return String.Format(CultureInfo.InvariantCulture, "Diagnostics message, sub-function return query data - {0}.", Data);
 		}
 
 		protected override void InitializeUnique(byte[] frame)
