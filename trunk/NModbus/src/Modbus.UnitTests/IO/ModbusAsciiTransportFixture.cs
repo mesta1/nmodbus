@@ -4,7 +4,7 @@ using System.IO.Ports;
 using Modbus.IO;
 using Modbus.Message;
 using Modbus.UnitTests.Message;
-using NUnit.Framework;
+using MbUnit.Framework;
 using Rhino.Mocks;
 
 namespace Modbus.UnitTests.IO
@@ -20,8 +20,7 @@ namespace Modbus.UnitTests.IO
 			Assert.AreEqual(message, new ModbusAsciiTransport().BuildMessageFrame(request));
 		}
 
-		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
+		[Test, ExpectedArgumentNullException]
 		public void ModbusASCIITranpsortNullSerialPort()
 		{
 			ModbusAsciiTransport transport = new ModbusAsciiTransport(null);

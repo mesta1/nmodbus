@@ -5,7 +5,7 @@ using Modbus.Data;
 using Modbus.IO;
 using Modbus.Message;
 using Modbus.Utility;
-using NUnit.Framework;
+using MbUnit.Framework;
 using Rhino.Mocks;
 using Unme.Common;
 

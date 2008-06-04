@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Modbus.Message;
-using NUnit.Framework;
+using MbUnit.Framework;
 
 namespace Modbus.UnitTests.Message
 {

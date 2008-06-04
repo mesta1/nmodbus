@@ -1,5 +1,5 @@
 using Modbus.Device;
-using NUnit.Framework;
+using MbUnit.Framework;
 
 namespace Modbus.IntegrationTests
 {

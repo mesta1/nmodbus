@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using Modbus.Data;
 using Modbus.Message;
-using NUnit.Framework;
+using MbUnit.Framework;
 using Unme.Common;
 
 namespace Modbus.UnitTests.Message
@@ -264,7 +264,7 @@ namespace Modbus.UnitTests.Message
 			Assert.Fail();
 		}
 
-		[Test, ExpectedException(typeof(ArgumentException))]
+		[Test, ExpectedArgumentException]
 		public void CreateModbusRequestWithInvalidFunctionCode()
 		{
 			ModbusMessageFactory.CreateModbusRequest(new byte[] { 1, 99, 0, 0, 0, 1, 23 });

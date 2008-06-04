@@ -1,6 +1,6 @@
 using System;
 using Modbus.Message;
-using NUnit.Framework;
+using MbUnit.Framework;
 
 namespace Modbus.UnitTests.Message
 {
@@ -24,8 +24,7 @@ namespace Modbus.UnitTests.Message
 			Assert.AreEqual(2, messageImpl.FunctionCode);
 		}
 
-		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
+		[Test, ExpectedArgumentNullException]		
 		public void ChecckInitializeFrameNull()
 		{
 			ModbusMessageImpl messageImpl = new ModbusMessageImpl();

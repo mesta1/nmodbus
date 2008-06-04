@@ -1,19 +1,19 @@
 ﻿using System;
 using Modbus.Device;
-using NUnit.Framework;
+using MbUnit.Framework;
 
 namespace Modbus.UnitTests.Device
 {
 	[TestFixture]
 	public class TcpConnectionEventArgsFixture
 	{
-		[Test, ExpectedException(typeof(ArgumentNullException))]
+		[Test, ExpectedArgumentNullException]
 		public void TcpConnectionEventArgs_NullEndPoint()
 		{
 			new TcpConnectionEventArgs(null);
 		}
 
-		[Test, ExpectedException(typeof(ArgumentException))]
+		[Test, ExpectedArgumentException]
 		public void TcpConnectionEventArgs_EmptyEndPoint()
 		{
 			new TcpConnectionEventArgs(String.Empty);

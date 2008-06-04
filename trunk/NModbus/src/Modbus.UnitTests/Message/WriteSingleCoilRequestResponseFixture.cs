@@ -1,5 +1,5 @@
 using Modbus.Message;
-using NUnit.Framework;
+using MbUnit.Framework;
 
 namespace Modbus.UnitTests.Message
 {
@@ -19,7 +19,7 @@ namespace Modbus.UnitTests.Message
 		[Test]
 		public void ToString_True()
 		{
-			WriteSingleCoilRequestResponse request = new WriteSingleCoilRequestResponse(11, 5, true);
+			var request = new WriteSingleCoilRequestResponse(11, 5, true);
 
 			Assert.AreEqual("Write single coil 1 at address 5.", request.ToString());
 		}
@@ -27,7 +27,7 @@ namespace Modbus.UnitTests.Message
 		[Test]
 		public void ToString_False()
 		{
-			WriteSingleCoilRequestResponse request = new WriteSingleCoilRequestResponse(11, 5, false);
+			var request = new WriteSingleCoilRequestResponse(11, 5, false);
 
 			Assert.AreEqual("Write single coil 0 at address 5.", request.ToString());
 		}

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Modbus.Data;
-using NUnit.Framework;
+using MbUnit.Framework;
 
 namespace Modbus.UnitTests.Data
 {
@@ -17,13 +17,13 @@ namespace Modbus.UnitTests.Data
 			Assert.AreEqual(new ushort[] { 1, 2, 3 }, eventArgs.Data.B.ToArray());
 		}
 
-		[Test, ExpectedException(typeof(ArgumentException))]
+		[Test, ExpectedArgumentException]
 		public void CreateDataStoreEventArgs_InvalidType()
 		{
 			var eventArgs = DataStoreEventArgs.CreateDataStoreEventArgs(5, ModbusDataType.HoldingRegister, new int[] { 1, 2, 3 });
 		}
 
-		[Test, ExpectedException(typeof(ArgumentNullException))]
+		[Test, ExpectedArgumentNullException]
 		public void CreateDataStoreEventArgs_DataNull()
 		{
 			var eventArgs = DataStoreEventArgs.CreateDataStoreEventArgs(5, ModbusDataType.HoldingRegister, default(ushort[]));
