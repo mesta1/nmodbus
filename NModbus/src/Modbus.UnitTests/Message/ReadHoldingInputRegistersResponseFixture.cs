@@ -1,6 +1,6 @@
 using Modbus.Data;
 using Modbus.Message;
-using NUnit.Framework;
+using MbUnit.Framework;
 using System;
 
 namespace Modbus.UnitTests.Message
@@ -8,7 +8,7 @@ namespace Modbus.UnitTests.Message
 	[TestFixture]
 	public class ReadHoldingInputRegistersResponseFixture
 	{
-		[Test, ExpectedException(typeof(ArgumentNullException))]
+		[Test, ExpectedArgumentNullException]
 		public void ReadHoldingInputRegistersResponse_NullData()
 		{
 			new ReadHoldingInputRegistersResponse(0, 0, null);

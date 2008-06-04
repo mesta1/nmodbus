@@ -1,5 +1,6 @@
 using Modbus.Device;
-using NUnit.Framework;
+using MbUnit.Framework;
+using System;
 
 namespace Modbus.IntegrationTests
 {
@@ -27,13 +28,7 @@ namespace Modbus.IntegrationTests
 		/// </summary>
 		public override void ReturnQueryData()
 		{
-		}
-
-		[Test, Ignore("Known Failure, TODO: enforce contstraint of zero read")]
-		public override void Read0Coils()
-		{
-			base.Read0Coils();
-		}
+		}		
 
 		[Test]
 		public override void ReadCoils()

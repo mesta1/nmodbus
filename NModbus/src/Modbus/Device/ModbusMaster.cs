@@ -3,6 +3,8 @@ using Modbus.Data;
 using Modbus.IO;
 using Modbus.Message;
 using Unme.Common;
+using System;
+using System.Globalization;
 
 namespace Modbus.Device
 {
@@ -25,6 +27,8 @@ namespace Modbus.Device
 		/// <returns>Coils status</returns>
 		public bool[] ReadCoils(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
 		{
+			ValidateNumberOfPoints("numberOfPoints", numberOfPoints, 2000);
+
 			return ReadDiscretes(Modbus.ReadCoils, slaveAddress, startAddress, numberOfPoints);
 		}
 
@@ -37,6 +41,8 @@ namespace Modbus.Device
 		/// <returns>Discrete inputs status</returns>
 		public bool[] ReadInputs(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
 		{
+			ValidateNumberOfPoints("numberOfPoints", numberOfPoints, 2000);
+
 			return ReadDiscretes(Modbus.ReadInputs, slaveAddress, startAddress, numberOfPoints);
 		}		
 
@@ -49,6 +55,8 @@ namespace Modbus.Device
 		/// <returns>Holding registers status</returns>
 		public ushort[] ReadHoldingRegisters(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
 		{
+			ValidateNumberOfPoints("numberOfPoints", numberOfPoints, 125);
+
 			return ReadRegisters(Modbus.ReadHoldingRegisters, slaveAddress, startAddress, numberOfPoints);
 		}
 
@@ -61,6 +69,8 @@ namespace Modbus.Device
 		/// <returns>Input registers status</returns>
 		public ushort[] ReadInputRegisters(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
 		{
+			ValidateNumberOfPoints("numberOfPoints", numberOfPoints, 125);
+
 			return ReadRegisters(Modbus.ReadInputRegisters, slaveAddress, startAddress, numberOfPoints);
 		}
 
@@ -96,9 +106,11 @@ namespace Modbus.Device
 		/// <param name="data">Values to write.</param>
 		public void WriteMultipleRegisters(byte slaveAddress, ushort startAddress, ushort[] data)
 		{
+			ValidateData("data", data, 123);
+
 			WriteMultipleRegistersRequest request = new WriteMultipleRegistersRequest(slaveAddress, startAddress, new RegisterCollection(data));
 			Transport.UnicastMessage<WriteMultipleRegistersResponse>(request);
-		}
+		}	
 
 		/// <summary>
 		/// Force each coil in a sequence of coils to a provided value.
@@ -108,6 +120,8 @@ namespace Modbus.Device
 		/// <param name="data">Values to write.</param>
 		public void WriteMultipleCoils(byte slaveAddress, ushort startAddress, bool[] data)
 		{
+			ValidateData("data", data, 1968);
+
 			WriteMultipleCoilsRequest request = new WriteMultipleCoilsRequest(slaveAddress, startAddress, new DiscreteCollection(data));
 			Transport.UnicastMessage<WriteMultipleCoilsResponse>(request);
 		}
@@ -123,6 +137,9 @@ namespace Modbus.Device
 		/// <param name="writeData">Register values to write.</param>
 		public ushort[] ReadWriteMultipleRegisters(byte slaveAddress, ushort startReadAddress, ushort numberOfPointsToRead, ushort startWriteAddress, ushort[] writeData)
 		{
+			ValidateNumberOfPoints("numberOfPointsToRead", numberOfPointsToRead, 125);
+			ValidateData("writeData", writeData, 121);
+
 			ReadWriteMultipleRegistersRequest request = new ReadWriteMultipleRegistersRequest(slaveAddress, startReadAddress, numberOfPointsToRead, startWriteAddress, new RegisterCollection(writeData));			
 			ReadHoldingInputRegistersResponse response = Transport.UnicastMessage<ReadHoldingInputRegistersResponse>(request);
 
@@ -150,6 +167,27 @@ namespace Modbus.Device
 		public void ExecuteCustomMessage<TResponse>(IModbusMessage request) where TResponse : IModbusMessage, new()
 		{
 			Transport.UnicastMessage<TResponse>(request);
+		}
+
+		internal static void ValidateData<T>(string argumentName, T[] data, int maxDataLength)
+		{
+			if (data == null)
+				throw new ArgumentNullException("data");
+
+			if (data.Length == 0 || data.Length > maxDataLength)
+			{
+				throw new ArgumentException(String.Format(CultureInfo.InvariantCulture,
+					"The length of argument {0} must be between 0 and {1} inclusive.", argumentName, maxDataLength));
+			}
+		}
+
+		internal static void ValidateNumberOfPoints(string argumentName, ushort numberOfPoints, ushort maxNumberOfPoints)
+		{
+			if (numberOfPoints < 1 || numberOfPoints > maxNumberOfPoints)
+			{
+				throw new ArgumentException(String.Format(CultureInfo.InvariantCulture,
+					"Argument {0} must be between 1 and {1} inclusive.", argumentName, maxNumberOfPoints));
+			}
 		}
 
 		internal ushort[] ReadRegisters(byte functionCode, byte slaveAddress, ushort startAddress, ushort numberOfPoints)

@@ -1,5 +1,5 @@
 using Modbus.Device;
-using NUnit.Framework;
+using MbUnit.Framework;
 
 namespace Modbus.IntegrationTests
 {
@@ -23,12 +23,6 @@ namespace Modbus.IntegrationTests
 		public override void ReadCoils()
 		{ 
 			base.ReadCoils();
-		}
-
-		[Test]
-		public override void Read0Coils()
-		{
-			base.Read0Coils();			
 		}
 
 		[Test]

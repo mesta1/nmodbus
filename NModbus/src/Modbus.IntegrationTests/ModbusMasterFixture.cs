@@ -10,7 +10,7 @@ using log4net;
 using Modbus.Data;
 using Modbus.Device;
 using Modbus.IntegrationTests.CustomMessages;
-using NUnit.Framework;
+using MbUnit.Framework;
 using System.Globalization;
 
 namespace Modbus.IntegrationTests
@@ -128,13 +128,6 @@ namespace Modbus.IntegrationTests
 		}
 
 		[Test]
-		public virtual void Read0Coils()
-		{
-			bool[] coils = Master.ReadCoils(SlaveAddress, 100, 0);
-			Assert.AreEqual(new bool[] { }, coils);
-		}
-
-		[Test]
 		public virtual void ReadInputs()
 		{
 			bool[] inputs = Master.ReadInputs(SlaveAddress, 150, 3);
@@ -209,14 +202,6 @@ namespace Modbus.IntegrationTests
 		{
 			ushort[] registers = Master.ReadHoldingRegisters(SlaveAddress, 104, 125);
 			Assert.AreEqual(125, registers.Length);
-		}
-
-		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		[Ignore("TODO: perform check for number of registers.")]
-		public virtual void ReadTooManyHoldingRegisters()
-		{
-			Master.ReadHoldingRegisters(SlaveAddress, 104, 126);
 		}
 
 		[Test]

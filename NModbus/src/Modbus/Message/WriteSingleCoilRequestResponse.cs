@@ -37,7 +37,7 @@ namespace Modbus.Message
 		public override string ToString()
 		{
 			Debug.Assert(Data != null, "Argument Data cannot be null.");
-			Debug.Assert(Data.Count() != 1, "Data should have a count of 1.");
+			Debug.Assert(Data.Count() == 1, "Data should have a count of 1.");
 
 			return String.Format(CultureInfo.InvariantCulture, "Write single coil {0} at address {1}.", 
 				Data.First() == Modbus.CoilOn ? 1 : 0, StartAddress);

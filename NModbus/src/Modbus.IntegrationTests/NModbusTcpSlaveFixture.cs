@@ -4,7 +4,7 @@ using System.IO;
 using System.Net.Sockets;
 using System.Threading;
 using Modbus.Device;
-using NUnit.Framework;
+using MbUnit.Framework;
 
 namespace Modbus.IntegrationTests
 {

@@ -2,7 +2,7 @@ using System;
 using System.IO.Ports;
 using Modbus.Device;
 using Modbus.IO;
-using NUnit.Framework;
+using MbUnit.Framework;
 using Rhino.Mocks;
 
 namespace Modbus.UnitTests.Device

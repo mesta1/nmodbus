@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using NUnit.Framework;
+using MbUnit.Framework;
 using System.IO.Ports;
 using Modbus.Device;
 using Modbus.Data;

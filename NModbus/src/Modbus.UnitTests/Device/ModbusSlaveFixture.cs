@@ -4,7 +4,7 @@ using Modbus.Data;
 using Modbus.Device;
 using Modbus.Message;
 using Modbus.UnitTests.Message;
-using NUnit.Framework;
+using MbUnit.Framework;
 using Unme.Common;
 
 namespace Modbus.UnitTests.Device

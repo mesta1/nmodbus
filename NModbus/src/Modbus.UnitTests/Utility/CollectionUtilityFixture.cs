@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Modbus.Data;
 using Modbus.Utility;
-using NUnit.Framework;
+using MbUnit.Framework;
 using Unme.Common;
 
 namespace Modbus.UnitTests.Utility
@@ -47,14 +47,14 @@ namespace Modbus.UnitTests.Utility
 			Assert.AreEqual(new bool[] { false, false, true }, col.Slice(2, 3).ToArray());
 		}
 
-		[Test, ExpectedException(typeof(ArgumentNullException))]
+		[Test, ExpectedArgumentNullException]
 		public void SliceNullICollection()
 		{
 			ICollection<bool> col = null;
 			col.Slice(1, 1).ToArray();
 		}
 
-		[Test, ExpectedException(typeof(ArgumentNullException))]
+		[Test, ExpectedArgumentNullException]
 		public void SliceNullArray()
 		{
 			bool[] array = null;

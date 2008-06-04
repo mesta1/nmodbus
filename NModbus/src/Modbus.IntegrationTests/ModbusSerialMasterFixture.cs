@@ -1,4 +1,4 @@
-using NUnit.Framework;
+using MbUnit.Framework;
 using Modbus.Device;
 
 namespace Modbus.IntegrationTests

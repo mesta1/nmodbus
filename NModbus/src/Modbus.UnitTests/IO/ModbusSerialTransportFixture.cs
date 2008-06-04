@@ -4,7 +4,7 @@ using Modbus.IO;
 using Modbus.Message;
 using Modbus.UnitTests.Message;
 using Modbus.Utility;
-using NUnit.Framework;
+using MbUnit.Framework;
 using Rhino.Mocks;
 using System;
 
