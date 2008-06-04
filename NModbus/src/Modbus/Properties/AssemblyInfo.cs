@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright("Licensed under MIT License.")]
 [assembly: AssemblyDescription("Provides connectivity to Modbus slave compatible devices and applications.")]
 [assembly: ComVisible(false)]
-[assembly: CLSCompliant(true)]
+[assembly: CLSCompliant(false)]
 [assembly: Guid("a2ec5378-e1b7-4bb0-b696-1c657407eeb9")]
 [assembly: AssemblyVersion("1.7.0.0")]
 [assembly: AssemblyFileVersion("1.7.0.0")]
