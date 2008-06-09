@@ -1,17 +1,18 @@
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.IO.Ports;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Threading;
 using FtdAdapter;
 using log4net;
+using MbUnit.Framework;
 using Modbus.Data;
 using Modbus.Device;
 using Modbus.IntegrationTests.CustomMessages;
-using MbUnit.Framework;
-using System.Globalization;
 
 namespace Modbus.IntegrationTests
 {
@@ -85,7 +86,9 @@ namespace Modbus.IntegrationTests
 
 		public void StartJamodSlave(string program)
 		{
-			string pathToJamod = Path.Combine(Environment.CurrentDirectory, "../../../../tools/jamod");
+			string pathToJamod = Path.Combine(
+				Path.GetDirectoryName(Assembly.GetAssembly(typeof(ModbusMasterFixture)).Location)
+				, "../../../../tools/jamod");
 			string classpath = String.Format(@"-classpath ""{0};{1};{2}""", Path.Combine(pathToJamod, "jamod.jar"), Path.Combine(pathToJamod, "comm.jar"), Path.Combine(pathToJamod, "."));
 			ProcessStartInfo startInfo = new ProcessStartInfo("java", String.Format(CultureInfo.InvariantCulture, "{0} {1}", classpath, program));
 			Jamod = Process.Start(startInfo);

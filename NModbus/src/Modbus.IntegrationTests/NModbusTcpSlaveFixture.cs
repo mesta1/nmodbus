@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Threading;
 using Modbus.Device;
 using MbUnit.Framework;
+using System.Reflection;
 
 namespace Modbus.IntegrationTests
 {
@@ -34,7 +35,9 @@ namespace Modbus.IntegrationTests
 
 			Thread.Sleep(500);
 
-			using (Process masterProcess = Process.Start(Path.Combine(Environment.CurrentDirectory, @"..\..\..\..\tools\nmodbus\TestDriver.exe")))
+			using (Process masterProcess = Process.Start(Path.Combine(
+				Path.GetDirectoryName(Assembly.GetAssembly(typeof(NModbusTcpSlaveFixture)).Location), 
+				@"..\..\..\..\tools\nmodbus\TestDriver.exe")))
 			{
 				Thread.Sleep(2000);
 				masterProcess.Kill();
