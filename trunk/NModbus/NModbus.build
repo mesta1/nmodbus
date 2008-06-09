@@ -16,7 +16,7 @@
 	<property name="path.ftd.bin" value="src\FtdAdapter\bin\Release" />
 	<property name="path.signed.ftd.bin" value="src\FtdAdapter\bin\SignedRelease" />
 	<property name="path.src" value="src" />
-	<property name="path.output" value="testOutput" />
+	<property name="path.output" value="build" />
 	<property name="path.lib" value="lib" />
 	<property name="path.tools" value="tools" />
 	<property name="path.ncoverexplorer.tasks" value="${path.tools}\ncover\NCoverExplorer.NAntTasks.dll" />
