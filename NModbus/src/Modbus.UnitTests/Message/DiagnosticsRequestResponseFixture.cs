@@ -8,7 +8,7 @@ namespace Modbus.UnitTests.Message
 	public class DiagnosticsRequestResponseFixture
 	{
 		[Test]
-		public void ToString()
+		public void ToString_Test()
 		{
 			var message = new DiagnosticsRequestResponse(Modbus.DiagnosticsReturnQueryData, 3, new RegisterCollection(5));
 

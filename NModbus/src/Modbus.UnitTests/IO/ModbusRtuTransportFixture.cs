@@ -212,7 +212,7 @@ namespace Modbus.UnitTests.IO
 		public void Read()
 		{
 			MockRepository mocks = new MockRepository();
-			ISerialResource mockSerialResource = mocks.CreateMock<ISerialResource>();
+			ISerialResource mockSerialResource = mocks.StrictMock<ISerialResource>();
 
 			Expect.Call(mockSerialResource.Read(new byte[5], 0, 5)).Do(((StreamReadWriteDelegate) delegate(byte[] buf, int offset, int count)
 			{

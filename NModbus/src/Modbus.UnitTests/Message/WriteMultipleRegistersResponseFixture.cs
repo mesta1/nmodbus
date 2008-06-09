@@ -31,7 +31,7 @@ namespace Modbus.UnitTests.Message
 		}
 
 		[Test]
-		public void ToString()
+		public void ToString_Test()
 		{
 			var response = new WriteMultipleRegistersResponse(1, 2, 3);
 

@@ -48,7 +48,7 @@ namespace Modbus.UnitTests.IO
 		public void UnicastMessage_PurgeReceiveBuffer()
 		{
 			MockRepository mocks = new MockRepository();
-			ISerialResource serialResource = mocks.CreateMock<ISerialResource>();
+			ISerialResource serialResource = mocks.StrictMock<ISerialResource>();
 			ModbusSerialTransport transport = new ModbusRtuTransport(serialResource);
 
 			serialResource.DiscardInBuffer();

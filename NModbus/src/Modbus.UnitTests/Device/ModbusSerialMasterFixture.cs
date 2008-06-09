@@ -14,7 +14,7 @@ namespace Modbus.UnitTests.Device
 		public void InitializeSerialPortTimeouts()
 		{
 			MockRepository mocks = new MockRepository();
-			ISerialResource mockSerialResource = mocks.CreateMock<ISerialResource>();
+			ISerialResource mockSerialResource = mocks.StrictMock<ISerialResource>();
 
 			Expect.Call(mockSerialResource.WriteTimeout).Return(1);
 			Expect.Call(mockSerialResource.InfiniteTimeout).Return(0);
@@ -34,7 +34,7 @@ namespace Modbus.UnitTests.Device
 		public void SetupTimeoutsDefaultTimeout()
 		{
 			MockRepository mocks = new MockRepository();
-			ISerialResource mockSerialResource = mocks.CreateMock<ISerialResource>();
+			ISerialResource mockSerialResource = mocks.StrictMock<ISerialResource>();
 
 			Expect.Call(mockSerialResource.WriteTimeout).Return(SerialPort.InfiniteTimeout);
 			Expect.Call(mockSerialResource.InfiniteTimeout).Return(SerialPort.InfiniteTimeout);
@@ -60,7 +60,7 @@ namespace Modbus.UnitTests.Device
 		public void CreateRtu_UsbPortFactoryMethod()
 		{
 			MockRepository mocks = new MockRepository();
-			ISerialResource mockSerialResource = mocks.CreateMock<ISerialResource>();
+			ISerialResource mockSerialResource = mocks.StrictMock<ISerialResource>();
 
 			Expect.Call(mockSerialResource.WriteTimeout).Return(0);
 			Expect.Call(mockSerialResource.InfiniteTimeout).Return(0);
@@ -87,7 +87,7 @@ namespace Modbus.UnitTests.Device
 		public void CreateAscii_UsbPortFactoryMethod()
 		{
 			MockRepository mocks = new MockRepository();
-			ISerialResource mockSerialResource = mocks.CreateMock<ISerialResource>();
+			ISerialResource mockSerialResource = mocks.StrictMock<ISerialResource>();
 
 			Expect.Call(mockSerialResource.WriteTimeout).Return(0);
 			Expect.Call(mockSerialResource.InfiniteTimeout).Return(0);

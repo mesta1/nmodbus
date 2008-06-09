@@ -20,6 +20,7 @@
 	<property name="path.lib" value="lib" />
 	<property name="path.tools" value="tools" />
 	<property name="path.ncoverexplorer.tasks" value="${path.tools}\ncover\NCoverExplorer.NAntTasks.dll" />
+	<property name="path.mbunit.tasks" value="${path.tools}\MbUnit\MbUnit.Tasks.dll" />
 	<property name="path.nantgooglecode" value="${path.tools}\nant\NantGoogleCode.dll" />
 	<property name="path.jamod" value="${path.tools}\jamod" />
 	<property name="path.nmodbus" value="${path.tools}\nmodbus" />
@@ -63,6 +64,8 @@
 	</target>
 
 	<target name="run-unit-tests" depends="build">
+		<loadtasks assembly="${path.mbunit.tasks}"/>
+		
 		<foreach item="Folder" property="foldername">
 			<in>
 				<items basedir="src">
@@ -71,10 +74,15 @@
 				</items>
 			</in>
 			<do>
-				<nunit2>
-					<formatter type="Xml" />
-					<test assemblyname="${foldername}\bin\Release\${path::get-file-name(foldername)}.dll" />
-				</nunit2>
+				<mbunit
+					 report-types="Xml"
+         report-filename-format="${foldername}.UnitTests"
+         report-output-directory="${path.output}"
+         failonerror="false"> 
+					<assemblies>
+						<include name="${foldername}\bin\Release\${path::get-file-name(foldername)}.dll" />	
+					</assemblies>
+				</mbunit>
 			</do>
 		</foreach>
 	</target>
@@ -88,10 +96,12 @@
 				</items>
 			</in>
 			<do>
-				<nunit2>
-					<formatter type="Xml" />
-					<test assemblyname="${foldername}\bin\Release\${path::get-file-name(foldername)}.dll" />
-				</nunit2>
+				<mbunit report-types ="Xml"
+         report-filename-format="${foldername}.IntegrationTests"
+         report-output-directory="${path.output}"
+         failonerror="false">
+					<include name="${foldername}\bin\Release\${path::get-file-name(foldername)}.dll" />
+				</mbunit>
 			</do>
 		</foreach>
 	</target>
