@@ -100,7 +100,9 @@
          report-filename-format="${foldername}.IntegrationTests"
          report-output-directory="${path.output}"
          failonerror="false">
-					<include name="${foldername}\bin\Release\${path::get-file-name(foldername)}.dll" />
+					<assemblies>
+						<include name="${foldername}\bin\Release\${path::get-file-name(foldername)}.dll" />
+					</assemblies>
 				</mbunit>
 			</do>
 		</foreach>
