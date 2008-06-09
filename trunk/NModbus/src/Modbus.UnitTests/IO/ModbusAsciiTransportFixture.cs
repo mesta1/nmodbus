@@ -31,7 +31,7 @@ namespace Modbus.UnitTests.IO
 		public void ReadRequestResponse()
 		{
 			MockRepository mocks = new MockRepository();
-			ISerialResource mockSerialResource = mocks.CreateMock<ISerialResource>();
+			ISerialResource mockSerialResource = mocks.StrictMock<ISerialResource>();
 			mockSerialResource.NewLine = Environment.NewLine;
 			Expect.Call(mockSerialResource.ReadLine()).Return(":110100130025B6");
 			mocks.ReplayAll();
@@ -46,7 +46,7 @@ namespace Modbus.UnitTests.IO
 		public void ReadRequestResponseNotEnoughBytes()
 		{
 			MockRepository mocks = new MockRepository(); 
-			ISerialResource mockSerialResource = mocks.CreateMock<ISerialResource>();
+			ISerialResource mockSerialResource = mocks.StrictMock<ISerialResource>();
 			mockSerialResource.NewLine = Environment.NewLine;
 			Expect.Call(mockSerialResource.ReadTimeout).Return(SerialPort.InfiniteTimeout);
 			mockSerialResource.WriteTimeout = 0;
