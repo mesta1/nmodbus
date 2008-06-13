@@ -25,10 +25,14 @@ namespace Modbus
 		public const byte ExceptionOffset = 128;
 
 		// modbus slave exception codes
-		public const byte Acknowlege = 5;
+		public const byte Acknowledge = 5;
+		public const byte SlaveDeviceBusy = 6;
 
 		// default setting for number of retries for IO operations
 		public const int DefaultRetries = 3;
+
+		// default number of milliseconds to wait after encountering an ACKNOWLEGE or SLAVE DEVIC BUSY slave exception response.
+		public const int DefaultWaitToRetryMilliseconds = 250;
 
 		// default setting for IO timeouts in milliseconds
 		public const int DefaultTimeout = 1000;
