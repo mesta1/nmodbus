@@ -13,6 +13,7 @@ namespace Modbus.IO
 	public abstract class ModbusTransport
 	{
 		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusTransport));
+		private object _syncLock = new object();
 		private int _retries = Modbus.DefaultRetries;
 		private int _waitToRetryMilliseconds = Modbus.DefaultWaitToRetryMilliseconds;
 
@@ -45,8 +46,6 @@ namespace Modbus.IO
 			}
 		}
 
-		// TODO catch socket exception
-		// TODO implement asynch calls
 		internal virtual T UnicastMessage<T>(IModbusMessage message) where T : IModbusMessage, new()
 		{
 			IModbusMessage response = null;
@@ -58,55 +57,72 @@ namespace Modbus.IO
 			{
 				try
 				{
-					Write(message);
-
-					do
+					lock (_syncLock)
 					{
-						readAgain = false;
-						response = ReadResponse<T>();
+						Write(message);
 
-						SlaveExceptionResponse exceptionResponse = response as SlaveExceptionResponse;
-						if (exceptionResponse != null)
+						do
 						{
-							if (exceptionResponse.SlaveExceptionCode == Modbus.Acknowledge ||
-								exceptionResponse.SlaveExceptionCode == Modbus.SlaveDeviceBusy)
-							{
-								readAgain = true;
-								Thread.Sleep(WaitToRetryMilliseconds);
-							}
-							else
-							{
-								throw new SlaveException(exceptionResponse);
-							}
-						}
+							readAgain = false;
+							response = ReadResponse<T>();
 
-					} while (readAgain);
+							var exceptionResponse = response as SlaveExceptionResponse;
+							if (exceptionResponse != null)
+							{
+								// if SlaveExceptionCode == ACKNOWLEDGE we retry reading the response without resubmitting request
+								if (readAgain = exceptionResponse.SlaveExceptionCode == Modbus.Acknowledge)
+								{
+									_log.InfoFormat("Received ACKNOWLEDGE slave exception response, waiting {0} milliseconds and retrying to read response.", _waitToRetryMilliseconds);
+									Thread.Sleep(WaitToRetryMilliseconds);
+								}
+								else
+								{
+									throw new SlaveException(exceptionResponse);
+								}
+							}
+
+						} while (readAgain);
+					}
 
 					ValidateResponse(message, response);
 					success = true;
 				}
+				catch (FormatException fe)
+				{
+					_log.ErrorFormat("FormatException, {0} retries remaining - {1}", _retries + 1 - attempt, fe.Message);
+
+					if (attempt++ > _retries)
+						throw;
+				}
 				catch (NotImplementedException nie)
 				{
-					_log.ErrorFormat("Not Implemented Exception, {0} retries remaining - {1}", _retries + 1 - attempt, nie.Message);
+					_log.ErrorFormat("NotImplementedException, {0} retries remaining - {1}", _retries + 1 - attempt, nie.Message);
 
 					if (attempt++ > _retries)
 						throw;
 				}
 				catch (TimeoutException te)
 				{
-					_log.ErrorFormat("Timeout, {0} retries remaining - {1}", _retries + 1 - attempt, te.Message);
+					_log.ErrorFormat("TimeoutException, {0} retries remaining - {1}", _retries + 1 - attempt, te.Message);
 
 					if (attempt++ > _retries)
 						throw;
 				}
 				catch (IOException ioe)
 				{
-					_log.ErrorFormat("IO Exception, {0} retries remaining - {1}", _retries + 1 - attempt, ioe.Message);
+					_log.ErrorFormat("IOException, {0} retries remaining - {1}", _retries + 1 - attempt, ioe.Message);
 
 					if (attempt++ > _retries)
 						throw;
 				}
+				catch (SlaveException se)
+				{
+					if (se.SlaveExceptionCode != Modbus.SlaveDeviceBusy)
+						throw;
 
+					_log.InfoFormat("Received SLAVE_DEVICE_BUSY exception response, waiting {0} milliseconds and resubmitting request.", _waitToRetryMilliseconds);
+					Thread.Sleep(WaitToRetryMilliseconds);
+				}
 			} while (!success);
 
 			return (T) response;

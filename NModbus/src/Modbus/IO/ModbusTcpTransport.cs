@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using log4net;
 using Modbus.Message;
 using Unme.Common;
+using System.IO;
 
 namespace Modbus.IO
 {
@@ -35,7 +36,7 @@ namespace Modbus.IO
 				numBytesRead += tcpTransportAdapter.Read(mbapHeader, numBytesRead, 6 - numBytesRead);
 
 				if (numBytesRead == 0)
-					throw new SocketException(Modbus.ConnectionAborted);
+					throw new IOException("Read resulted in 0 bytes returned.");
 			}
 			_log.DebugFormat("MBAP header: {0}", mbapHeader.Join(", "));
 
@@ -50,7 +51,7 @@ namespace Modbus.IO
 				numBytesRead += tcpTransportAdapter.Read(messageFrame, numBytesRead, frameLength - numBytesRead);
 				
 				if (numBytesRead == 0)
-					throw new SocketException(Modbus.ConnectionAborted);
+					throw new IOException("Read resulted in 0 bytes returned.");
 			}
 			_log.DebugFormat("PDU: {0}", frameLength);
 
