@@ -58,15 +58,14 @@ namespace Modbus.UnitTests.IO
 		}
 
 		[Test, ExpectedException(typeof(SlaveException))]
-		public void UnicastMessage_SlaveException()
+		public void UnicastMessage_ErrorSlaveException()
 		{
 			MockRepository mocks = new MockRepository();
 			ModbusTransport transport = mocks.PartialMock<ModbusTransport>();
 			transport.Write(null);
 			LastCall.IgnoreArguments().Repeat.Times(Modbus.DefaultRetries + 1);
 			Expect.Call(transport.ReadResponse<ReadCoilsInputsResponse>())
-				.Do((ThrowExceptionDelegate) delegate { throw new SlaveException(); })
-				.Repeat.Times(Modbus.DefaultRetries + 1);
+				.Do((ThrowExceptionDelegate) delegate { throw new SlaveException(); });
 
 			mocks.ReplayAll();
 
@@ -76,17 +75,24 @@ namespace Modbus.UnitTests.IO
 			mocks.VerifyAll();
 		}
 
-		[Test]
-		public void UnicastMessage_AcknowlegeSlaveException()
+		[RowTest,
+		Row(Modbus.SlaveDeviceBusy), 
+		Row(Modbus.Acknowledge)]
+		public void UnicastMessage_NonErrorSlaveException(byte slaveException)
 		{
 			MockRepository mocks = new MockRepository();
 			ModbusTransport transport = mocks.PartialMock<ModbusTransport>();
+
+			// set the wait to retry property to a small value so the test completes quickly
+			transport.WaitToRetryMilliseconds = 5;
+
 			transport.Write(null);
 			LastCall.IgnoreArguments();
 
+			// return a slave exception a greater number of times than number of retries to make sure we aren't just retrying
 			Expect.Call(transport.ReadResponse<ReadHoldingInputRegistersResponse>())
-				.Return(new SlaveExceptionResponse(1, Modbus.ReadHoldingRegisters + Modbus.ExceptionOffset, Modbus.Acknowlege))
-				.Repeat.Times(8);
+				.Return(new SlaveExceptionResponse(1, Modbus.ReadHoldingRegisters + Modbus.ExceptionOffset, slaveException))
+				.Repeat.Times(transport.Retries + 1);
 
 			Expect.Call(transport.ReadResponse<ReadHoldingInputRegistersResponse>())
 				.Return(new ReadHoldingInputRegistersResponse(Modbus.ReadHoldingRegisters, 1, new RegisterCollection(1)));
