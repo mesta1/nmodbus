@@ -8,6 +8,7 @@ using Modbus.Message;
 using Modbus.Utility;
 using Unme.Common;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace Modbus.IO
 {
@@ -17,21 +18,24 @@ namespace Modbus.IO
 	internal class ModbusAsciiTransport : ModbusSerialTransport
 	{
 		private static readonly ILog _logger = LogManager.GetLogger(typeof(ModbusAsciiTransport));
+		private Func<IStreamResource, Func<string>> _lineGetter;
 
 		internal ModbusAsciiTransport(IStreamResource streamResource)
 			: base(streamResource)
 		{
 			Debug.Assert(streamResource != null, "Argument streamResource cannot be null.");
-		}
+
+			_lineGetter = FunctionalUtility.Memoize((IStreamResource stream) => GetReadLine());
+		}		
 
 		internal override byte[] BuildMessageFrame(IModbusMessage message)
 		{
 			List<byte> frame = new List<byte>();
-			frame.Add((byte) ':');
+			frame.Add((byte)':');
 			frame.AddRange(ModbusUtility.GetAsciiBytes(message.SlaveAddress));
 			frame.AddRange(ModbusUtility.GetAsciiBytes(message.ProtocolDataUnit));
 			frame.AddRange(ModbusUtility.GetAsciiBytes(ModbusUtility.CalculateLrc(message.MessageFrame)));
-			frame.AddRange(Encoding.ASCII.GetBytes(Environment.NewLine.ToCharArray()));
+			frame.AddRange(Encoding.ASCII.GetBytes(Modbus.NewLine.ToCharArray()));
 
 			return frame.ToArray();
 		}
@@ -51,10 +55,23 @@ namespace Modbus.IO
 			return CreateResponse<T>(ReadRequestResponse());
 		}
 
+		/// <summary>
+		/// HACK: Gets a Func&lt;string&gt; for reading a line. Use the ReadLine method on the IStreamResource
+		/// if it exists (optimization), else use the naive implementation.
+		/// </summary>
+		internal virtual Func<string> GetReadLine()
+		{
+			var readLineMethod = StreamResource.GetType().GetMethod("ReadLine", BindingFlags.Public | BindingFlags.Instance);
+
+			return readLineMethod == null && readLineMethod.ReturnType == typeof(string) ? 
+				(Func<string>)(() => StreamResourceUtility.ReadLine(StreamResource)) :
+				(Func<string>)(() => readLineMethod.Invoke(StreamResource, null) as string);
+		}
+
 		internal byte[] ReadRequestResponse()
 		{
 			// read message frame, removing frame start ':'
-			string frameHex = StreamResource.ReadLine().Substring(1);
+			string frameHex = _lineGetter(StreamResource).Invoke().Substring(1);
 
 			// convert hex to bytes
 			byte[] frame = ModbusUtility.HexToBytes(frameHex);

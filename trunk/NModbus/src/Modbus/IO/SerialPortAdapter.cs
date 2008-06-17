@@ -16,7 +16,7 @@ namespace Modbus.IO
 			Debug.Assert(serialPort != null, "Argument serialPort cannot be null.");
 			
 			_serialPort = serialPort;
-			NewLine = Environment.NewLine;
+			_serialPort.NewLine = Modbus.NewLine;
 		}
 
 		public int InfiniteTimeout
@@ -36,12 +36,6 @@ namespace Modbus.IO
 			set { _serialPort.WriteTimeout = value; }
 		}
 
-		public string NewLine
-		{
-			get { return _serialPort.NewLine; }
-			set { _serialPort.NewLine = value; }
-		}
-
 		public void DiscardInBuffer()
 		{
 			_serialPort.DiscardInBuffer();
@@ -51,15 +45,19 @@ namespace Modbus.IO
 		{
 			return _serialPort.Read(buffer, offset, count);
 		}
-
-		public string ReadLine()
-		{
-			return _serialPort.ReadLine();
-		}
-
+	
 		public void Write(byte[] buffer, int offset, int count)
 		{
 			_serialPort.Write(buffer, offset, count);
+		}
+
+		/// <summary>
+		/// HACK: This method isn't part of the interface but will enable an optimized
+		/// ReadLine implementation utilized by the ModbusAsciiTransport.
+		/// </summary>
+		public string ReadLine()
+		{
+			return _serialPort.ReadLine();
 		}
 	}
 }

@@ -46,7 +46,6 @@ namespace FtdAdapter
 		private const uint _infiniteTimeout = 0;
 		private readonly FtdDeviceInfo _deviceInfo;
 		private uint _deviceId;
-		private string _newLine = Environment.NewLine;
 		private uint _deviceHandle;
 		private uint _readTimeout = _infiniteTimeout;
 		private uint _writeTimeout = _infiniteTimeout;
@@ -104,15 +103,6 @@ namespace FtdAdapter
 
 				_deviceId = (uint) value;
 			}
-		}
-
-		/// <summary>
-		/// Gets or sets the value used to interpret the end of a call to the ReadLine method. 
-		/// </summary>
-		public string NewLine
-		{
-			get { return _newLine; }
-			set { _newLine = value; }
 		}
 
 		/// <summary>
@@ -350,17 +340,6 @@ namespace FtdAdapter
 				throw new TimeoutException("The operation has timed out.");
 			if (bytesWritten != count)
                throw new IOException("Not all bytes written to stream.");
-		}
-
-		/// <summary>
-		/// Reads up to the NewLine value in the input buffer. 
-		/// </summary>
-		public string ReadLine()
-		{
-			if (!IsOpen)
-				throw new InvalidOperationException("Port not open.");
-
-			return StreamResourceUtility.ReadLine(this);
 		}
 
 		/// <summary>

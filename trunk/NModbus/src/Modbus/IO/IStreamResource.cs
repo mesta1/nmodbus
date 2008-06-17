@@ -22,11 +22,6 @@ namespace Modbus.IO
 		int WriteTimeout { get; set; }
 
 		/// <summary>
-		/// Gets or sets the value used to interpret the end of a call to the ReadLine method. 
-		/// </summary>
-		string NewLine { get; set; }
-
-		/// <summary>
 		/// Purges the receive buffer.
 		/// </summary>
 		void DiscardInBuffer();
@@ -39,11 +34,6 @@ namespace Modbus.IO
 		/// <param name="count">The number of bytes to read.</param>
 		/// <returns>The number of bytes read.</returns>
 		int Read(byte[] buffer, int offset, int count);
-
-		/// <summary>
-		/// Reads up to the NewLine value in the input buffer. 
-		/// </summary>
-		string ReadLine();
 
 		/// <summary>
 		/// Writes a specified number of bytes to the port from an output buffer, starting at the specified offset.
