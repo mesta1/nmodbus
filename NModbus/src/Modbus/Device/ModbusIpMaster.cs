@@ -2,6 +2,7 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using Modbus.IO;
+using System.IO.Ports;
 
 namespace Modbus.Device
 {
@@ -37,6 +38,17 @@ namespace Modbus.Device
 				throw new InvalidOperationException("UdpClient must be bound to a default remote host. Call the Connect method.");
 
 			return CreateIp(new UdpClientAdapter(udpClient));
+		}
+
+		/// <summary>
+		/// Modbus IP master factory method.
+		/// </summary>
+		public static ModbusIpMaster CreateIp(SerialPort serialPort)
+		{
+			if (serialPort == null)
+				throw new ArgumentNullException("serialPort");
+
+			return CreateIp(new SerialPortAdapter(serialPort));
 		}
 
 		/// <summary>
