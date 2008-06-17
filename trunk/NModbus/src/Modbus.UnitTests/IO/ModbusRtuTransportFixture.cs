@@ -19,7 +19,7 @@ namespace Modbus.UnitTests.IO
 		{
 			byte[] message = { 17, Modbus.ReadCoils, 0, 19, 0, 37, 14, 132 };
 			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 17, 19, 37);
-			Assert.AreEqual(message, new ModbusRtuTransport().BuildMessageFrame(request));
+			Assert.AreEqual(message, new ModbusRtuTransport(MockRepository.GenerateStub<IStreamResource>()).BuildMessageFrame(request));
 		}
 
 		[Test]
@@ -104,7 +104,7 @@ namespace Modbus.UnitTests.IO
 		[Test]
 		public void ChecksumsMatchSucceed()
 		{
-			ModbusRtuTransport transport = new ModbusRtuTransport();
+			ModbusRtuTransport transport = new ModbusRtuTransport(MockRepository.GenerateStub<IStreamResource>());
 			ReadCoilsInputsRequest message = new ReadCoilsInputsRequest(Modbus.ReadCoils, 17, 19, 37);
 			byte[] frame = { 17, Modbus.ReadCoils, 0, 19, 0, 37, 14, 132 };
 			Assert.IsTrue(transport.ChecksumsMatch(message, frame));
@@ -113,7 +113,7 @@ namespace Modbus.UnitTests.IO
 		[Test]
 		public void ChecksumsMatchFail()
 		{
-			ModbusRtuTransport transport = new ModbusRtuTransport();
+			ModbusRtuTransport transport = new ModbusRtuTransport(MockRepository.GenerateStub<IStreamResource>());
 			ReadCoilsInputsRequest message = new ReadCoilsInputsRequest(Modbus.ReadCoils, 17, 19, 38);
 			byte[] frame = { 17, Modbus.ReadCoils, 0, 19, 0, 37, 14, 132 };
 			Assert.IsFalse(transport.ChecksumsMatch(message, frame));
@@ -123,7 +123,7 @@ namespace Modbus.UnitTests.IO
 		public void ReadResponse()
 		{
 			MockRepository mocks = new MockRepository();
-			ModbusRtuTransport transport = mocks.PartialMock<ModbusRtuTransport>();
+			ModbusRtuTransport transport = mocks.PartialMock<ModbusRtuTransport>(MockRepository.GenerateStub<IStreamResource>());
 
 			Expect.Call(transport.Read(ModbusRtuTransport.ResponseFrameStartLength))
 				.Return(new byte[] { 1, 1, 1, 0 });
@@ -145,7 +145,7 @@ namespace Modbus.UnitTests.IO
 		public void ReadResponseSlaveException()
 		{
 			MockRepository mocks = new MockRepository();
-			ModbusRtuTransport transport = mocks.PartialMock<ModbusRtuTransport>();
+			ModbusRtuTransport transport = mocks.PartialMock<ModbusRtuTransport>(MockRepository.GenerateStub<IStreamResource>());
 
 			byte[] messageFrame = { 0x01, 0x81, 0x02 };
 			byte[] crc = ModbusUtility.CalculateCrc(messageFrame);
@@ -171,7 +171,7 @@ namespace Modbus.UnitTests.IO
 		public void ReadResponseSlaveExceptionWithErroneousLrc()
 		{
 			MockRepository mocks = new MockRepository();
-			ModbusRtuTransport transport = mocks.PartialMock<ModbusRtuTransport>();
+			ModbusRtuTransport transport = mocks.PartialMock<ModbusRtuTransport>(MockRepository.GenerateStub<IStreamResource>());
 
 			byte[] messageFrame = { 0x01, 0x81, 0x02 };
 			// invalid crc
@@ -194,7 +194,7 @@ namespace Modbus.UnitTests.IO
 		public void ReadRequest()
 		{
 			MockRepository mocks = new MockRepository();
-			ModbusRtuTransport transport = mocks.PartialMock<ModbusRtuTransport>();
+			ModbusRtuTransport transport = mocks.PartialMock<ModbusRtuTransport>(MockRepository.GenerateStub<IStreamResource>());
 
 			Expect.Call(transport.Read(ModbusRtuTransport.RequestFrameStartLength))
 				.Return(new byte[] { 1, 1, 1, 0, 1, 0, 0 });
@@ -212,15 +212,15 @@ namespace Modbus.UnitTests.IO
 		public void Read()
 		{
 			MockRepository mocks = new MockRepository();
-			ISerialResource mockSerialResource = mocks.StrictMock<ISerialResource>();
+			IStreamResource mockSerialResource = mocks.StrictMock<IStreamResource>();
 
-			Expect.Call(mockSerialResource.Read(new byte[5], 0, 5)).Do(((StreamReadWriteDelegate) delegate(byte[] buf, int offset, int count)
+			Expect.Call(mockSerialResource.Read(new byte[5], 0, 5)).Do(((Func<byte[], int, int, int>) delegate(byte[] buf, int offset, int count)
 			{
 				Array.Copy(new byte[] { 2, 2, 2 }, buf, 3);
 				return 3;
 			}));
 
-			Expect.Call(mockSerialResource.Read(new byte[] { 2, 2, 2, 0, 0 }, 3, 2)).Do(((StreamReadWriteDelegate) delegate(byte[] buf, int offset, int count)
+			Expect.Call(mockSerialResource.Read(new byte[] { 2, 2, 2, 0, 0 }, 3, 2)).Do(((Func<byte[], int, int, int>) delegate(byte[] buf, int offset, int count)
 			{
 				Array.Copy(new byte[] { 3, 3 }, 0, buf, 3, 2);
 				return 2;

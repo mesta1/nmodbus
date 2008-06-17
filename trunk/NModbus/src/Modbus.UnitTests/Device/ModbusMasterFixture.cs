@@ -14,7 +14,7 @@ namespace Modbus.UnitTests.Device
 		[Test]
 		public void ReadCoils()
 		{
-			var mockSerialResource = MockRepository.GenerateStub<ISerialResource>();
+			var mockSerialResource = MockRepository.GenerateStub<IStreamResource>();
 			var master = ModbusSerialMaster.CreateRtu(mockSerialResource);
 
 			AssertUtility.Throws<ArgumentException>(() => master.ReadCoils(1, 1, 0));
@@ -24,7 +24,7 @@ namespace Modbus.UnitTests.Device
 		[Test]
 		public void ReadInputs()
 		{
-			var mockSerialResource = MockRepository.GenerateStub<ISerialResource>();
+			var mockSerialResource = MockRepository.GenerateStub<IStreamResource>();
 			var master = ModbusSerialMaster.CreateRtu(mockSerialResource);
 
 			AssertUtility.Throws<ArgumentException>(() => master.ReadInputs(1, 1, 0));
@@ -34,7 +34,7 @@ namespace Modbus.UnitTests.Device
 		[Test]
 		public void ReadHoldingRegisters()
 		{
-			var mockSerialResource = MockRepository.GenerateStub<ISerialResource>();
+			var mockSerialResource = MockRepository.GenerateStub<IStreamResource>();
 			var master = ModbusSerialMaster.CreateRtu(mockSerialResource);
 
 			AssertUtility.Throws<ArgumentException>(() => master.ReadHoldingRegisters(1, 1, 0));
@@ -44,7 +44,7 @@ namespace Modbus.UnitTests.Device
 		[Test]
 		public void ReadInputRegisters()
 		{
-			var mockSerialResource = MockRepository.GenerateStub<ISerialResource>();
+			var mockSerialResource = MockRepository.GenerateStub<IStreamResource>();
 			var master = ModbusSerialMaster.CreateRtu(mockSerialResource);
 
 			AssertUtility.Throws<ArgumentException>(() => master.ReadInputRegisters(1, 1, 0));
@@ -54,7 +54,7 @@ namespace Modbus.UnitTests.Device
 		[Test]
 		public void WriteMultipleRegisters()
 		{
-			var mockSerialResource = MockRepository.GenerateStub<ISerialResource>();
+			var mockSerialResource = MockRepository.GenerateStub<IStreamResource>();
 			var master = ModbusSerialMaster.CreateRtu(mockSerialResource);
 
 			AssertUtility.Throws<ArgumentNullException>(() => master.WriteMultipleRegisters(1, 1, null));
@@ -65,7 +65,7 @@ namespace Modbus.UnitTests.Device
 		[Test]
 		public void WriteMultipleCoils()
 		{
-			var mockSerialResource = MockRepository.GenerateStub<ISerialResource>();
+			var mockSerialResource = MockRepository.GenerateStub<IStreamResource>();
 			var master = ModbusSerialMaster.CreateRtu(mockSerialResource);
 
 			AssertUtility.Throws<ArgumentNullException>(() => master.WriteMultipleCoils(1, 1, null));
@@ -76,7 +76,7 @@ namespace Modbus.UnitTests.Device
 		[Test]
 		public void ReadWriteMultipleRegisters()
 		{
-			var mockSerialResource = MockRepository.GenerateStub<ISerialResource>();
+			var mockSerialResource = MockRepository.GenerateStub<IStreamResource>();
 			var master = ModbusSerialMaster.CreateRtu(mockSerialResource);
 
 			// validate numberOfPointsToRead

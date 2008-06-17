@@ -83,11 +83,13 @@
     <Compile Include="Device\ModbusSerialMasterFixture.cs" />
     <Compile Include="Device\ModbusSlaveFixture.cs" />
     <Compile Include="Device\TcpConnectionEventArgsFixture.cs" />
+    <Compile Include="IO\AbstractStreamResourceFixture.cs" />
     <Compile Include="IO\ModbusAsciiTransportFixture.cs" />
     <Compile Include="IO\ModbusRtuTransportFixture.cs" />
     <Compile Include="IO\ModbusSerialTransportFixture.cs" />
     <Compile Include="IO\ModbusTcpTransportFixture.cs" />
     <Compile Include="IO\ModbusTransportFixture.cs" />
+    <Compile Include="IO\UdpClientAdapterFixture.cs" />
     <Compile Include="Message\DiagnosticsRequestResponseFixture.cs" />
     <Compile Include="Message\ModbusMessageFactoryFixture.cs" />
     <Compile Include="Message\ModbusMessageFixture.cs" />

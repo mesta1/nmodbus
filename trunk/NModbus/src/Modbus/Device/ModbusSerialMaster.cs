@@ -32,19 +32,20 @@ namespace Modbus.Device
 			if (serialPort == null)
 				throw new ArgumentNullException("serialPort");
 
-			return CreateAscii(new CommPortAdapter(serialPort));
+			return CreateAscii(new SerialPortAdapter(serialPort));
 		}
 
 		/// <summary>
 		/// Modbus ASCII master factory method.
 		/// </summary>
-		public static ModbusSerialMaster CreateAscii(ISerialResource serialResource)
+		public static ModbusSerialMaster CreateAscii(IStreamResource streamResource)
 		{
-			if (serialResource == null)
-				throw new ArgumentNullException("serialResource");
+			if (streamResource == null)
+				throw new ArgumentNullException("streamResource");
 
-			InitializeTimeouts(serialResource);
-			return new ModbusSerialMaster(new ModbusAsciiTransport(serialResource));
+			StreamResourceUtility.InitializeDefaultTimeouts(streamResource);
+
+			return new ModbusSerialMaster(new ModbusAsciiTransport(streamResource));
 		}
 
 		/// <summary>
@@ -55,19 +56,20 @@ namespace Modbus.Device
 			if (serialPort == null)
 				throw new ArgumentNullException("serialPort");
 
-			return CreateRtu(new CommPortAdapter(serialPort));
+			return CreateRtu(new SerialPortAdapter(serialPort));
 		}
 
 		/// <summary>
 		/// Modbus RTU master factory method.
 		/// </summary>
-		public static ModbusSerialMaster CreateRtu(ISerialResource serialResource)
+		public static ModbusSerialMaster CreateRtu(IStreamResource streamResource)
 		{
-			if (serialResource == null)
-				throw new ArgumentNullException("serialResource");
+			if (streamResource == null)
+				throw new ArgumentNullException("streamResource");
 
-			InitializeTimeouts(serialResource);
-			return new ModbusSerialMaster(new ModbusRtuTransport(serialResource));
+			StreamResourceUtility.InitializeDefaultTimeouts(streamResource);
+
+			return new ModbusSerialMaster(new ModbusRtuTransport(streamResource));
 		}
 		
 		/// <summary>
@@ -84,15 +86,6 @@ namespace Modbus.Device
 			DiagnosticsRequestResponse response = Transport.UnicastMessage<DiagnosticsRequestResponse>(request);
 
 			return response.Data[0] == data;
-		}
-
-		/// <summary>
-		/// Initializes serial port read write timeouts to default value if they have not been overridden already.
-		/// </summary>
-		internal static void InitializeTimeouts(ISerialResource serialResource)
-		{
-			serialResource.WriteTimeout = serialResource.WriteTimeout == serialResource.InfiniteTimeout ? Modbus.DefaultTimeout : serialResource.WriteTimeout;
-			serialResource.ReadTimeout = serialResource.ReadTimeout == serialResource.InfiniteTimeout ? Modbus.DefaultTimeout : serialResource.ReadTimeout;
 		}
 	}
 }

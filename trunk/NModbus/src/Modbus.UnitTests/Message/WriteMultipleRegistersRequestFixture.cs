@@ -33,5 +33,14 @@ namespace Modbus.UnitTests.Message
 			WriteMultipleRegistersRequest request = new WriteMultipleRegistersRequest(1, 2, CollectionUtility.CreateDefaultCollection<RegisterCollection, ushort>(3, Modbus.MaximumRegisterRequestResponseSize));
 			Assert.AreEqual(Modbus.MaximumRegisterRequestResponseSize, request.NumberOfPoints);
 		}
+
+		[Test]
+		public void ToString_WriteMultipleRegistersRequest()
+		{
+			RegisterCollection col = new RegisterCollection(10, 20, 30, 40, 50);
+			WriteMultipleRegistersRequest request = new WriteMultipleRegistersRequest(11, 34, col);
+
+			Assert.AreEqual("Write 5 holding registers starting at address 34.", request.ToString());
+		}
 	}
 }

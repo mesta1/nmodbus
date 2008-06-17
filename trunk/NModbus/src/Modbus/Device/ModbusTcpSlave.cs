@@ -17,12 +17,12 @@ namespace Modbus.Device
 	public class ModbusTcpSlave : ModbusSlave, IDisposable
 	{		
 		private readonly object _mastersLock = new object();
-		private readonly ILog _log = LogManager.GetLogger(typeof(ModbusTcpSlave));
+		private readonly ILog _logger = LogManager.GetLogger(typeof(ModbusTcpSlave));
 		private readonly Dictionary<string, ModbusMasterTcpConnection> _masters = new Dictionary<string, ModbusMasterTcpConnection>();
 		private readonly TcpListener _server;
 
 		private ModbusTcpSlave(byte unitId, TcpListener tcpListener)
-			: base(unitId, new ModbusTcpTransport())
+			: base(unitId, new EmptyTransport())
 		{
 			_server = tcpListener;
 		}		
@@ -52,7 +52,7 @@ namespace Modbus.Device
 		/// </summary>
 		public override void Listen()
 		{
-			_log.Debug("Start Modbus Tcp Server.");
+			_logger.Debug("Start Modbus Tcp Server.");
 			_server.Start();
 
 			_server.BeginAcceptTcpClient(AcceptCompleted, this);
@@ -74,7 +74,7 @@ namespace Modbus.Device
 					throw new ArgumentException(String.Format(CultureInfo.InvariantCulture, "EndPoint {0} cannot be removed, it does not exist.", endPoint));
 			}
 
-			_log.InfoFormat("Removed Master {0}", endPoint);
+			_logger.InfoFormat("Removed Master {0}", endPoint);
 		}
 
 		internal void AcceptCompleted(IAsyncResult ar)
@@ -90,7 +90,7 @@ namespace Modbus.Device
 				lock (_mastersLock)
 					_masters.Add(client.Client.RemoteEndPoint.ToString(), masterConnection);
 				
-				_log.Debug("Accept completed.");
+				_logger.Debug("Accept completed.");
 
 				// Accept another client
 				_server.BeginAcceptTcpClient(AcceptCompleted, slave);

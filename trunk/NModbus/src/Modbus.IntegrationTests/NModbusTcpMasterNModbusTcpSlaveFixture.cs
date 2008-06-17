@@ -18,7 +18,7 @@ namespace Modbus.IntegrationTests
 			StartSlave();
 
 			MasterTcp = new TcpClient(TcpHost.ToString(), Port);
-			Master = ModbusIpMaster.CreateTcp(MasterTcp);
+			Master = ModbusIpMaster.CreateIp(MasterTcp);
 		}
 
 		[TestFixtureTearDown]

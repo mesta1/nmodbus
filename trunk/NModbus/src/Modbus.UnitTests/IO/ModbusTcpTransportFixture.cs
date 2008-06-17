@@ -1,153 +1,155 @@
-//using System;
-//using System.Collections.Generic;
-//using Modbus.Data;
-//using Modbus.IO;
-//using Modbus.Message;
-//using Modbus.Utility;
-//using MbUnit.Framework;
-//using Rhino.Mocks;
-//using System.Net.Sockets;
-//using System.IO;
-//using Modbus.Device;
+using System;
+using System.Collections.Generic;
+using Modbus.Data;
+using Modbus.IO;
+using Modbus.Message;
+using Modbus.Utility;
+using MbUnit.Framework;
+using System.Linq;
+using Rhino.Mocks;
+using System.Net.Sockets;
+using System.IO;
+using Modbus.Device;
+using Unme.Common;
 
-//namespace Modbus.UnitTests.IO
-//{
-//    [TestFixture]
-//    public class ModbusTcpTransportFixture
-//    {
-//        [Test]
-//        public void BuildMessageFrame()
-//        {
-//            MockRepository mocks = new MockRepository();
-//            ModbusTcpTransport mockModbusTcpTransport = mocks.PartialMock<ModbusTcpTransport>();
-//            Expect.Call(mockModbusTcpTransport.GetNewTransactionID()).Return((ushort) 8);
-//            ReadCoilsInputsRequest message = new ReadCoilsInputsRequest(Modbus.ReadCoils, 2, 10, 5);
-//            mocks.ReplayAll();
-//            Assert.AreEqual(new byte[] { 0, 8, 0, 0, 0, 6, 2, 1, 0, 10, 0, 5 }, mockModbusTcpTransport.BuildMessageFrame(message));
-//            mocks.VerifyAll();
-//        }
+namespace Modbus.UnitTests.IO
+{
+	[TestFixture]
+	public class ModbusTcpTransportFixture
+	{
+		[Test]
+		public void BuildMessageFrame()
+		{
+			MockRepository mocks = new MockRepository();
+			ModbusIpTransport mockModbusTcpTransport = mocks.PartialMock<ModbusIpTransport>(MockRepository.GenerateStub<IStreamResource>());
+			Expect.Call(mockModbusTcpTransport.GetNewTransactionId()).Return((ushort) 8);
+			ReadCoilsInputsRequest message = new ReadCoilsInputsRequest(Modbus.ReadCoils, 2, 10, 5);
+			mocks.ReplayAll();
+			Assert.AreEqual(new byte[] { 0, 8, 0, 0, 0, 6, 2, 1, 0, 10, 0, 5 }, mockModbusTcpTransport.BuildMessageFrame(message));
+			mocks.VerifyAll();
+		}
 
-//        [Test]
-//        public void GetMbapHeader()
-//        {
-//            WriteMultipleRegistersRequest message = new WriteMultipleRegistersRequest(3, 1, CollectionUtility.CreateDefaultCollection<RegisterCollection, ushort>(0, 120));
-//            message.TransactionID = 45;
-//            Assert.AreEqual(new byte[] { 0, 45, 0, 0, 0, 247, 3 }, ModbusTcpTransport.GetMbapHeader(message));
-//        }
+		[Test]
+		public void GetMbapHeader()
+		{
+			WriteMultipleRegistersRequest message = new WriteMultipleRegistersRequest(3, 1, CollectionUtility.CreateDefaultCollection<RegisterCollection, ushort>(0, 120));
+			message.TransactionId = 45;
+			Assert.AreEqual(new byte[] { 0, 45, 0, 0, 0, 247, 3 }, ModbusIpTransport.GetMbapHeader(message));
+		}
 
-//        [Test]
-//        public void Write()
-//        {
-//            MockRepository mocks = new MockRepository();
-//            TcpStreamAdapter mockTcpStreamAdapter = mocks.CreateMock<TcpStreamAdapter>();
-//            mockTcpStreamAdapter.Write(new byte[] { 255, 255, 0, 0, 0, 6, 1, 1, 0, 1, 0, 3 }, 0, 12);
-//            ModbusTcpTransport mockModbusTcpTransport = mocks.PartialMock<ModbusTcpTransport>(mockTcpStreamAdapter);
-//            Expect.Call(mockModbusTcpTransport.GetNewTransactionID()).Return(UInt16.MaxValue);
-//            mocks.ReplayAll();
-//            ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 1, 3); 
-//            mockModbusTcpTransport.Write(request);
-//            mocks.VerifyAll();
-//        }
+		[Test]
+		public void Write()
+		{
+			MockRepository mocks = new MockRepository();
+			var mockTcpStreamAdapter = mocks.StrictMock<IStreamResource>();
+			mockTcpStreamAdapter.Write(new byte[] { 255, 255, 0, 0, 0, 6, 1, 1, 0, 1, 0, 3 }, 0, 12);
+			ModbusIpTransport mockModbusTcpTransport = mocks.PartialMock<ModbusIpTransport>(mockTcpStreamAdapter);
+			Expect.Call(mockModbusTcpTransport.GetNewTransactionId()).Return(UInt16.MaxValue);
+			mocks.ReplayAll();
+			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 1, 3);
+			mockModbusTcpTransport.Write(request);
+			mocks.VerifyAll();
+		}
 
-//        [Test]
-//        public void ReadRequestResponse()
-//        {
-//            MockRepository mocks = new MockRepository();
-//            TcpStreamAdapter mockTransport = mocks.CreateMock<TcpStreamAdapter>(null);
+		[Test]
+		public void ReadRequestResponse()
+		{
+			MockRepository mocks = new MockRepository();
+			var mockTransport = mocks.StrictMock<IStreamResource>(null);
 
-//            byte[] mbapHeader = { 45, 63, 0, 0, 0, 6 };
+			byte[] mbapHeader = { 45, 63, 0, 0, 0, 6 };
 
-//            Expect.Call(mockTransport.Read(new byte[6], 0, 6)).Do(((StreamReadWriteDelegate) delegate(byte[] buf, int offset, int count)
-//            {
-//                Array.Copy(mbapHeader, buf, 6);
-//                return 6;
-//            }));
+			Expect.Call(mockTransport.Read(new byte[6], 0, 6)).Do(((Func<byte[], int, int, int>) delegate(byte[] buf, int offset, int count)
+			{
+				Array.Copy(mbapHeader, buf, 6);
+				return 6;
+			}));
 
-//            ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 1, 3);
+			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 1, 3);
 
-//            Expect.Call(mockTransport.Read(new byte[6], 0, 6)).Do(((StreamReadWriteDelegate) delegate(byte[] buf, int offset, int count)
-//            {
-//                Array.Copy(CollectionUtility.Concat(new byte[] { 1 }, request.ProtocolDataUnit), buf, 6);
-//                return 6;
-//            }));
+			Expect.Call(mockTransport.Read(new byte[6], 0, 6)).Do(((Func<byte[], int, int, int>) delegate(byte[] buf, int offset, int count)
+			{
+				Array.Copy(new byte[] { 1 }.Concat(request.ProtocolDataUnit).ToArray(), buf, 6);
+				return 6;
+			}));
 
-//            mocks.ReplayAll();
-//            Assert.AreEqual(ModbusTcpTransport.ReadRequestResponse(mockTransport), new byte[] { 45, 63, 0, 0, 0, 6, 1, 1, 0, 1, 0, 3 });
-//            mocks.VerifyAll();
-//        }
+			mocks.ReplayAll();
+			Assert.AreEqual(ModbusIpTransport.ReadRequestResponse(mockTransport), new byte[] { 45, 63, 0, 0, 0, 6, 1, 1, 0, 1, 0, 3 });
+			mocks.VerifyAll();
+		}
 
-//        [Test, ExpectedException(typeof(SocketException))]
-//        public void ReadRequestResponse_ConnectionAbortedWhileReadingMBAPHeader()
-//        {
-//            MockRepository mocks = new MockRepository();
-//            TcpStreamAdapter mockTransport = mocks.CreateMock<TcpStreamAdapter>(null);
+		[Test, ExpectedException(typeof(IOException))]
+		public void ReadRequestResponse_ConnectionAbortedWhileReadingMBAPHeader()
+		{
+			MockRepository mocks = new MockRepository();
+			var mockTransport = mocks.StrictMock<IStreamResource>(null);
 
-//            Expect.Call(mockTransport.Read(new byte[6], 0, 6)).Return(0);
+			Expect.Call(mockTransport.Read(new byte[6], 0, 6)).Return(0);
 
-//            mocks.ReplayAll();
-//            ModbusTcpTransport.ReadRequestResponse(mockTransport);
-//            mocks.VerifyAll();
-//        }
+			mocks.ReplayAll();
+			ModbusIpTransport.ReadRequestResponse(mockTransport);
+			mocks.VerifyAll();
+		}
 
-//        [Test, ExpectedException(typeof(SocketException))]
-//        public void ReadRequestResponse_ConnectionAbortedWhileReadingMessageFrame()
-//        {
-//            MockRepository mocks = new MockRepository();
-//            TcpStreamAdapter mockTransport = mocks.CreateMock<TcpStreamAdapter>(null);
+		[Test, ExpectedException(typeof(IOException))]
+		public void ReadRequestResponse_ConnectionAbortedWhileReadingMessageFrame()
+		{
+			MockRepository mocks = new MockRepository();
+			var mockTransport = mocks.StrictMock<IStreamResource>(null);
 
-//            byte[] mbapHeader = { 45, 63, 0, 0, 0, 6 };
+			byte[] mbapHeader = { 45, 63, 0, 0, 0, 6 };
 
-//            Expect.Call(mockTransport.Read(new byte[6], 0, 6)).Do(((StreamReadWriteDelegate) delegate(byte[] buf, int offset, int count)
-//            {
-//                Array.Copy(mbapHeader, buf, 6);
-//                return 6;
-//            }));
+			Expect.Call(mockTransport.Read(new byte[6], 0, 6)).Do(((Func<byte[], int, int, int>) delegate(byte[] buf, int offset, int count)
+			{
+				Array.Copy(mbapHeader, buf, 6);
+				return 6;
+			}));
 
-//            Expect.Call(mockTransport.Read(new byte[6], 0, 6)).Return(0);
-			
-//            mocks.ReplayAll();
-//            ModbusTcpTransport.ReadRequestResponse(mockTransport);
-//            mocks.VerifyAll();
-//        }
+			Expect.Call(mockTransport.Read(new byte[6], 0, 6)).Return(0);
 
-//        [Test]
-//        public void GetNewTransactionID()
-//        {
-//            ModbusTcpTransport transport = new ModbusTcpTransport();
-//            Dictionary<int, string> transactionIDs = new Dictionary<int, string>();
+			mocks.ReplayAll();
+			ModbusIpTransport.ReadRequestResponse(mockTransport);
+			mocks.VerifyAll();
+		}
 
-//            for (int i = 0; i < UInt16.MaxValue; i++)
-//                transactionIDs.Add(transport.GetNewTransactionID(), String.Empty);
+		[Test]
+		public void GetNewTransactionId()
+		{
+			ModbusIpTransport transport = new ModbusIpTransport(MockRepository.GenerateStub<IStreamResource>());
+			Dictionary<int, string> transactionIds = new Dictionary<int, string>();
 
-//            Assert.AreEqual(1, transport.GetNewTransactionID());
-//            Assert.AreEqual(2, transport.GetNewTransactionID());
-//        }
+			for (int i = 0; i < UInt16.MaxValue; i++)
+				transactionIds.Add(transport.GetNewTransactionId(), String.Empty);
 
-//        [Test, ExpectedException(typeof(IOException))]
-//        public void ValidateResponse_MismatchingTransactionIDs()
-//        {
-//            ModbusTcpTransport transport = new ModbusTcpTransport();
+			Assert.AreEqual(1, transport.GetNewTransactionId());
+			Assert.AreEqual(2, transport.GetNewTransactionId());
+		}
 
-//            IModbusMessage request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 1, 1);
-//            request.TransactionID = 5;
-//            IModbusMessage response = new ReadCoilsInputsResponse(Modbus.ReadCoils, 1, 1, null);
-//            response.TransactionID = 6;
+		[Test, ExpectedException(typeof(IOException))]
+		public void ValidateResponse_MismatchingTransactionIds()
+		{
+			ModbusIpTransport transport = new ModbusIpTransport(MockRepository.GenerateStub<IStreamResource>());
 
-//            transport.ValidateResponse(request, response);
-//        }
+			IModbusMessage request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 1, 1);
+			request.TransactionId = 5;
+			IModbusMessage response = new ReadCoilsInputsResponse(Modbus.ReadCoils, 1, 1, null);
+			response.TransactionId = 6;
 
-//        [Test]
-//        public void ValidateResponse()
-//        {
-//            ModbusTcpTransport transport = new ModbusTcpTransport();
+			transport.ValidateResponse(request, response);
+		}
 
-//            IModbusMessage request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 1, 1);
-//            request.TransactionID = 5;
-//            IModbusMessage response = new ReadCoilsInputsResponse(Modbus.ReadCoils, 1, 1, null);
-//            response.TransactionID = 5;
+		[Test]
+		public void ValidateResponse()
+		{
+			ModbusIpTransport transport = new ModbusIpTransport(MockRepository.GenerateStub<IStreamResource>());
 
-//            // no exception is thrown
-//            transport.ValidateResponse(request, response);
-//        }
-//    }
-//}
+			IModbusMessage request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 1, 1);
+			request.TransactionId = 5;
+			IModbusMessage response = new ReadCoilsInputsResponse(Modbus.ReadCoils, 1, 1, null);
+			response.TransactionId = 5;
+
+			// no exception is thrown
+			transport.ValidateResponse(request, response);
+		}
+	}
+}

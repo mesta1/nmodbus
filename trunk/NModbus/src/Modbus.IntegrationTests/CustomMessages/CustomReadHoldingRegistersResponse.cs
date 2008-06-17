@@ -12,7 +12,7 @@ namespace Modbus.IntegrationTests.CustomMessages
 		private byte _functionCode;
 		private byte _slaveAddress;
 		private byte _byteCount;
-		private ushort _transactionID;
+		private ushort _transactionId;
 		private RegisterCollection _data;
 
 		public ushort[] Data
@@ -49,10 +49,10 @@ namespace Modbus.IntegrationTests.CustomMessages
 			}
 		}
 
-		public ushort TransactionID
+		public ushort TransactionId
 		{
-			get { return _transactionID; }
-			set { _transactionID = value; }
+			get { return _transactionId; }
+			set { _transactionId = value; }
 		}
 
 		public byte FunctionCode

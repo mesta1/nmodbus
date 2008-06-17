@@ -28,7 +28,7 @@ namespace Modbus.Message
 		/// <summary>
 		/// A unique identifier assigned to a message when using the IP protocol.
 		/// </summary>
-		ushort TransactionID { get; set; }
+		ushort TransactionId { get; set; }
 
 		/// <summary>
 		/// Initializes a modbus message from the specified message frame.

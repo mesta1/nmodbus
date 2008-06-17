@@ -64,7 +64,7 @@ namespace Modbus.IntegrationTests
 
 			using (TcpClient masterClient = new TcpClient(ModbusMasterFixture.TcpHost.ToString(), ModbusMasterFixture.Port))
 			{
-				ModbusIpMaster master = ModbusIpMaster.CreateTcp(masterClient);
+				ModbusIpMaster master = ModbusIpMaster.CreateIp(masterClient);
 				master.Transport.Retries = 0;
 
 				bool[] coils = master.ReadCoils(1, 1);
@@ -96,7 +96,7 @@ namespace Modbus.IntegrationTests
 
 			using (TcpClient masterClient = new TcpClient(ModbusMasterFixture.TcpHost.ToString(), ModbusMasterFixture.Port))
 			{
-				ModbusIpMaster master = ModbusIpMaster.CreateTcp(masterClient);
+				ModbusIpMaster master = ModbusIpMaster.CreateIp(masterClient);
 				master.Transport.Retries = 0;
 
 				bool[] coils = master.ReadCoils(1, 1);

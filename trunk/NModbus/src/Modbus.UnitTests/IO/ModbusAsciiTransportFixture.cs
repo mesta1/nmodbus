@@ -17,22 +17,14 @@ namespace Modbus.UnitTests.IO
 		{
 			byte[] message = { 58, 48, 50, 48, 49, 48, 48, 48, 48, 48, 48, 48, 49, 70, 67, 13, 10 };
 			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 2, 0, 1);
-			Assert.AreEqual(message, new ModbusAsciiTransport().BuildMessageFrame(request));
-		}
-
-		[Test, ExpectedArgumentNullException]
-		public void ModbusASCIITranpsortNullSerialPort()
-		{
-			ModbusAsciiTransport transport = new ModbusAsciiTransport(null);
-			Assert.Fail();
+			Assert.AreEqual(message, new ModbusAsciiTransport(MockRepository.GenerateStub<IStreamResource>()).BuildMessageFrame(request));
 		}
 
 		[Test]
 		public void ReadRequestResponse()
 		{
 			MockRepository mocks = new MockRepository();
-			ISerialResource mockSerialResource = mocks.StrictMock<ISerialResource>();
-			mockSerialResource.NewLine = Environment.NewLine;
+			IStreamResource mockSerialResource = mocks.StrictMock<IStreamResource>();
 			Expect.Call(mockSerialResource.ReadLine()).Return(":110100130025B6");
 			mocks.ReplayAll();
 
@@ -46,7 +38,7 @@ namespace Modbus.UnitTests.IO
 		public void ReadRequestResponseNotEnoughBytes()
 		{
 			MockRepository mocks = new MockRepository(); 
-			ISerialResource mockSerialResource = mocks.StrictMock<ISerialResource>();
+			IStreamResource mockSerialResource = mocks.StrictMock<IStreamResource>();
 			mockSerialResource.NewLine = Environment.NewLine;
 			Expect.Call(mockSerialResource.ReadTimeout).Return(SerialPort.InfiniteTimeout);
 			mockSerialResource.WriteTimeout = 0;
@@ -66,7 +58,7 @@ namespace Modbus.UnitTests.IO
 		[Test]
 		public void ChecksumsMatchSucceed()
 		{
-			ModbusAsciiTransport transport = new ModbusAsciiTransport();
+			ModbusAsciiTransport transport = new ModbusAsciiTransport(MockRepository.GenerateStub<IStreamResource>());
 			ReadCoilsInputsRequest message = new ReadCoilsInputsRequest(Modbus.ReadCoils, 17, 19, 37);
 			byte[] frame = { 17, Modbus.ReadCoils, 0, 19, 0, 37, 182 };
 			Assert.IsTrue(transport.ChecksumsMatch(message, frame));
@@ -75,7 +67,7 @@ namespace Modbus.UnitTests.IO
 		[Test]
 		public void ChecksumsMatchFail()
 		{
-			ModbusAsciiTransport transport = new ModbusAsciiTransport();
+			ModbusAsciiTransport transport = new ModbusAsciiTransport(MockRepository.GenerateStub<IStreamResource>());
 			ReadCoilsInputsRequest message = new ReadCoilsInputsRequest(Modbus.ReadCoils, 17, 19, 37);
 			byte[] frame = { 17, Modbus.ReadCoils, 0, 19, 0, 37, 181 };
 			Assert.IsFalse(transport.ChecksumsMatch(message, frame));

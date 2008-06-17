@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Threading;
@@ -9,13 +10,28 @@ namespace Modbus.IO
 {
 	/// <summary>
 	/// Modbus transport.
+	/// Abstraction - http://en.wikipedia.org/wiki/Bridge_Pattern
 	/// </summary>
 	public abstract class ModbusTransport
 	{
-		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusTransport));
+		private static readonly ILog _logger = LogManager.GetLogger(typeof(ModbusTransport));
 		private object _syncLock = new object();
 		private int _retries = Modbus.DefaultRetries;
 		private int _waitToRetryMilliseconds = Modbus.DefaultWaitToRetryMilliseconds;
+
+		/// <summary>
+		/// This constructor is called by the NullTransport.
+		/// </summary>
+		internal ModbusTransport()
+		{
+		}
+
+		internal ModbusTransport(IStreamResource streamResource)
+		{
+			Debug.Assert(streamResource != null, "Argument streamResource cannot be null.");
+
+			StreamResource = streamResource;
+		}		
 
 		/// <summary>
 		/// Number of times to retry sending message after encountering a failure such as an IOException, 
@@ -29,7 +45,7 @@ namespace Modbus.IO
 
 		/// <summary>
 		/// Gets or sets the number of milliseconds the tranport will wait before retrying a message after receiving 
-		/// an ACKNOWLEGE or SLAVE DEVIC BUSY slave exception response.
+		/// an ACKNOWLEGE or SLAVE DEVICE BUSY slave exception response.
 		/// </summary>
 		public int WaitToRetryMilliseconds
 		{
@@ -45,6 +61,11 @@ namespace Modbus.IO
 				_waitToRetryMilliseconds = value;
 			}
 		}
+
+		/// <summary>
+		/// Gets or sets the stream resource.
+		/// </summary>
+		internal IStreamResource StreamResource { get; private set; }
 
 		internal virtual T UnicastMessage<T>(IModbusMessage message) where T : IModbusMessage, new()
 		{
@@ -72,7 +93,7 @@ namespace Modbus.IO
 								// if SlaveExceptionCode == ACKNOWLEDGE we retry reading the response without resubmitting request
 								if (readAgain = exceptionResponse.SlaveExceptionCode == Modbus.Acknowledge)
 								{
-									_log.InfoFormat("Received ACKNOWLEDGE slave exception response, waiting {0} milliseconds and retrying to read response.", _waitToRetryMilliseconds);
+									_logger.InfoFormat("Received ACKNOWLEDGE slave exception response, waiting {0} milliseconds and retrying to read response.", _waitToRetryMilliseconds);
 									Thread.Sleep(WaitToRetryMilliseconds);
 								}
 								else
@@ -89,28 +110,28 @@ namespace Modbus.IO
 				}
 				catch (FormatException fe)
 				{
-					_log.ErrorFormat("FormatException, {0} retries remaining - {1}", _retries + 1 - attempt, fe.Message);
+					_logger.ErrorFormat("FormatException, {0} retries remaining - {1}", _retries + 1 - attempt, fe.Message);
 
 					if (attempt++ > _retries)
 						throw;
 				}
 				catch (NotImplementedException nie)
 				{
-					_log.ErrorFormat("NotImplementedException, {0} retries remaining - {1}", _retries + 1 - attempt, nie.Message);
+					_logger.ErrorFormat("NotImplementedException, {0} retries remaining - {1}", _retries + 1 - attempt, nie.Message);
 
 					if (attempt++ > _retries)
 						throw;
 				}
 				catch (TimeoutException te)
 				{
-					_log.ErrorFormat("TimeoutException, {0} retries remaining - {1}", _retries + 1 - attempt, te.Message);
+					_logger.ErrorFormat("TimeoutException, {0} retries remaining - {1}", _retries + 1 - attempt, te.Message);
 
 					if (attempt++ > _retries)
 						throw;
 				}
 				catch (IOException ioe)
 				{
-					_log.ErrorFormat("IOException, {0} retries remaining - {1}", _retries + 1 - attempt, ioe.Message);
+					_logger.ErrorFormat("IOException, {0} retries remaining - {1}", _retries + 1 - attempt, ioe.Message);
 
 					if (attempt++ > _retries)
 						throw;
@@ -120,7 +141,7 @@ namespace Modbus.IO
 					if (se.SlaveExceptionCode != Modbus.SlaveDeviceBusy)
 						throw;
 
-					_log.InfoFormat("Received SLAVE_DEVICE_BUSY exception response, waiting {0} milliseconds and resubmitting request.", _waitToRetryMilliseconds);
+					_logger.InfoFormat("Received SLAVE_DEVICE_BUSY exception response, waiting {0} milliseconds and resubmitting request.", _waitToRetryMilliseconds);
 					Thread.Sleep(WaitToRetryMilliseconds);
 				}
 			} while (!success);

@@ -13,7 +13,7 @@ using Unme.Common;
 
 namespace Modbus.Device
 {
-	internal class ModbusMasterTcpConnection : IDisposable
+	internal class ModbusMasterTcpConnection : ModbusDevice, IDisposable
 	{
 		/// <summary>
 		/// Occurs when a Modbus master TCP connection is closed.
@@ -32,6 +32,7 @@ namespace Modbus.Device
 		private byte[] _messageFrame;
 
 		public ModbusMasterTcpConnection(TcpClient client, ModbusTcpSlave slave)
+			: base(new ModbusIpTransport(new TcpClientAdapter(client)))
 		{
 			if (client == null)
 				throw new ArgumentNullException("client");
@@ -107,16 +108,14 @@ namespace Modbus.Device
 				_log.InfoFormat("RX: {0}", frame.Join(", "));
 
 				IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(frame.Slice(6, frame.Length - 6).ToArray());
-				request.TransactionID = (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 0));
+				request.TransactionId = (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 0));
 
-				// TODO refactor
-				ModbusTcpTransport transport = new ModbusTcpTransport();
 				// perform action and build response
 				IModbusMessage response = _slave.ApplyRequest(request);
-				response.TransactionID = request.TransactionID;
+				response.TransactionId = request.TransactionId;
 
 				// write response
-				byte[] responseFrame = transport.BuildMessageFrame(response);
+				byte[] responseFrame = Transport.BuildMessageFrame(response);
 				_log.InfoFormat("TX: {0}", responseFrame.Join(", "));
 				Stream.BeginWrite(responseFrame, 0, responseFrame.Length, WriteCompleted, null);
 			}, EndPoint);
@@ -144,7 +143,7 @@ namespace Modbus.Device
 				throw new ArgumentNullException("action");
 			if (endPoint == null)
 				throw new ArgumentNullException("endPoint");
-			if (endPoint == String.Empty)
+			if (endPoint.IsNullOrEmpty())
 				throw new ArgumentException("Argument endPoint cannot be empty.");
 
 			try

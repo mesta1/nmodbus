@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Modbus.IO;
 using Modbus.Utility;
+using System.Globalization;
 
 namespace FtdAdapter
 {
@@ -81,12 +82,12 @@ namespace FtdAdapter
 	/// <summary>
 	/// Wrapper class for the FTD2XX USB resource.
 	/// </summary>
-	public class FtdUsbPort : ISerialResource, IDisposable
+	public class FtdUsbPort : IStreamResource, IDisposable
 	{
 		[DllImport(FtdAssemblyName)]
 		static extern FtdStatus FT_Close(uint deviceHandle);
 		[DllImport(FtdAssemblyName)]
-		static extern FtdStatus FT_Open(uint deviceID, ref uint deviceHandle);
+		static extern FtdStatus FT_Open(uint deviceId, ref uint deviceHandle);
 		[DllImport(FtdAssemblyName)]
 		static extern FtdStatus FT_SetBaudRate(uint deviceHandle, uint baudRate);
 		[DllImport(FtdAssemblyName)]
@@ -106,7 +107,7 @@ namespace FtdAdapter
 		private const byte PurgeRx = 1;
 		private const uint _infiniteTimeout = 0;
 		//private static readonly ILog _log = LogManager.GetLogger(typeof(FtdUsbPort));
-		private uint _deviceID;
+		private uint _deviceId;
 		private string _newLine = Environment.NewLine;
 		private uint _deviceHandle;
 		private uint _readTimeout = _infiniteTimeout;
@@ -126,20 +127,20 @@ namespace FtdAdapter
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FtdUsbPort"/> class.
 		/// </summary>
-		/// <param name="deviceID">The device ID.</param>
-		public FtdUsbPort(uint deviceID)
+		/// <param name="deviceId">The device ID.</param>
+		public FtdUsbPort(uint deviceId)
 		{
-			_deviceID = deviceID;
+			_deviceId = deviceId;
 		}
 
 		/// <summary>
 		/// Gets or sets the device ID.
 		/// </summary>
-		public int DeviceID
+		public int DeviceId
 		{
 			get
 			{
-				return (int) _deviceID;
+				return (int) _deviceId;
 			}
 			set
 			{
@@ -149,7 +150,7 @@ namespace FtdAdapter
 				if (IsOpen)
 					throw new InvalidOperationException("Cannot set the Device ID when the port is open");
 
-				_deviceID = (uint) value;
+				_deviceId = (uint) value;
 			}
 		}
 
@@ -261,7 +262,7 @@ namespace FtdAdapter
 		{
 			get
 			{
-				return (FtdStopBits) Enum.Parse(typeof(FtdStopBits), _stopBits.ToString());
+				return (FtdStopBits) Enum.Parse(typeof(FtdStopBits), _stopBits.ToString(CultureInfo.InvariantCulture));
 			}
 			set
 			{
@@ -279,7 +280,7 @@ namespace FtdAdapter
 		{
 			get
 			{
-				return (FtdParity) Enum.Parse(typeof(FtdParity), _parity.ToString());
+				return (FtdParity) Enum.Parse(typeof(FtdParity), _parity.ToString(CultureInfo.InvariantCulture));
 			}
 			set
 			{
@@ -326,7 +327,7 @@ namespace FtdAdapter
 			if (IsOpen)
 				throw new InvalidOperationException("Port is already open.");
 
-			InvokeFtdMethod(delegate { return FT_Open(_deviceID, ref _deviceHandle); });
+			InvokeFtdMethod(delegate { return FT_Open(_deviceId, ref _deviceHandle); });
 			BaudRate = _baudRate;
 			InvokeFtdMethod(delegate { return FT_SetDataCharacteristics(_deviceHandle, (byte) _dataBits, _stopBits, _parity); });
 			InvokeFtdMethod(delegate { return FT_SetTimeouts(_deviceHandle, _readTimeout, _writeTimeout); });
@@ -399,17 +400,8 @@ namespace FtdAdapter
 		{
 			if (!IsOpen)
 				throw new InvalidOperationException("Port not open.");
-
-			StringBuilder result = new StringBuilder();
-			byte[] singleByteBuffer = new byte[1];
-
-			do
-			{
-				Read(singleByteBuffer, 0, 1);
-				result.Append(Encoding.ASCII.GetChars(singleByteBuffer)[0]);
-			} while (!result.ToString().EndsWith(NewLine));
-
-			return result.ToString().Substring(0, result.Length - NewLine.Length);
+			
+			return StreamResourceUtility.ReadLine(this);
 		}
 
 		/// <summary>

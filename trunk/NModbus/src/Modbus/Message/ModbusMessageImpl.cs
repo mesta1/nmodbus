@@ -40,7 +40,7 @@ namespace Modbus.Message
 			set { _exceptionCode = value; }
 		}
 
-		public ushort TransactionID { get; set; }
+		public ushort TransactionId { get; set; }
 		
 		public byte FunctionCode { get; set; }
 

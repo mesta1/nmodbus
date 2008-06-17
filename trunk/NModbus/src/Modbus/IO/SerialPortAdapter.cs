@@ -1,14 +1,22 @@
 using System.IO.Ports;
+using System.Diagnostics;
+using System;
 
 namespace Modbus.IO
 {
-	internal class CommPortAdapter : ISerialResource
+	/// <summary>
+	/// Concrete Implementor - http://en.wikipedia.org/wiki/Bridge_Pattern
+	/// </summary>
+	internal class SerialPortAdapter : IStreamResource
 	{
 		private readonly SerialPort _serialPort;
 
-		public CommPortAdapter(SerialPort serialPort)
+		public SerialPortAdapter(SerialPort serialPort)
 		{
+			Debug.Assert(serialPort != null, "Argument serialPort cannot be null.");
+			
 			_serialPort = serialPort;
+			NewLine = Environment.NewLine;
 		}
 
 		public int InfiniteTimeout

@@ -1,4 +1,5 @@
 ﻿using System;
+using Unme.Common;
 
 namespace Modbus.Device
 {
@@ -8,7 +9,7 @@ namespace Modbus.Device
 		{
 			if (endPoint == null)
 				throw new ArgumentNullException("endPoint");
-			if (endPoint == String.Empty)
+			if (endPoint.IsNullOrEmpty())
 				throw new ArgumentException("Argument endPoint cannot be empty.");
 
 			EndPoint = endPoint;

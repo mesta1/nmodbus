@@ -11,66 +11,28 @@ namespace Modbus.UnitTests.Device
 	public class ModbusSerialMasterFixture
 	{
 		[Test]
-		public void InitializeSerialPortTimeouts()
-		{
-			MockRepository mocks = new MockRepository();
-			ISerialResource mockSerialResource = mocks.StrictMock<ISerialResource>();
-
-			Expect.Call(mockSerialResource.WriteTimeout).Return(1);
-			Expect.Call(mockSerialResource.InfiniteTimeout).Return(0);
-			Expect.Call(mockSerialResource.WriteTimeout).Return(1);
-			mockSerialResource.WriteTimeout = 1;
-			Expect.Call(mockSerialResource.ReadTimeout).Return(1);
-			Expect.Call(mockSerialResource.InfiniteTimeout).Return(0);
-			Expect.Call(mockSerialResource.ReadTimeout).Return(1);
-			mockSerialResource.ReadTimeout = 1;
-
-			mocks.ReplayAll();
-			ModbusSerialMaster.InitializeTimeouts(mockSerialResource);
-			mocks.VerifyAll();
-		}
-
-		[Test]
-		public void SetupTimeoutsDefaultTimeout()
-		{
-			MockRepository mocks = new MockRepository();
-			ISerialResource mockSerialResource = mocks.StrictMock<ISerialResource>();
-
-			Expect.Call(mockSerialResource.WriteTimeout).Return(SerialPort.InfiniteTimeout);
-			Expect.Call(mockSerialResource.InfiniteTimeout).Return(SerialPort.InfiniteTimeout);
-			mockSerialResource.WriteTimeout = Modbus.DefaultTimeout;
-			Expect.Call(mockSerialResource.ReadTimeout).Return(SerialPort.InfiniteTimeout);
-			Expect.Call(mockSerialResource.InfiniteTimeout).Return(SerialPort.InfiniteTimeout);
-			mockSerialResource.ReadTimeout = Modbus.DefaultTimeout;
-
-			mocks.ReplayAll();
-			ModbusSerialMaster.InitializeTimeouts(mockSerialResource);
-			mocks.VerifyAll();
-		}
-
-		[Test]
 		public void CreateRtu_SerialPortFactoryMethod()
 		{
 			IModbusSerialMaster master = ModbusSerialMaster.CreateRtu(new SerialPort());
 
-			Assert.AreEqual(Modbus.DefaultTimeout, master.Transport._serialResource.ReadTimeout);
+			Assert.AreEqual(Modbus.DefaultTimeout, master.Transport.StreamResource.ReadTimeout);
 		}
 
 		[Test]
 		public void CreateRtu_UsbPortFactoryMethod()
 		{
 			MockRepository mocks = new MockRepository();
-			ISerialResource mockSerialResource = mocks.StrictMock<ISerialResource>();
+			IStreamResource mockStreamResource = mocks.StrictMock<IStreamResource>();
 
-			Expect.Call(mockSerialResource.WriteTimeout).Return(0);
-			Expect.Call(mockSerialResource.InfiniteTimeout).Return(0);
-			mockSerialResource.WriteTimeout = Modbus.DefaultTimeout;
-			Expect.Call(mockSerialResource.ReadTimeout).Return(0);
-			Expect.Call(mockSerialResource.InfiniteTimeout).Return(0);
-			mockSerialResource.ReadTimeout = Modbus.DefaultTimeout;
+			Expect.Call(mockStreamResource.WriteTimeout).Return(0);
+			Expect.Call(mockStreamResource.InfiniteTimeout).Return(0);
+			mockStreamResource.WriteTimeout = Modbus.DefaultTimeout;
+			Expect.Call(mockStreamResource.ReadTimeout).Return(0);
+			Expect.Call(mockStreamResource.InfiniteTimeout).Return(0);
+			mockStreamResource.ReadTimeout = Modbus.DefaultTimeout;
 
 			mocks.ReplayAll();
-			ModbusSerialMaster.CreateRtu(mockSerialResource);
+			var master = ModbusSerialMaster.CreateRtu(mockStreamResource);
 			mocks.VerifyAll();
 		}
 
@@ -79,15 +41,15 @@ namespace Modbus.UnitTests.Device
 		{
 			IModbusSerialMaster master = ModbusSerialMaster.CreateAscii(new SerialPort());
 
-			Assert.AreEqual(Modbus.DefaultTimeout, master.Transport._serialResource.ReadTimeout);
-			Assert.AreEqual(Modbus.DefaultTimeout, master.Transport._serialResource.ReadTimeout);
+			Assert.AreEqual(Modbus.DefaultTimeout, master.Transport.StreamResource.ReadTimeout);
+			Assert.AreEqual(Modbus.DefaultTimeout, master.Transport.StreamResource.ReadTimeout);
 		}
 
 		[Test]
 		public void CreateAscii_UsbPortFactoryMethod()
 		{
 			MockRepository mocks = new MockRepository();
-			ISerialResource mockSerialResource = mocks.StrictMock<ISerialResource>();
+			IStreamResource mockSerialResource = mocks.StrictMock<IStreamResource>();
 
 			Expect.Call(mockSerialResource.WriteTimeout).Return(0);
 			Expect.Call(mockSerialResource.InfiniteTimeout).Return(0);
@@ -95,7 +57,6 @@ namespace Modbus.UnitTests.Device
 			Expect.Call(mockSerialResource.ReadTimeout).Return(0);
 			Expect.Call(mockSerialResource.InfiniteTimeout).Return(0);
 			mockSerialResource.ReadTimeout = Modbus.DefaultTimeout;
-			mockSerialResource.NewLine = Environment.NewLine;
 
 			mocks.ReplayAll();
 			ModbusSerialMaster.CreateAscii(mockSerialResource);

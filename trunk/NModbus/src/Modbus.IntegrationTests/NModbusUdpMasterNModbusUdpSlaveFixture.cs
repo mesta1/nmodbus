@@ -18,7 +18,7 @@ namespace Modbus.IntegrationTests
 
 			MasterUdp = new UdpClient();
 			MasterUdp.Connect(DefaultModbusIPEndPoint);
-			Master = ModbusIpMaster.CreateUdp(MasterUdp);
+			Master = ModbusIpMaster.CreateIp(MasterUdp);
 		}
 
 		[Test]

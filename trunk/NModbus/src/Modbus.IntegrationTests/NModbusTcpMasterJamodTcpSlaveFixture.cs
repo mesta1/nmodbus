@@ -19,7 +19,7 @@ namespace Modbus.IntegrationTests
 			StartJamodSlave(program);
 
 			MasterTcp = new TcpClient(TcpHost.ToString(), Port);
-			Master = ModbusIpMaster.CreateTcp(MasterTcp);
+			Master = ModbusIpMaster.CreateIp(MasterTcp);
 		}
 
 		/// <summary>

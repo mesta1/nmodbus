@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using log4net;
@@ -9,18 +10,17 @@ namespace Modbus.IO
 {
 	/// <summary>
 	/// Transport for Serial protocols.
+	/// Refined Abstraction - http://en.wikipedia.org/wiki/Bridge_Pattern
 	/// </summary>
 	public abstract class ModbusSerialTransport : ModbusTransport
 	{
-		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusTransport));
-		internal ISerialResource _serialResource;
+		private static readonly ILog _logger = LogManager.GetLogger(typeof(ModbusSerialTransport));
 		private bool _checkFrame = true;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ModbusSerialTransport"/> class.
-		/// </summary>
-		public ModbusSerialTransport()
+		internal ModbusSerialTransport(IStreamResource streamResource)
+			: base(streamResource)
 		{
+			Debug.Assert(streamResource != null, "Argument streamResource cannot be null.");
 		}
 
 		/// <summary>
@@ -32,21 +32,9 @@ namespace Modbus.IO
 			set { _checkFrame = value; }
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ModbusSerialTransport"/> class.
-		/// </summary>
-		/// <param name="serialResource">The serial resource.</param>
-		internal ModbusSerialTransport(ISerialResource serialResource)
-		{
-			if (serialResource == null)
-				throw new ArgumentNullException("serialResource");
-
-			_serialResource = serialResource;
-		}
-
 		internal void DiscardInBuffer()
 		{
-			_serialResource.DiscardInBuffer();
+			StreamResource.DiscardInBuffer();
 		}
 
 		internal override void Write(IModbusMessage message)
@@ -54,8 +42,8 @@ namespace Modbus.IO
 			DiscardInBuffer();
 
 			byte[] frame = BuildMessageFrame(message);
-			_log.InfoFormat("TX: {0}", frame.Join(", "));
-			_serialResource.Write(frame, 0, frame.Length);
+			_logger.InfoFormat("TX: {0}", frame.Join(", "));
+			StreamResource.Write(frame, 0, frame.Length);
 		}
 
 		internal override IModbusMessage CreateResponse<T>(byte[] frame)
@@ -66,7 +54,7 @@ namespace Modbus.IO
 			if (CheckFrame && !ChecksumsMatch(response, frame))
 			{
 				string errorMessage = String.Format(CultureInfo.InvariantCulture, "Checksums failed to match {0} != {1}", response.MessageFrame.Join(", "), frame.Join(", "));
-				_log.Error(errorMessage);
+				_logger.Error(errorMessage);
 				throw new IOException(errorMessage);
 			}
 
