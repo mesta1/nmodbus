@@ -16,11 +16,8 @@ namespace Modbus.IO
 		{
 			Debug.Assert(tcpClient != null, "Argument tcpClient cannot be null.");
 
-			NewLine = Environment.NewLine;
 			_networkStream = tcpClient.GetStream();
 		}
-
-		public string NewLine { get; set; }
 
 		public int InfiniteTimeout
 		{
@@ -53,10 +50,5 @@ namespace Modbus.IO
 		{
 			_networkStream.Flush();
 		}		
-
-		public string ReadLine()
-		{
-			return StreamResourceUtility.ReadLine(this);
-		}
 	}
 }

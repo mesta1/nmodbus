@@ -48,5 +48,8 @@ namespace Modbus
 
 		// An existing connection was forcibly closed by the remote host
 		public const int ConnectionResetByPeer = 10054;
+
+		// used by the ASCII tranport to indicate end of message
+		public const string NewLine = @"\r\n";
 	}
 }

@@ -21,11 +21,8 @@ namespace Modbus.IO
 		{			
 			Debug.Assert(udpClient != null, "Argument udpClient cannot be null.");
 
-			NewLine = Environment.NewLine;
 			_udpClient = udpClient;
 		}
-
-		public string NewLine { get; set; }
 
 		public int InfiniteTimeout
 		{
@@ -85,11 +82,6 @@ namespace Modbus.IO
 				throw new ArgumentOutOfRangeException("offset", "Argument offset cannot be greater than the length of buffer.");
 
 			_udpClient.Send(buffer.Skip(offset).ToArray(), count);
-		}
-
-		public string ReadLine()
-		{
-			return StreamResourceUtility.ReadLine(this);
 		}
 
 		/// <summary>

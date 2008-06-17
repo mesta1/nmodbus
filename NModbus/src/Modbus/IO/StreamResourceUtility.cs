@@ -15,9 +15,9 @@ namespace Modbus.IO
 			{
 				stream.Read(singleByteBuffer, 0, 1);
 				result.Append(Encoding.ASCII.GetChars(singleByteBuffer).First());
-			} while (!result.ToString().EndsWith(Environment.NewLine));
+			} while (!result.ToString().EndsWith(Modbus.NewLine));
 
-			return result.ToString().Substring(0, result.Length - Environment.NewLine.Length);
+			return result.ToString().Substring(0, result.Length - Modbus.NewLine.Length);
 		}
 
 		/// <summary>
