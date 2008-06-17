@@ -17,10 +17,10 @@ namespace Modbus.Message
 			_messageImpl = new ModbusMessageImpl(slaveAddress, functionCode);
 		}
 
-		public ushort TransactionID
+		public ushort TransactionId
 		{
-			get { return _messageImpl.TransactionID; }
-			set { _messageImpl.TransactionID = value; }
+			get { return _messageImpl.TransactionId; }
+			set { _messageImpl.TransactionId = value; }
 		}
 
 		public byte FunctionCode

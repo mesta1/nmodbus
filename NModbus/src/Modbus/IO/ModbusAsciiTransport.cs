@@ -1,26 +1,27 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using log4net;
 using Modbus.Message;
 using Modbus.Utility;
 using Unme.Common;
+using System.Diagnostics;
 
 namespace Modbus.IO
 {
-	class ModbusAsciiTransport : ModbusSerialTransport
+	/// <summary>	
+	/// Refined Abstraction - http://en.wikipedia.org/wiki/Bridge_Pattern
+	/// </summary>
+	internal class ModbusAsciiTransport : ModbusSerialTransport
 	{
-		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusAsciiTransport));
+		private static readonly ILog _logger = LogManager.GetLogger(typeof(ModbusAsciiTransport));
 
-		internal ModbusAsciiTransport()
+		internal ModbusAsciiTransport(IStreamResource streamResource)
+			: base(streamResource)
 		{
-		}
-
-		internal ModbusAsciiTransport(ISerialResource serialResource)
-			: base(serialResource)
-		{
-			serialResource.NewLine = Environment.NewLine;
+			Debug.Assert(streamResource != null, "Argument streamResource cannot be null.");
 		}
 
 		internal override byte[] BuildMessageFrame(IModbusMessage message)
@@ -53,16 +54,16 @@ namespace Modbus.IO
 		internal byte[] ReadRequestResponse()
 		{
 			// read message frame, removing frame start ':'
-			string frameHex = _serialResource.ReadLine().Substring(1);
+			string frameHex = StreamResource.ReadLine().Substring(1);
 
 			// convert hex to bytes
 			byte[] frame = ModbusUtility.HexToBytes(frameHex);
-			_log.InfoFormat("RX: {0}", frame.Join(", "));
+			_logger.InfoFormat("RX: {0}", frame.Join(", "));
 
 			if (frame.Length < 3)
 				throw new IOException("Premature end of stream, message truncated.");
 
 			return frame;
 		}
-	}		
+	}
 }

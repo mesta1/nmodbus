@@ -39,5 +39,21 @@ namespace Modbus.UnitTests.Message
 			ReadCoilsInputsRequest response = new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 2, Modbus.MaximumDiscreteRequestResponseSize);
 			Assert.AreEqual(Modbus.MaximumDiscreteRequestResponseSize, response.NumberOfPoints);
 		}
+
+		[Test]
+		public void ToString_ReadCoilsRequest()
+		{
+			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 5, 1, 10);
+
+			Assert.AreEqual("Read 10 coils starting at address 1.", request.ToString());
+		}
+
+		[Test]
+		public void ToString_ReadInputsRequest()
+		{
+			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadInputs, 5, 1, 10);
+
+			Assert.AreEqual("Read 10 inputs starting at address 1.", request.ToString());
+		}
 	}
 }

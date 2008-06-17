@@ -16,29 +16,40 @@ namespace Modbus.Device
 		}
 
 		/// <summary>
-		/// Modbus TCP master factory method.
+		/// Modbus IP master factory method.
 		/// </summary>
-		public static ModbusIpMaster CreateTcp(TcpClient tcpClient)
+		public static ModbusIpMaster CreateIp(TcpClient tcpClient)
 		{
 			if (tcpClient == null)
 				throw new ArgumentNullException("tcpClient");
 
-			InitializeTimeouts(tcpClient.Client);
-
-			return new ModbusIpMaster(new ModbusTcpTransport(new TcpStreamAdapter(tcpClient.GetStream())));
-		}
+			return CreateIp(new TcpClientAdapter(tcpClient));
+		}	
 
 		/// <summary>
-		/// Modbus UDP master factory method.
+		/// Modbus IP master factory method.
 		/// </summary>
-		public static ModbusIpMaster CreateUdp(UdpClient udpClient)
+		public static ModbusIpMaster CreateIp(UdpClient udpClient)
 		{
 			if (udpClient == null)
 				throw new ArgumentNullException("udpClient");
+			if (!udpClient.Client.Connected)
+				throw new InvalidOperationException("UdpClient must be bound to a default remote host. Call the Connect method.");
 
-			InitializeTimeouts(udpClient.Client);
+			return CreateIp(new UdpClientAdapter(udpClient));
+		}
 
-			return new ModbusIpMaster(new ModbusUdpTransport(udpClient));
+		/// <summary>
+		/// Modbus IP master factory method.
+		/// </summary>
+		public static ModbusIpMaster CreateIp(IStreamResource streamResource)
+		{
+			if (streamResource == null)
+				throw new ArgumentNullException("streamResource");
+
+			StreamResourceUtility.InitializeDefaultTimeouts(streamResource);
+
+			return new ModbusIpMaster(new ModbusIpTransport(streamResource));
 		}
 
 		/// <summary>
@@ -137,15 +148,6 @@ namespace Modbus.Device
 		public ushort[] ReadWriteMultipleRegisters(ushort startReadAddress, ushort numberOfPointsToRead, ushort startWriteAddress, ushort[] writeData)
 		{
 			return base.ReadWriteMultipleRegisters(Modbus.DefaultIpSlaveUnitId, startReadAddress, numberOfPointsToRead, startWriteAddress, writeData);
-		}
-
-		/// <summary>
-		/// Initializes socket read write timeouts to default value if they have not been overridden already.
-		/// </summary>
-		internal static void InitializeTimeouts(Socket socket)
-		{
-			socket.ReceiveTimeout = socket.ReceiveTimeout != 0 ? socket.ReceiveTimeout : Modbus.DefaultTimeout;
-			socket.SendTimeout = socket.SendTimeout != 0 ? socket.SendTimeout : Modbus.DefaultTimeout;
 		}
 	}
 }

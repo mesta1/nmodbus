@@ -15,7 +15,7 @@ namespace Modbus.IntegrationTests
 			Slave = ModbusSerialSlave.CreateRtu(SlaveAddress, SlaveSerialPort);
 			StartSlave();
 
-			MasterUsbPort = CreateAndOpenUsbPort(DefaultMasterUsbPortID);
+			MasterUsbPort = CreateAndOpenUsbPort(DefaultMasterUsbPortId);
 			Master = ModbusSerialMaster.CreateRtu(MasterUsbPort);
 		}
 

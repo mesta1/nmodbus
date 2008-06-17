@@ -19,13 +19,13 @@ namespace Modbus.Device
 		/// </summary>
 		public event EventHandler<ModbusSlaveRequestEventArgs> ModbusSlaveRequestReceived;
 
-		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusSlave));
+		private static readonly ILog _logger = LogManager.GetLogger(typeof(ModbusSlave));
 
 		internal ModbusSlave(byte unitId, ModbusTransport transport)
 			: base(transport)
 		{
 			DataStore = DataStoreFactory.CreateDefaultDataStore();
-			UnitID = unitId;
+			UnitId = unitId;
 		}
 
 		/// <summary>
@@ -36,7 +36,7 @@ namespace Modbus.Device
 		/// <summary>
 		/// Gets or sets the unit ID.
 		/// </summary>
-		public byte UnitID { get; set; }
+		public byte UnitId { get; set; }
 
 		/// <summary>
 		/// Start slave listening for requests.
@@ -91,7 +91,7 @@ namespace Modbus.Device
 
 		internal IModbusMessage ApplyRequest(IModbusMessage request)
 		{			
-			_log.Info(request.ToString());
+			_logger.Info(request.ToString());
 			ModbusSlaveRequestReceived.Raise(this, new ModbusSlaveRequestEventArgs(request));
 
 			IModbusMessage response;
@@ -131,7 +131,7 @@ namespace Modbus.Device
 					break;
 				default:
 					string errorMessage = String.Format(CultureInfo.InvariantCulture, "Unsupported function code {0}", request.FunctionCode);
-					_log.Error(errorMessage);
+					_logger.Error(errorMessage);
 					throw new ArgumentException(errorMessage, "request");
 			}			
 

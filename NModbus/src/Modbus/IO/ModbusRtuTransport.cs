@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using log4net;
@@ -9,20 +10,20 @@ using Unme.Common;
 
 namespace Modbus.IO
 {
-	class ModbusRtuTransport : ModbusSerialTransport
+	/// <summary>	
+	/// Refined Abstraction - http://en.wikipedia.org/wiki/Bridge_Pattern
+	/// </summary>
+	internal class ModbusRtuTransport : ModbusSerialTransport
 	{
 		public const int RequestFrameStartLength = 7;
 		public const int ResponseFrameStartLength = 4;
 
-		private static readonly ILog _log = LogManager.GetLogger(typeof(ModbusRtuTransport));
+		private static readonly ILog _logger = LogManager.GetLogger(typeof(ModbusRtuTransport));
 
-		public ModbusRtuTransport()
+		internal ModbusRtuTransport(IStreamResource streamResource)
+			: base(streamResource)
 		{
-		}
-
-		public ModbusRtuTransport(ISerialResource serialResource)
-			: base(serialResource)
-		{
+			Debug.Assert(streamResource != null, "Argument streamResource cannot be null.");
 		}
 
 		internal override byte[] BuildMessageFrame(IModbusMessage message)
@@ -45,7 +46,7 @@ namespace Modbus.IO
 			byte[] frameStart = Read(ResponseFrameStartLength);
 			byte[] frameEnd = Read(ResponseBytesToRead(frameStart));
 			byte[] frame = frameStart.Concat(frameEnd).ToArray();
-			_log.InfoFormat("RX: {0}", frame.Join(", "));
+			_logger.InfoFormat("RX: {0}", frame.Join(", "));
 
 			return CreateResponse<T>(frame);
 		}
@@ -55,7 +56,7 @@ namespace Modbus.IO
 			byte[] frameStart = Read(RequestFrameStartLength);
 			byte[] frameEnd = Read(RequestBytesToRead(frameStart));
 			byte[] frame = frameStart.Concat(frameEnd).ToArray();
-			_log.InfoFormat("RX: {0}", frame.Join(", "));
+			_logger.InfoFormat("RX: {0}", frame.Join(", "));
 
 			return frame;
 		}
@@ -66,7 +67,7 @@ namespace Modbus.IO
 			int numBytesRead = 0;
 
 			while (numBytesRead != count)
-				numBytesRead += _serialResource.Read(frameBytes, numBytesRead, count - numBytesRead);
+				numBytesRead += StreamResource.Read(frameBytes, numBytesRead, count - numBytesRead);
 
 			return frameBytes;
 		}
@@ -94,7 +95,7 @@ namespace Modbus.IO
 					break;
 				default:
 					string errorMessage = String.Format(CultureInfo.InvariantCulture, "Function code {0} not supported.", functionCode);
-					_log.Error(errorMessage);
+					_logger.Error(errorMessage);
 					throw new NotImplementedException(errorMessage);
 			}
 
@@ -103,7 +104,7 @@ namespace Modbus.IO
 
 		public static int ResponseBytesToRead(byte[] frameStart)
 		{
-			byte functionCode = frameStart[1];			
+			byte functionCode = frameStart[1];
 
 			// exception response
 			if (functionCode > Modbus.ExceptionOffset)
@@ -127,7 +128,7 @@ namespace Modbus.IO
 					break;
 				default:
 					string errorMessage = String.Format(CultureInfo.InvariantCulture, "Function code {0} not supported.", functionCode);
-					_log.Error(errorMessage);
+					_logger.Error(errorMessage);
 					throw new NotImplementedException(errorMessage);
 			}
 

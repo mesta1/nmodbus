@@ -22,7 +22,7 @@ namespace Modbus.IntegrationTests
 		public SerialPort MasterSerialPort;
 		public const string DefaultMasterSerialPortName = "COM3";
 		public FtdUsbPort MasterUsbPort;
-		public const uint DefaultMasterUsbPortID = 0;
+		public const uint DefaultMasterUsbPortId = 0;
 		public TcpClient MasterTcp;
 		public UdpClient MasterUdp;
 
@@ -68,9 +68,9 @@ namespace Modbus.IntegrationTests
 			return port;
 		}
 
-		public static FtdUsbPort CreateAndOpenUsbPort(uint portID)
+		public static FtdUsbPort CreateAndOpenUsbPort(uint portId)
 		{
-			FtdUsbPort port = new FtdUsbPort(portID);
+			FtdUsbPort port = new FtdUsbPort(portId);
 			port.Open();
 
 			return port;

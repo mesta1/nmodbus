@@ -52,11 +52,11 @@ namespace Modbus.IntegrationTests
 			bool master2Complete = false;
 			UdpClient masterClient1 = new UdpClient();
 			masterClient1.Connect(ModbusMasterFixture.DefaultModbusIPEndPoint);
-			ModbusIpMaster master1 = ModbusIpMaster.CreateUdp(masterClient1);
+			ModbusIpMaster master1 = ModbusIpMaster.CreateIp(masterClient1);
 
 			UdpClient masterClient2 = new UdpClient();
 			masterClient2.Connect(ModbusMasterFixture.DefaultModbusIPEndPoint);
-			ModbusIpMaster master2 = ModbusIpMaster.CreateUdp(masterClient2);
+			ModbusIpMaster master2 = ModbusIpMaster.CreateIp(masterClient2);
 
 			UdpClient slaveClient = CreateAndStartUdpSlave(ModbusMasterFixture.Port, DataStoreFactory.CreateTestDataStore());
 			
@@ -109,7 +109,7 @@ namespace Modbus.IntegrationTests
 			using (UdpClient masterClient = new UdpClient())
 			{			
 				masterClient.Connect(ModbusMasterFixture.DefaultModbusIPEndPoint);
-				ModbusIpMaster master = ModbusIpMaster.CreateUdp(masterClient);
+				ModbusIpMaster master = ModbusIpMaster.CreateIp(masterClient);
 
 				for (int i = 0; i < 5; i++)
 				{

@@ -15,7 +15,7 @@ namespace Modbus.IntegrationTests
 			Slave = ModbusSerialSlave.CreateAscii(SlaveAddress, SlaveSerialPort);
 			StartSlave();
 
-			MasterUsbPort = CreateAndOpenUsbPort(DefaultMasterUsbPortID);
+			MasterUsbPort = CreateAndOpenUsbPort(DefaultMasterUsbPortId);
 			Master = ModbusSerialMaster.CreateAscii(MasterUsbPort);
 		}
 

@@ -34,5 +34,14 @@ namespace Modbus.UnitTests.Message
 			WriteMultipleCoilsRequest request = new WriteMultipleCoilsRequest(1, 2, CollectionUtility.CreateDefaultCollection<DiscreteCollection, bool>(true, Modbus.MaximumDiscreteRequestResponseSize));
 			Assert.AreEqual(Modbus.MaximumDiscreteRequestResponseSize, request.Data.Count);
 		}
+
+		[Test]
+		public void ToString_WriteMultipleCoilsRequest()
+		{
+			DiscreteCollection col = new DiscreteCollection(true, false, true, false, true, true, true, false, false);
+			WriteMultipleCoilsRequest request = new WriteMultipleCoilsRequest(34, 45, col);
+
+			Assert.AreEqual("Write 9 coils starting at address 45.", request.ToString());
+		}
 	}
 }

@@ -274,7 +274,7 @@ namespace Modbus.UnitTests.IO
 		[Test]
 		public void CreateResponse_SlaveException()
 		{
-			ModbusTransport transport = new ModbusAsciiTransport();
+			ModbusTransport transport = new ModbusAsciiTransport(MockRepository.GenerateStub<IStreamResource>());
 			byte[] frame = { 2, 129, 2 };
 			IModbusMessage message = transport.CreateResponse<ReadCoilsInputsResponse>(frame.Concat(SequenceUtility.ToSequence(ModbusUtility.CalculateLrc(frame))).ToArray());
 			Assert.IsTrue(message is SlaveExceptionResponse);
