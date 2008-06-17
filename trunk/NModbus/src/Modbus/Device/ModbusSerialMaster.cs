@@ -3,6 +3,7 @@ using System.IO.Ports;
 using Modbus.Data;
 using Modbus.IO;
 using Modbus.Message;
+using System.Net.Sockets;
 
 namespace Modbus.Device
 {
@@ -38,6 +39,28 @@ namespace Modbus.Device
 		/// <summary>
 		/// Modbus ASCII master factory method.
 		/// </summary>
+		public static ModbusSerialMaster CreateAscii(TcpClient tcpClient)
+		{
+			if (tcpClient == null)
+				throw new ArgumentNullException("tcpClient");
+
+			return CreateAscii(new TcpClientAdapter(tcpClient));
+		}
+
+		/// <summary>
+		/// Modbus ASCII master factory method.
+		/// </summary>
+		public static ModbusSerialMaster CreateAscii(UdpClient udpClient)
+		{
+			if (udpClient == null)
+				throw new ArgumentNullException("udpClient");
+
+			return CreateAscii(new UdpClientAdapter(udpClient));
+		}
+
+		/// <summary>
+		/// Modbus ASCII master factory method.
+		/// </summary>
 		public static ModbusSerialMaster CreateAscii(IStreamResource streamResource)
 		{
 			if (streamResource == null)
@@ -57,6 +80,28 @@ namespace Modbus.Device
 				throw new ArgumentNullException("serialPort");
 
 			return CreateRtu(new SerialPortAdapter(serialPort));
+		}
+
+		/// <summary>
+		/// Modbus RTU master factory method.
+		/// </summary>
+		public static ModbusSerialMaster CreateRtu(TcpClient tcpClient)
+		{
+			if (tcpClient == null)
+				throw new ArgumentNullException("tcpClient");
+
+			return CreateRtu(new TcpClientAdapter(tcpClient));
+		}
+
+		/// <summary>
+		/// Modbus RTU master factory method.
+		/// </summary>
+		public static ModbusSerialMaster CreateRtu(UdpClient udpClient)
+		{
+			if (udpClient == null)
+				throw new ArgumentNullException("udpClient");
+
+			return CreateRtu(new UdpClientAdapter(udpClient));
 		}
 
 		/// <summary>
