@@ -160,7 +160,7 @@ namespace MySample
 		{
 			using (TcpClient client = new TcpClient("127.0.0.1", 502))
 			{
-				ModbusIpMaster master = ModbusIpMaster.CreateIp(client);
+				ModbusIpMaster master = ModbusIpMaster.CreateTcp(client);
 
 				// read five input values
 				ushort startAddress = 100;
@@ -189,7 +189,7 @@ namespace MySample
 				IPEndPoint endPoint = new IPEndPoint(new IPAddress(new byte[] { 127, 0, 0, 1 }), 502);
 				client.Connect(endPoint);
 
-				ModbusIpMaster master = ModbusIpMaster.CreateIp(client);
+				ModbusIpMaster master = ModbusIpMaster.CreateUdp(client);
 
 				ushort startAddress = 1;
 
@@ -275,7 +275,7 @@ namespace MySample
 			TcpListener slaveTcpListener = new TcpListener(address, port);
 			slaveTcpListener.Start();
 
-			var slave = ModbusTcpSlave.CreateTcp(slaveId, slaveTcpListener);
+			ModbusSlave slave = ModbusTcpSlave.CreateTcp(slaveId, slaveTcpListener);
 			slave.DataStore = DataStoreFactory.CreateDefaultDataStore();
 
 			slave.Listen();
@@ -319,7 +319,7 @@ namespace MySample
 
 			// create the master
 			TcpClient masterTcpClient = new TcpClient(address.ToString(), port);
-			ModbusIpMaster master = ModbusIpMaster.CreateIp(masterTcpClient);
+			ModbusIpMaster master = ModbusIpMaster.CreateTcp(masterTcpClient);
 
 			ushort numInputs = 5;
 			ushort startAddress = 100;

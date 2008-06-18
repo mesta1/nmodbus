@@ -79,6 +79,9 @@ namespace FtdAdapter
            _deviceInfo = deviceInfo;
        }
 
+	   /// <summary>
+	   /// Gets the device info.
+	   /// </summary>
        public FtdDeviceInfo DeviceInfo
        {
            get { return _deviceInfo; }
