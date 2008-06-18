@@ -50,14 +50,5 @@ namespace Modbus.IO
 		{
 			_serialPort.Write(buffer, offset, count);
 		}
-
-		/// <summary>
-		/// HACK: This method isn't part of the interface but will enable an optimized
-		/// ReadLine implementation utilized by the ModbusAsciiTransport.
-		/// </summary>
-		public string ReadLine()
-		{
-			return _serialPort.ReadLine();
-		}
 	}
 }
