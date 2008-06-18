@@ -50,6 +50,6 @@ namespace Modbus
 		public const int ConnectionResetByPeer = 10054;
 
 		// used by the ASCII tranport to indicate end of message
-		public const string NewLine = @"\r\n";
+		public const string NewLine = "\r\n";
 	}
 }

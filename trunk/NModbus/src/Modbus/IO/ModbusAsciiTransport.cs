@@ -63,9 +63,9 @@ namespace Modbus.IO
 		{
 			var readLineMethod = StreamResource.GetType().GetMethod("ReadLine", BindingFlags.Public | BindingFlags.Instance);
 
-			return readLineMethod == null && readLineMethod.ReturnType == typeof(string) ? 
-				(Func<string>)(() => StreamResourceUtility.ReadLine(StreamResource)) :
-				(Func<string>)(() => readLineMethod.Invoke(StreamResource, null) as string);
+			return readLineMethod != null && readLineMethod.ReturnType == typeof(string) ? 
+				(Func<string>)(() => readLineMethod.Invoke(StreamResource, null) as string) :
+                (Func<string>)(() => StreamResourceUtility.ReadLine(StreamResource));
 		}
 
 		internal byte[] ReadRequestResponse()

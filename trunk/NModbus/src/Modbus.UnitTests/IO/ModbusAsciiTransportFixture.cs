@@ -29,28 +29,16 @@ namespace Modbus.UnitTests.IO
 				return 1;
 			}));
 
-			// newline - 92, 114, 92, 110
+			// newline - 13 10
 			Expect.Call(stream.Read(new byte[] { 1 }, 0, 1)).Do(((Func<byte[], int, int, int>)delegate(byte[] buf, int offset, int count)
 			{
-				Array.Copy(new byte[] { 92 }, buf, 1);
+				Array.Copy(new byte[] { 13 }, buf, 1);
 				return 1;
 			}));
 
-			Expect.Call(stream.Read(new byte[] { 92 }, 0, 1)).Do(((Func<byte[], int, int, int>)delegate(byte[] buf, int offset, int count)
+			Expect.Call(stream.Read(new byte[] { 13 }, 0, 1)).Do(((Func<byte[], int, int, int>)delegate(byte[] buf, int offset, int count)
 			{
-				Array.Copy(new byte[] { 114 }, buf, 1);
-				return 1;
-			}));
-
-			Expect.Call(stream.Read(new byte[] { 114 }, 0, 1)).Do(((Func<byte[], int, int, int>)delegate(byte[] buf, int offset, int count)
-			{
-				Array.Copy(new byte[] { 92 }, buf, 1);
-				return 1;
-			}));
-
-			Expect.Call(stream.Read(new byte[] { 92 }, 0, 1)).Do(((Func<byte[], int, int, int>)delegate(byte[] buf, int offset, int count)
-			{
-				Array.Copy(new byte[] { 110 }, buf, 1);
+				Array.Copy(new byte[] { 10 }, buf, 1);
 				return 1;
 			}));
 
@@ -75,9 +63,10 @@ namespace Modbus.UnitTests.IO
 		[Test]
 		public void BuildMessageFrame()
 		{
-			byte[] message = { 58, 48, 50, 48, 49, 48, 48, 48, 48, 48, 48, 48, 49, 70, 67, 13, 10 };
+			byte[] expected = { 58, 48, 50, 48, 49, 48, 48, 48, 48, 48, 48, 48, 49, 70, 67, 13, 10 };
 			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 2, 0, 1);
-			Assert.AreEqual(message, new ModbusAsciiTransport(MockRepository.GenerateStub<IStreamResource>()).BuildMessageFrame(request));
+            var actual = new ModbusAsciiTransport(MockRepository.GenerateStub<IStreamResource>()).BuildMessageFrame(request);
+			Assert.AreEqual(expected, actual);
 		}
 
 		[Test]
