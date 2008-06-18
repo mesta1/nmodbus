@@ -9,57 +9,13 @@ using Rhino.Mocks;
 using System.Linq;
 using Unme.MbUnit.Framework.Extensions;
 using System.Linq.Expressions;
+using System.Text;
 
 namespace Modbus.UnitTests.IO
 {
 	[TestFixture]
 	public class ModbusAsciiTransportFixture : ModbusMessageFixture
 	{
-		[Test]
-		public void GetReadLine_ResourceWithoutReadLineMethod()
-		{
-			var mocks = new MockRepository();
-			var stream = mocks.StrictMock<IStreamResource>();
-			var transport = new ModbusAsciiTransport(stream);
-
-			// single character
-			Expect.Call(stream.Read(new byte[1], 0, 1)).Do(((Func<byte[], int, int, int>)delegate(byte[] buf, int offset, int count)
-			{
-				Array.Copy(new byte[] { 1 }, buf, 1);
-				return 1;
-			}));
-
-			// newline - 13 10
-			Expect.Call(stream.Read(new byte[] { 1 }, 0, 1)).Do(((Func<byte[], int, int, int>)delegate(byte[] buf, int offset, int count)
-			{
-				Array.Copy(new byte[] { 13 }, buf, 1);
-				return 1;
-			}));
-
-			Expect.Call(stream.Read(new byte[] { 13 }, 0, 1)).Do(((Func<byte[], int, int, int>)delegate(byte[] buf, int offset, int count)
-			{
-				Array.Copy(new byte[] { 10 }, buf, 1);
-				return 1;
-			}));
-
-			var getter = transport.GetReadLine();
-
-			mocks.ReplayAll();
-
-			getter.Invoke();
-
-			mocks.VerifyAll();
-		}
-
-		[Test]
-		public void GetReadLine_ResourceWithReadLineMethod()
-		{
-			var transport = new ModbusAsciiTransport(new TestSerialPortAdapter());
-
-			var getter = transport.GetReadLine();
-			Assert.AreEqual("FooBar", getter.Invoke());
-		}
-
 		[Test]
 		public void BuildMessageFrame()
 		{
@@ -73,11 +29,14 @@ namespace Modbus.UnitTests.IO
 		public void ReadRequestResponse()
 		{
 			var mocks = new MockRepository();
-			var mockTransport = mocks.PartialMock<ModbusAsciiTransport>(MockRepository.GenerateStub<IStreamResource>());
-			Expect.Call(mockTransport.GetReadLine()).Return(() => ":110100130025B6");
+			var stream = mocks.StrictMock<IStreamResource>();
+			var transport = new ModbusAsciiTransport(stream);
+
+			ExpectReadLine(stream, Encoding.ASCII.GetBytes(":110100130025B6\r\n"));
+
 			mocks.ReplayAll();
 
-			Assert.AreEqual(new byte[] { 17, 1, 0, 19, 0, 37, 182 }, mockTransport.ReadRequestResponse());
+			Assert.AreEqual(new byte[] { 17, 1, 0, 19, 0, 37, 182 }, transport.ReadRequestResponse());
 
 			mocks.VerifyAll();
 		}
@@ -94,8 +53,8 @@ namespace Modbus.UnitTests.IO
 			mockSerialResource.ReadTimeout = 0;
 			LastCall.IgnoreArguments();
 
-			var mockTransport = mocks.PartialMock<ModbusAsciiTransport>(MockRepository.GenerateStub<IStreamResource>());
-			Expect.Call(mockTransport.GetReadLine()).Return(() => ":10");
+			var mockTransport = mocks.PartialMock<ModbusAsciiTransport>(mockSerialResource);
+			ExpectReadLine(mockSerialResource, Encoding.ASCII.GetBytes(":10\r\n"));
 			mocks.ReplayAll();
 
 			mockTransport.ReadRequestResponse();
@@ -119,6 +78,23 @@ namespace Modbus.UnitTests.IO
 			ReadCoilsInputsRequest message = new ReadCoilsInputsRequest(Modbus.ReadCoils, 17, 19, 37);
 			byte[] frame = { 17, Modbus.ReadCoils, 0, 19, 0, 37, 181 };
 			Assert.IsFalse(transport.ChecksumsMatch(message, frame));
+		}
+
+		private static void ExpectReadLine(IStreamResource stream, byte[] frame)
+		{
+			byte lastByte = 0;
+
+			foreach (var b in frame)
+			{
+				byte tempByte = b;
+				Expect.Call(stream.Read(new byte[] { lastByte }, 0, 1)).Do(((Func<byte[], int, int, int>) delegate(byte[] buf, int offset, int count)
+				{
+					Array.Copy(new byte[] { tempByte }, buf, 1);
+					return 1;
+				}));
+
+				lastByte = tempByte;
+			}
 		}
 
 		class TestSerialPortAdapter : IStreamResource
