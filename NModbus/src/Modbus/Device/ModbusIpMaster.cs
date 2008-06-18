@@ -19,13 +19,39 @@ namespace Modbus.Device
 		/// <summary>
 		/// Modbus IP master factory method.
 		/// </summary>
+		[Obsolete("Use CreateIp instead.")]
+		public static ModbusIpMaster CreateTcp(TcpClient tcpClient)
+		{
+			if (tcpClient == null)
+				throw new ArgumentNullException("tcpClient");
+
+			return CreateIp(new TcpClientAdapter(tcpClient));
+		}
+
+		/// <summary>
+		/// Modbus IP master factory method.
+		/// </summary>
 		public static ModbusIpMaster CreateIp(TcpClient tcpClient)
 		{
 			if (tcpClient == null)
 				throw new ArgumentNullException("tcpClient");
 
 			return CreateIp(new TcpClientAdapter(tcpClient));
-		}	
+		}
+
+		/// <summary>
+		/// Modbus IP master factory method.
+		/// </summary>
+		[Obsolete("Use CreateIp instead.")]
+		public static ModbusIpMaster CreateUdp(UdpClient udpClient)
+		{
+			if (udpClient == null)
+				throw new ArgumentNullException("udpClient");
+			if (!udpClient.Client.Connected)
+				throw new InvalidOperationException("UdpClient must be bound to a default remote host. Call the Connect method.");
+
+			return CreateIp(new UdpClientAdapter(udpClient));
+		}
 
 		/// <summary>
 		/// Modbus IP master factory method.

@@ -85,6 +85,7 @@
     <Compile Include="Device\ModbusTcpSlave.cs" />
     <Compile Include="Device\ModbusUdpSlave.cs" />
     <Compile Include="Device\TcpConnectionEventArgs.cs" />
+    <Compile Include="IO\ISerialResource.cs" />
     <Compile Include="IO\StreamResourceUtility.cs" />
     <Compile Include="IO\IStreamResource.cs" />
     <Compile Include="IO\ModbusAsciiTransport.cs" />
