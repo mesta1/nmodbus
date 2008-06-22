@@ -68,10 +68,10 @@ namespace Modbus.IntegrationTests
 			return port;
 		}
 
-		public static FtdUsbPort CreateAndOpenUsbPort(uint portId)
+		public static FtdUsbPort CreateAndOpenUsbPort(uint index)
 		{
-			FtdUsbPort port = new FtdUsbPort(portId);
-			port.Open();
+			FtdUsbPort port = new FtdUsbPort();
+			port.OpenByIndex(index);
 
 			return port;
 		}
@@ -238,8 +238,8 @@ namespace Modbus.IntegrationTests
 		public virtual void ExecuteCustomMessage_ReadHoldingRegisters()
 		{
 			CustomReadHoldingRegistersRequest request = new CustomReadHoldingRegistersRequest(3, SlaveAddress, 104, 2);
-			ushort[] registers = Master.ExecuteCustomMessage<CustomReadHoldingRegistersResponse, ushort>(request);
-			Assert.AreEqual(new ushort[] { 0, 0 }, registers);
+			CustomReadHoldingRegistersResponse response = Master.ExecuteCustomMessage<CustomReadHoldingRegistersResponse>(request);
+			Assert.AreEqual(new ushort[] { 0, 0 }, response.Data);
 		}
 
 		[Test]
@@ -250,9 +250,11 @@ namespace Modbus.IntegrationTests
 			CustomReadHoldingRegistersRequest readRequest = new CustomReadHoldingRegistersRequest(3, SlaveAddress, testAddress, (ushort) testValues.Length);
 			CustomWriteMultipleRegistersRequest writeRequest = new CustomWriteMultipleRegistersRequest(16, SlaveAddress, testAddress, new RegisterCollection(testValues));
 
-			ushort[] originalValues = Master.ExecuteCustomMessage<CustomReadHoldingRegistersResponse, ushort>(readRequest);
+			var response = Master.ExecuteCustomMessage<CustomReadHoldingRegistersResponse>(readRequest);
+			ushort[] originalValues = response.Data;
 			Master.ExecuteCustomMessage<CustomWriteMultipleRegistersResponse>(writeRequest);
-			ushort[] newValues = Master.ExecuteCustomMessage<CustomReadHoldingRegistersResponse, ushort>(readRequest);
+			response = Master.ExecuteCustomMessage<CustomReadHoldingRegistersResponse>(readRequest);
+			ushort[] newValues = response.Data;
 			Assert.AreEqual(testValues, newValues);
 			writeRequest = new CustomWriteMultipleRegistersRequest(16, SlaveAddress, testAddress, new RegisterCollection(originalValues));
 			Master.ExecuteCustomMessage<CustomWriteMultipleRegistersResponse>(writeRequest);
