@@ -89,7 +89,7 @@ namespace FtdAdapter
 				_baudRate = value;
 
 				if (IsOpen)
-					InvokeFtdMethod(delegate { return FT_SetBaudRate(_deviceHandle, (uint) BaudRate); });
+					InvokeFtdMethod(() => FT_SetBaudRate(_deviceHandle, (uint) BaudRate));
 			}
 		}
 
@@ -110,7 +110,7 @@ namespace FtdAdapter
 				_dataBits = value;
 
 				if (IsOpen)
-					InvokeFtdMethod(delegate { return FT_SetDataCharacteristics(DeviceHandle, (byte) DataBits, (byte) StopBits, (byte) Parity); });
+					InvokeFtdMethod(() => FT_SetDataCharacteristics(DeviceHandle, (byte) DataBits, (byte) StopBits, (byte) Parity));
 			}
 		}
 
@@ -139,7 +139,7 @@ namespace FtdAdapter
 				_readTimeout = (uint) value;
 
 				if (IsOpen)
-					InvokeFtdMethod(delegate { return FT_SetTimeouts(DeviceHandle, (byte) ReadTimeout, (byte) WriteTimeout); });
+					InvokeFtdMethod(() => FT_SetTimeouts(DeviceHandle, (byte) ReadTimeout, (byte) WriteTimeout));
 			}
 		}
 
@@ -160,7 +160,7 @@ namespace FtdAdapter
 				_writeTimeout = (uint) value;
 
 				if (IsOpen)
-					InvokeFtdMethod(delegate { return FT_SetTimeouts(DeviceHandle, (byte) ReadTimeout, (byte) WriteTimeout); });
+					InvokeFtdMethod(() => FT_SetTimeouts(DeviceHandle, (byte) ReadTimeout, (byte) WriteTimeout));
 			}
 		}
 
@@ -178,7 +178,7 @@ namespace FtdAdapter
 				_stopBits = (byte) value;
 
 				if (IsOpen)
-					InvokeFtdMethod(delegate { return FT_SetDataCharacteristics(_deviceHandle, (byte) DataBits, (byte) StopBits, (byte) Parity); });
+					InvokeFtdMethod(() => FT_SetDataCharacteristics(_deviceHandle, (byte) DataBits, (byte) StopBits, (byte) Parity));
 			}
 		}
 
@@ -196,7 +196,7 @@ namespace FtdAdapter
 				_parity = (byte) value;
 
 				if (IsOpen)
-					InvokeFtdMethod(delegate { return FT_SetDataCharacteristics(DeviceHandle, (byte) DataBits, (byte) StopBits, (byte) Parity); });
+					InvokeFtdMethod(() => FT_SetDataCharacteristics(DeviceHandle, (byte) DataBits, (byte) StopBits, (byte) Parity));
 			}
 		}
 
@@ -327,7 +327,7 @@ namespace FtdAdapter
 		{
 			try
 			{
-				InvokeFtdMethod(delegate { return FT_Close(DeviceHandle); });
+				InvokeFtdMethod(() => FT_Close(DeviceHandle));
 			}
 			finally
 			{
@@ -414,7 +414,7 @@ namespace FtdAdapter
 			if (!IsOpen)
 				throw new InvalidOperationException("Port is not open.");
 
-			InvokeFtdMethod(delegate { return FT_Purge(DeviceHandle, PurgeRx); });
+			InvokeFtdMethod(() => FT_Purge(DeviceHandle, PurgeRx));
 		}
 
 		///<summary>
@@ -442,7 +442,7 @@ namespace FtdAdapter
 		internal static int CreateDeviceInfoList()
 		{
 			uint deviceCount = 0;
-			InvokeFtdMethod(delegate { return FT_CreateDeviceInfoList(ref deviceCount); });
+			InvokeFtdMethod(() => FT_CreateDeviceInfoList(ref deviceCount));
 
 			return (int) deviceCount;
 		}
