@@ -7,7 +7,7 @@ using Unme.Common;
 
 namespace Modbus.IntegrationTests.CustomMessages
 {
-	public class CustomReadHoldingRegistersResponse : IModbusMessageWithData<ushort>
+	public class CustomReadHoldingRegistersResponse : IModbusMessage
 	{
 		private byte _functionCode;
 		private byte _slaveAddress;

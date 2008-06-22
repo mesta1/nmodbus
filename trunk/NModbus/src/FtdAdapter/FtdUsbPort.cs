@@ -1,11 +1,10 @@
 using System;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Modbus.IO;
-using Modbus.Utility;
-using System.Globalization;
-using System.Linq;
 
 namespace FtdAdapter
 {
@@ -37,22 +36,23 @@ namespace FtdAdapter
 		[DllImport(FtdAssemblyName)]
 		static extern FtdStatus FT_GetDeviceInfoDetail(uint index, ref uint flags, ref uint type, ref uint id,
 			ref uint locid, [In] [Out] byte[] serial, [In] [Out] byte[] description, ref uint deviceHandle);
-
 		[DllImport(FtdAssemblyName)]
-		static extern FtdStatus FT_OpenEx(byte[] arg1, uint flags, ref uint deviceHandle);
+		static extern FtdStatus FT_OpenEx(byte[] key, uint flags, ref uint deviceHandle);
+		[DllImport(FtdAssemblyName)]
+		static extern FtdStatus FT_OpenEx(uint locationId, uint flags, ref uint deviceHandle);
 
 		private const string FtdAssemblyName = "FTD2XX.dll";
 		private const byte PurgeRx = 1;
-		private const uint _infiniteTimeout = 0;
-		private readonly FtdDeviceInfo _deviceInfo;
-		private uint _deviceId;
+		private const uint DefaultInfiniteTimeout = 0;
+		private const uint _infiniteTimeout = DefaultInfiniteTimeout;
+		private uint _deviceIndex;
 		private uint _deviceHandle;
-		private uint _readTimeout = _infiniteTimeout;
-		private uint _writeTimeout = _infiniteTimeout;
+		private uint _readTimeout = DefaultInfiniteTimeout;
+		private uint _writeTimeout = DefaultInfiniteTimeout;
 		private int _baudRate = 9600;
 		private int _dataBits = 8;
 		private byte _stopBits = 1;
-		private byte _parity = 0;		
+		private byte _parity = 0;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FtdUsbPort"/> class.
@@ -63,49 +63,13 @@ namespace FtdAdapter
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FtdUsbPort"/> class.
+		/// The index value provided is used by the default Open method.
 		/// </summary>
-		/// <param name="deviceId">The device ID.</param>
-		public FtdUsbPort(uint deviceId)
+		/// <param name="index">Must be 0 if only one device is attached. For multiple devices 1, 2 etc.</param>
+		[Obsolete("Use the default constructor and an explicit Open method instead.")]
+		public FtdUsbPort(uint index)
 		{
-			_deviceId = deviceId;
-		}
-
-		    /// <summary>
-       /// Initializes a new instance of the <see cref="FtdUsbPort"/> class.
-       /// </summary>
-       /// <param name="deviceInfo">The device info.</param>
-       public FtdUsbPort(FtdDeviceInfo deviceInfo)
-       {
-           _deviceInfo = deviceInfo;
-       }
-
-	   /// <summary>
-	   /// Gets the device info.
-	   /// </summary>
-       public FtdDeviceInfo DeviceInfo
-       {
-           get { return _deviceInfo; }
-       }
-
-		/// <summary>
-		/// Gets or sets the device ID.
-		/// </summary>
-		public int DeviceId
-		{
-			get
-			{
-				return (int) _deviceId;
-			}
-			set
-			{
-				if (value < 0)
-					throw new ArgumentException("Device ID must be greater than 0.");
-
-				if (IsOpen)
-					throw new InvalidOperationException("Cannot set the Device ID when the port is open");
-
-				_deviceId = (uint) value;
-			}
+			_deviceIndex = index;
 		}
 
 		/// <summary>
@@ -125,7 +89,7 @@ namespace FtdAdapter
 				_baudRate = value;
 
 				if (IsOpen)
-					InvokeFtdMethod(delegate { return FT_SetBaudRate(_deviceHandle, (uint) _baudRate); });
+					InvokeFtdMethod(delegate { return FT_SetBaudRate(_deviceHandle, (uint) BaudRate); });
 			}
 		}
 
@@ -146,7 +110,7 @@ namespace FtdAdapter
 				_dataBits = value;
 
 				if (IsOpen)
-					InvokeFtdMethod(delegate { return FT_SetDataCharacteristics(_deviceHandle, (byte) _dataBits, _stopBits, _parity); });
+					InvokeFtdMethod(delegate { return FT_SetDataCharacteristics(DeviceHandle, (byte) DataBits, (byte) StopBits, (byte) Parity); });
 			}
 		}
 
@@ -175,7 +139,7 @@ namespace FtdAdapter
 				_readTimeout = (uint) value;
 
 				if (IsOpen)
-					InvokeFtdMethod(delegate { return FT_SetTimeouts(_deviceHandle, _readTimeout, _writeTimeout); });
+					InvokeFtdMethod(delegate { return FT_SetTimeouts(DeviceHandle, (byte) ReadTimeout, (byte) WriteTimeout); });
 			}
 		}
 
@@ -196,7 +160,7 @@ namespace FtdAdapter
 				_writeTimeout = (uint) value;
 
 				if (IsOpen)
-					InvokeFtdMethod(delegate { return FT_SetTimeouts(_deviceHandle, _readTimeout, _writeTimeout); });
+					InvokeFtdMethod(delegate { return FT_SetTimeouts(DeviceHandle, (byte) ReadTimeout, (byte) WriteTimeout); });
 			}
 		}
 
@@ -214,7 +178,7 @@ namespace FtdAdapter
 				_stopBits = (byte) value;
 
 				if (IsOpen)
-					InvokeFtdMethod(delegate { return FT_SetDataCharacteristics(_deviceHandle, (byte) _dataBits, _stopBits, _parity); });
+					InvokeFtdMethod(delegate { return FT_SetDataCharacteristics(_deviceHandle, (byte) DataBits, (byte) StopBits, (byte) Parity); });
 			}
 		}
 
@@ -232,7 +196,7 @@ namespace FtdAdapter
 				_parity = (byte) value;
 
 				if (IsOpen)
-					InvokeFtdMethod(delegate { return FT_SetDataCharacteristics(_deviceHandle, (byte) _dataBits, _stopBits, _parity); });
+					InvokeFtdMethod(delegate { return FT_SetDataCharacteristics(DeviceHandle, (byte) DataBits, (byte) StopBits, (byte) Parity); });
 			}
 		}
 
@@ -243,7 +207,7 @@ namespace FtdAdapter
 		{
 			get
 			{
-				return _deviceHandle != 0;
+				return DeviceHandle != 0;
 			}
 		}
 
@@ -256,39 +220,105 @@ namespace FtdAdapter
 		/// <summary>
 		/// Returns the number of D2XX devices connected to the system.
 		/// </summary>
-		public static int DeviceCount()
+		public static int GetDeviceCount()
 		{
-			uint deviceCount = 0;
-			InvokeFtdMethod(delegate { return FT_CreateDeviceInfoList(ref deviceCount); });
+			return CreateDeviceInfoList();
+		}
+		
+		/// <summary>
+		/// Gets an array of the currently connected device's device info.
+		/// </summary>
+		/// <returns>An array of FtdDeviceInfo objects.</returns>
+		/// <exception cref="IOException"></exception>
+		public static FtdDeviceInfo[] GetDeviceInfos()
+		{
+			return Enumerable.Range(0, CreateDeviceInfoList()).Select(n => GetDeviceInfo((uint) n)).ToArray();
+		}
 
-			return (int) deviceCount;
+		/// <summary>
+		/// Gets the device info at the specified device index.
+		/// </summary>
+		/// <param name="index">Index of the device.</param>
+		/// <returns>An FtdDeviceInfo instance.</returns>
+		public static FtdDeviceInfo GetDeviceInfo(uint index)
+		{
+			uint flags = 0, type = 0, id = 0, locId = 0, handle = 0;		
+			var serial = new byte[16];
+			var description = new byte[64];
+
+			CreateDeviceInfoList();
+			InvokeFtdMethod(() => FT_GetDeviceInfoDetail(index, ref flags, ref type, ref id, ref locId, serial, description, ref handle));
+
+			return new FtdDeviceInfo(flags, type, id, locId, Encoding.ASCII.GetString(serial).Split('\0')[0], Encoding.ASCII.GetString(description).Split('\0')[0]);
 		}
 
 		/// <summary>
 		/// Opens a new port connection.
 		/// </summary>
+		[Obsolete("Use OpenByIndex instead.")]
 		public void Open()
 		{
 			if (IsOpen)
 				throw new InvalidOperationException("Port is already open.");
 
-			if (_deviceInfo.SerialNumber == null)
-			{
-				InvokeFtdMethod(() => FT_Open(_deviceId, ref _deviceHandle));
-			}
-			else
-			{
-				var bytes = Encoding.ASCII.GetBytes(_deviceInfo.SerialNumber);
-				InvokeFtdMethod(() => FT_OpenEx(bytes, (uint) OpenExFlags.BySerialNumber, ref _deviceHandle));
-			}
-
-			BaudRate = _baudRate;
-			
-			InvokeFtdMethod(() => FT_SetDataCharacteristics(_deviceHandle, (byte) _dataBits, _stopBits, _parity));
-			InvokeFtdMethod(() => FT_SetTimeouts(_deviceHandle, _readTimeout, _writeTimeout));
-
-			SetFlowControl(FtdFlowControl.None, 0, 0);
+			OpenByIndex(_deviceIndex);			
 		}
+
+		/// <summary>
+		/// Opens the device by index.
+		/// </summary>
+		/// <param name="index">Must be 0 if only one device is attached. For multiple devices 1, 2 etc.</param>
+		public void OpenByIndex(uint index)
+		{
+			if (IsOpen)
+				throw new InvalidOperationException("Port is already open.");
+
+			InvokeFtdMethod(() => FT_Open(index, ref _deviceHandle));
+			InitializeUsbPort();
+		}
+
+		/// <summary>
+		/// Opens the device by location id.
+		/// </summary>
+		/// <param name="locationId">The location id.</param>
+		public void OpenByLocationId(uint locationId)
+		{
+			if (IsOpen)
+				throw new InvalidOperationException("Port is already open.");
+
+			InvokeFtdMethod(() => FT_OpenEx(locationId, (uint) OpenExFlags.ByLocation, ref _deviceHandle));
+			InitializeUsbPort();
+		}
+
+		/// <summary>
+		/// Opens the device by serial number.
+		/// </summary>
+		/// <param name="serialNumber">The serial number.</param>
+		public void OpenBySerialNumber(string serialNumber)
+		{
+			if (serialNumber == null)
+				throw new ArgumentNullException("serialNumber");
+			if (IsOpen)
+				throw new InvalidOperationException("Port is already open.");
+
+			InvokeFtdMethod(() => FT_OpenEx(Encoding.ASCII.GetBytes(serialNumber), (uint) OpenExFlags.BySerialNumber, ref _deviceHandle));
+			InitializeUsbPort();
+		}
+
+		/// <summary>
+		/// Opens the device by description.
+		/// </summary>
+		/// <param name="description">The description.</param>
+		public void OpenByDescription(string description)
+		{
+			if (description == null)
+				throw new ArgumentNullException("description");
+			if (IsOpen)
+				throw new InvalidOperationException("Port is already open.");
+
+			InvokeFtdMethod(() => FT_OpenEx(Encoding.ASCII.GetBytes(description), (uint) OpenExFlags.ByDescription, ref _deviceHandle));
+			InitializeUsbPort();
+		}				
 
 		/// <summary>
 		/// Closes the port connection.
@@ -297,7 +327,7 @@ namespace FtdAdapter
 		{
 			try
 			{
-				InvokeFtdMethod(delegate { return FT_Close(_deviceHandle); });
+				InvokeFtdMethod(delegate { return FT_Close(DeviceHandle); });
 			}
 			finally
 			{
@@ -337,12 +367,12 @@ namespace FtdAdapter
 
 			var buf = new byte[count];
 			Array.Copy(buffer, offset, buf, 0, count);
-			InvokeFtdMethod(() => FT_Write(_deviceHandle, buf, (uint) count, ref bytesWritten));
+			InvokeFtdMethod(() => FT_Write(DeviceHandle, buf, (uint) count, ref bytesWritten));
 
 			if (count != 0 && bytesWritten == 0)
 				throw new TimeoutException("The operation has timed out.");
 			if (bytesWritten != count)
-               throw new IOException("Not all bytes written to stream.");
+				throw new IOException("Not all bytes written to stream.");
 		}
 
 		/// <summary>
@@ -367,7 +397,7 @@ namespace FtdAdapter
 
 			uint numBytesReturned = 0;
 			var buf = new byte[count];
-			InvokeFtdMethod(() => FT_Read(_deviceHandle, buf, (uint) count, ref numBytesReturned));
+			InvokeFtdMethod(() => FT_Read(DeviceHandle, buf, (uint) count, ref numBytesReturned));
 			Array.Copy(buf, 0, buffer, offset, numBytesReturned);
 
 			if (count != 0 && numBytesReturned == 0)
@@ -384,7 +414,7 @@ namespace FtdAdapter
 			if (!IsOpen)
 				throw new InvalidOperationException("Port is not open.");
 
-			InvokeFtdMethod(delegate { return FT_Purge(_deviceHandle, PurgeRx); });
+			InvokeFtdMethod(delegate { return FT_Purge(DeviceHandle, PurgeRx); });
 		}
 
 		///<summary>
@@ -396,37 +426,8 @@ namespace FtdAdapter
 		public void SetFlowControl(FtdFlowControl FlowControl, byte Xon, byte Xoff)
 		{
 			InvokeFtdMethod(() => FT_SetFlowControl(_deviceHandle, (ushort) FlowControl, Xon, Xoff));
-		}
-
-		/// <summary>
-		/// Gets the device info at the specified device index.
-		/// </summary>
-		/// <param name="index">Index of the device.</param>
-		/// <returns>An FtdDeviceInfo instance.</returns>
-		public static FtdDeviceInfo GetDeviceInfo(int index)
-		{
-			uint flags = 0;
-			uint type = 0;
-			uint id = 0;
-			uint locid = 0;
-			var serial = new byte[16];
-			var description = new byte[64];
-			uint handle = 0;
-
-			InvokeFtdMethod(() => FT_GetDeviceInfoDetail((uint) index, ref flags, ref type, ref id, ref locid, serial, description, ref handle));
-
-			return new FtdDeviceInfo(flags, type, id, locid, Encoding.ASCII.GetString(serial).Split('\0')[0], Encoding.ASCII.GetString(description).Split('\0')[0]);
-		}
-
-		/// <summary>
-		/// Gets an array of all currently connected devices.
-		/// </summary>
-		/// <returns>An array of FtdDeviceInfo objects.</returns>
-		public static FtdDeviceInfo[] GetDeviceInfos()
-		{
-			return Enumerable.Range(0, DeviceCount()).Select(n => GetDeviceInfo(n)).ToArray();
-		}
-
+		}		
+		
 		/// <summary>
 		/// Invokes FT method and checks the FTStatus result, throw IOException if result is something other than FTStatus.OK
 		/// </summary>
@@ -435,9 +436,23 @@ namespace FtdAdapter
 			FtdStatus status = func();
 
 			if (status != FtdStatus.OK)
-			{
 				throw new IOException(Enum.GetName(typeof(FtdStatus), status));
-			}
+		}
+
+		internal static int CreateDeviceInfoList()
+		{
+			uint deviceCount = 0;
+			InvokeFtdMethod(delegate { return FT_CreateDeviceInfoList(ref deviceCount); });
+
+			return (int) deviceCount;
+		}
+
+		internal void InitializeUsbPort()
+		{
+			BaudRate = BaudRate;
+			SetFlowControl(FtdFlowControl.None, 0, 0);
+			InvokeFtdMethod(() => FT_SetDataCharacteristics(DeviceHandle, (byte) DataBits, (byte) StopBits, (byte) Parity));
+			InvokeFtdMethod(() => FT_SetTimeouts(DeviceHandle, (uint) ReadTimeout, (uint) WriteTimeout));
 		}
 	}
 }

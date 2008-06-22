@@ -1,99 +1,89 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace FtdAdapter
+﻿namespace FtdAdapter
 {
 	/// <summary>
-	/// Provides information about attached FTDI USB devices.
+	/// Provides information about an attached FTDI USB device.
 	/// </summary>
 	public struct FtdDeviceInfo
 	{
+		private readonly uint _flags;
+		private readonly uint _id;
+		private readonly string _serialNumber;
+		private readonly uint _type;
+		private readonly uint _locationId;
+		private readonly string _description;
+
 		internal FtdDeviceInfo(uint flags, uint type, uint id, uint locId, string serialNumber, string description)
 		{
-			this.flags = flags;
-			this.type = type;
-			this.id = id;
-			this.locId = locId;
-			this.serialNumber = serialNumber;
-			this.description = description;
+			_flags = flags;
+			_type = type;
+			_id = id;
+			_locationId = locId;
+			_serialNumber = serialNumber;
+			_description = description;
 		}
-
-		private readonly uint id;
-
+		
 		/// <summary>
-		/// Complete device ID, comprising Vid and Pid
+		/// Complete device ID, comprising Vendor ID and Product ID.
 		/// </summary>
 		public uint Id
 		{
-			get { return id; }
+			get { return _id; }
 		}
 
 		/// <summary>
-		/// Vendor ID
+		/// Vendor ID.
 		/// </summary>
-		public uint Vid
+		public uint VendorId
 		{
-			get { return (id >> 16) & 0xFFFF; }
+			get { return (_id >> 16) & 0xFFFF; }
 		}
 
 		/// <summary>
 		/// Product ID
 		/// </summary>
-		public uint Pid
+		public uint ProductId
 		{
-			get { return id & 0xFFFF; }
-		}
-
-		private readonly string serialNumber;
+			get { return _id & 0xFFFF; }
+		}	
 
 		/// <summary>
 		/// Serial number of device.
 		/// </summary>
 		public string SerialNumber
 		{
-			get { return serialNumber; }
+			get { return _serialNumber; }
 		}
 
-		private uint flags;
-
 		/// <summary>
-		/// Device flags
+		/// Device flags.
 		/// </summary>
 		public uint Flags
 		{
-			get { return flags; }
+			get { return _flags; }
 		}
-
-		private uint type;
 
 		/// <summary>
 		/// Device type.
 		/// </summary>
 		public uint Type
 		{
-			get { return type; }
+			get { return _type; }
 		}
-
-		private uint locId;
 
 		/// <summary>
 		/// LocID
 		/// </summary>
-		public uint Locid
+		public uint LocationId
 		{
-			get { return locId; }
+			get { return _locationId; }
 		}
-
-		private string description;
 
 		/// <summary>
 		/// Description of device.
 		/// </summary>
 		public string Description
 		{
-			get { return description; }
+			get { return _description; }
 		}
 
 		/// <summary>
@@ -101,16 +91,7 @@ namespace FtdAdapter
 		/// </summary>
 		public bool IsOpen
 		{
-			get { return (flags & 0x01) != 0; }
-		}
-
-		/// <summary>
-		/// String representation of the device.
-		/// </summary>
-		/// <returns>Returns the device description.</returns>
-		public override string ToString()
-		{
-			return description;
+			get { return (_flags & 0x01) != 0; }
 		}
 	}
 }

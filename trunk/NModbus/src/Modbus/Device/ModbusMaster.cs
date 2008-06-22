@@ -153,6 +153,7 @@ namespace Modbus.Device
 		/// <typeparam name="TData">The type of the data.</typeparam>
 		/// <param name="request">The request.</param>
 		/// <returns></returns>
+		[Obsolete("Use other ExecuteCustomMessage overload instead.")]
 		public TData[] ExecuteCustomMessage<TResponse, TData>(IModbusMessage request) where TResponse : IModbusMessageWithData<TData>, new()
 		{
 			TResponse response = Transport.UnicastMessage<TResponse>(request);
@@ -164,9 +165,9 @@ namespace Modbus.Device
 		/// </summary>
 		/// <typeparam name="TResponse">The type of the response.</typeparam>
 		/// <param name="request">The request.</param>
-		public void ExecuteCustomMessage<TResponse>(IModbusMessage request) where TResponse : IModbusMessage, new()
+		public TResponse ExecuteCustomMessage<TResponse>(IModbusMessage request) where TResponse : IModbusMessage, new()
 		{
-			Transport.UnicastMessage<TResponse>(request);
+			return Transport.UnicastMessage<TResponse>(request);
 		}
 
 		internal static void ValidateData<T>(string argumentName, T[] data, int maxDataLength)

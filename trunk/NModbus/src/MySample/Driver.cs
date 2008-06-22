@@ -108,14 +108,14 @@ namespace MySample
 		/// </summary>
 		public static void ModbusSerialUsbRtuMasterWriteCoils()
 		{
-			using (FtdUsbPort port = new FtdUsbPort(0))
+			using (FtdUsbPort port = new FtdUsbPort())
 			{
 				// configure usb port
 				port.BaudRate = 9600;
 				port.DataBits = 8;
 				port.Parity = FtdParity.None;
 				port.StopBits = FtdStopBits.One;
-				port.Open();
+				port.OpenByIndex(0);
 
 				// create modbus master
 				IModbusSerialMaster master = ModbusSerialMaster.CreateRtu(port);
@@ -133,14 +133,14 @@ namespace MySample
 		/// </summary>
 		public static void ModbusSerialUsbAsciiMasterWriteCoils()
 		{
-			using (FtdUsbPort port = new FtdUsbPort(0))
+			using (FtdUsbPort port = new FtdUsbPort())
 			{
 				// configure usb port
 				port.BaudRate = 9600;
 				port.DataBits = 8;
 				port.Parity = FtdParity.None;
 				port.StopBits = FtdStopBits.One;
-				port.Open();
+				port.OpenByIndex(0);
 
 				// create modbus master
 				IModbusSerialMaster master = ModbusSerialMaster.CreateAscii(port);
@@ -160,7 +160,7 @@ namespace MySample
 		{
 			using (TcpClient client = new TcpClient("127.0.0.1", 502))
 			{
-				ModbusIpMaster master = ModbusIpMaster.CreateTcp(client);
+				ModbusIpMaster master = ModbusIpMaster.CreateIp(client);
 
 				// read five input values
 				ushort startAddress = 100;
@@ -189,7 +189,7 @@ namespace MySample
 				IPEndPoint endPoint = new IPEndPoint(new IPAddress(new byte[] { 127, 0, 0, 1 }), 502);
 				client.Connect(endPoint);
 
-				ModbusIpMaster master = ModbusIpMaster.CreateUdp(client);
+				ModbusIpMaster master = ModbusIpMaster.CreateIp(client);
 
 				ushort startAddress = 1;
 
@@ -319,7 +319,7 @@ namespace MySample
 
 			// create the master
 			TcpClient masterTcpClient = new TcpClient(address.ToString(), port);
-			ModbusIpMaster master = ModbusIpMaster.CreateTcp(masterTcpClient);
+			ModbusIpMaster master = ModbusIpMaster.CreateIp(masterTcpClient);
 
 			ushort numInputs = 5;
 			ushort startAddress = 100;
