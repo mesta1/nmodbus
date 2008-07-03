@@ -1,0 +1,301 @@
+<?xml version="1.0"?>
+<project default="all">
+	<include buildfile="NModbus.build.private" if="${file::exists('NModbus.build.private')}" />
+
+	<property name="path.fxcop" value="${environment::get-variable('FXCOP_HOME')}" />
+	<property name="path.framework" value="${environment::get-variable('SYSTEMROOT')}\Microsoft.NET\Framework\v3.5" />
+	<property name="path.ms.sdk" value="${environment::get-variable('MS_SDK_HOME')}" />
+	<property name="path.shfb" value="${environment::get-variable('SHFB_HOME')}\SandcastleBuilderConsole.exe" />
+	<property name="nantcontrib" value="${environment::get-variable('NANTCONTRIB_HOME')}\bin\NAnt.Contrib.Tasks.dll" />
+	<property name="path.ncoverconsole" value="${environment::get-variable('NCOVER_HOME')}\NCover.Console.exe" />
+	<property name="path.ncoverexplorer" value="${environment::get-variable('NCOVEREXPLORER_HOME')}\ncoverexplorer.console.exe" />
+	<property name="path.jre" value="${environment::get-variable('JRE_HOME')}" />
+	<property name="path.jdk" value="${environment::get-variable('JDK_HOME')}" />
+	<property name="path.bin" value="src\Modbus\bin\Release" />
+	<property name="path.signed.bin" value="src\Modbus\bin\SignedRelease" />
+	<property name="path.ftd.bin" value="src\FtdAdapter\bin\Release" />
+	<property name="path.signed.ftd.bin" value="src\FtdAdapter\bin\SignedRelease" />
+	<property name="path.src" value="src" />
+	<property name="path.output" value="build" />
+	<property name="path.lib" value="lib" />
+	<property name="path.tools" value="tools" />
+	<property name="path.ncoverexplorer.tasks" value="${path.tools}\ncover\NCoverExplorer.NAntTasks.dll" />
+	<property name="path.mbunit.console" value="${environment::get-variable('MBUNIT_HOME')}\bin\MbUnit.Cons.exe" />
+	<property name="path.mbunit.tasks" value="${path.tools}\MbUnit\MbUnit.Tasks.dll" />
+	<property name="path.nantgooglecode" value="${path.tools}\nant\NantGoogleCode.dll" />
+	<property name="path.jamod" value="${path.tools}\jamod" />
+	<property name="path.nmodbus" value="${path.tools}\nmodbus" />
+	<property name="path.docs" value="docs" />
+	<property name="path.dist" value="dist" />
+	<property name="version" value="1.8.0.0" />
+
+	<setenv name="PATH" value="%PATH%;${path.fxcop}" />
+
+	<target name="build">
+		<exec program="${path.framework}\msbuild.exe" failonerror="true">
+			<arg value="src\NModbus.sln"/>
+			<arg line="/p:Configuration=Release"/>
+		</exec>
+	</target>
+
+	<target name="build-signed">
+		<exec program="${path.framework}\msbuild.exe" failonerror="true">
+			<arg value="src\NModbus.sln"/>
+			<arg line="/p:Configuration=SignedRelease"/>
+		</exec>
+	</target>
+
+	<target name="clean">
+		<foreach item="Folder" property="foldername">
+			<in>
+				<items basedir="src">
+					<include name="*"></include>
+					<exclude name="."></exclude>
+				</items>
+			</in>
+			<do>
+				<delete dir="${foldername}\bin" />
+				<delete dir="${foldername}\obj" />
+			</do>
+		</foreach>
+		<delete dir="${path.output}" />
+		<delete dir="${path.dist}" />
+		<delete dir="${path.docs}" />
+	</target>
+
+	<target name="run-unit-tests" depends="build">
+		<loadtasks assembly="${path.mbunit.tasks}"/>
+		
+		<foreach item="Folder" property="foldername">
+			<in>
+				<items basedir="src">
+					<include name="*.UnitTests"></include>
+					<exclude name="."></exclude>
+				</items>
+			</in>
+			<do>
+				<mbunit
+					 report-types="Xml"
+         report-filename-format="${foldername}.UnitTests"
+         report-output-directory="${path.output}"
+         failonerror="false"> 
+					<assemblies>
+						<include name="${foldername}\bin\Release\${path::get-file-name(foldername)}.dll" />	
+					</assemblies>
+				</mbunit>
+			</do>
+		</foreach>
+	</target>
+
+	<target name="run-integration-tests" depends="build">
+		<foreach item="Folder" property="foldername">
+			<in>
+				<items basedir="src">
+					<include name="*.IntegrationTests"></include>
+					<exclude name="."></exclude>
+				</items>
+			</in>
+			<do>
+				<mbunit report-types ="Xml"
+         report-filename-format="${foldername}.IntegrationTests"
+         report-output-directory="${path.output}"
+         failonerror="false">
+					<assemblies>
+						<include name="${foldername}\bin\Release\${path::get-file-name(foldername)}.dll" />
+					</assemblies>
+				</mbunit>
+			</do>
+		</foreach>
+	</target>
+
+	<target name="run-code-coverage" depends="build">
+		<loadtasks assembly="${path.ncoverexplorer.tasks}"/>
+		<mkdir dir="${path.output}" failonerror="false"/>
+
+		<foreach item="Folder" property="foldername">
+			<in>
+				<items basedir="src">
+					<include name="*Tests"></include>
+					<exclude name="."></exclude>
+				</items>
+			</in>
+			<do>
+				<ncover program="${path.ncoverconsole}"
+          commandLineExe="${path.mbunit.console}"
+          commandLineArgs="${foldername}\bin\Release\${path::get-file-name(foldername)}.dll"
+          workingDirectory="${path.output}"
+          coverageFile="${path.output}\Modbus.${path::get-file-name(foldername)}.NCover.xml"
+          logFile="${path.output}\Coverage.log"
+         />
+			</do>
+		</foreach>
+
+		<ncoverexplorer program="${path.ncoverexplorer}"
+      projectName="NModbus"
+      outputDir="${path.output}"
+      reportType="4"
+      xmlReportName="CoverageSummary.xml"
+      satisfactoryCoverage="80"
+    >
+			<fileset>
+				<include name="${path.output}\*.NCover.xml"/>
+			</fileset>
+			<exclusions>
+				<exclusion type="Assembly" pattern="*Tests" />
+			</exclusions>
+		</ncoverexplorer>
+	</target>
+
+	<target name="run-fxcop" depends="build">
+		<loadtasks assembly="${nantcontrib}"/>
+		<mkdir dir="${path.output}" failonerror="false"/>
+
+		<fxcop analysisReportFilename="${path.output}\fxcop.xml">
+			<targets>
+				<include name="${path.bin}\Modbus.dll" />
+			</targets>
+		</fxcop>
+	</target>
+
+	<target name="dist" depends="clean, setversion, build, build-signed, run-unit-tests, docs">
+
+		<mkdir dir="${path.dist}" />
+		<mkdir dir="${path.dist}\scratch" />
+
+		<!-- create scratch directory with the delay signed binaries to distribute -->
+		<copy todir="${path.dist}\scratch\bin">
+			<fileset basedir="${path.signed.bin}">
+				<include name="*.dll" />
+				<exclude name="System.Core.dll" />
+			</fileset>
+		</copy>
+		<copy file="${path.signed.ftd.bin}\FtdAdapter.dll" todir="${path.dist}\scratch\bin" />
+
+		<!-- sign dlls with private key -->
+		<property name="path.privatekey" value="${environment::get-variable('PRIVATE_KEY_HOME')}\NModbus.snk" />
+		<foreach item="File" property="assembly">
+			<in>
+				<items basedir="${path.dist}\scratch\bin">
+					<include name="Modbus.dll" />
+					<include name="FtdAdapter.dll" />
+				</items>
+			</in>
+			<do>
+				<exec program="${path.ms.sdk}\bin\sn.exe" failonerror="true">
+					<arg value="-R" />
+					<arg value="${assembly}" />
+					<arg value ="${path.privatekey}" />
+				</exec>
+			</do>
+		</foreach>
+
+		<!-- create scratch directory with root files to distribute -->
+		<copy file="README.txt" todir="${path.dist}\scratch\root" />
+		<copy file="${path.docs}\Documentation.chm" tofile="${path.dist}\scratch\root\NModbus.chm" />
+
+		<!-- zip source distribution -->
+		<zip zipfile="${path.dist}\NModbus_${version}-source.zip">
+			<fileset basedir="." prefix="source">
+				<include name="**" />
+				<exclude name="**/dist/**" />
+				<exclude name="**/*.suo" />
+				<exclude name="**/*.resharper" />
+				<exclude name="**/*.user" />
+				<exclude name="**/obj/**" />
+				<exclude name="**/bin/**" />
+				<exclude name="**/docs/**" />
+				<exclude name="README.txt" />
+				<exclude name="*.private" />
+				<exclude name="msbuild_log.xml" />
+			</fileset>
+			<fileset  basedir="${path.dist}\scratch\root">
+				<include name="**" />
+			</fileset>
+			<fileset  basedir="${path.dist}\scratch\bin" prefix="bin">
+				<include name="**" />
+			</fileset>
+		</zip>
+
+		<!-- zip binary distribution -->
+		<zip zipfile="${path.dist}\NModbus_${version}.zip">
+			<fileset  basedir="${path.dist}\scratch\root">
+				<include name="**" />
+			</fileset>
+			<fileset  basedir="${path.dist}\scratch\bin" prefix="bin">
+				<include name="**" />
+			</fileset>
+		</zip>
+
+	</target>
+
+	<target name="all" depends="clean, build, run-unit-tests, run-integration-tests, run-code-coverage, run-fxcop" />
+
+	<target name="build-jamod">
+		<exec program="${path.jdk}\bin\javac.exe" commandline="-classpath comm.jar;jamod.jar;. *.java" workingdir="${path.jamod}" />
+	</target>
+
+	<target name="build-nmodbus-test-driver">
+		<exec program="csc.exe" commandline="/r:modbus.dll *.cs" workingdir="${path.nmodbus}" />
+	</target>
+
+	<target name="setup-java" depends="build-jamod">
+		<copy file="${path.jamod}\javax.comm.properties" todir="${path.jre}\lib" />
+		<copy file="${path.jamod}\win32com.dll" todir="${path.jre}\bin" />
+	</target>
+
+	<target name="docs" depends="build">
+		<exec program="${path.shfb}">
+			<arg value="NModbus.shfb"/>
+		</exec>
+	</target>
+
+	<target name="setversion" description="Stamp the version info onto assemblyinfo.cs files">
+
+		<foreach item="File" property="filename">
+			<in>
+				<items basedir="src">
+					<include name="**\AssemblyInfo.cs"></include>
+				</items>
+			</in>
+			<do>
+				<echo message="Set version ${filename}" />
+				<script language="C#">
+					<code>
+						<![CDATA[
+							public static void ScriptMain(Project project) 
+							{      
+								StreamReader reader = new StreamReader(project.Properties["filename"]);
+								string contents = reader.ReadToEnd();
+								reader.Close();
+
+								string newText = Regex.Replace(contents, @"\[assembly: AssemblyVersion\("".*""\)\]", 
+									String.Format("[assembly: AssemblyVersion(\"{0}\")]", project.Properties["version"]));
+
+								newText = Regex.Replace(newText, @"\[assembly: AssemblyFileVersion\("".*""\)\]", 
+									String.Format("[assembly: AssemblyFileVersion(\"{0}\")]", project.Properties["version"]));
+
+								StreamWriter writer = new StreamWriter(project.Properties["filename"], false);
+								writer.Write(newText);
+								writer.Close();
+							}
+            ]]>
+					</code>
+				</script>
+			</do>
+		</foreach>
+	</target>
+
+	<target name="upload" description="Uploads distribution to google code downloads page">
+		<if test="${not property::exists('gc.username') or not property::exists('gc.password')}">
+			<fail message="Private buildfile is missing or does not contain neccessary properties." />
+		</if>
+
+		<loadtasks assembly="${path.nantgooglecode}" />
+
+		<gcupload username="${gc.username}" password="${gc.password}" verbose="true" projectname="NModbus"
+			  filename="${path.dist}\NModbus_${version}.zip" targetfilename="NModbus_${version}.zip" summary="NModbus ${version} Binaries" />
+		<gcupload username="${gc.username}" password="${gc.password}" verbose="true" projectname="NModbus"
+			  filename="${path.dist}\NModbus_${version}-source.zip" targetfilename="NModbus_${version}-source.zip" summary="NModbus ${version} Source" />
+	</target>
+
+</project>
