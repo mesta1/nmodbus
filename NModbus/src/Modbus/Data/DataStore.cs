@@ -14,13 +14,13 @@ namespace Modbus.Data
 	public class DataStore
 	{
 		/// <summary>
-		/// Occurs when the DataStore is written to via a Modbus command.
+		/// Occurs when the DataStore is read from via a Modbus command.
 		/// </summary>
 		public event EventHandler<DataStoreEventArgs> DataStoreReadFrom;
 
 		/// <summary>
-		/// Occurs when the DataStore is read from via a Modbus command.
-		/// </summary>
+		/// Occurs when the DataStore is written to via a Modbus command.
+		/// </summary>		
 		public event EventHandler<DataStoreEventArgs> DataStoreWrittenTo;
 
 		private readonly object _syncRoot = new object();
