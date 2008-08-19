@@ -178,7 +178,7 @@ namespace Modbus.Device
 			if (data.Length == 0 || data.Length > maxDataLength)
 			{
 				throw new ArgumentException(String.Format(CultureInfo.InvariantCulture,
-					"The length of argument {0} must be between 0 and {1} inclusive.", argumentName, maxDataLength));
+					"The length of argument {0} must be between 1 and {1} inclusive.", argumentName, maxDataLength));
 			}
 		}
 
