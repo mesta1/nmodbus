@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Modbus.Utility;
 using Unme.Common;
+using System.Collections.Generic;
 
 namespace Modbus.Data
 {
@@ -99,14 +100,14 @@ namespace Modbus.Data
 		/// Write data to data store.
 		/// </summary>
 		/// <typeparam name="TData">The type of the data.</typeparam>
-		internal static void WriteData<TData>(DataStore dataStore, Collection<TData> items, ModbusDataCollection<TData> destination, ushort startAddress, object syncRoot)
+		internal static void WriteData<TData>(DataStore dataStore, IEnumerable<TData> items, ModbusDataCollection<TData> destination, ushort startAddress, object syncRoot)
 		{
 			int startIndex = startAddress + 1;
 
 			if (startIndex < 0 || startIndex >= destination.Count)
 				throw new ArgumentOutOfRangeException("Start address was out of range. Must be non-negative and <= the size of the collection.");
 
-			if (destination.Count < startIndex + items.Count)
+			if (destination.Count < startIndex + items.Count())
 				throw new ArgumentOutOfRangeException("Items collection is too large to write at specified start index.");
 
 			lock (syncRoot)

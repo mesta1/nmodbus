@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unme.Common;
 
 namespace Modbus.Utility
 {
@@ -13,13 +14,12 @@ namespace Modbus.Utility
 		/// <summary>
 		/// Updates subset of values in a collection.
 		/// </summary>
-		public static void Update<T>(IList<T> items, IList<T> destination, int startIndex)
+		public static void Update<T>(IEnumerable<T> items, IList<T> destination, int startIndex)
 		{
-			if (startIndex < 0 || destination.Count < startIndex + items.Count)
+			if (startIndex < 0 || destination.Count < startIndex + items.Count())
 				throw new ArgumentOutOfRangeException("Index was out of range. Must be non-negative and less than the size of the collection.");
 
-			for (int i = 0; i < items.Count; i++)
-				destination[i + startIndex] = items[i];
+			items.ForEachWithIndex((item, index) => destination[index + startIndex] = item);
 		}
 
 		/// <summary>
