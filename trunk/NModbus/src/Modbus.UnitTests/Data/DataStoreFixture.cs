@@ -170,8 +170,9 @@ namespace Modbus.UnitTests.Data
 			dataStore.DataStoreWrittenTo += (obj, e) =>
 			{
 				writtenToEventFired = true;
+				Assert.AreEqual(3, e.Data.A.Count);
 				Assert.AreEqual(4, e.StartAddress);
-				Assert.AreEqual(new bool[] { true, false, true }, e.Data.A.ToArray());
+				Assert.AreEqual(new [] { true, false, true }, e.Data.A.ToArray());
 				Assert.AreEqual(ModbusDataType.Coil, e.ModbusDataType);
 			};
 
@@ -181,7 +182,7 @@ namespace Modbus.UnitTests.Data
 			Assert.IsFalse(readFromEventFired);
 			Assert.IsTrue(writtenToEventFired);
 		}
-
+	
 		[Test]
 		public void DataStoreWrittenToEvent_WriteHoldingRegisters()
 		{
@@ -193,6 +194,7 @@ namespace Modbus.UnitTests.Data
 			dataStore.DataStoreWrittenTo += (obj, e) =>
 			{
 				writtenToEventFired = true;
+				Assert.AreEqual(3, e.Data.B.Count);
 				Assert.AreEqual(0, e.StartAddress);
 				Assert.AreEqual(new ushort[] { 5, 6, 7 }, e.Data.B.ToArray());
 				Assert.AreEqual(ModbusDataType.HoldingRegister, e.ModbusDataType);
