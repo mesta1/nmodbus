@@ -1,11 +1,11 @@
 using System;
 using System.Globalization;
+using System.Linq;
 using log4net;
 using Modbus.Data;
 using Modbus.IO;
 using Modbus.Message;
 using Unme.Common;
-using Unme.Common.NullReferenceExtension;
 
 namespace Modbus.Device
 {
@@ -68,7 +68,7 @@ namespace Modbus.Device
 
 		internal static WriteMultipleCoilsResponse WriteMultipleCoils(WriteMultipleCoilsRequest request, DataStore dataStore, ModbusDataCollection<bool> dataSource)
 		{
-			DataStore.WriteData(dataStore, request.Data, dataSource, request.StartAddress, dataStore.SyncRoot);
+			DataStore.WriteData(dataStore, request.Data.Take(request.NumberOfPoints), dataSource, request.StartAddress, dataStore.SyncRoot);
 			WriteMultipleCoilsResponse response = new WriteMultipleCoilsResponse(request.SlaveAddress, request.StartAddress, request.NumberOfPoints);
 
 			return response;
