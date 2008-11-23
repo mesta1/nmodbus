@@ -85,4 +85,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <PostBuildEvent>copy "$(ProjectDir)\..\..\lib\FTD2XX.dll" "$(TargetDir)"</PostBuildEvent>
+  </PropertyGroup>
 </Project>
