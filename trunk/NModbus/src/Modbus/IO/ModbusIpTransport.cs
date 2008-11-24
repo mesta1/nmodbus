@@ -95,9 +95,6 @@ namespace Modbus.IO
 
 		internal override byte[] BuildMessageFrame(IModbusMessage message)
 		{
-			if (message.TransactionId == 0)
-				message.TransactionId = GetNewTransactionId();
-
 			List<byte> messageBody = new List<byte>();
 			messageBody.AddRange(GetMbapHeader(message));
 			messageBody.AddRange(message.ProtocolDataUnit);
@@ -115,6 +112,7 @@ namespace Modbus.IO
 
 		internal override void Write(IModbusMessage message)
 		{
+            message.TransactionId = GetNewTransactionId();
 			byte[] frame = BuildMessageFrame(message);
 			_logger.InfoFormat("TX: {0}", frame.Join(", "));
 			StreamResource.Write(frame, 0, frame.Length);
