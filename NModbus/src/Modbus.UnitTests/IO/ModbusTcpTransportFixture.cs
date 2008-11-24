@@ -22,10 +22,9 @@ namespace Modbus.UnitTests.IO
 		{
 			MockRepository mocks = new MockRepository();
 			ModbusIpTransport mockModbusTcpTransport = mocks.PartialMock<ModbusIpTransport>(MockRepository.GenerateStub<IStreamResource>());
-			Expect.Call(mockModbusTcpTransport.GetNewTransactionId()).Return((ushort) 8);
 			ReadCoilsInputsRequest message = new ReadCoilsInputsRequest(Modbus.ReadCoils, 2, 10, 5);
 			mocks.ReplayAll();
-			Assert.AreEqual(new byte[] { 0, 8, 0, 0, 0, 6, 2, 1, 0, 10, 0, 5 }, mockModbusTcpTransport.BuildMessageFrame(message));
+			Assert.AreEqual(new byte[] { 0, 0, 0, 0, 0, 6, 2, 1, 0, 10, 0, 5 }, mockModbusTcpTransport.BuildMessageFrame(message));
 			mocks.VerifyAll();
 		}
 
