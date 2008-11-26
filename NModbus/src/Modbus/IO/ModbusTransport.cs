@@ -168,6 +168,9 @@ namespace Modbus.IO
 		{
 			if (request.FunctionCode != response.FunctionCode)
 				throw new IOException(String.Format(CultureInfo.InvariantCulture, "Received response with unexpected Function Code. Expected {0}, received {1}.", request.FunctionCode, response.FunctionCode));
+
+            if (request.SlaveAddress != response.SlaveAddress)
+                throw new IOException(String.Format(CultureInfo.InvariantCulture, "Response slave address does not match request. Expected {0}, received {1}.", response.SlaveAddress, request.SlaveAddress));
 		}
 
 		internal abstract byte[] ReadRequest();
