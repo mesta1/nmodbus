@@ -54,6 +54,8 @@ namespace Modbus.Device
 		{
 			if (udpClient == null)
 				throw new ArgumentNullException("udpClient");
+            if (!udpClient.Client.Connected)
+                throw new InvalidOperationException("UdpClient must be bound to a default remote host. Call the Connect method.");
 
 			return CreateAscii(new UdpClientAdapter(udpClient));
 		}
@@ -100,6 +102,8 @@ namespace Modbus.Device
 		{
 			if (udpClient == null)
 				throw new ArgumentNullException("udpClient");
+            if (!udpClient.Client.Connected)
+                throw new InvalidOperationException("UdpClient must be bound to a default remote host. Call the Connect method.");
 
 			return CreateRtu(new UdpClientAdapter(udpClient));
 		}
