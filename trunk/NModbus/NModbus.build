@@ -170,6 +170,7 @@
 			</fileset>
 		</copy>
 		<copy file="${path.signed.ftd.bin}\FtdAdapter.dll" todir="${path.dist}\scratch\bin" />
+		<copy file="${path.lib}\FTD2XX.dll" todir="${path.dist}\scratch\bin" />
 
 		<!-- sign dlls with private key -->
 		<property name="path.privatekey" value="${environment::get-variable('PRIVATE_KEY_HOME')}\NModbus.snk" />
