@@ -98,6 +98,7 @@
     <Compile Include="IO\SerialPortAdapter.cs" />
     <Compile Include="IO\TcpClientAdapter.cs" />
     <Compile Include="IO\UdpClientAdapter.cs" />
+    <Compile Include="Message\IModbusRequest.cs" />
     <Compile Include="Message\IModbusMessageWithData.cs" />
     <Compile Include="Message\ReadCoilsInputsRequest.cs" />
     <Compile Include="Message\ReadHoldingInputRegistersRequest.cs" />
