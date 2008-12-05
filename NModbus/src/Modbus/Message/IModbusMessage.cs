@@ -18,7 +18,7 @@ namespace Modbus.Message
 		///<summary>
 		/// Composition of the slave address and protocol data unit.
 		///</summary>
-		byte[] MessageFrame { get; }
+		byte[] MessageFrame { get; } 
 
 		/// <summary>
 		/// Composition of the function code and message data.

@@ -4,7 +4,7 @@ using System.Net;
 
 namespace Modbus.Message
 {
-	class ReadCoilsInputsRequest : ModbusMessage, IModbusMessage
+	class ReadCoilsInputsRequest : ModbusMessage, IModbusRequest
 	{
 		private const int _minimumFrameSize = 6;
 
@@ -55,5 +55,10 @@ namespace Modbus.Message
 			StartAddress = (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 2));
 			NumberOfPoints = (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 4));
 		}
-	}
+
+        public void ValidateResponse(IModbusMessage response)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
