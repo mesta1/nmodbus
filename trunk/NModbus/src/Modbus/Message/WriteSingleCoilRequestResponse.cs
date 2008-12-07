@@ -5,10 +5,11 @@ using System.Linq;
 using System.Net;
 using Modbus.Data;
 using Unme.Common;
+using System.IO;
 
 namespace Modbus.Message
 {
-	class WriteSingleCoilRequestResponse : ModbusMessageWithData<RegisterCollection>, IModbusMessage
+	class WriteSingleCoilRequestResponse : ModbusMessageWithData<RegisterCollection>, IModbusRequest
 	{
 		private const int _minimumFrameSize = 6;
 
@@ -42,6 +43,23 @@ namespace Modbus.Message
 			return String.Format(CultureInfo.InvariantCulture, "Write single coil {0} at address {1}.", 
 				Data.First() == Modbus.CoilOn ? 1 : 0, StartAddress);
 		}
+
+        public void ValidateResponse(IModbusMessage response)
+        {
+            var typedResponse = (WriteSingleCoilRequestResponse) response;
+
+            if (StartAddress != typedResponse.StartAddress)
+            {
+                throw new IOException(String.Format(CultureInfo.InvariantCulture,
+                    "Unexpected start address in response. Expected {0}, received {1}.", StartAddress, typedResponse.StartAddress));
+            }
+
+            if (Data.First() != typedResponse.Data.First())
+            {
+                throw new IOException(String.Format(CultureInfo.InvariantCulture,
+                    "Unexpected data in response. Expected {0}, received {1}.", Data.First(), typedResponse.Data.First()));
+            }
+        }
 
 		protected override void InitializeUnique(byte[] frame)
 		{

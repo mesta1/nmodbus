@@ -3,10 +3,12 @@ using System.Globalization;
 using System.Linq;
 using Modbus.Data;
 using Unme.Common;
+using System.Diagnostics;
+using System.IO;
 
 namespace Modbus.Message
 {
-	class ReadWriteMultipleRegistersRequest : ModbusMessage, IModbusMessage
+	class ReadWriteMultipleRegistersRequest : ModbusMessage, IModbusRequest
 	{
 		private const int _minimumFrameSize = 11;
 		private ReadHoldingInputRegistersRequest _readRequest;
@@ -56,6 +58,18 @@ namespace Modbus.Message
 				_writeRequest.NumberOfPoints, _writeRequest.StartAddress, _readRequest.NumberOfPoints, _readRequest.StartAddress);
 		}
 
+        public void ValidateResponse(IModbusMessage response)
+        {
+            var typedResponse = (ReadHoldingInputRegistersResponse) response;
+
+            var expectedByteCount = ReadRequest.NumberOfPoints * 2;
+            if (expectedByteCount != typedResponse.ByteCount)
+            {
+                throw new IOException(String.Format(CultureInfo.InvariantCulture,
+                    "Unexpected byte count in response. Expected {0}, received {1}.", expectedByteCount, typedResponse.ByteCount));
+            }
+        }
+
 		protected override void InitializeUnique(byte[] frame)
 		{
 			if (frame.Length < _minimumFrameSize + frame[10])
@@ -68,5 +82,5 @@ namespace Modbus.Message
 			_readRequest = ModbusMessageFactory.CreateModbusMessage<ReadHoldingInputRegistersRequest>(header.Concat(readFrame).ToArray());
 			_writeRequest = ModbusMessageFactory.CreateModbusMessage<WriteMultipleRegistersRequest>(header.Concat(writeFrame).ToArray());
 		}
-	}
+    }
 }

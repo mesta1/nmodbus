@@ -4,10 +4,12 @@ using System.Linq;
 using System.Net;
 using Modbus.Data;
 using Unme.Common;
+using System.Diagnostics;
+using System.IO;
 
 namespace Modbus.Message
 {
-	class WriteMultipleCoilsRequest : ModbusMessageWithData<DiscreteCollection>, IModbusMessage
+	class WriteMultipleCoilsRequest : ModbusMessageWithData<DiscreteCollection>, IModbusRequest
 	{
 		private const int _minimumFrameSize = 7;
 
@@ -60,6 +62,23 @@ namespace Modbus.Message
 		{
 			return String.Format(CultureInfo.InvariantCulture, "Write {0} coils starting at address {1}.", NumberOfPoints, StartAddress);
 		}
+
+        public void ValidateResponse(IModbusMessage response)
+        {
+            var typedResponse = (WriteMultipleCoilsResponse) response;
+
+            if (StartAddress != typedResponse.StartAddress)
+            {
+                throw new IOException(String.Format(CultureInfo.InvariantCulture,
+                    "Unexpected start address in response. Expected {0}, received {1}.", StartAddress, typedResponse.StartAddress));
+            }
+
+            if (NumberOfPoints != typedResponse.NumberOfPoints)
+            {
+                throw new IOException(String.Format(CultureInfo.InvariantCulture,
+                    "Unexpected number of points in response. Expected {0}, received {1}.", NumberOfPoints, typedResponse.NumberOfPoints));
+            }
+        }
 
 		protected override void InitializeUnique(byte[] frame)
 		{

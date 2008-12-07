@@ -212,6 +212,26 @@
             Subsequent calls do nothing. This method is thread-safe.
             </summary>
         </member>
+        <member name="T:Unme.Common.ReaderWriterLockSlimUtility">
+            <summary>
+            Convenience methods for the ReaderWriterLockSlim type.
+            </summary>
+        </member>
+        <member name="M:Unme.Common.ReaderWriterLockSlimUtility.ScopedEnterWriteLock(System.Threading.ReaderWriterLockSlim)">
+            <summary>
+            Convenience method providing a Scoped write lock.
+            </summary>
+        </member>
+        <member name="M:Unme.Common.ReaderWriterLockSlimUtility.ScopedEnterReadLock(System.Threading.ReaderWriterLockSlim)">
+            <summary>
+            Convenience method providing a Scoped read lock.
+            </summary>
+        </member>
+        <member name="M:Unme.Common.ReaderWriterLockSlimUtility.ScopedEnterUpgradeableReadLock(System.Threading.ReaderWriterLockSlim)">
+            <summary>
+            Convenience method providing a Scoped upgradeable read lock.
+            </summary>
+        </member>
         <member name="T:Unme.Common.StringUtility">
             <summary>
             Utility methods for strings.
@@ -225,6 +245,16 @@
             <returns>
             true if the value parameter is null or an empty string (""); otherwise, false.
             </returns>
+        </member>
+        <member name="M:Unme.Common.StringUtility.DoubleQuote(System.String)">
+            <summary>
+            Wraps the specified string in double quotes.
+            </summary>
+        </member>
+        <member name="M:Unme.Common.StringUtility.SingleQuote(System.String)">
+            <summary>
+            Wraps the specified string in single quotes.
+            </summary>
         </member>
         <member name="T:Unme.Common.NullReferenceExtension.NullReferenceExtension">
             <summary>
@@ -262,6 +292,11 @@
             <param name="defaultValue">The value to return if the element is null.</param>
             <returns></returns>
         </member>
+        <member name="M:Unme.Common.NullReferenceExtension.NullReferenceExtension.Is``1(System.Object,System.Action{``0})">
+            <summary>
+            Perfom the specified action on the element if it is convertible to type TTarget.
+            </summary>
+        </member>
         <member name="T:Unme.Common.LockTimeoutException">
             <summary>
             Custom exception for lock timeout.
@@ -288,26 +323,6 @@
         <member name="M:Unme.Common.DisposableUtility.Dispose``1(``0@)">
             <summary>
             Disposes the specified item and sets its value to null.
-            </summary>
-        </member>
-        <member name="T:Unme.Common.ReaderWriterLockSlimUtility">
-            <summary>
-            Convenience methods for the ReaderWriterLockSlim type.
-            </summary>
-        </member>
-        <member name="M:Unme.Common.ReaderWriterLockSlimUtility.ScopedEnterWriteLock(System.Threading.ReaderWriterLockSlim)">
-            <summary>
-            Convenience method providing a Scoped write lock.
-            </summary>
-        </member>
-        <member name="M:Unme.Common.ReaderWriterLockSlimUtility.ScopedEnterReadLock(System.Threading.ReaderWriterLockSlim)">
-            <summary>
-            Convenience method providing a Scoped read lock.
-            </summary>
-        </member>
-        <member name="M:Unme.Common.ReaderWriterLockSlimUtility.ScopedEnterUpgradeableReadLock(System.Threading.ReaderWriterLockSlim)">
-            <summary>
-            Convenience method providing a Scoped upgradeable read lock.
             </summary>
         </member>
     </members>

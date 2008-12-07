@@ -58,12 +58,7 @@ namespace Modbus.Message
 			_messageImpl.Initialize(frame);
 			InitializeUnique(frame);
 		}
-
-        //public void ValidateResponse(IModbusMessage request, IModbusMessage, response)
-        //{
-
-        //}
-
+     
 		protected abstract void InitializeUnique(byte[] frame);
 
 		public abstract int MinimumFrameSize { get; }
