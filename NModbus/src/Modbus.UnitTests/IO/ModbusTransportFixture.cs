@@ -28,6 +28,8 @@ namespace Modbus.UnitTests.IO
 			// read 4 coils from slave id 2
 			Expect.Call(transport.ReadResponse<ReadCoilsInputsResponse>())
 				.Return(new ReadCoilsInputsResponse(Modbus.ReadCoils, 2, 1, new DiscreteCollection(true, false, true, false, false, false, false, false)));
+            transport.OnValidateResponse(null, null);
+            LastCall.IgnoreArguments();
 
 			mocks.ReplayAll();
 
@@ -100,6 +102,9 @@ namespace Modbus.UnitTests.IO
 			Expect.Call(transport.ReadResponse<ReadHoldingInputRegistersResponse>())
 				.Return(new ReadHoldingInputRegistersResponse(Modbus.ReadHoldingRegisters, 1, new RegisterCollection(1)));
 
+            transport.OnValidateResponse(null, null);
+            LastCall.IgnoreArguments();
+
 			mocks.ReplayAll();
 
 			ReadHoldingInputRegistersRequest request = new ReadHoldingInputRegistersRequest(Modbus.ReadHoldingRegisters, 1, 1, 1);
@@ -132,6 +137,9 @@ namespace Modbus.UnitTests.IO
 
 			Expect.Call(transport.ReadResponse<ReadHoldingInputRegistersResponse>())
 				.Return(new ReadHoldingInputRegistersResponse(Modbus.ReadHoldingRegisters, 1, new RegisterCollection(1)));
+
+            transport.OnValidateResponse(null, null);
+            LastCall.IgnoreArguments();
 
 			mocks.ReplayAll();
 
@@ -167,6 +175,9 @@ namespace Modbus.UnitTests.IO
 			Expect.Call(transport.ReadResponse<ReadHoldingInputRegistersResponse>())
 				.Return(new ReadHoldingInputRegistersResponse(Modbus.ReadHoldingRegisters, 1, new RegisterCollection(1)));
 
+            transport.OnValidateResponse(null, null);
+            LastCall.IgnoreArguments();
+
 			mocks.ReplayAll();
 
 			ReadHoldingInputRegistersRequest request = new ReadHoldingInputRegistersRequest(Modbus.ReadHoldingRegisters, 1, 1, 1);
@@ -194,6 +205,9 @@ namespace Modbus.UnitTests.IO
 			
 			Expect.Call(transport.ReadResponse<ReadCoilsInputsResponse>())
 				.Return(new ReadCoilsInputsResponse(Modbus.ReadCoils, 2, 1, new DiscreteCollection(true, false, true, false, false, false, false, false)));
+
+            transport.OnValidateResponse(null, null);
+            LastCall.IgnoreArguments();
 
 			mocks.ReplayAll();
 
@@ -302,6 +316,9 @@ namespace Modbus.UnitTests.IO
 
 			IModbusMessage request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 1, 1);
 			IModbusMessage response = new ReadCoilsInputsResponse(Modbus.ReadCoils, 1, 1, null);
+
+            transport.OnValidateResponse(null, null);
+            LastCall.IgnoreArguments();
 
 			mocks.ReplayAll();
 			transport.ValidateResponse(request, response);
