@@ -7,8 +7,6 @@
 	<property name="path.ms.sdk" value="${environment::get-variable('MS_SDK_HOME')}" />
 	<property name="path.shfb" value="${environment::get-variable('SHFB_HOME')}\SandcastleBuilderConsole.exe" />
 	<property name="nantcontrib" value="${environment::get-variable('NANTCONTRIB_HOME')}\bin\NAnt.Contrib.Tasks.dll" />
-	<property name="path.ncoverconsole" value="${environment::get-variable('NCOVER_HOME')}\NCover.Console.exe" />
-	<property name="path.ncoverexplorer" value="${environment::get-variable('NCOVEREXPLORER_HOME')}\ncoverexplorer.console.exe" />
 	<property name="path.jre" value="${environment::get-variable('JRE_HOME')}" />
 	<property name="path.jdk" value="${environment::get-variable('JDK_HOME')}" />
 	<property name="path.bin" value="src\Modbus\bin\Release" />
@@ -19,7 +17,6 @@
 	<property name="path.output" value="build" />
 	<property name="path.lib" value="lib" />
 	<property name="path.tools" value="tools" />
-	<property name="path.ncoverexplorer.tasks" value="${path.tools}\ncover\NCoverExplorer.NAntTasks.dll" />
 	<property name="path.mbunit.console" value="${environment::get-variable('MBUNIT_HOME')}\bin\MbUnit.Cons.exe" />
 	<property name="path.mbunit.tasks" value="${path.tools}\MbUnit\MbUnit.Tasks.dll" />
 	<property name="path.nantgooglecode" value="${path.tools}\nant\NantGoogleCode.dll" />
@@ -27,7 +24,7 @@
 	<property name="path.nmodbus" value="${path.tools}\nmodbus" />
 	<property name="path.docs" value="docs" />
 	<property name="path.dist" value="dist" />
-	<property name="version" value="1.8.0.0" />
+	<property name="version" value="1.9.0.0" />
 
 	<setenv name="PATH" value="%PATH%;${path.fxcop}" />
 
@@ -106,44 +103,6 @@
 				</mbunit>
 			</do>
 		</foreach>
-	</target>
-
-	<target name="run-code-coverage" depends="build">
-		<loadtasks assembly="${path.ncoverexplorer.tasks}"/>
-		<mkdir dir="${path.output}" failonerror="false"/>
-
-		<foreach item="Folder" property="foldername">
-			<in>
-				<items basedir="src">
-					<include name="*Tests"></include>
-					<exclude name="."></exclude>
-				</items>
-			</in>
-			<do>
-				<ncover program="${path.ncoverconsole}"
-          commandLineExe="${path.mbunit.console}"
-          commandLineArgs="${foldername}\bin\Release\${path::get-file-name(foldername)}.dll"
-          workingDirectory="${path.output}"
-          coverageFile="${path.output}\Modbus.${path::get-file-name(foldername)}.NCover.xml"
-          logFile="${path.output}\Coverage.log"
-         />
-			</do>
-		</foreach>
-
-		<ncoverexplorer program="${path.ncoverexplorer}"
-      projectName="NModbus"
-      outputDir="${path.output}"
-      reportType="4"
-      xmlReportName="CoverageSummary.xml"
-      satisfactoryCoverage="80"
-    >
-			<fileset>
-				<include name="${path.output}\*.NCover.xml"/>
-			</fileset>
-			<exclusions>
-				<exclusion type="Assembly" pattern="*Tests" />
-			</exclusions>
-		</ncoverexplorer>
 	</target>
 
 	<target name="run-fxcop" depends="build">
@@ -229,7 +188,7 @@
 
 	</target>
 
-	<target name="all" depends="clean, build, run-unit-tests, run-integration-tests, run-code-coverage, run-fxcop" />
+	<target name="all" depends="clean, build, run-unit-tests, run-integration-tests, run-fxcop" />
 
 	<target name="build-jamod">
 		<exec program="${path.jdk}\bin\javac.exe" commandline="-classpath comm.jar;jamod.jar;. *.java" workingdir="${path.jamod}" />
