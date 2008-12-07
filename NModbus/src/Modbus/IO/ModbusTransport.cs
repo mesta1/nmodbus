@@ -5,6 +5,7 @@ using System.IO;
 using System.Threading;
 using log4net;
 using Modbus.Message;
+using Unme.Common.NullReferenceExtension;
 
 namespace Modbus.IO
 {
@@ -76,74 +77,64 @@ namespace Modbus.IO
 
 			do
 			{
-				try
-				{
-					lock (_syncLock)
-					{
-						Write(message);
+                try
+                {
+                    lock (_syncLock)
+                    {
+                        Write(message);
 
-						do
-						{
-							readAgain = false;
-							response = ReadResponse<T>();
+                        do
+                        {
+                            readAgain = false;
+                            response = ReadResponse<T>();
 
-							var exceptionResponse = response as SlaveExceptionResponse;
-							if (exceptionResponse != null)
-							{
-								// if SlaveExceptionCode == ACKNOWLEDGE we retry reading the response without resubmitting request
-								if (readAgain = exceptionResponse.SlaveExceptionCode == Modbus.Acknowledge)
-								{
-									_logger.InfoFormat("Received ACKNOWLEDGE slave exception response, waiting {0} milliseconds and retrying to read response.", _waitToRetryMilliseconds);
-									Thread.Sleep(WaitToRetryMilliseconds);
-								}
-								else
-								{
-									throw new SlaveException(exceptionResponse);
-								}
-							}
+                            var exceptionResponse = response as SlaveExceptionResponse;
+                            if (exceptionResponse != null)
+                            {
+                                // if SlaveExceptionCode == ACKNOWLEDGE we retry reading the response without resubmitting request
+                                if (readAgain = exceptionResponse.SlaveExceptionCode == Modbus.Acknowledge)
+                                {
+                                    _logger.InfoFormat("Received ACKNOWLEDGE slave exception response, waiting {0} milliseconds and retrying to read response.", _waitToRetryMilliseconds);
+                                    Thread.Sleep(WaitToRetryMilliseconds);
+                                }
+                                else
+                                {
+                                    throw new SlaveException(exceptionResponse);
+                                }
+                            }
 
-						} while (readAgain);
-					}
+                        } while (readAgain);
+                    }
 
-					ValidateResponse(message, response);
-					success = true;
-				}
-				catch (FormatException fe)
-				{
-					_logger.ErrorFormat("FormatException, {0} retries remaining - {1}", _retries + 1 - attempt, fe.Message);
+                    ValidateResponse(message, response);
+                    success = true;
+                }            
+                catch (SlaveException se)
+                {
+                    if (se.SlaveExceptionCode != Modbus.SlaveDeviceBusy)
+                        throw;
 
-					if (attempt++ > _retries)
-						throw;
-				}
-				catch (NotImplementedException nie)
-				{
-					_logger.ErrorFormat("NotImplementedException, {0} retries remaining - {1}", _retries + 1 - attempt, nie.Message);
+                    _logger.InfoFormat("Received SLAVE_DEVICE_BUSY exception response, waiting {0} milliseconds and resubmitting request.", _waitToRetryMilliseconds);
+                    Thread.Sleep(WaitToRetryMilliseconds);
+                }
+                catch (Exception e)
+                {
+                    if (e is FormatException ||
+                        e is NotImplementedException ||
+                        e is TimeoutException ||
+                        e is IOException)
+                    {
+                        if (attempt++ > _retries)
+                            throw;
 
-					if (attempt++ > _retries)
-						throw;
-				}
-				catch (TimeoutException te)
-				{
-					_logger.ErrorFormat("TimeoutException, {0} retries remaining - {1}", _retries + 1 - attempt, te.Message);
+                        _logger.ErrorFormat("{0}, {1} retries remaining - {2}", e.GetType().Name, _retries - attempt, e);
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
 
-					if (attempt++ > _retries)
-						throw;
-				}
-				catch (IOException ioe)
-				{
-					_logger.ErrorFormat("IOException, {0} retries remaining - {1}", _retries + 1 - attempt, ioe.Message);
-
-					if (attempt++ > _retries)
-						throw;
-				}
-				catch (SlaveException se)
-				{
-					if (se.SlaveExceptionCode != Modbus.SlaveDeviceBusy)
-						throw;
-
-					_logger.InfoFormat("Received SLAVE_DEVICE_BUSY exception response, waiting {0} milliseconds and resubmitting request.", _waitToRetryMilliseconds);
-					Thread.Sleep(WaitToRetryMilliseconds);
-				}
 			} while (!success);
 
 			return (T) response;
@@ -164,18 +155,32 @@ namespace Modbus.IO
 			return response;
 		}
 
-		internal virtual void ValidateResponse(IModbusMessage request, IModbusMessage response)
-		{
+		internal void ValidateResponse(IModbusMessage request, IModbusMessage response)
+		{            
+            // always check the function code and slave address, regardless of transport protocol
 			if (request.FunctionCode != response.FunctionCode)
 				throw new IOException(String.Format(CultureInfo.InvariantCulture, "Received response with unexpected Function Code. Expected {0}, received {1}.", request.FunctionCode, response.FunctionCode));
 
             if (request.SlaveAddress != response.SlaveAddress)
                 throw new IOException(String.Format(CultureInfo.InvariantCulture, "Response slave address does not match request. Expected {0}, received {1}.", response.SlaveAddress, request.SlaveAddress));
+
+            // message specific validation
+            request.Is<IModbusRequest>(req => req.ValidateResponse(response));
+
+            OnValidateResponse(request, response);
 		}
 
+        /// <summary>
+        /// Provide hook to do transport level message validation.
+        /// </summary>
+        internal abstract void OnValidateResponse(IModbusMessage request, IModbusMessage response);
+
 		internal abstract byte[] ReadRequest();
-		internal abstract IModbusMessage ReadResponse<T>() where T : IModbusMessage, new();
-		internal abstract byte[] BuildMessageFrame(IModbusMessage message);
-		internal abstract void Write(IModbusMessage message);
+		
+        internal abstract IModbusMessage ReadResponse<T>() where T : IModbusMessage, new();
+		
+        internal abstract byte[] BuildMessageFrame(IModbusMessage message);
+		
+        internal abstract void Write(IModbusMessage message);
 	}
 }

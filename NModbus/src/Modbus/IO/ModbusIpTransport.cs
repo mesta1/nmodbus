@@ -102,14 +102,6 @@ namespace Modbus.IO
 			return messageBody.ToArray();
 		}
 
-		internal override void ValidateResponse(IModbusMessage request, IModbusMessage response)
-		{          
-			if (request.TransactionId != response.TransactionId)
-				throw new IOException(String.Format(CultureInfo.InvariantCulture, "Response was not of expected transaction ID. Expected {0}, received {1}.", request.TransactionId, response.TransactionId));
-
-			base.ValidateResponse(request, response);
-		}
-
 		internal override void Write(IModbusMessage message)
 		{
             message.TransactionId = GetNewTransactionId();
@@ -127,5 +119,11 @@ namespace Modbus.IO
 		{
 			return CreateMessageAndInitializeTransactionId<T>(ReadRequestResponse(StreamResource));
 		}
-	}
+
+        internal override void OnValidateResponse(IModbusMessage request, IModbusMessage response)
+        {
+            if (request.TransactionId != response.TransactionId)
+                throw new IOException(String.Format(CultureInfo.InvariantCulture, "Response was not of expected transaction ID. Expected {0}, received {1}.", request.TransactionId, response.TransactionId));
+        }
+    }
 }

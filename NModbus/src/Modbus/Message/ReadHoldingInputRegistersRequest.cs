@@ -1,10 +1,12 @@
 using System;
+using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Net;
 
 namespace Modbus.Message
 {
-	class ReadHoldingInputRegistersRequest : ModbusMessage, IModbusMessage
+	class ReadHoldingInputRegistersRequest : ModbusMessage, IModbusRequest
 	{
 		private const int _minimumFrameSize = 6;
 
@@ -49,6 +51,18 @@ namespace Modbus.Message
 		{
 			return String.Format(CultureInfo.InvariantCulture, "Read {0} {1} registers starting at address {2}.", NumberOfPoints, FunctionCode == Modbus.ReadHoldingRegisters ? "holding" : "input", StartAddress);
 		}
+
+        public void ValidateResponse(IModbusMessage response)
+        {
+            Debug.Assert(response is ReadHoldingInputRegistersResponse);
+
+            var expectedByteCount = NumberOfPoints * 2;
+            if (expectedByteCount != ((ReadHoldingInputRegistersResponse) response).ByteCount)
+            {
+                throw new IOException(String.Format(CultureInfo.InvariantCulture,
+                    "Unexpected byte count. Expected {0}, received {1}.", expectedByteCount, ((ReadHoldingInputRegistersResponse) response).ByteCount));
+            }
+        }
 
 		protected override void InitializeUnique(byte[] frame)
 		{
