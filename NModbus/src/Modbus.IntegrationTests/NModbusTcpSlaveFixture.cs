@@ -2,10 +2,10 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Sockets;
-using System.Threading;
-using Modbus.Device;
-using MbUnit.Framework;
 using System.Reflection;
+using System.Threading;
+using MbUnit.Framework;
+using Modbus.Device;
 
 namespace Modbus.IntegrationTests
 {
@@ -112,5 +112,47 @@ namespace Modbus.IntegrationTests
 			Assert.AreEqual(0, slave.Masters.Count);
 			slaveListener.Stop();
 		}
+
+        /// <summary>
+        /// Tests possible exception when master closes gracefully and the ReadHeaderCompleted EndRead call returns 0 bytes;
+        /// </summary>
+        [Test, Explicit]
+        public void ModbusTcpSlave_MultiThreaded()
+        {
+            TcpListener slaveListener = new TcpListener(ModbusMasterFixture.TcpHost, ModbusMasterFixture.Port);
+            slaveListener.Start();
+            ModbusTcpSlave slave = ModbusTcpSlave.CreateTcp(ModbusMasterFixture.SlaveAddress, slaveListener);
+            Thread slaveThread = new Thread(slave.Listen);
+            slaveThread.IsBackground = true;
+            slaveThread.Start();
+
+            var workerThread1 = new Thread(ReadOnOwnThread);
+            var workerThread2 = new Thread(ReadOnOwnThread);
+            workerThread1.Start();
+            workerThread2.Start();
+
+            workerThread1.Join();
+            workerThread2.Join();
+
+            slaveListener.Stop();
+        }
+
+        private static void ReadOnOwnThread(object state)
+        {           
+            using (TcpClient masterClient = new TcpClient(ModbusMasterFixture.TcpHost.ToString(), ModbusMasterFixture.Port))
+            {
+                ModbusIpMaster master = ModbusIpMaster.CreateIp(masterClient);
+                master.Transport.Retries = 0;
+
+                var random = new Random();
+                for (int i = 0; i < 5; i++)
+                {
+                    bool[] coils = master.ReadCoils(1, 1);
+                    Assert.AreEqual(1, coils.Length);
+                    Debug.WriteLine(String.Format("{0}: Reading coil value", Thread.CurrentThread.ManagedThreadId));
+                    Thread.Sleep(random.Next(100));
+                }                       
+            }
+        }
 	}
 }
