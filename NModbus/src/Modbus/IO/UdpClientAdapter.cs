@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using Unme.Common;
 
 namespace Modbus.IO
 {
@@ -14,7 +15,7 @@ namespace Modbus.IO
 	internal class UdpClientAdapter : IStreamResource
 	{
 		private const int InfiniteTimeoutValue = 0;
-		private readonly UdpClient _udpClient;
+		private UdpClient _udpClient;
 		private List<byte> _readBuffer;
 
 		public UdpClientAdapter(UdpClient udpClient)
@@ -84,6 +85,12 @@ namespace Modbus.IO
 			_udpClient.Send(buffer.Skip(offset).ToArray(), count);
 		}
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
 		/// <summary>
 		/// This method facilitates unit testing.
 		/// </summary>
@@ -91,5 +98,11 @@ namespace Modbus.IO
 		{
 			return _udpClient.Receive(ref remoteIpEndPoint);
 		}
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+                DisposableUtility.Dispose(ref _udpClient);
+        }
 	}
 }

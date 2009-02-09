@@ -1,3 +1,4 @@
+using System;
 using Modbus.IO;
 
 namespace Modbus.Device
@@ -5,7 +6,7 @@ namespace Modbus.Device
 	/// <summary>
 	/// Modbus master device.
 	/// </summary>
-	public interface IModbusMaster
+	public interface IModbusMaster : IDisposable
 	{
 		/// <summary>
 		/// Transport for used by this master.

@@ -25,8 +25,8 @@ namespace Modbus.IO
 			: base(streamResource)
 		{
 			Debug.Assert(streamResource != null, "Argument streamResource cannot be null.");
-		}		
-
+		}
+      
 		internal static byte[] ReadRequestResponse(IStreamResource streamResource)
 		{
 			// read header

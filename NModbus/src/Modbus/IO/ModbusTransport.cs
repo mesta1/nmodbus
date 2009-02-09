@@ -6,6 +6,7 @@ using System.Threading;
 using log4net;
 using Modbus.Message;
 using Unme.Common.NullReferenceExtension;
+using Unme.Common;
 
 namespace Modbus.IO
 {
@@ -13,12 +14,13 @@ namespace Modbus.IO
 	/// Modbus transport.
 	/// Abstraction - http://en.wikipedia.org/wiki/Bridge_Pattern
 	/// </summary>
-	public abstract class ModbusTransport
+	public abstract class ModbusTransport : IDisposable
 	{
 		private static readonly ILog _logger = LogManager.GetLogger(typeof(ModbusTransport));
 		private object _syncLock = new object();
 		private int _retries = Modbus.DefaultRetries;
 		private int _waitToRetryMilliseconds = Modbus.DefaultWaitToRetryMilliseconds;
+        private IStreamResource _streamResource;
 
 		/// <summary>
 		/// This constructor is called by the NullTransport.
@@ -31,7 +33,7 @@ namespace Modbus.IO
 		{
 			Debug.Assert(streamResource != null, "Argument streamResource cannot be null.");
 
-			StreamResource = streamResource;
+			_streamResource = streamResource;
 		}		
 
 		/// <summary>
@@ -63,10 +65,22 @@ namespace Modbus.IO
 			}
 		}
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
 		/// <summary>
 		/// Gets or sets the stream resource.
 		/// </summary>
-		internal IStreamResource StreamResource { get; private set; }
+        internal IStreamResource StreamResource
+        {
+            get
+            {
+                return _streamResource;
+            }
+        }
 
 		internal virtual T UnicastMessage<T>(IModbusMessage message) where T : IModbusMessage, new()
 		{
@@ -182,5 +196,11 @@ namespace Modbus.IO
         internal abstract byte[] BuildMessageFrame(IModbusMessage message);
 		
         internal abstract void Write(IModbusMessage message);
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+                DisposableUtility.Dispose(ref _streamResource);
+        }
 	}
 }
