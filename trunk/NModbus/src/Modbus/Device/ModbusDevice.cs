@@ -1,4 +1,6 @@
 using Modbus.IO;
+using System;
+using Unme.Common;
 
 namespace Modbus.Device
 {
@@ -29,5 +31,17 @@ namespace Modbus.Device
 				_transport = value;
 			}
 		}
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+                DisposableUtility.Dispose(ref _transport);
+        }
 	}
 }

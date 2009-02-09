@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Net.Sockets;
 using System;
+using Unme.Common;
 
 namespace Modbus.IO
 {
@@ -10,7 +11,7 @@ namespace Modbus.IO
 	internal class TcpClientAdapter : IStreamResource
 	{
 		private const int InfiniteTimeoutValue = 0;
-		private readonly NetworkStream _networkStream;
+		private NetworkStream _networkStream;
 
 		public TcpClientAdapter(TcpClient tcpClient)
 		{
@@ -49,6 +50,18 @@ namespace Modbus.IO
 		public void DiscardInBuffer()
 		{
 			_networkStream.Flush();
-		}		
-	}
+		}
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+                DisposableUtility.Dispose(ref _networkStream);
+        }
+    }
 }

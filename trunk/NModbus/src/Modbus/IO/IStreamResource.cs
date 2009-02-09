@@ -1,10 +1,11 @@
+using System;
 namespace Modbus.IO
 {
 	/// <summary>
 	/// Represents a serial resource.
 	/// Implementor - http://en.wikipedia.org/wiki/Bridge_Pattern
 	/// </summary>
-	public interface IStreamResource
+	public interface IStreamResource : IDisposable
 	{
 		/// <summary>
 		/// Indicates that no time-out should occur.
