@@ -147,6 +147,11 @@ namespace Modbus.UnitTests.IO
 			{
 				return "FooBar";
 			}
-		}
+
+            public void Dispose()
+            {
+                throw new NotImplementedException();
+            }
+        }
 	}
 }
