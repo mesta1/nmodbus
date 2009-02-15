@@ -10,60 +10,60 @@ using Unme.Common;
 
 namespace Modbus.IO
 {
-	/// <summary>
-	/// Modbus transport.
-	/// Abstraction - http://en.wikipedia.org/wiki/Bridge_Pattern
-	/// </summary>
-	public abstract class ModbusTransport : IDisposable
-	{
-		private static readonly ILog _logger = LogManager.GetLogger(typeof(ModbusTransport));
-		private object _syncLock = new object();
-		private int _retries = Modbus.DefaultRetries;
-		private int _waitToRetryMilliseconds = Modbus.DefaultWaitToRetryMilliseconds;
+    /// <summary>
+    /// Modbus transport.
+    /// Abstraction - http://en.wikipedia.org/wiki/Bridge_Pattern
+    /// </summary>
+    public abstract class ModbusTransport : IDisposable
+    {
+        private static readonly ILog _logger = LogManager.GetLogger(typeof(ModbusTransport));
+        private object _syncLock = new object();
+        private int _retries = Modbus.DefaultRetries;
+        private int _waitToRetryMilliseconds = Modbus.DefaultWaitToRetryMilliseconds;
         private IStreamResource _streamResource;
 
-		/// <summary>
-		/// This constructor is called by the NullTransport.
-		/// </summary>
-		internal ModbusTransport()
-		{
-		}
+        /// <summary>
+        /// This constructor is called by the NullTransport.
+        /// </summary>
+        internal ModbusTransport()
+        {
+        }
 
-		internal ModbusTransport(IStreamResource streamResource)
-		{
-			Debug.Assert(streamResource != null, "Argument streamResource cannot be null.");
+        internal ModbusTransport(IStreamResource streamResource)
+        {
+            Debug.Assert(streamResource != null, "Argument streamResource cannot be null.");
 
-			_streamResource = streamResource;
-		}		
+            _streamResource = streamResource;
+        }
 
-		/// <summary>
-		/// Number of times to retry sending message after encountering a failure such as an IOException, 
-		/// TimeoutException, or a corrupt message.
-		/// </summary>
-		public int Retries
-		{
-			get { return _retries; }
-			set { _retries = value; }
-		}
+        /// <summary>
+        /// Number of times to retry sending message after encountering a failure such as an IOException, 
+        /// TimeoutException, or a corrupt message.
+        /// </summary>
+        public int Retries
+        {
+            get { return _retries; }
+            set { _retries = value; }
+        }
 
-		/// <summary>
-		/// Gets or sets the number of milliseconds the tranport will wait before retrying a message after receiving 
-		/// an ACKNOWLEGE or SLAVE DEVICE BUSY slave exception response.
-		/// </summary>
-		public int WaitToRetryMilliseconds
-		{
-			get
-			{
-				return _waitToRetryMilliseconds;
-			}
-			set
-			{
-				if (value < 0)
-					throw new ArgumentException("WaitToRetryMilliseconds must be greater than 0.");
+        /// <summary>
+        /// Gets or sets the number of milliseconds the tranport will wait before retrying a message after receiving 
+        /// an ACKNOWLEGE or SLAVE DEVICE BUSY slave exception response.
+        /// </summary>
+        public int WaitToRetryMilliseconds
+        {
+            get
+            {
+                return _waitToRetryMilliseconds;
+            }
+            set
+            {
+                if (value < 0)
+                    throw new ArgumentException("WaitToRetryMilliseconds must be greater than 0.");
 
-				_waitToRetryMilliseconds = value;
-			}
-		}
+                _waitToRetryMilliseconds = value;
+            }
+        }
 
         public void Dispose()
         {
@@ -71,9 +71,9 @@ namespace Modbus.IO
             GC.SuppressFinalize(this);
         }
 
-		/// <summary>
-		/// Gets or sets the stream resource.
-		/// </summary>
+        /// <summary>
+        /// Gets or sets the stream resource.
+        /// </summary>
         internal IStreamResource StreamResource
         {
             get
@@ -82,15 +82,15 @@ namespace Modbus.IO
             }
         }
 
-		internal virtual T UnicastMessage<T>(IModbusMessage message) where T : IModbusMessage, new()
-		{
-			IModbusMessage response = null;
-			int attempt = 1;
-			bool readAgain;
-			bool success = false;
+        internal virtual T UnicastMessage<T>(IModbusMessage message) where T : IModbusMessage, new()
+        {
+            IModbusMessage response = null;
+            int attempt = 1;
+            bool readAgain;
+            bool success = false;
 
-			do
-			{
+            do
+            {
                 try
                 {
                     lock (_syncLock)
@@ -122,7 +122,7 @@ namespace Modbus.IO
 
                     ValidateResponse(message, response);
                     success = true;
-                }            
+                }
                 catch (SlaveException se)
                 {
                     if (se.SlaveExceptionCode != Modbus.SlaveDeviceBusy)
@@ -138,10 +138,10 @@ namespace Modbus.IO
                         e is TimeoutException ||
                         e is IOException)
                     {
+                        _logger.WarnFormat("{0}, {1} retries remaining - {2}", e.GetType().Name, _retries - attempt, e);
+
                         if (attempt++ > _retries)
                             throw;
-
-                        _logger.ErrorFormat("{0}, {1} retries remaining - {2}", e.GetType().Name, _retries - attempt, e);
                     }
                     else
                     {
@@ -149,31 +149,31 @@ namespace Modbus.IO
                     }
                 }
 
-			} while (!success);
+            } while (!success);
 
-			return (T) response;
-		}
+            return (T) response;
+        }
 
-		internal virtual IModbusMessage CreateResponse<T>(byte[] frame) where T : IModbusMessage, new()
-		{
-			byte functionCode = frame[1];
-			IModbusMessage response;
+        internal virtual IModbusMessage CreateResponse<T>(byte[] frame) where T : IModbusMessage, new()
+        {
+            byte functionCode = frame[1];
+            IModbusMessage response;
 
-			// check for slave exception response
-			if (functionCode > Modbus.ExceptionOffset)
-				response = ModbusMessageFactory.CreateModbusMessage<SlaveExceptionResponse>(frame);
-			else
-				// create message from frame
-				response = ModbusMessageFactory.CreateModbusMessage<T>(frame);
+            // check for slave exception response
+            if (functionCode > Modbus.ExceptionOffset)
+                response = ModbusMessageFactory.CreateModbusMessage<SlaveExceptionResponse>(frame);
+            else
+                // create message from frame
+                response = ModbusMessageFactory.CreateModbusMessage<T>(frame);
 
-			return response;
-		}
+            return response;
+        }
 
-		internal void ValidateResponse(IModbusMessage request, IModbusMessage response)
-		{            
+        internal void ValidateResponse(IModbusMessage request, IModbusMessage response)
+        {
             // always check the function code and slave address, regardless of transport protocol
-			if (request.FunctionCode != response.FunctionCode)
-				throw new IOException(String.Format(CultureInfo.InvariantCulture, "Received response with unexpected Function Code. Expected {0}, received {1}.", request.FunctionCode, response.FunctionCode));
+            if (request.FunctionCode != response.FunctionCode)
+                throw new IOException(String.Format(CultureInfo.InvariantCulture, "Received response with unexpected Function Code. Expected {0}, received {1}.", request.FunctionCode, response.FunctionCode));
 
             if (request.SlaveAddress != response.SlaveAddress)
                 throw new IOException(String.Format(CultureInfo.InvariantCulture, "Response slave address does not match request. Expected {0}, received {1}.", response.SlaveAddress, request.SlaveAddress));
@@ -182,19 +182,19 @@ namespace Modbus.IO
             request.Is<IModbusRequest>(req => req.ValidateResponse(response));
 
             OnValidateResponse(request, response);
-		}
+        }
 
         /// <summary>
         /// Provide hook to do transport level message validation.
         /// </summary>
         internal abstract void OnValidateResponse(IModbusMessage request, IModbusMessage response);
 
-		internal abstract byte[] ReadRequest();
-		
+        internal abstract byte[] ReadRequest();
+
         internal abstract IModbusMessage ReadResponse<T>() where T : IModbusMessage, new();
-		
+
         internal abstract byte[] BuildMessageFrame(IModbusMessage message);
-		
+
         internal abstract void Write(IModbusMessage message);
 
         protected virtual void Dispose(bool disposing)
@@ -202,5 +202,5 @@ namespace Modbus.IO
             if (disposing)
                 DisposableUtility.Dispose(ref _streamResource);
         }
-	}
+    }
 }
