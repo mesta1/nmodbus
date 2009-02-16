@@ -57,15 +57,7 @@ namespace Modbus.Device
 
 			_server.BeginAcceptTcpClient(AcceptCompleted, this);
 		}
-
-		/// <summary>
-		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-		/// </summary>
-		public void Dispose()
-		{
-			_masters.IfNotNull(m => m.Values.ForEach(client => DisposableUtility.Dispose(ref client)));
-		}
-
+	
 		internal void RemoveMaster(string endPoint)
 		{
 			lock (_mastersLock)
@@ -100,5 +92,13 @@ namespace Modbus.Device
 				// this happens when the server stops
 			}
 		}
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (disposing)
+                _masters.IfNotNull(m => m.Values.ForEach(client => DisposableUtility.Dispose(ref client)));
+        }
 	}
 }
