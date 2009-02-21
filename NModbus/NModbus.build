@@ -75,7 +75,7 @@
 					 report-types="Xml"
          report-filename-format="${foldername}.UnitTests"
          report-output-directory="${path.output}"
-         failonerror="false"> 
+         failonerror="true"> 
 					<assemblies>
 						<include name="${foldername}\bin\Release\${path::get-file-name(foldername)}.dll" />	
 					</assemblies>
@@ -96,7 +96,7 @@
 				<mbunit report-types ="Xml"
          report-filename-format="${foldername}.IntegrationTests"
          report-output-directory="${path.output}"
-         failonerror="false">
+         failonerror="true">
 					<assemblies>
 						<include name="${foldername}\bin\Release\${path::get-file-name(foldername)}.dll" />
 					</assemblies>
