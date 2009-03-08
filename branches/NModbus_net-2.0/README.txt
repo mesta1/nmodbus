@@ -2,7 +2,7 @@ NModbus
 
 What is it? 
 -----------
-NModbus is a C# 3.0 implementation of the Modbus protocol.
+NModbus is a C# 2.0 implementation of the Modbus protocol.
   
 More information at the NModbus project web site http://nmodbus.com/
 
@@ -16,7 +16,7 @@ The latest source for the project can be found at the NModbus project's google c
 
 Documentation
 -------------
-Documentation is available in chm format (NModbus.chm)
+Documentation is available in chm format (NModbus_net-2.0.chm)
 
 
 License

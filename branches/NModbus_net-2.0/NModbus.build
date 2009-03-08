@@ -5,7 +5,6 @@
 	<property name="path.fxcop" value="${environment::get-variable('FXCOP_HOME')}" />
 	<property name="path.framework" value="${environment::get-variable('SYSTEMROOT')}\Microsoft.NET\Framework\v3.5" />
 	<property name="path.ms.sdk" value="${environment::get-variable('MS_SDK_HOME')}" />
-	<property name="path.shfb" value="${environment::get-variable('SHFB_HOME')}\SandcastleBuilderConsole.exe" />
 	<property name="nantcontrib" value="${environment::get-variable('NANTCONTRIB_HOME')}\bin\NAnt.Contrib.Tasks.dll" />
 	<property name="path.jre" value="${environment::get-variable('JRE_HOME')}" />
 	<property name="path.jdk" value="${environment::get-variable('JDK_HOME')}" />
@@ -25,6 +24,7 @@
 	<property name="path.docs" value="docs" />
 	<property name="path.dist" value="dist" />
 	<property name="version" value="1.9.0.0" />
+  <property name="product-name" value="NModbus_net-2.0_${version}" />
 
 	<setenv name="PATH" value="%PATH%;${path.fxcop}" />
 
@@ -151,12 +151,13 @@
 
 		<!-- create scratch directory with root files to distribute -->
 		<copy file="README.txt" todir="${path.dist}\scratch\root" />
-		<copy file="${path.docs}\Documentation.chm" tofile="${path.dist}\scratch\root\NModbus.chm" />
+		<copy file="${path.docs}\Documentation.chm" tofile="${path.dist}\scratch\root\NModbus_net-2.0.chm" />
 
 		<!-- zip source distribution -->
-		<zip zipfile="${path.dist}\NModbus_${version}-source.zip">
+		<zip zipfile="${path.dist}\${product-name}-source.zip">
 			<fileset basedir="." prefix="source">
 				<include name="**" />
+        <exclude name="**/build/**" />
 				<exclude name="**/dist/**" />
 				<exclude name="**/*.suo" />
 				<exclude name="**/*.resharper" />
@@ -177,7 +178,7 @@
 		</zip>
 
 		<!-- zip binary distribution -->
-		<zip zipfile="${path.dist}\NModbus_${version}.zip">
+		<zip zipfile="${path.dist}\${product-name}.zip">
 			<fileset  basedir="${path.dist}\scratch\root">
 				<include name="**" />
 			</fileset>
@@ -201,12 +202,12 @@
 	<target name="setup-java" depends="build-jamod">
 		<copy file="${path.jamod}\javax.comm.properties" todir="${path.jre}\lib" />
 		<copy file="${path.jamod}\win32com.dll" todir="${path.jre}\bin" />
-	</target>
+	</target>  
 
-	<target name="docs" depends="build">
-		<exec program="${path.shfb}">
-			<arg value="NModbus.shfb"/>
-		</exec>
+  <target name="docs" depends="build">
+    <exec program="${path.framework}\msbuild.exe" failonerror="true">
+      <arg value="NModbus.shfbproj"/>
+    </exec>			
 	</target>
 
 	<target name="setversion" description="Stamp the version info onto assemblyinfo.cs files">
@@ -253,9 +254,9 @@
 		<loadtasks assembly="${path.nantgooglecode}" />
 
 		<gcupload username="${gc.username}" password="${gc.password}" verbose="true" projectname="NModbus"
-			  filename="${path.dist}\NModbus_${version}.zip" targetfilename="NModbus_${version}.zip" summary="NModbus ${version} Binaries" />
+			  filename="${path.dist}\${product-name}.zip" targetfilename="${product-name}.zip" summary=".NET 2.0 NModbus ${version} Binaries" />
 		<gcupload username="${gc.username}" password="${gc.password}" verbose="true" projectname="NModbus"
-			  filename="${path.dist}\NModbus_${version}-source.zip" targetfilename="NModbus_${version}-source.zip" summary="NModbus ${version} Source" />
+			  filename="${path.dist}\${product-name}-source.zip" targetfilename="${product-name}-source.zip" summary=".NET 2.0 NModbus ${version} Source" />
 	</target>
 
 </project>
