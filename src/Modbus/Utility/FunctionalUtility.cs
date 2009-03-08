@@ -52,32 +52,5 @@ namespace Modbus.Utility
                 return output;
             };
         }
-
-        ///// <summary>
-        ///// Memoizes the given function using the TInput1 argument as the key.
-        ///// </summary>
-        //public static Func<TInput1, TInput2, TOutput> Memoize<TInput1, TInput2, TOutput>(Func<TInput1, TInput2, TOutput> generator)
-        //{
-        //    return Memoize(generator, input1 => input1);
-        //}
-
-        ///// <summary>
-        ///// Memoizes the given function.
-        ///// </summary>
-        //public static Func<TInput1, TInput2, TOutput> Memoize<TInput1, TInput2, TKey, TOutput>(Func<TInput1, TInput2, TOutput> generator, Func<TInput1, TKey> keySelector)
-        //{
-        //    Dictionary<TKey, TOutput> cache = new Dictionary<TKey, TOutput>();
-        //    return (input1, input2) =>
-        //    {
-        //        TOutput output;
-        //        if (!cache.TryGetValue(keySelector(input1), out output))
-        //        {
-        //            output = generator(input1, input2);
-        //            cache.Add(keySelector(input1), output);
-        //        }
-
-        //        return output;
-        //    };
-        //}
     }
 }
