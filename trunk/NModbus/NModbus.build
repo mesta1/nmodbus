@@ -5,9 +5,9 @@
 	<property name="path.fxcop" value="${environment::get-variable('FXCOP_HOME')}" />
 	<property name="path.framework" value="${environment::get-variable('SYSTEMROOT')}\Microsoft.NET\Framework\v3.5" />
 	<property name="path.ms.sdk" value="${environment::get-variable('MS_SDK_HOME')}" />
-	<!--<property name="nantcontrib" value="${environment::get-variable('NANTCONTRIB_HOME')}\bin\NAnt.Contrib.Tasks.dll" />
+	<property name="nantcontrib" value="${environment::get-variable('NANTCONTRIB_HOME')}\bin\NAnt.Contrib.Tasks.dll" />
 	<property name="path.jre" value="${environment::get-variable('JRE_HOME')}" />
-	<property name="path.jdk" value="${environment::get-variable('JDK_HOME')}" />-->
+	<property name="path.jdk" value="${environment::get-variable('JDK_HOME')}" />
 	<property name="path.bin" value="src\Modbus\bin\Release" />
 	<property name="path.signed.bin" value="src\Modbus\bin\SignedRelease" />
 	<property name="path.ftd.bin" value="src\FtdAdapter\bin\Release" />
