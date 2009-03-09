@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using Modbus.Data;
+using System.Diagnostics;
 
 namespace Modbus.Message
 {
@@ -35,7 +36,10 @@ namespace Modbus.Message
 
 		public override string ToString()
 		{
-			return String.Format(CultureInfo.InvariantCulture, "Write single holding register at address {0}.", StartAddress);
+            Debug.Assert(Data != null, "Argument Data cannot be null.");
+            Debug.Assert(Data.Count() == 1, "Data should have a count of 1.");
+
+			return String.Format(CultureInfo.InvariantCulture, "Write single holding register {0} at address {1}.", Data[0], StartAddress);
 		}
 
         public void ValidateResponse(IModbusMessage response)
