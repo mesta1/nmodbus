@@ -20,7 +20,7 @@ namespace Modbus.UnitTests.Message
 		public void ToStringOverride()
 		{
 			WriteSingleRegisterRequestResponse message = new WriteSingleRegisterRequestResponse(12, 5, 1200);
-			Assert.AreEqual("Write single holding register at address 5.", message.ToString());
+			Assert.AreEqual("Write single holding register 1200 at address 5.", message.ToString());
 		}
 	}
 }
