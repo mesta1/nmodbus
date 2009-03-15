@@ -1,16 +1,14 @@
 using System;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using Modbus.Data;
 using Unme.Common;
-using System.Diagnostics;
-using System.IO;
 
 namespace Modbus.Message
 {
-	class ReadWriteMultipleRegistersRequest : ModbusMessage, IModbusRequest
-	{
-		private const int _minimumFrameSize = 11;
+	internal class ReadWriteMultipleRegistersRequest : ModbusMessage, IModbusRequest
+	{		
 		private ReadHoldingInputRegistersRequest _readRequest;
 		private WriteMultipleRegistersRequest _writeRequest;
 
@@ -24,7 +22,7 @@ namespace Modbus.Message
 			_readRequest = new ReadHoldingInputRegistersRequest(Modbus.ReadHoldingRegisters, slaveAddress, startReadAddress, numberOfPointsToRead);
 			_writeRequest = new WriteMultipleRegistersRequest(slaveAddress, startWriteAddress, writeData);
 		}
-		
+
 		public override byte[] ProtocolDataUnit
 		{
 			get
@@ -32,13 +30,13 @@ namespace Modbus.Message
 				// read and write PDUs without function codes
 				byte[] read = _readRequest.ProtocolDataUnit.Slice(1, _readRequest.ProtocolDataUnit.Length - 1).ToArray();
 				byte[] write = _writeRequest.ProtocolDataUnit.Slice(1, _writeRequest.ProtocolDataUnit.Length - 1).ToArray();
-				
+
 				return FunctionCode.ToSequence().Concat(read, write).ToArray();
 			}
 		}
 
 		public ReadHoldingInputRegistersRequest ReadRequest
-		{					
+		{
 			get { return _readRequest; }
 		}
 
@@ -46,33 +44,39 @@ namespace Modbus.Message
 		{
 			get { return _writeRequest; }
 		}
-	
+
 		public override int MinimumFrameSize
 		{
-			get { return _minimumFrameSize; }
+			get { return 11; }
 		}
 
 		public override string ToString()
 		{
-			return String.Format(CultureInfo.InvariantCulture, "Write {0} holding registers starting at address {1}, and read {2} registers starting at address {3}.",
-				_writeRequest.NumberOfPoints, _writeRequest.StartAddress, _readRequest.NumberOfPoints, _readRequest.StartAddress);
+			return String.Format(CultureInfo.InvariantCulture, 
+				"Write {0} holding registers starting at address {1}, and read {2} registers starting at address {3}.",
+				_writeRequest.NumberOfPoints, 
+				_writeRequest.StartAddress, 
+				_readRequest.NumberOfPoints, 
+				_readRequest.StartAddress);
 		}
 
-        public void ValidateResponse(IModbusMessage response)
-        {
-            var typedResponse = (ReadHoldingInputRegistersResponse) response;
+		public void ValidateResponse(IModbusMessage response)
+		{
+			var typedResponse = (ReadHoldingInputRegistersResponse) response;
 
-            var expectedByteCount = ReadRequest.NumberOfPoints * 2;
-            if (expectedByteCount != typedResponse.ByteCount)
-            {
-                throw new IOException(String.Format(CultureInfo.InvariantCulture,
-                    "Unexpected byte count in response. Expected {0}, received {1}.", expectedByteCount, typedResponse.ByteCount));
-            }
-        }
+			var expectedByteCount = ReadRequest.NumberOfPoints * 2;
+			if (expectedByteCount != typedResponse.ByteCount)
+			{
+				throw new IOException(String.Format(CultureInfo.InvariantCulture,
+					"Unexpected byte count in response. Expected {0}, received {1}.", 
+					expectedByteCount, 
+					typedResponse.ByteCount));
+			}
+		}
 
 		protected override void InitializeUnique(byte[] frame)
 		{
-			if (frame.Length < _minimumFrameSize + frame[10])
+			if (frame.Length < MinimumFrameSize + frame[10])
 				throw new FormatException("Message frame does not contain enough bytes.");
 
 			byte[] readFrame = frame.Slice(2, 4).ToArray();
@@ -82,5 +86,5 @@ namespace Modbus.Message
 			_readRequest = ModbusMessageFactory.CreateModbusMessage<ReadHoldingInputRegistersRequest>(header.Concat(readFrame).ToArray());
 			_writeRequest = ModbusMessageFactory.CreateModbusMessage<WriteMultipleRegistersRequest>(header.Concat(writeFrame).ToArray());
 		}
-    }
+	}
 }

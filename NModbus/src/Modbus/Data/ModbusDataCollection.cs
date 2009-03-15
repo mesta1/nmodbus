@@ -42,6 +42,16 @@ namespace Modbus.Data
 		internal ModbusDataType ModbusDataType { get; set; }
 
 		/// <summary>
+		/// Adds a default element to the collection.
+		/// </summary>
+		/// <param name="data">The data.</param>
+		internal static IList<TData> AddDefault(IList<TData> data)
+		{
+			data.Insert(0, default(TData));
+			return data;
+		}
+
+		/// <summary>
 		/// Inserts an element into the <see cref="T:System.Collections.ObjectModel.Collection`1"></see> at the specified index.
 		/// </summary>
 		/// <param name="index">The zero-based index at which item should be inserted.</param>
@@ -91,16 +101,6 @@ namespace Modbus.Data
 			base.ClearItems();
 			AddDefault(this);
 			_allowZeroElement = false;
-		}
-
-		/// <summary>
-		/// Adds a default element to the collection.
-		/// </summary>
-		/// <param name="data">The data.</param>
-		internal static IList<TData> AddDefault(IList<TData> data)
-		{
-			data.Insert(0, default(TData));
-			return data;
-		}
+		}		
 	}
 }

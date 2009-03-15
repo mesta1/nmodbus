@@ -1,8 +1,7 @@
 using System;
-using System.Net;
+using System.IO.Ports;
 using System.Net.Sockets;
 using Modbus.IO;
-using System.IO.Ports;
 
 namespace Modbus.Device
 {
@@ -147,7 +146,7 @@ namespace Modbus.Device
 		/// <summary>
 		/// Write a single holding register.
 		/// </summary>
-		/// <param name="registerAddress">Value to write.</param>
+		/// <param name="registerAddress">Address to write.</param>
 		/// <param name="value">Value to write.</param>
 		public void WriteSingleRegister(ushort registerAddress, ushort value)
 		{

@@ -13,12 +13,7 @@ namespace Modbus.Device
 	/// Modbus slave device.
 	/// </summary>
 	public abstract class ModbusSlave : ModbusDevice
-	{
-		/// <summary>
-		/// Occurs when a modbus slave receives a request.
-		/// </summary>
-		public event EventHandler<ModbusSlaveRequestEventArgs> ModbusSlaveRequestReceived;
-
+	{		
 		private static readonly ILog _logger = LogManager.GetLogger(typeof(ModbusSlave));
 
 		internal ModbusSlave(byte unitId, ModbusTransport transport)
@@ -27,6 +22,11 @@ namespace Modbus.Device
 			DataStore = DataStoreFactory.CreateDefaultDataStore();
 			UnitId = unitId;
 		}
+
+		/// <summary>
+		/// Occurs when a modbus slave receives a request.
+		/// </summary>
+		public event EventHandler<ModbusSlaveRequestEventArgs> ModbusSlaveRequestReceived;
 
 		/// <summary>
 		/// Gets or sets the data store.

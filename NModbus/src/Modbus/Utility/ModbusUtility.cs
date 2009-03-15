@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Text;
-using Modbus.Utility;
 
 namespace Modbus.Utility
 {
@@ -11,7 +10,7 @@ namespace Modbus.Utility
 	/// </summary>
 	public static class ModbusUtility
 	{
-		private readonly static ushort[] crcTable = {
+		private static readonly ushort[] crcTable = {
         	0X0000, 0XC0C1, 0XC181, 0X0140, 0XC301, 0X03C0, 0X0280, 0XC241,
         	0XC601, 0X06C0, 0X0780, 0XC741, 0X0500, 0XC5C1, 0XC481, 0X0440,
         	0XCC01, 0X0CC0, 0X0D80, 0XCD41, 0X0F00, 0XCFC1, 0XCE81, 0X0E40,
@@ -60,9 +59,6 @@ namespace Modbus.Utility
 		/// <summary>
 		/// Converts two UInt16 values into a UInt32
 		/// </summary>
-		/// <param name="highOrderValue"></param>
-		/// <param name="lowOrderValue"></param>
-		/// <returns></returns>
 		public static uint GetUInt32(ushort highOrderValue, ushort lowOrderValue)
 		{
 			return BitConverter.ToUInt32(BitConverter.GetBytes(lowOrderValue).Concat(BitConverter.GetBytes(highOrderValue)).ToArray(), 0);
@@ -75,7 +71,7 @@ namespace Modbus.Utility
 		/// <returns>An array of ASCII byte values</returns>
 		public static byte[] GetAsciiBytes(params byte[] numbers)
 		{
-			return Encoding.ASCII.GetBytes(String.Join("", Array.ConvertAll<byte, string>(numbers, delegate(byte n) { return n.ToString("X2"); })));
+			return Encoding.ASCII.GetBytes(String.Join(String.Empty, Array.ConvertAll<byte, string>(numbers, delegate(byte n) { return n.ToString("X2"); })));
 		}
 
 		/// <summary>
@@ -85,7 +81,7 @@ namespace Modbus.Utility
 		/// <returns>An array of ASCII byte values</returns>
 		public static byte[] GetAsciiBytes(params ushort[] numbers)
 		{
-			return Encoding.ASCII.GetBytes(String.Join("", Array.ConvertAll<ushort, string>(numbers, delegate(ushort n) { return n.ToString("X4"); })));
+			return Encoding.ASCII.GetBytes(String.Join(String.Empty, Array.ConvertAll<ushort, string>(numbers, delegate(ushort n) { return n.ToString("X4"); })));
 		}
 
 		/// <summary>

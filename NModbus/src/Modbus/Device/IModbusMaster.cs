@@ -61,7 +61,7 @@ namespace Modbus.Device
 		/// Write a single holding register.
 		/// </summary>
 		/// <param name="slaveAddress">Address of the device to write to.</param>
-		/// <param name="registerAddress">Value to write.</param>
+		/// <param name="registerAddress">Address to write.</param>
 		/// <param name="value">Value to write.</param>
 		void WriteSingleRegister(byte slaveAddress, ushort registerAddress, ushort value);
 

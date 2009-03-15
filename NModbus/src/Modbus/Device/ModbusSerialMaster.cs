@@ -1,9 +1,9 @@
 using System;
 using System.IO.Ports;
+using System.Net.Sockets;
 using Modbus.Data;
 using Modbus.IO;
 using Modbus.Message;
-using System.Net.Sockets;
 
 namespace Modbus.Device
 {
@@ -54,8 +54,8 @@ namespace Modbus.Device
 		{
 			if (udpClient == null)
 				throw new ArgumentNullException("udpClient");
-            if (!udpClient.Client.Connected)
-                throw new InvalidOperationException("UdpClient must be bound to a default remote host. Call the Connect method.");
+			if (!udpClient.Client.Connected)
+				throw new InvalidOperationException("UdpClient must be bound to a default remote host. Call the Connect method.");
 
 			return CreateAscii(new UdpClientAdapter(udpClient));
 		}
@@ -102,8 +102,8 @@ namespace Modbus.Device
 		{
 			if (udpClient == null)
 				throw new ArgumentNullException("udpClient");
-            if (!udpClient.Client.Connected)
-                throw new InvalidOperationException("UdpClient must be bound to a default remote host. Call the Connect method.");
+			if (!udpClient.Client.Connected)
+				throw new InvalidOperationException("UdpClient must be bound to a default remote host. Call the Connect method.");
 
 			return CreateRtu(new UdpClientAdapter(udpClient));
 		}
@@ -120,7 +120,7 @@ namespace Modbus.Device
 
 			return new ModbusSerialMaster(new ModbusRtuTransport(streamResource));
 		}
-		
+
 		/// <summary>
 		/// Serial Line only.
 		/// Diagnostic function which loops back the original data.

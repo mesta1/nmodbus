@@ -1,10 +1,10 @@
+using System;
+using System.Globalization;
 using System.Linq;
 using Modbus.Data;
 using Modbus.IO;
 using Modbus.Message;
 using Unme.Common;
-using System;
-using System.Globalization;
 
 namespace Modbus.Device
 {
@@ -90,7 +90,7 @@ namespace Modbus.Device
 		/// Write a single holding register.
 		/// </summary>
 		/// <param name="slaveAddress">Address of the device to write to.</param>
-		/// <param name="registerAddress">Value to write.</param>
+		/// <param name="registerAddress">Address to write.</param>
 		/// <param name="value">Value to write.</param>
 		public void WriteSingleRegister(byte slaveAddress, ushort registerAddress, ushort value)
 		{
@@ -177,8 +177,10 @@ namespace Modbus.Device
 
 			if (data.Length == 0 || data.Length > maxDataLength)
 			{
-				throw new ArgumentException(String.Format(CultureInfo.InvariantCulture,
-					"The length of argument {0} must be between 1 and {1} inclusive.", argumentName, maxDataLength));
+				throw new ArgumentException(String.Format(CultureInfo.InvariantCulture, 
+					"The length of argument {0} must be between 1 and {1} inclusive.", 
+					argumentName, 
+					maxDataLength));
 			}
 		}
 
@@ -187,7 +189,9 @@ namespace Modbus.Device
 			if (numberOfPoints < 1 || numberOfPoints > maxNumberOfPoints)
 			{
 				throw new ArgumentException(String.Format(CultureInfo.InvariantCulture,
-					"Argument {0} must be between 1 and {1} inclusive.", argumentName, maxNumberOfPoints));
+					"Argument {0} must be between 1 and {1} inclusive.", 
+					argumentName, 
+					maxNumberOfPoints));
 			}
 		}
 

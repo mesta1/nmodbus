@@ -4,10 +4,8 @@ using System.Net;
 
 namespace Modbus.Message
 {
-	class WriteMultipleRegistersResponse : ModbusMessage, IModbusMessage
-	{
-		private const int _minimumFrameSize = 6;
-
+	internal class WriteMultipleRegistersResponse : ModbusMessage, IModbusMessage
+	{		
 		public WriteMultipleRegistersResponse()
 		{
 		}
@@ -29,8 +27,8 @@ namespace Modbus.Message
 			{
 				if (value > Modbus.MaximumRegisterRequestResponseSize)
 				{
-					throw new ArgumentOutOfRangeException("NumberOfPoints", String.Format(CultureInfo.InvariantCulture,
-						"Maximum amount of data {0} registers.", Modbus.MaximumRegisterRequestResponseSize));
+					throw new ArgumentOutOfRangeException("NumberOfPoints", 
+						String.Format(CultureInfo.InvariantCulture, "Maximum amount of data {0} registers.", Modbus.MaximumRegisterRequestResponseSize));
 				}
 
 				MessageImpl.NumberOfPoints = value;
@@ -45,7 +43,7 @@ namespace Modbus.Message
 
 		public override int MinimumFrameSize
 		{
-			get { return _minimumFrameSize; }
+			get { return 6; }
 		}
 
 		public override string ToString()

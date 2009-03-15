@@ -19,14 +19,14 @@ namespace Modbus.IO
 	{
 		private static readonly ILog _logger = LogManager.GetLogger(typeof(ModbusIpTransport));
 		private static readonly object _transactionIdLock = new object();
-		private ushort _transactionId;		
+		private ushort _transactionId;
 
 		internal ModbusIpTransport(IStreamResource streamResource)
 			: base(streamResource)
 		{
 			Debug.Assert(streamResource != null, "Argument streamResource cannot be null.");
 		}
-      
+
 		internal static byte[] ReadRequestResponse(IStreamResource streamResource)
 		{
 			// read header
@@ -41,7 +41,7 @@ namespace Modbus.IO
 			}
 			_logger.DebugFormat("MBAP header: {0}", mbapHeader.Join(", "));
 
-			ushort frameLength = (ushort) (IPAddress.HostToNetworkOrder(BitConverter.ToInt16(mbapHeader, 4)));
+			ushort frameLength = (ushort) IPAddress.HostToNetworkOrder(BitConverter.ToInt16(mbapHeader, 4));
 			_logger.DebugFormat("{0} bytes in PDU.", frameLength);
 
 			// read message
@@ -64,10 +64,10 @@ namespace Modbus.IO
 
 		internal static byte[] GetMbapHeader(IModbusMessage message)
 		{
-			byte[] transactionId = BitConverter.GetBytes((short) IPAddress.HostToNetworkOrder((short) (message.TransactionId)));
+			byte[] transactionId = BitConverter.GetBytes((short) IPAddress.HostToNetworkOrder((short) message.TransactionId));
 			byte[] protocol = { 0, 0 };
 			byte[] length = BitConverter.GetBytes((short) IPAddress.HostToNetworkOrder((short) (message.ProtocolDataUnit.Length + 1)));
-				
+
 			return transactionId.Concat(protocol, length, new byte[] { message.SlaveAddress }).ToArray();
 		}
 
@@ -87,7 +87,7 @@ namespace Modbus.IO
 			byte[] mbapHeader = fullFrame.Slice(0, 6).ToArray();
 			byte[] messageFrame = fullFrame.Slice(6, fullFrame.Length - 6).ToArray();
 
-			IModbusMessage response = base.CreateResponse<T>(messageFrame);
+			IModbusMessage response = CreateResponse<T>(messageFrame);
 			response.TransactionId = (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(mbapHeader, 0));
 
 			return response;
@@ -104,11 +104,11 @@ namespace Modbus.IO
 
 		internal override void Write(IModbusMessage message)
 		{
-            message.TransactionId = GetNewTransactionId();
+			message.TransactionId = GetNewTransactionId();
 			byte[] frame = BuildMessageFrame(message);
 			_logger.InfoFormat("TX: {0}", frame.Join(", "));
 			StreamResource.Write(frame, 0, frame.Length);
-		}	
+		}
 
 		internal override byte[] ReadRequest()
 		{
@@ -120,10 +120,10 @@ namespace Modbus.IO
 			return CreateMessageAndInitializeTransactionId<T>(ReadRequestResponse(StreamResource));
 		}
 
-        internal override void OnValidateResponse(IModbusMessage request, IModbusMessage response)
-        {
-            if (request.TransactionId != response.TransactionId)
-                throw new IOException(String.Format(CultureInfo.InvariantCulture, "Response was not of expected transaction ID. Expected {0}, received {1}.", request.TransactionId, response.TransactionId));
-        }
-    }
+		internal override void OnValidateResponse(IModbusMessage request, IModbusMessage response)
+		{
+			if (request.TransactionId != response.TransactionId)
+				throw new IOException(String.Format(CultureInfo.InvariantCulture, "Response was not of expected transaction ID. Expected {0}, received {1}.", request.TransactionId, response.TransactionId));
+		}
+	}
 }

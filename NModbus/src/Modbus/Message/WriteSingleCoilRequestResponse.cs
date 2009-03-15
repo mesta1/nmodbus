@@ -1,18 +1,16 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net;
 using Modbus.Data;
 using Unme.Common;
-using System.IO;
 
 namespace Modbus.Message
 {
-	class WriteSingleCoilRequestResponse : ModbusMessageWithData<RegisterCollection>, IModbusRequest
+	internal class WriteSingleCoilRequestResponse : ModbusMessageWithData<RegisterCollection>, IModbusRequest
 	{
-		private const int _minimumFrameSize = 6;
-
 		public WriteSingleCoilRequestResponse()
 		{
 		}
@@ -26,7 +24,7 @@ namespace Modbus.Message
 
 		public override int MinimumFrameSize
 		{
-			get { return _minimumFrameSize; }
+			get { return 6; }
 		}
 
 		public ushort StartAddress
@@ -40,26 +38,32 @@ namespace Modbus.Message
 			Debug.Assert(Data != null, "Argument Data cannot be null.");
 			Debug.Assert(Data.Count() == 1, "Data should have a count of 1.");
 
-			return String.Format(CultureInfo.InvariantCulture, "Write single coil {0} at address {1}.", 
-				Data.First() == Modbus.CoilOn ? 1 : 0, StartAddress);
+			return String.Format(CultureInfo.InvariantCulture, 
+				"Write single coil {0} at address {1}.",
+				Data.First() == Modbus.CoilOn ? 1 : 0, 
+				StartAddress);
 		}
 
-        public void ValidateResponse(IModbusMessage response)
-        {
-            var typedResponse = (WriteSingleCoilRequestResponse) response;
+		public void ValidateResponse(IModbusMessage response)
+		{
+			var typedResponse = (WriteSingleCoilRequestResponse) response;
 
-            if (StartAddress != typedResponse.StartAddress)
-            {
-                throw new IOException(String.Format(CultureInfo.InvariantCulture,
-                    "Unexpected start address in response. Expected {0}, received {1}.", StartAddress, typedResponse.StartAddress));
-            }
+			if (StartAddress != typedResponse.StartAddress)
+			{
+				throw new IOException(String.Format(CultureInfo.InvariantCulture,
+					"Unexpected start address in response. Expected {0}, received {1}.", 
+					StartAddress, 
+					typedResponse.StartAddress));
+			}
 
-            if (Data.First() != typedResponse.Data.First())
-            {
-                throw new IOException(String.Format(CultureInfo.InvariantCulture,
-                    "Unexpected data in response. Expected {0}, received {1}.", Data.First(), typedResponse.Data.First()));
-            }
-        }
+			if (Data.First() != typedResponse.Data.First())
+			{
+				throw new IOException(String.Format(CultureInfo.InvariantCulture,
+					"Unexpected data in response. Expected {0}, received {1}.", 
+					Data.First(), 
+					typedResponse.Data.First()));
+			}
+		}
 
 		protected override void InitializeUnique(byte[] frame)
 		{

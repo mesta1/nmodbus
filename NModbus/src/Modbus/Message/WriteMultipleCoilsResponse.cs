@@ -4,10 +4,8 @@ using System.Net;
 
 namespace Modbus.Message
 {
-	class WriteMultipleCoilsResponse : ModbusMessage, IModbusMessage
+	internal class WriteMultipleCoilsResponse : ModbusMessage, IModbusMessage
 	{
-		private const int _minimumFrameSize = 6;
-
 		public WriteMultipleCoilsResponse()
 		{
 		}
@@ -42,7 +40,7 @@ namespace Modbus.Message
 
 		public override int MinimumFrameSize
 		{
-			get { return _minimumFrameSize; }
+			get { return 6; }
 		}
 
 		public override string ToString()

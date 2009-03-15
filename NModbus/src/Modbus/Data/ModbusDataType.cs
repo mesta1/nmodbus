@@ -9,14 +9,17 @@
 		/// read/write register
 		/// </summary>
 		HoldingRegister,
+
 		/// <summary>
 		/// readonly register
 		/// </summary>
 		InputRegister,
+		
 		/// <summary>
 		/// read/write discrete
 		/// </summary>
 		Coil,
+		
 		/// <summary>
 		/// readonly discrete
 		/// </summary>

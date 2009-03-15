@@ -1,8 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System;
 
 namespace Modbus.Data
 {
@@ -14,7 +14,7 @@ namespace Modbus.Data
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DiscreteCollection"/> class.
 		/// </summary>
-		public DiscreteCollection ()
+		public DiscreteCollection()
 		{
 		}
 
@@ -22,7 +22,7 @@ namespace Modbus.Data
 		/// Initializes a new instance of the <see cref="DiscreteCollection"/> class.
 		/// </summary>
 		public DiscreteCollection(params bool[] bits)
-			: this((IList<bool>)bits)
+			: this((IList<bool>) bits)
 		{
 		}
 
@@ -30,7 +30,7 @@ namespace Modbus.Data
 		/// Initializes a new instance of the <see cref="DiscreteCollection"/> class.
 		/// </summary>
 		public DiscreteCollection(params byte[] bytes)
-			: this((IList<bool>)(new BitArray(bytes)).Cast<bool>().ToArray())
+			: this((IList<bool>) (new BitArray(bytes)).Cast<bool>().ToArray())
 		{
 		}
 
@@ -38,7 +38,7 @@ namespace Modbus.Data
 		/// Initializes a new instance of the <see cref="DiscreteCollection"/> class.
 		/// </summary>
 		public DiscreteCollection(IList<bool> bits)
-		    : base(bits.IsReadOnly ? new List<bool>(bits) : bits)
+			: base(bits.IsReadOnly ? new List<bool>(bits) : bits)
 		{
 		}
 

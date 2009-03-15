@@ -13,9 +13,9 @@ namespace Modbus
 	{
 		private readonly SlaveExceptionResponse _slaveExceptionResponse;
 
-		private const string slaveAddressPropertyName = "SlaveAdress";
-		private const string functionCodePropertyName = "FunctionCode";
-		private const string slaveExceptionCodePropertyName = "SlaveExceptionCode";
+		private const string SlaveAddressPropertyName = "SlaveAdress";
+		private const string FunctionCodePropertyName = "FunctionCode";
+		private const string SlaveExceptionCodePropertyName = "SlaveExceptionCode";
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SlaveException"/> class.
@@ -42,6 +42,17 @@ namespace Modbus
 			: base(message, innerException)
 		{
 		}
+		
+		internal SlaveException(SlaveExceptionResponse slaveExceptionResponse)
+		{
+			_slaveExceptionResponse = slaveExceptionResponse;
+		}
+
+		internal SlaveException(string message, SlaveExceptionResponse slaveExceptionResponse)
+			: base(message)
+		{
+			_slaveExceptionResponse = slaveExceptionResponse;
+		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SlaveException"/> class.
@@ -55,19 +66,8 @@ namespace Modbus
 		{
 			if (info != null)
 			{
-				_slaveExceptionResponse = new SlaveExceptionResponse(info.GetByte(slaveAddressPropertyName), info.GetByte(functionCodePropertyName), info.GetByte(slaveExceptionCodePropertyName));
+				_slaveExceptionResponse = new SlaveExceptionResponse(info.GetByte(SlaveAddressPropertyName), info.GetByte(FunctionCodePropertyName), info.GetByte(SlaveExceptionCodePropertyName));
 			}
-		}
-
-		internal SlaveException(SlaveExceptionResponse slaveExceptionResponse)
-		{
-			_slaveExceptionResponse = slaveExceptionResponse;
-		}
-
-		internal SlaveException(string message, SlaveExceptionResponse slaveExceptionResponse)
-			: base(message)
-		{
-			_slaveExceptionResponse = slaveExceptionResponse;
 		}
 
 		/// <summary>
@@ -126,16 +126,16 @@ namespace Modbus
 		/// <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext"></see> that contains contextual information about the source or destination.</param>
 		/// <exception cref="T:System.ArgumentNullException">The info parameter is a null reference (Nothing in Visual Basic). </exception>
 		/// <PermissionSet><IPermission class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Read="*AllFiles*" PathDiscovery="*AllFiles*"/><IPermission class="System.Security.Permissions.SecurityPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Flags="SerializationFormatter"/></PermissionSet>
-		[SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter=true)]
+		[SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
 		public override void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData(info, context);
 
 			if (info != null && _slaveExceptionResponse != null)
 			{
-				info.AddValue(slaveAddressPropertyName, _slaveExceptionResponse.SlaveAddress);
-				info.AddValue(functionCodePropertyName, _slaveExceptionResponse.FunctionCode);
-				info.AddValue(slaveExceptionCodePropertyName, _slaveExceptionResponse.SlaveExceptionCode);
+				info.AddValue(SlaveAddressPropertyName, _slaveExceptionResponse.SlaveAddress);
+				info.AddValue(FunctionCodePropertyName, _slaveExceptionResponse.FunctionCode);
+				info.AddValue(SlaveExceptionCodePropertyName, _slaveExceptionResponse.SlaveExceptionCode);
 			}
 		}
 	}

@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace Modbus.Message
 {
-	abstract class ModbusMessage
+	internal abstract class ModbusMessage
 	{
 		private ModbusMessageImpl _messageImpl;
 
@@ -50,6 +50,8 @@ namespace Modbus.Message
 			get { return _messageImpl.ProtocolDataUnit; }
 		}
 
+		public abstract int MinimumFrameSize { get; }
+
 		public void Initialize(byte[] frame)
 		{
 			if (frame.Length < MinimumFrameSize)
@@ -59,8 +61,6 @@ namespace Modbus.Message
 			InitializeUnique(frame);
 		}
      
-		protected abstract void InitializeUnique(byte[] frame);
-
-		public abstract int MinimumFrameSize { get; }
+		protected abstract void InitializeUnique(byte[] frame);		
 	}
 }

@@ -4,10 +4,9 @@ using System.Globalization;
 
 namespace Modbus.Message
 {
-	class SlaveExceptionResponse : ModbusMessage, IModbusMessage
+	internal class SlaveExceptionResponse : ModbusMessage, IModbusMessage
 	{
-		private static readonly Dictionary<byte, string> _exceptionMessages = CreateExceptionMessages();
-		private const int _minimumFrameSize = 3;
+		private static readonly Dictionary<byte, string> _exceptionMessages = CreateExceptionMessages();		
 
 		public SlaveExceptionResponse()
 		{
@@ -21,7 +20,7 @@ namespace Modbus.Message
 
 		public override int MinimumFrameSize
 		{
-			get { return _minimumFrameSize; }
+			get { return 3; }
 		}
 
 		public byte SlaveExceptionCode
