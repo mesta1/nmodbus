@@ -6,10 +6,8 @@ using Unme.Common;
 
 namespace Modbus.Message
 {
-	class ReadHoldingInputRegistersResponse : ModbusMessageWithData<RegisterCollection>, IModbusMessage
+	internal class ReadHoldingInputRegistersResponse : ModbusMessageWithData<RegisterCollection>, IModbusMessage
 	{
-		private const int _minimumFrameSize = 3;
-
 		public ReadHoldingInputRegistersResponse()
 		{
 		}
@@ -32,7 +30,7 @@ namespace Modbus.Message
 
 		public override int MinimumFrameSize
 		{
-			get { return _minimumFrameSize; }
+			get { return 3; }
 		}
 
 		public override string ToString()
@@ -42,7 +40,7 @@ namespace Modbus.Message
 
 		protected override void InitializeUnique(byte[] frame)
 		{
-			if (frame.Length < _minimumFrameSize + frame[2])
+			if (frame.Length < MinimumFrameSize + frame[2])
 				throw new FormatException("Message frame does not contain enough bytes.");
 
 			ByteCount = frame[2];

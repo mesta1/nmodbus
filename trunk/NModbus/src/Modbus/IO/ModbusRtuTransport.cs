@@ -26,52 +26,6 @@ namespace Modbus.IO
 			Debug.Assert(streamResource != null, "Argument streamResource cannot be null.");
 		}
 
-		internal override byte[] BuildMessageFrame(IModbusMessage message)
-		{
-			List<byte> messageBody = new List<byte>();
-			messageBody.Add(message.SlaveAddress);
-			messageBody.AddRange(message.ProtocolDataUnit);
-			messageBody.AddRange(ModbusUtility.CalculateCrc(message.MessageFrame));
-
-			return messageBody.ToArray();
-		}
-
-		internal override bool ChecksumsMatch(IModbusMessage message, byte[] messageFrame)
-		{
-			return BitConverter.ToUInt16(messageFrame, messageFrame.Length - 2) == BitConverter.ToUInt16(ModbusUtility.CalculateCrc(message.MessageFrame), 0);
-		}
-
-		internal override IModbusMessage ReadResponse<T>()
-		{
-			byte[] frameStart = Read(ResponseFrameStartLength);
-			byte[] frameEnd = Read(ResponseBytesToRead(frameStart));
-			byte[] frame = frameStart.Concat(frameEnd).ToArray();
-			_logger.InfoFormat("RX: {0}", frame.Join(", "));
-
-			return CreateResponse<T>(frame);
-		}
-
-		internal override byte[] ReadRequest()
-		{
-			byte[] frameStart = Read(RequestFrameStartLength);
-			byte[] frameEnd = Read(RequestBytesToRead(frameStart));
-			byte[] frame = frameStart.Concat(frameEnd).ToArray();
-			_logger.InfoFormat("RX: {0}", frame.Join(", "));
-
-			return frame;
-		}
-
-		public virtual byte[] Read(int count)
-		{
-			byte[] frameBytes = new byte[count];
-			int numBytesRead = 0;
-
-			while (numBytesRead != count)
-				numBytesRead += StreamResource.Read(frameBytes, numBytesRead, count - numBytesRead);
-
-			return frameBytes;
-		}
-
 		public static int RequestBytesToRead(byte[] frameStart)
 		{
 			byte functionCode = frameStart[1];
@@ -133,6 +87,52 @@ namespace Modbus.IO
 			}
 
 			return numBytes;
+		}
+
+		public virtual byte[] Read(int count)
+		{
+			byte[] frameBytes = new byte[count];
+			int numBytesRead = 0;
+
+			while (numBytesRead != count)
+				numBytesRead += StreamResource.Read(frameBytes, numBytesRead, count - numBytesRead);
+
+			return frameBytes;
+		}
+
+		internal override byte[] BuildMessageFrame(IModbusMessage message)
+		{
+			List<byte> messageBody = new List<byte>();
+			messageBody.Add(message.SlaveAddress);
+			messageBody.AddRange(message.ProtocolDataUnit);
+			messageBody.AddRange(ModbusUtility.CalculateCrc(message.MessageFrame));
+
+			return messageBody.ToArray();
+		}
+
+		internal override bool ChecksumsMatch(IModbusMessage message, byte[] messageFrame)
+		{
+			return BitConverter.ToUInt16(messageFrame, messageFrame.Length - 2) == BitConverter.ToUInt16(ModbusUtility.CalculateCrc(message.MessageFrame), 0);
+		}
+
+		internal override IModbusMessage ReadResponse<T>()
+		{
+			byte[] frameStart = Read(ResponseFrameStartLength);
+			byte[] frameEnd = Read(ResponseBytesToRead(frameStart));
+			byte[] frame = frameStart.Concat(frameEnd).ToArray();
+			_logger.InfoFormat("RX: {0}", frame.Join(", "));
+
+			return CreateResponse<T>(frame);
+		}
+
+		internal override byte[] ReadRequest()
+		{
+			byte[] frameStart = Read(RequestFrameStartLength);
+			byte[] frameEnd = Read(RequestBytesToRead(frameStart));
+			byte[] frame = frameStart.Concat(frameEnd).ToArray();
+			_logger.InfoFormat("RX: {0}", frame.Join(", "));
+
+			return frame;
 		}
 	}
 }

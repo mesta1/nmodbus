@@ -5,11 +5,9 @@ using Modbus.Data;
 using Unme.Common;
 
 namespace Modbus.Message
-{	
-	class ReadCoilsInputsResponse : ModbusMessageWithData<DiscreteCollection>, IModbusMessage
+{
+	internal class ReadCoilsInputsResponse : ModbusMessageWithData<DiscreteCollection>, IModbusMessage
 	{
-		private const int _minimumFrameSize = 3;
-
 		public ReadCoilsInputsResponse()
 		{
 		}
@@ -29,13 +27,16 @@ namespace Modbus.Message
 
 		public override int MinimumFrameSize
 		{
-			get { return _minimumFrameSize; }
+			get { return 3; }
 		}
 
 		public override string ToString()
 		{
-			return String.Format(CultureInfo.InvariantCulture, "Read {0} {1} - {2}.", Data.Count(), 
-				FunctionCode == Modbus.ReadInputs ? "inputs" : "coils", Data);
+			return String.Format(CultureInfo.InvariantCulture, 
+				"Read {0} {1} - {2}.", 
+				Data.Count(), 
+				FunctionCode == Modbus.ReadInputs ? "inputs" : "coils", 
+				Data);
 		}
 
 		protected override void InitializeUnique(byte[] frame)

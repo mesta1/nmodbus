@@ -44,8 +44,8 @@ namespace Modbus.Data
 				bool value = i % 2 > 0;
 				dataStore.CoilDiscretes.Add(value);
 				dataStore.InputDiscretes.Add(!value);
-				dataStore.HoldingRegisters.Add((ushort) (i));
-				dataStore.InputRegisters.Add((ushort) ((i) * 10));
+				dataStore.HoldingRegisters.Add((ushort) i);
+				dataStore.InputRegisters.Add((ushort) (i * 10));
 			}
 
 			return dataStore;

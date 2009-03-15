@@ -3,9 +3,9 @@ using System.Globalization;
 
 namespace Modbus.Message
 {
-	static class ModbusMessageFactory
+	internal static class ModbusMessageFactory
 	{	
-		const int MinRequestFrameLength = 3;
+		private const int MinRequestFrameLength = 3;
 
 		public static T CreateModbusMessage<T>(byte[] frame) where T : IModbusMessage, new()
 		{

@@ -1,6 +1,6 @@
+using System;
 using System.Diagnostics;
 using System.Net.Sockets;
-using System;
 using Unme.Common;
 
 namespace Modbus.IO
@@ -35,7 +35,7 @@ namespace Modbus.IO
 		{
 			get { return _networkStream.WriteTimeout; }
 			set { _networkStream.WriteTimeout = value; }
-		}		
+		}
 
 		public void Write(byte[] buffer, int offset, int size)
 		{
@@ -52,16 +52,16 @@ namespace Modbus.IO
 			_networkStream.Flush();
 		}
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-                DisposableUtility.Dispose(ref _networkStream);
-        }
-    }
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+				DisposableUtility.Dispose(ref _networkStream);
+		}
+	}
 }

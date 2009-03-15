@@ -1,17 +1,15 @@
 using System;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using Modbus.Data;
 using Unme.Common;
-using System.Globalization;
-using System.Diagnostics;
 
 namespace Modbus.Message
 {
-	class DiagnosticsRequestResponse : ModbusMessageWithData<RegisterCollection>, IModbusMessage
-	{
-		private const int _minimumFrameSize = 6;
-
+	internal class DiagnosticsRequestResponse : ModbusMessageWithData<RegisterCollection>, IModbusMessage
+	{		
 		public DiagnosticsRequestResponse()
 		{
 		}
@@ -25,7 +23,7 @@ namespace Modbus.Message
 		
 		public override int MinimumFrameSize
 		{
-			get { return _minimumFrameSize; }
+			get { return 6; }
 		}
 
 		public ushort SubFunctionCode

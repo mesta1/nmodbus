@@ -1,4 +1,5 @@
 using System;
+
 namespace Modbus.Message
 {
 	/// <summary>
@@ -7,9 +8,9 @@ namespace Modbus.Message
 	[Obsolete]
 	public interface IModbusMessageWithData<TData> : IModbusMessage
 	{
-		///<summary>
+		/// <summary>
 		/// The message data.
-		///</summary>
+		/// </summary>
 		TData[] Data { get; }
 	}
 }

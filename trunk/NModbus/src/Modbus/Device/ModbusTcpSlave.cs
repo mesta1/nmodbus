@@ -15,7 +15,7 @@ namespace Modbus.Device
 	/// Modbus TCP slave device.
 	/// </summary>
 	public class ModbusTcpSlave : ModbusSlave, IDisposable
-	{		
+	{
 		private readonly object _mastersLock = new object();
 		private readonly ILog _logger = LogManager.GetLogger(typeof(ModbusTcpSlave));
 		private readonly Dictionary<string, ModbusMasterTcpConnection> _masters = new Dictionary<string, ModbusMasterTcpConnection>();
@@ -26,14 +26,6 @@ namespace Modbus.Device
 		{
 			_server = tcpListener;
 		}		
-
-		/// <summary>
-		/// Modbus TCP slave factory method.
-		/// </summary>
-		public static ModbusTcpSlave CreateTcp(byte unitId, TcpListener tcpListener)
-		{
-			return new ModbusTcpSlave(unitId, tcpListener);
-		}
 
 		/// <summary>
 		/// Gets the Modbus TCP Masters connected to this Modbus TCP Slave.
@@ -48,6 +40,14 @@ namespace Modbus.Device
 		}
 
 		/// <summary>
+		/// Modbus TCP slave factory method.
+		/// </summary>
+		public static ModbusTcpSlave CreateTcp(byte unitId, TcpListener tcpListener)
+		{
+			return new ModbusTcpSlave(unitId, tcpListener);
+		}
+
+		/// <summary>
 		/// Start slave listening for requests.
 		/// </summary>
 		public override void Listen()
@@ -57,7 +57,7 @@ namespace Modbus.Device
 
 			_server.BeginAcceptTcpClient(AcceptCompleted, this);
 		}
-	
+
 		internal void RemoveMaster(string endPoint)
 		{
 			lock (_mastersLock)
@@ -81,7 +81,7 @@ namespace Modbus.Device
 
 				lock (_mastersLock)
 					_masters.Add(client.Client.RemoteEndPoint.ToString(), masterConnection);
-				
+
 				_logger.Debug("Accept completed.");
 
 				// Accept another client
@@ -93,16 +93,16 @@ namespace Modbus.Device
 			}
 		}
 
-        /// <summary>
-        /// Releases unmanaged and - optionally - managed resources
-        /// </summary>
-        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
+		/// <summary>
+		/// Releases unmanaged and - optionally - managed resources
+		/// </summary>
+		/// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+		protected override void Dispose(bool disposing)
+		{
+			base.Dispose(disposing);
 
-            if (disposing)
-                _masters.IfNotNull(m => m.Values.ForEach(client => DisposableUtility.Dispose(ref client)));
-        }
+			if (disposing)
+				_masters.IfNotNull(m => m.Values.ForEach(client => DisposableUtility.Dispose(ref client)));
+		}
 	}
 }

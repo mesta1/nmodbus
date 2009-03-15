@@ -1,9 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Modbus.Utility;
 using Unme.Common;
-using System.Collections.Generic;
 
 namespace Modbus.Data
 {
@@ -14,16 +14,6 @@ namespace Modbus.Data
 	/// </summary>
 	public class DataStore
 	{
-		/// <summary>
-		/// Occurs when the DataStore is read from via a Modbus command.
-		/// </summary>
-		public event EventHandler<DataStoreEventArgs> DataStoreReadFrom;
-
-		/// <summary>
-		/// Occurs when the DataStore is written to via a Modbus command.
-		/// </summary>		
-		public event EventHandler<DataStoreEventArgs> DataStoreWrittenTo;
-
 		private readonly object _syncRoot = new object();
 
 		/// <summary>
@@ -36,6 +26,16 @@ namespace Modbus.Data
 			HoldingRegisters = new ModbusDataCollection<ushort> { ModbusDataType = ModbusDataType.HoldingRegister };
 			InputRegisters = new ModbusDataCollection<ushort> { ModbusDataType = ModbusDataType.InputRegister };
 		}
+
+		/// <summary>
+		/// Occurs when the DataStore is written to via a Modbus command.
+		/// </summary>		
+		public event EventHandler<DataStoreEventArgs> DataStoreWrittenTo;
+
+		/// <summary>
+		/// Occurs when the DataStore is read from via a Modbus command.
+		/// </summary>
+		public event EventHandler<DataStoreEventArgs> DataStoreReadFrom;
 
 		/// <summary>
 		/// Gets the coil discretes.
@@ -60,7 +60,7 @@ namespace Modbus.Data
 		/// <summary>
 		/// An object that can be used to synchronize direct access to the DataStore collections.
 		/// </summary>
-		public Object SyncRoot
+		public object SyncRoot
 		{
 			get
 			{
@@ -82,11 +82,11 @@ namespace Modbus.Data
 
 			if (dataSource.Count < startIndex + count)
 				throw new ArgumentOutOfRangeException("Read is outside valid range.");
-			
+
 			U[] dataToRetrieve;
-			lock(syncRoot)
+			lock (syncRoot)
 				dataToRetrieve = dataSource.Slice(startIndex, count).ToArray();
-			
+
 			T result = new T();
 			for (int i = 0; i < count; i++)
 				result.Add(dataToRetrieve[i]);
