@@ -142,7 +142,7 @@ namespace Modbus.IO
 					{
 						_logger.WarnFormat("{0}, {1} retries remaining - {2}", e.GetType().Name, _retries - attempt, e);
 
-						if (attempt++ > _retries)
+						if (++attempt > _retries)
 							throw;
 					}
 					else
