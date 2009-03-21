@@ -140,9 +140,9 @@ namespace Modbus.IO
 						e is TimeoutException ||
 						e is IOException)
 					{
-						_logger.WarnFormat("{0}, {1} retries remaining - {2}", e.GetType().Name, _retries - attempt, e);
+						_logger.WarnFormat("{0}, {1} retries remaining - {2}", e.GetType().Name, _retries - attempt + 1, e);
 
-						if (++attempt > _retries)
+						if (attempt++ > _retries)
 							throw;
 					}
 					else
