@@ -139,7 +139,7 @@ namespace FtdAdapter
 				_readTimeout = (uint) value;
 
 				if (IsOpen)
-					InvokeFtdMethod(() => FT_SetTimeouts(DeviceHandle, (byte) ReadTimeout, (byte) WriteTimeout));
+					InvokeFtdMethod(() => FT_SetTimeouts(DeviceHandle, (uint) ReadTimeout, (uint) WriteTimeout));
 			}
 		}
 
