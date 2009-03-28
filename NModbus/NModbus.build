@@ -137,6 +137,7 @@
 			<in>
 				<items basedir="${path.dist}\scratch\bin">
 					<include name="Modbus.dll" />
+          <include name="Modbus.Extensions.dll" />
 					<include name="FtdAdapter.dll" />
 				</items>
 			</in>
