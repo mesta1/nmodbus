@@ -111,7 +111,7 @@ namespace Modbus.Extensions.Enron
 		{
 			for (int i = 0; i < registers.Length; i++)
 			{
-				yield return ModbusUtility.GetUInt32(registers[i], registers[i + 1]);
+				yield return ModbusUtility.GetUInt32(registers[i + 1], registers[i]);
 				i++;
 			}
 		}
