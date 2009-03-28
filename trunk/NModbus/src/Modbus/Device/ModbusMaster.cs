@@ -47,7 +47,7 @@ namespace Modbus.Device
 		}		
 
 		/// <summary>
-		/// Read contiguous block of holding registers.
+		/// Read contiguous block of 16 bit holding registers.
 		/// </summary>
 		/// <param name="slaveAddress">Address of device to read values from.</param>
 		/// <param name="startAddress">Address to begin reading.</param>
@@ -61,7 +61,7 @@ namespace Modbus.Device
 		}
 
 		/// <summary>
-		/// Read contiguous block of input registers.
+		/// Read contiguous block of 16 bit input registers.
 		/// </summary>
 		/// <param name="slaveAddress">Address of device to read values from.</param>
 		/// <param name="startAddress">Address to begin reading.</param>
@@ -99,7 +99,7 @@ namespace Modbus.Device
 		}
 
 		/// <summary>
-		/// Write a block of 1 to 123 contiguous registers.
+		/// Write a block of 1 to 123 contiguous 16 bit holding registers.
 		/// </summary>
 		/// <param name="slaveAddress">Address of the device to write to.</param>
 		/// <param name="startAddress">Address to begin writing values.</param>
