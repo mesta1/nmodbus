@@ -10,6 +10,7 @@
 	<property name="path.jdk" value="${environment::get-variable('JDK_HOME')}" />
 	<property name="path.bin" value="src\Modbus\bin\Release" />
 	<property name="path.signed.bin" value="src\Modbus\bin\SignedRelease" />
+	<property name="path.signed.extensions.bin" value="src\Modbus.Extensions\bin\SignedRelease" />
 	<property name="path.ftd.bin" value="src\FtdAdapter\bin\Release" />
 	<property name="path.signed.ftd.bin" value="src\FtdAdapter\bin\SignedRelease" />
 	<property name="path.src" value="src" />
@@ -112,6 +113,7 @@
 		<fxcop analysisReportFilename="${path.output}\fxcop.xml">
 			<targets>
 				<include name="${path.bin}\Modbus.dll" />
+				<include name="${path.bin}\Modbus.Extensions.dll" />
 			</targets>
 		</fxcop>
 	</target>
@@ -126,9 +128,10 @@
 			<fileset basedir="${path.signed.bin}">
 				<include name="*.dll" />
 				<exclude name="System.Core.dll" />
-			</fileset>
+			</fileset>			
 		</copy>
-		<copy file="${path.signed.ftd.bin}\FtdAdapter.dll" todir="${path.dist}\scratch\bin" />
+	  <copy file="${path.signed.ftd.bin}\FtdAdapter.dll" todir="${path.dist}\scratch\bin" />
+		<copy file="${path.signed.extensions.bin}\Modbus.Extensions.dll" todir="${path.dist}\scratch\bin" />
 		<copy file="${path.lib}\FTD2XX.dll" todir="${path.dist}\scratch\bin" />
 
 		<!-- sign dlls with private key -->
