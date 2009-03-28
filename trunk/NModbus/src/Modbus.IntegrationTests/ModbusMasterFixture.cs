@@ -142,7 +142,7 @@ namespace Modbus.IntegrationTests
 		{
 			ushort[] registers = Master.ReadHoldingRegisters(SlaveAddress, 104, 2);
 			Assert.AreEqual(new ushort[] { 0, 0 }, registers);
-		}
+		}	
 
 		[Test]
 		public virtual void ReadInputRegisters()
@@ -150,7 +150,7 @@ namespace Modbus.IntegrationTests
 			ushort[] registers = Master.ReadInputRegisters(SlaveAddress, 104, 2);
 			Assert.AreEqual(new ushort[] { 0, 0 }, registers);
 		}
-
+		
 		[Test]
 		public virtual void WriteSingleCoil()
 		{
@@ -258,7 +258,7 @@ namespace Modbus.IntegrationTests
 			Assert.AreEqual(testValues, newValues);
 			writeRequest = new CustomWriteMultipleRegistersRequest(16, SlaveAddress, testAddress, new RegisterCollection(originalValues));
 			Master.ExecuteCustomMessage<CustomWriteMultipleRegistersResponse>(writeRequest);
-		}
+		}		
 
 		/// <summary>
 		/// Perform read registers command 

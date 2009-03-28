@@ -22,10 +22,12 @@ namespace Modbus.Extensions.Enron
 		/// <returns>Holding registers status</returns>
 		public static uint[] ReadHoldingRegisters32(this ModbusMaster master, byte slaveAddress, ushort startAddress, ushort numberOfPoints)
 		{
+			if (master == null)
+				throw new ArgumentNullException("master");
 			ValidateNumberOfPoints(numberOfPoints, 62);
 
 			// read 16 bit chunks and perform conversion
-			var rawRegisters = master.ReadHoldingRegisters(slaveAddress, startAddress, (ushort) (numberOfPoints * 2));			
+			var rawRegisters = master.ReadHoldingRegisters(slaveAddress, startAddress, (ushort) (numberOfPoints * 2));
 
 			return Convert(rawRegisters).ToArray();
 		}
@@ -40,13 +42,30 @@ namespace Modbus.Extensions.Enron
 		/// <returns>Input registers status</returns>
 		public static uint[] ReadInputRegisters32(this ModbusMaster master, byte slaveAddress, ushort startAddress, ushort numberOfPoints)
 		{
+			if (master == null)
+				throw new ArgumentNullException("master");
 			ValidateNumberOfPoints(numberOfPoints, 62);
 
 			var rawRegisters = master.ReadInputRegisters(slaveAddress, startAddress, (ushort) (numberOfPoints * 2));
 
 			return Convert(rawRegisters).ToArray();
 		}
-		
+
+		/// <summary>
+		/// Write a single 16 bit holding register.
+		/// </summary>
+		/// <param name="master">The Modbus master.</param>
+		/// <param name="slaveAddress">Address of the device to write to.</param>
+		/// <param name="registerAddress">Address to write.</param>
+		/// <param name="value">Value to write.</param>
+		public static void WriteSingleRegister32(this ModbusMaster master, byte slaveAddress, ushort registerAddress, uint value)
+		{
+			if (master == null)
+				throw new ArgumentNullException("master");
+
+			master.WriteMultipleRegisters32(slaveAddress, registerAddress, new[] { value });
+		}
+
 		/// <summary>
 		/// Write a block of contiguous 32 bit holding registers.
 		/// </summary>
@@ -56,12 +75,14 @@ namespace Modbus.Extensions.Enron
 		/// <param name="data">Values to write.</param>
 		public static void WriteMultipleRegisters32(this ModbusMaster master, byte slaveAddress, ushort startAddress, uint[] data)
 		{
+			if (master == null)
+				throw new ArgumentNullException("master");
 			if (data == null)
 				throw new ArgumentNullException("data");
 
 			if (data.Length == 0 || data.Length > 61)
 			{
-				throw new ArgumentException(String.Format(CultureInfo.InvariantCulture, 
+				throw new ArgumentException(String.Format(CultureInfo.InvariantCulture,
 					"The length of argument data must be between 1 and 61 inclusive."));
 			}
 
