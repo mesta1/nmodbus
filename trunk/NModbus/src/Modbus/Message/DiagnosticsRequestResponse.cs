@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using Modbus.Data;
 using Unme.Common;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Modbus.Message
 {
@@ -26,9 +27,10 @@ namespace Modbus.Message
 			get { return 6; }
 		}
 
+		[SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "May implement addtional sub function codes in the future.")]
 		public ushort SubFunctionCode
 		{
-			get { return MessageImpl.SubFunctionCode; }
+			get { return MessageImpl.SubFunctionCode.Value; }
 			set { MessageImpl.SubFunctionCode = value; }
 		}
 

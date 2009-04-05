@@ -111,9 +111,20 @@ namespace Modbus.Data
 				throw new ArgumentOutOfRangeException("Items collection is too large to write at specified start index.");
 
 			lock (syncRoot)
-				CollectionUtility.Update(items, destination, startIndex);
+				Update(items, destination, startIndex);
 
 			dataStore.DataStoreWrittenTo.Raise(dataStore, DataStoreEventArgs.CreateDataStoreEventArgs(startAddress, destination.ModbusDataType, items));
+		}
+
+		/// <summary>
+		/// Updates subset of values in a collection.
+		/// </summary>
+		internal static void Update<T>(IEnumerable<T> items, IList<T> destination, int startIndex)
+		{
+			if (startIndex < 0 || destination.Count < startIndex + items.Count())
+				throw new ArgumentOutOfRangeException("Index was out of range. Must be non-negative and less than the size of the collection.");
+
+			items.ForEachWithIndex((item, index) => destination[index + startIndex] = item);
 		}
 	}
 }

@@ -21,7 +21,7 @@ namespace Modbus.Message
 		{
 			get
 			{
-				return MessageImpl.NumberOfPoints;
+				return MessageImpl.NumberOfPoints.Value;
 			}
 			set
 			{
@@ -37,7 +37,7 @@ namespace Modbus.Message
 
 		public ushort StartAddress
 		{
-			get { return MessageImpl.StartAddress; }
+			get { return MessageImpl.StartAddress.Value; }
 			set { MessageImpl.StartAddress = value; }
 		}
 

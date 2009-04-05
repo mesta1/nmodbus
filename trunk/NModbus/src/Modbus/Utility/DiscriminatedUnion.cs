@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace Modbus.Utility
@@ -11,11 +12,13 @@ namespace Modbus.Utility
 		/// <summary>
 		/// Option A
 		/// </summary>
+		[SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "A")]
 		A,
 
 		/// <summary>
 		/// Option B
 		/// </summary>
+		[SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "B")]
 		B
 	}
 
@@ -33,6 +36,7 @@ namespace Modbus.Utility
 		/// <summary>
 		/// Gets the value of option A.
 		/// </summary>
+		[SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "A")]
 		public TA A
 		{
 			get
@@ -47,6 +51,7 @@ namespace Modbus.Utility
 		/// <summary>
 		/// Gets the value of option B.
 		/// </summary>
+		[SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "B")]
 		public TB B
 		{
 			get
@@ -69,6 +74,8 @@ namespace Modbus.Utility
 		/// <summary>
 		/// Factory method for creating DiscriminatedUnion with option A set.
 		/// </summary>
+		[SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes", Justification = "Factory method.")]
+		[SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "0#a")]
 		public static DiscriminatedUnion<TA, TB> CreateA(TA a)
 		{
 			return new DiscriminatedUnion<TA, TB>() { option = DiscriminatedUnionOption.A, optionA = a };
@@ -77,6 +84,9 @@ namespace Modbus.Utility
 		/// <summary>
 		/// Factory method for creating DiscriminatedUnion with option B set.
 		/// </summary>
+		/// 
+		[SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes", Justification = "Factory method.")]
+		[SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "0#b")]
 		public static DiscriminatedUnion<TA, TB> CreateB(TB b)
 		{
 			return new DiscriminatedUnion<TA, TB>() { option = DiscriminatedUnionOption.B, optionB = b };

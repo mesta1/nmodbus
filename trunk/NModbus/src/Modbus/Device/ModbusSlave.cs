@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using log4net;
@@ -89,6 +90,7 @@ namespace Modbus.Device
 			return response;
 		}
 
+		[SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily", Justification = "Cast is not unneccessary.")]
 		internal IModbusMessage ApplyRequest(IModbusMessage request)
 		{			
 			_logger.Info(request.ToString());

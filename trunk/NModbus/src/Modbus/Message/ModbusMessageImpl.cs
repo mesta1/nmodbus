@@ -12,12 +12,6 @@ namespace Modbus.Message
 	/// </summary>
 	internal class ModbusMessageImpl
 	{
-		private byte? _exceptionCode;
-		private ushort? _subFunctionCode;
-		private ushort? _startAddress;
-		private ushort? _numberOfPoints;
-		private byte? _byteCount;
-
 		public ModbusMessageImpl()
 		{
 		}
@@ -28,41 +22,21 @@ namespace Modbus.Message
 			FunctionCode = functionCode;
 		}
 
-		public byte ByteCount
-		{
-			get { return _byteCount.Value; }
-			set { _byteCount = value; }
-		}
+		public byte? ByteCount { get; set; }
 
-		public byte ExceptionCode
-		{
-			get { return _exceptionCode.Value; }
-			set { _exceptionCode = value; }
-		}
+		public byte? ExceptionCode { get; set; }
 
 		public ushort TransactionId { get; set; }
 		
 		public byte FunctionCode { get; set; }
 
-		public ushort NumberOfPoints
-		{
-			get { return _numberOfPoints.Value; }
-			set { _numberOfPoints = value; }
-		}
+		public ushort? NumberOfPoints { get; set; }
 
 		public byte SlaveAddress { get; set; }
 
-		public ushort StartAddress
-		{
-			get { return _startAddress.Value; }
-			set { _startAddress = value; }
-		}
+		public ushort? StartAddress { get; set; }
 
-		public ushort SubFunctionCode
-		{
-			get { return _subFunctionCode.Value; }
-			set { _subFunctionCode = value; }
-		}
+		public ushort? SubFunctionCode { get; set; }
 
 		public IModbusMessageDataCollection Data { get; set; }
 
@@ -86,20 +60,20 @@ namespace Modbus.Message
 
 				pdu.Add(FunctionCode);
 
-				if (_exceptionCode.HasValue)
-					pdu.Add(_exceptionCode.Value);
+				if (ExceptionCode.HasValue)
+					pdu.Add(ExceptionCode.Value);
 
-				if (_subFunctionCode.HasValue)
-					pdu.AddRange(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short) _subFunctionCode.Value)));
+				if (SubFunctionCode.HasValue)
+					pdu.AddRange(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short) SubFunctionCode.Value)));
 
-				if (_startAddress.HasValue)
-					pdu.AddRange(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short) _startAddress.Value)));
+				if (StartAddress.HasValue)
+					pdu.AddRange(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short) StartAddress.Value)));
 
-				if (_numberOfPoints.HasValue)
-					pdu.AddRange(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short) _numberOfPoints.Value)));
+				if (NumberOfPoints.HasValue)
+					pdu.AddRange(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short) NumberOfPoints.Value)));
 
-				if (_byteCount.HasValue)
-					pdu.Add(_byteCount.Value);
+				if (ByteCount.HasValue)
+					pdu.Add(ByteCount.Value);
 
 				if (Data != null)
 					pdu.AddRange(Data.NetworkBytes);

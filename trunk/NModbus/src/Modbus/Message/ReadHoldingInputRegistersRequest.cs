@@ -21,7 +21,7 @@ namespace Modbus.Message
 
 		public ushort StartAddress
 		{
-			get { return MessageImpl.StartAddress; }
+			get { return MessageImpl.StartAddress.Value; }
 			set { MessageImpl.StartAddress = value; }
 		}
 
@@ -34,7 +34,7 @@ namespace Modbus.Message
 		{
 			get
 			{
-				return MessageImpl.NumberOfPoints;
+				return MessageImpl.NumberOfPoints.Value;
 			}
 			set
 			{
@@ -52,15 +52,16 @@ namespace Modbus.Message
 
 		public void ValidateResponse(IModbusMessage response)
 		{
-			Debug.Assert(response is ReadHoldingInputRegistersResponse, "Argument response should be of type ReadHoldingInputRegistersResponse.");
-
+			var typedResponse = response as ReadHoldingInputRegistersResponse;
+			Debug.Assert(typedResponse != null, "Argument response should be of type ReadHoldingInputRegistersResponse.");
 			var expectedByteCount = NumberOfPoints * 2;
-			if (expectedByteCount != ((ReadHoldingInputRegistersResponse) response).ByteCount)
+			
+			if (expectedByteCount != typedResponse.ByteCount)
 			{
 				throw new IOException(String.Format(CultureInfo.InvariantCulture,
 					"Unexpected byte count. Expected {0}, received {1}.", 
 					expectedByteCount, 
-					((ReadHoldingInputRegistersResponse) response).ByteCount));
+					typedResponse.ByteCount));
 			}
 		}
 
