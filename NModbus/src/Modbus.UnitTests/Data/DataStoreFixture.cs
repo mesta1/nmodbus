@@ -3,6 +3,8 @@ using Modbus.Data;
 using System.Linq;
 using MbUnit.Framework;
 using System.Diagnostics;
+using System.Collections.Generic;
+using Modbus.Utility;
 
 namespace Modbus.UnitTests.Data
 {
@@ -205,6 +207,31 @@ namespace Modbus.UnitTests.Data
 			DataStore.WriteData(dataStore, new RegisterCollection(5, 6, 7), dataStore.HoldingRegisters, 0, new object());
 			Assert.IsFalse(readFromEventFired);
 			Assert.IsTrue(writtenToEventFired);
+		}
+
+		[Test]
+		public void Update()
+		{
+			List<int> newItems = new List<int>(new int[] { 4, 5, 6 });
+			List<int> destination = new List<int>(new int[] { 1, 2, 3, 7, 8, 9 });
+			DataStore.Update<int>(newItems, destination, 3);
+			Assert.AreEqual(new int[] { 1, 2, 3, 4, 5, 6 }, destination.ToArray());
+		}
+
+		[Test, ExpectedException(typeof(ArgumentOutOfRangeException))]
+		public void UpdateItemsTooLarge()
+		{
+			List<int> newItems = new List<int>(new int[] { 1, 2, 3, 7, 8, 9 });
+			List<int> destination = new List<int>(new int[] { 4, 5, 6 });
+			DataStore.Update<int>(newItems, destination, 3);
+		}
+
+		[Test, ExpectedException(typeof(ArgumentOutOfRangeException))]
+		public void UpdateNegativeIndex()
+		{
+			List<int> newItems = new List<int>(new int[] { 1, 2, 3, 7, 8, 9 });
+			List<int> destination = new List<int>(new int[] { 4, 5, 6 });
+			DataStore.Update<int>(newItems, destination, -1);
 		}
 	}
 }

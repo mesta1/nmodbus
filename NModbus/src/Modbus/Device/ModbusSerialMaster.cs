@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using Modbus.Data;
 using Modbus.IO;
 using Modbus.Message;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Modbus.Device
 {
@@ -17,6 +18,7 @@ namespace Modbus.Device
 		{
 		}
 
+		[SuppressMessage("Microsoft.Design", "CA1033:InterfaceMethodsShouldBeCallableByChildTypes")]
 		ModbusSerialTransport IModbusSerialMaster.Transport
 		{
 			get
@@ -55,7 +57,7 @@ namespace Modbus.Device
 			if (udpClient == null)
 				throw new ArgumentNullException("udpClient");
 			if (!udpClient.Client.Connected)
-				throw new InvalidOperationException("UdpClient must be bound to a default remote host. Call the Connect method.");
+				throw new InvalidOperationException(Resources.UdpClientNotConnected);
 
 			return CreateAscii(new UdpClientAdapter(udpClient));
 		}
@@ -103,7 +105,7 @@ namespace Modbus.Device
 			if (udpClient == null)
 				throw new ArgumentNullException("udpClient");
 			if (!udpClient.Client.Connected)
-				throw new InvalidOperationException("UdpClient must be bound to a default remote host. Call the Connect method.");
+				throw new InvalidOperationException(Resources.UdpClientNotConnected);
 
 			return CreateRtu(new UdpClientAdapter(udpClient));
 		}

@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Modbus.Data;
-using Modbus.Utility;
 using MbUnit.Framework;
+using Modbus.Data;
+using Modbus.UnitTests.Message;
+using Modbus.Utility;
 using Unme.Common;
 
 namespace Modbus.UnitTests.Utility
@@ -60,42 +61,17 @@ namespace Modbus.UnitTests.Utility
 			bool[] array = null;
 			array.Slice(1, 1).ToArray();
 		}
-
-		[Test]
-		public void Update()
-		{
-			List<int> newItems = new List<int>(new int[] { 4, 5, 6 });
-			List<int> destination = new List<int>(new int[] { 1, 2, 3, 7, 8, 9 });
-			CollectionUtility.Update<int>(newItems, destination, 3);
-			Assert.AreEqual(new int[] { 1, 2, 3, 4, 5, 6 }, destination.ToArray());
-		}
-
-		[Test, ExpectedException(typeof(ArgumentOutOfRangeException))]
-		public void UpdateItemsTooLarge()
-		{
-			List<int> newItems = new List<int>(new int[] { 1, 2, 3, 7, 8, 9 });
-			List<int> destination = new List<int>(new int[] { 4, 5, 6 });
-			CollectionUtility.Update<int>(newItems, destination, 3);
-		}
-
-		[Test, ExpectedException(typeof(ArgumentOutOfRangeException))]
-		public void UpdateNegativeIndex()
-		{
-			List<int> newItems = new List<int>(new int[] { 1, 2, 3, 7, 8, 9 });
-			List<int> destination = new List<int>(new int[] { 4, 5, 6 });
-			CollectionUtility.Update<int>(newItems, destination, -1);
-		}
-
+	
 		[Test, ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void CreateDefaultCollectionNegativeSize()
 		{
-			CollectionUtility.CreateDefaultCollection<RegisterCollection, ushort>(0, -1);
+			MessageUtility.CreateDefaultCollection<RegisterCollection, ushort>(0, -1);
 		}
 
 		[Test]
 		public void CreateDefaultCollection()
 		{
-			RegisterCollection col = CollectionUtility.CreateDefaultCollection<RegisterCollection, ushort>(3, 5);
+			RegisterCollection col = MessageUtility.CreateDefaultCollection<RegisterCollection, ushort>(3, 5);
 			Assert.AreEqual(5, col.Count);
 			Assert.AreEqual(new ushort[] { 3, 3, 3, 3, 3 }, col.ToArray());
 		}

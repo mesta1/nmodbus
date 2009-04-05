@@ -59,7 +59,7 @@ namespace Modbus.IO
 			set
 			{
 				if (value < 0)
-					throw new ArgumentException("WaitToRetryMilliseconds must be greater than 0.");
+					throw new ArgumentException(Resources.WaitRetryGreaterThanZero);
 
 				_waitToRetryMilliseconds = value;
 			}

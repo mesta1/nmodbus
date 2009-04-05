@@ -25,13 +25,13 @@ namespace Modbus.UnitTests.Message
 		[Test, ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void CreateWriteMultipleCoilsRequestTooMuchData()
 		{
-			new WriteMultipleCoilsRequest(1, 2, CollectionUtility.CreateDefaultCollection<DiscreteCollection, bool>(true, Modbus.MaximumDiscreteRequestResponseSize + 1));
+			new WriteMultipleCoilsRequest(1, 2, MessageUtility.CreateDefaultCollection<DiscreteCollection, bool>(true, Modbus.MaximumDiscreteRequestResponseSize + 1));
 		}
 
 		[Test]
 		public void CreateWriteMultipleCoilsRequestMaxSize()
 		{
-			WriteMultipleCoilsRequest request = new WriteMultipleCoilsRequest(1, 2, CollectionUtility.CreateDefaultCollection<DiscreteCollection, bool>(true, Modbus.MaximumDiscreteRequestResponseSize));
+			WriteMultipleCoilsRequest request = new WriteMultipleCoilsRequest(1, 2, MessageUtility.CreateDefaultCollection<DiscreteCollection, bool>(true, Modbus.MaximumDiscreteRequestResponseSize));
 			Assert.AreEqual(Modbus.MaximumDiscreteRequestResponseSize, request.Data.Count);
 		}
 

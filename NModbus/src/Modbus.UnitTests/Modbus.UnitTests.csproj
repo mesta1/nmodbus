@@ -91,6 +91,7 @@
     <Compile Include="IO\ModbusTransportFixture.cs" />
     <Compile Include="IO\UdpClientAdapterFixture.cs" />
     <Compile Include="Message\DiagnosticsRequestResponseFixture.cs" />
+    <Compile Include="Message\MessageUtility.cs" />
     <Compile Include="Message\ModbusMessageFactoryFixture.cs" />
     <Compile Include="Message\ModbusMessageFixture.cs" />
     <Compile Include="Message\ModbusMessageImplFixture.cs" />
