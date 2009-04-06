@@ -26,7 +26,7 @@ namespace Modbus.Message
 
 		public byte ByteCount
 		{
-			get { return MessageImpl.ByteCount; }
+			get { return MessageImpl.ByteCount.Value; }
 			set { MessageImpl.ByteCount = value; }
 		}
 
@@ -34,7 +34,7 @@ namespace Modbus.Message
 		{
 			get
 			{
-				return MessageImpl.NumberOfPoints;
+				return MessageImpl.NumberOfPoints.Value;
 			}
 			set
 			{
@@ -47,7 +47,7 @@ namespace Modbus.Message
 		
 		public ushort StartAddress
 		{
-			get { return MessageImpl.StartAddress; }
+			get { return MessageImpl.StartAddress.Value; }
 			set { MessageImpl.StartAddress = value; }
 		}
 

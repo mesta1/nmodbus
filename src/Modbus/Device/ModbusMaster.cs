@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Modbus.Data;
 using Modbus.IO;
@@ -164,6 +165,8 @@ namespace Modbus.Device
 		/// </summary>
 		/// <typeparam name="TResponse">The type of the response.</typeparam>
 		/// <param name="request">The request.</param>
+		[SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
+		[SuppressMessage("Microsoft.Usage", "CA2223:MembersShouldDifferByMoreThanReturnType")]
 		public TResponse ExecuteCustomMessage<TResponse>(IModbusMessage request) where TResponse : IModbusMessage, new()
 		{
 			return Transport.UnicastMessage<TResponse>(request);

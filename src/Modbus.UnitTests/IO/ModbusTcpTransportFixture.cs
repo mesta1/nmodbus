@@ -6,7 +6,7 @@ using MbUnit.Framework;
 using Modbus.Data;
 using Modbus.IO;
 using Modbus.Message;
-using Modbus.Utility;
+using Modbus.UnitTests.Message;
 using Rhino.Mocks;
 
 namespace Modbus.UnitTests.IO
@@ -28,7 +28,7 @@ namespace Modbus.UnitTests.IO
 		[Test]
 		public void GetMbapHeader()
 		{
-			WriteMultipleRegistersRequest message = new WriteMultipleRegistersRequest(3, 1, CollectionUtility.CreateDefaultCollection<RegisterCollection, ushort>(0, 120));
+			WriteMultipleRegistersRequest message = new WriteMultipleRegistersRequest(3, 1, MessageUtility.CreateDefaultCollection<RegisterCollection, ushort>(0, 120));
 			message.TransactionId = 45;
 			Assert.AreEqual(new byte[] { 0, 45, 0, 0, 0, 247, 3 }, ModbusIpTransport.GetMbapHeader(message));
 		}

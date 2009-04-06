@@ -26,7 +26,7 @@ namespace Modbus.Message
 
 		public byte SlaveExceptionCode
 		{
-			get { return MessageImpl.ExceptionCode; }
+			get { return MessageImpl.ExceptionCode.Value; }
 			set { MessageImpl.ExceptionCode = value; }
 		}
 
@@ -39,7 +39,7 @@ namespace Modbus.Message
 		public override string ToString()
 		{
 			string message = _exceptionMessages.ContainsKey(SlaveExceptionCode) ? _exceptionMessages[SlaveExceptionCode] : Resources.Unknown;
-			return String.Format(CultureInfo.InvariantCulture, "Function Code: {1}{0}Exception Code: {2} - {3}", Environment.NewLine, FunctionCode, SlaveExceptionCode, message);
+			return String.Format(CultureInfo.InvariantCulture, Resources.SlaveExceptionResponseFormat, Environment.NewLine, FunctionCode, SlaveExceptionCode, message);
 		}
 
 		internal static Dictionary<byte, string> CreateExceptionMessages()
@@ -62,7 +62,7 @@ namespace Modbus.Message
 		protected override void InitializeUnique(byte[] frame)
 		{
 			if (FunctionCode <= Modbus.ExceptionOffset)
-				throw new FormatException("Invalid function code value for SlaveExceptionResponse.");
+				throw new FormatException(Resources.SlaveExceptionResponseInvalidFunctionCode);
 
 			SlaveExceptionCode = frame[2];
 		}

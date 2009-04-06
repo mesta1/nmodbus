@@ -25,7 +25,7 @@ namespace Modbus.Message
 
 		public byte ByteCount
 		{
-			get { return MessageImpl.ByteCount; }
+			get { return MessageImpl.ByteCount.Value; }
 			set { MessageImpl.ByteCount = value; }
 		}
 

@@ -25,10 +25,6 @@ namespace Modbus.Device
 			{ 
 				return _transport; 
 			}
-			internal set
-			{
-				_transport = value;
-			}
 		}
 
         /// <summary>

@@ -97,7 +97,7 @@ namespace Modbus.Utility
 				throw new ArgumentNullException("networkBytes");
 
 			if (networkBytes.Length % 2 != 0)
-				throw new FormatException("Array networkBytes must contain an even number of bytes.");
+				throw new FormatException(Resources.NetworkBytesNotEven);
 
 			ushort[] result = new ushort[networkBytes.Length / 2];
 
@@ -115,10 +115,10 @@ namespace Modbus.Utility
 		public static byte[] HexToBytes(string hex)
 		{
 			if (hex == null)
-				throw new ArgumentNullException("hex", "Argument cannot be null.");
+				throw new ArgumentNullException("hex");
 
 			if (hex.Length % 2 != 0)
-				throw new FormatException("Hex string must have even number of characters.");
+				throw new FormatException(Resources.HexCharacterCountNotEven);
 
 			byte[] bytes = new byte[hex.Length / 2];
 
