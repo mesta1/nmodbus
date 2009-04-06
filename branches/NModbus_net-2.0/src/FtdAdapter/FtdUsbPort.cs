@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text;
 using Modbus.IO;
 using Modbus.Utility;
@@ -14,46 +14,15 @@ namespace FtdAdapter
 	/// </summary>
 	public class FtdUsbPort : IStreamResource, IDisposable
 	{
-		[DllImport(FtdAssemblyName)]
-		static extern FtdStatus FT_Close(uint deviceHandle);
-		[DllImport(FtdAssemblyName)]
-		static extern FtdStatus FT_Open(uint deviceId, ref uint deviceHandle);
-		[DllImport(FtdAssemblyName)]
-		static extern FtdStatus FT_SetBaudRate(uint deviceHandle, uint baudRate);
-		[DllImport(FtdAssemblyName)]
-		static extern FtdStatus FT_SetFlowControl(uint handle, ushort usFlowControl, byte uXon, byte uXoff);
-		[DllImport(FtdAssemblyName)]
-		static extern FtdStatus FT_SetDataCharacteristics(uint deviceHandle, byte wordLength, byte stopBits, byte parity);
-		[DllImport(FtdAssemblyName)]
-		static extern FtdStatus FT_Read(uint deviceHandle, byte[] buffer, uint bytesToRead, ref uint bytesReturned);
-		[DllImport(FtdAssemblyName)]
-		static extern FtdStatus FT_Write(uint deviceHandle, byte[] buffer, uint bytesToWrite, ref uint bytesWritten);
-		[DllImport(FtdAssemblyName)]
-		static extern FtdStatus FT_SetTimeouts(uint deviceHandle, uint readTimeout, uint writeTimeout);
-		[DllImport(FtdAssemblyName)]
-		static extern FtdStatus FT_Purge(uint deviceHandle, uint mask);
-		[DllImport(FtdAssemblyName)]
-		static extern FtdStatus FT_CreateDeviceInfoList(ref uint deviceCount);
-		[DllImport(FtdAssemblyName)]
-		static extern FtdStatus FT_GetDeviceInfoDetail(uint index, ref uint flags, ref uint type, ref uint id,
-			ref uint locid, [In] [Out] byte[] serial, [In] [Out] byte[] description, ref uint deviceHandle);
-		[DllImport(FtdAssemblyName)]
-		static extern FtdStatus FT_OpenEx(byte[] key, uint flags, ref uint deviceHandle);
-		[DllImport(FtdAssemblyName)]
-		static extern FtdStatus FT_OpenEx(uint locationId, uint flags, ref uint deviceHandle);
-
-		private const string FtdAssemblyName = "FTD2XX.dll";
 		private const byte PurgeRx = 1;
-		private const uint DefaultInfiniteTimeout = 0;
-		private const uint _infiniteTimeout = DefaultInfiniteTimeout;
 		private uint _deviceIndex;
 		private uint _deviceHandle;
-		private uint _readTimeout = DefaultInfiniteTimeout;
-		private uint _writeTimeout = DefaultInfiniteTimeout;
+		private uint _readTimeout;
+		private uint _writeTimeout;
 		private int _baudRate = 9600;
 		private int _dataBits = 8;
 		private byte _stopBits = 1;
-		private byte _parity = 0;
+		private byte _parity;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FtdUsbPort"/> class.
@@ -90,7 +59,7 @@ namespace FtdAdapter
 				_baudRate = value;
 
 				if (IsOpen)
-					InvokeFtdMethod(() => FT_SetBaudRate(_deviceHandle, (uint) BaudRate));
+					InvokeFtdMethod(() => NativeMethods.FT_SetBaudRate(_deviceHandle, (uint) BaudRate));
 			}
 		}
 
@@ -111,7 +80,7 @@ namespace FtdAdapter
 				_dataBits = value;
 
 				if (IsOpen)
-					InvokeFtdMethod(() => FT_SetDataCharacteristics(DeviceHandle, (byte) DataBits, (byte) StopBits, (byte) Parity));
+					InvokeFtdMethod(() => NativeMethods.FT_SetDataCharacteristics(_deviceHandle, (byte) DataBits, (byte) StopBits, (byte) Parity));
 			}
 		}
 
@@ -120,7 +89,7 @@ namespace FtdAdapter
 		/// </summary>
 		public int InfiniteTimeout
 		{
-			get { return (int) _infiniteTimeout; }
+			get { return 0; }
 		}
 
 		/// <summary>
@@ -140,7 +109,7 @@ namespace FtdAdapter
 				_readTimeout = (uint) value;
 
 				if (IsOpen)
-					InvokeFtdMethod(() => FT_SetTimeouts(DeviceHandle, (uint) ReadTimeout, (uint) WriteTimeout));
+					InvokeFtdMethod(() => NativeMethods.FT_SetTimeouts(_deviceHandle, (uint) ReadTimeout, (uint) WriteTimeout));
 			}
 		}
 
@@ -161,7 +130,7 @@ namespace FtdAdapter
 				_writeTimeout = (uint) value;
 
 				if (IsOpen)
-					InvokeFtdMethod(() => FT_SetTimeouts(DeviceHandle, (uint) ReadTimeout, (uint) WriteTimeout));
+					InvokeFtdMethod(() => NativeMethods.FT_SetTimeouts(_deviceHandle, (uint) ReadTimeout, (uint) WriteTimeout));
 			}
 		}
 
@@ -179,7 +148,7 @@ namespace FtdAdapter
 				_stopBits = (byte) value;
 
 				if (IsOpen)
-					InvokeFtdMethod(() => FT_SetDataCharacteristics(_deviceHandle, (byte) DataBits, (byte) StopBits, (byte) Parity));
+					InvokeFtdMethod(() => NativeMethods.FT_SetDataCharacteristics(_deviceHandle, (byte) DataBits, (byte) StopBits, (byte) Parity));
 			}
 		}
 
@@ -197,7 +166,7 @@ namespace FtdAdapter
 				_parity = (byte) value;
 
 				if (IsOpen)
-					InvokeFtdMethod(() => FT_SetDataCharacteristics(DeviceHandle, (byte) DataBits, (byte) StopBits, (byte) Parity));
+					InvokeFtdMethod(() => NativeMethods.FT_SetDataCharacteristics(_deviceHandle, (byte) DataBits, (byte) StopBits, (byte) Parity));
 			}
 		}
 
@@ -208,24 +177,19 @@ namespace FtdAdapter
 		{
 			get
 			{
-				return DeviceHandle != 0;
+				return _deviceHandle != 0;
 			}
-		}
-
-		internal uint DeviceHandle
-		{
-			get { return _deviceHandle; }
-			set { _deviceHandle = value; }
 		}
 
 		/// <summary>
 		/// Returns the number of D2XX devices connected to the system.
 		/// </summary>
+		[SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "Operation is expensive.")]
 		public static int GetDeviceCount()
 		{
 			return CreateDeviceInfoList();
 		}
-		
+
 		/// <summary>
 		/// Gets an array of the currently connected device's device info.
 		/// </summary>
@@ -247,12 +211,12 @@ namespace FtdAdapter
 		/// <returns>An FtdDeviceInfo instance.</returns>
 		public static FtdDeviceInfo GetDeviceInfo(uint index)
 		{
-			uint flags = 0, type = 0, id = 0, locId = 0, handle = 0;		
+			uint flags = 0, type = 0, id = 0, locId = 0, handle = 0;
 			byte[] serial = new byte[16];
 			byte[] description = new byte[64];
 
 			CreateDeviceInfoList();
-			InvokeFtdMethod(() => FT_GetDeviceInfoDetail(index, ref flags, ref type, ref id, ref locId, serial, description, ref handle));
+			InvokeFtdMethod(() => NativeMethods.FT_GetDeviceInfoDetail(index, ref flags, ref type, ref id, ref locId, serial, description, ref handle));
 
 			return new FtdDeviceInfo(flags, type, id, locId, Encoding.ASCII.GetString(serial).Split('\0')[0], Encoding.ASCII.GetString(description).Split('\0')[0]);
 		}
@@ -264,9 +228,9 @@ namespace FtdAdapter
 		public void Open()
 		{
 			if (IsOpen)
-				throw new InvalidOperationException("Port is already open.");
+				throw new InvalidOperationException(Resources.PortIsAlreadyOpen);
 
-			OpenByIndex(_deviceIndex);			
+			OpenByIndex(_deviceIndex);
 		}
 
 		/// <summary>
@@ -278,7 +242,7 @@ namespace FtdAdapter
 			if (IsOpen)
 				throw new InvalidOperationException("Port is already open.");
 
-			InvokeFtdMethod(() => FT_Open(index, ref _deviceHandle));
+			InvokeFtdMethod(() => NativeMethods.FT_Open(index, ref _deviceHandle));
 			InitializeUsbPort();
 		}
 
@@ -291,7 +255,7 @@ namespace FtdAdapter
 			if (IsOpen)
 				throw new InvalidOperationException("Port is already open.");
 
-			InvokeFtdMethod(() => FT_OpenEx(locationId, (uint) OpenExFlags.ByLocation, ref _deviceHandle));
+			InvokeFtdMethod(() => NativeMethods.FT_OpenEx(locationId, (uint) OpenExFlags.ByLocation, ref _deviceHandle));
 			InitializeUsbPort();
 		}
 
@@ -306,7 +270,7 @@ namespace FtdAdapter
 			if (IsOpen)
 				throw new InvalidOperationException("Port is already open.");
 
-			InvokeFtdMethod(() => FT_OpenEx(Encoding.ASCII.GetBytes(serialNumber), (uint) OpenExFlags.BySerialNumber, ref _deviceHandle));
+			InvokeFtdMethod(() => NativeMethods.FT_OpenEx(Encoding.ASCII.GetBytes(serialNumber), (uint) OpenExFlags.BySerialNumber, ref _deviceHandle));
 			InitializeUsbPort();
 		}
 
@@ -321,9 +285,9 @@ namespace FtdAdapter
 			if (IsOpen)
 				throw new InvalidOperationException("Port is already open.");
 
-			InvokeFtdMethod(() => FT_OpenEx(Encoding.ASCII.GetBytes(description), (uint) OpenExFlags.ByDescription, ref _deviceHandle));
+			InvokeFtdMethod(() => NativeMethods.FT_OpenEx(Encoding.ASCII.GetBytes(description), (uint) OpenExFlags.ByDescription, ref _deviceHandle));
 			InitializeUsbPort();
-		}				
+		}
 
 		/// <summary>
 		/// Closes the port connection.
@@ -332,21 +296,12 @@ namespace FtdAdapter
 		{
 			try
 			{
-				InvokeFtdMethod(() => FT_Close(DeviceHandle));
+				InvokeFtdMethod(() => NativeMethods.FT_Close(_deviceHandle));
 			}
 			finally
 			{
 				_deviceHandle = 0;
 			}
-		}
-
-		/// <summary>
-		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-		/// </summary>
-		public void Dispose()
-		{
-			if (IsOpen)
-				Close();
 		}
 
 		/// <summary>
@@ -372,7 +327,7 @@ namespace FtdAdapter
 
 			byte[] buf = new byte[count];
 			Array.Copy(buffer, offset, buf, 0, count);
-			InvokeFtdMethod(() => FT_Write(DeviceHandle, buf, (uint) count, ref bytesWritten));
+			InvokeFtdMethod(() => NativeMethods.FT_Write(_deviceHandle, buf, (uint) count, ref bytesWritten));
 
 			if (count != 0 && bytesWritten == 0)
 				throw new TimeoutException("The operation has timed out.");
@@ -402,7 +357,7 @@ namespace FtdAdapter
 
 			uint numBytesReturned = 0;
 			byte[] buf = new byte[count];
-			InvokeFtdMethod(() => FT_Read(DeviceHandle, buf, (uint) count, ref numBytesReturned));
+			InvokeFtdMethod(() => NativeMethods.FT_Read(_deviceHandle, buf, (uint) count, ref numBytesReturned));
 			Array.Copy(buf, 0, buffer, offset, numBytesReturned);
 
 			if (count != 0 && numBytesReturned == 0)
@@ -419,20 +374,22 @@ namespace FtdAdapter
 			if (!IsOpen)
 				throw new InvalidOperationException("Port is not open.");
 
-			InvokeFtdMethod(() => FT_Purge(DeviceHandle, PurgeRx));
+			InvokeFtdMethod(() => NativeMethods.FT_Purge(_deviceHandle, PurgeRx));
 		}
 
 		///<summary>
 		/// Set flow control.
 		///</summary>
-		///<param name="FlowControl">Type of flow control</param>
-		///<param name="Xon">XON symbol</param>
-		///<param name="Xoff">XOFF symbol</param>
-		public void SetFlowControl(FtdFlowControl FlowControl, byte Xon, byte Xoff)
+		///<param name="flowControl">Type of flow control</param>
+		///<param name="xOn">XON symbol</param>
+		///<param name="xOff">XOFF symbol</param>
+		[SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "1#x")]
+		[SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "2#x")]
+		public void SetFlowControl(FtdFlowControl flowControl, byte xOn, byte xOff)
 		{
-			InvokeFtdMethod(() => FT_SetFlowControl(_deviceHandle, (ushort) FlowControl, Xon, Xoff));
-		}		
-		
+			InvokeFtdMethod(() => NativeMethods.FT_SetFlowControl(_deviceHandle, (ushort) flowControl, xOn, xOff));
+		}
+
 		/// <summary>
 		/// Invokes FT method and checks the FTStatus result, throw IOException if result is something other than FTStatus.OK
 		/// </summary>
@@ -447,7 +404,7 @@ namespace FtdAdapter
 		internal static int CreateDeviceInfoList()
 		{
 			uint deviceCount = 0;
-			InvokeFtdMethod(() => FT_CreateDeviceInfoList(ref deviceCount));
+			InvokeFtdMethod(() => NativeMethods.FT_CreateDeviceInfoList(ref deviceCount));
 
 			return (int) deviceCount;
 		}
@@ -456,8 +413,27 @@ namespace FtdAdapter
 		{
 			BaudRate = BaudRate;
 			SetFlowControl(FtdFlowControl.None, 0, 0);
-			InvokeFtdMethod(() => FT_SetDataCharacteristics(DeviceHandle, (byte) DataBits, (byte) StopBits, (byte) Parity));
-			InvokeFtdMethod(() => FT_SetTimeouts(DeviceHandle, (uint) ReadTimeout, (uint) WriteTimeout));
+			InvokeFtdMethod(() => NativeMethods.FT_SetDataCharacteristics(_deviceHandle, (byte) DataBits, (byte) StopBits, (byte) Parity));
+			InvokeFtdMethod(() => NativeMethods.FT_SetTimeouts(_deviceHandle, (uint) ReadTimeout, (uint) WriteTimeout));
+		}
+
+		/// <summary>
+		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+		/// </summary>
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		/// <summary>
+		/// Releases unmanaged and - optionally - managed resources
+		/// </summary>
+		/// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing && IsOpen)
+				Close();
 		}
 	}
 }

@@ -9,7 +9,7 @@ namespace Modbus.IntegrationTests
 		[Test]
 		public void GetDeviceInfos()
 		{
-			var deviceInfos = FtdUsbPort.GetDeviceInfos();
+			FtdDeviceInfo[] deviceInfos = FtdUsbPort.GetDeviceInfos();
 			Assert.IsNotNull(deviceInfos);
 			Assert.AreEqual(1, deviceInfos.Length);			
 		}
@@ -17,7 +17,7 @@ namespace Modbus.IntegrationTests
 		[Test]
 		public void GetDeviceInfo()
 		{
-			var deviceInfo = FtdUsbPort.GetDeviceInfo(0);
+			FtdDeviceInfo deviceInfo = FtdUsbPort.GetDeviceInfo(0);
 			Assert.IsNotNull(deviceInfo);
 
 			Assert.AreEqual("ftCARN75", deviceInfo.SerialNumber);
@@ -27,7 +27,7 @@ namespace Modbus.IntegrationTests
 		[Test]
 		public void OpenByIndex()
 		{
-			using (var port = new FtdUsbPort())
+			using (FtdUsbPort port = new FtdUsbPort())
 			{
 				port.OpenByIndex(0);
 				Assert.IsTrue(port.IsOpen);

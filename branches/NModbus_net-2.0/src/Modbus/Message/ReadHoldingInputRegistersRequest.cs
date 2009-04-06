@@ -23,7 +23,7 @@ namespace Modbus.Message
 
 		public ushort StartAddress
 		{
-			get { return MessageImpl.StartAddress; }
+			get { return MessageImpl.StartAddress.Value; }
 			set { MessageImpl.StartAddress = value; }
 		}
 
@@ -36,7 +36,7 @@ namespace Modbus.Message
 		{
 			get
 			{
-				return MessageImpl.NumberOfPoints;
+				return MessageImpl.NumberOfPoints.Value;
 			}
 			set
 			{
@@ -52,17 +52,20 @@ namespace Modbus.Message
 			return String.Format(CultureInfo.InvariantCulture, "Read {0} {1} registers starting at address {2}.", NumberOfPoints, FunctionCode == Modbus.ReadHoldingRegisters ? "holding" : "input", StartAddress);
 		}
 
-        public void ValidateResponse(IModbusMessage response)
-        {
-            Debug.Assert(response is ReadHoldingInputRegistersResponse);
-
-            int expectedByteCount = NumberOfPoints * 2;
-            if (expectedByteCount != ((ReadHoldingInputRegistersResponse) response).ByteCount)
-            {
-                throw new IOException(String.Format(CultureInfo.InvariantCulture,
-                    "Unexpected byte count. Expected {0}, received {1}.", expectedByteCount, ((ReadHoldingInputRegistersResponse) response).ByteCount));
-            }
-        }
+		public void ValidateResponse(IModbusMessage response)
+		{
+			ReadHoldingInputRegistersResponse typedResponse = response as ReadHoldingInputRegistersResponse;
+			Debug.Assert(typedResponse != null, "Argument response should be of type ReadHoldingInputRegistersResponse.");
+			int expectedByteCount = NumberOfPoints * 2;
+			
+			if (expectedByteCount != typedResponse.ByteCount)
+			{
+				throw new IOException(String.Format(CultureInfo.InvariantCulture,
+					"Unexpected byte count. Expected {0}, received {1}.", 
+					expectedByteCount, 
+					typedResponse.ByteCount));
+			}
+		}
 
 		protected override void InitializeUnique(byte[] frame)
 		{

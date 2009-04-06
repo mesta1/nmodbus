@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Modbus.Message
 {
 	/// <summary>
@@ -18,11 +20,13 @@ namespace Modbus.Message
 		///<summary>
 		/// Composition of the slave address and protocol data unit.
 		///</summary>
+		[SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
 		byte[] MessageFrame { get; } 
 
 		/// <summary>
 		/// Composition of the function code and message data.
 		/// </summary>
+		[SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
 		byte[] ProtocolDataUnit { get; }
 
 		/// <summary>

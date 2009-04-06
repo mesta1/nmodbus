@@ -30,7 +30,7 @@ namespace Modbus.Message
 
 		public ushort StartAddress
 		{
-			get { return MessageImpl.StartAddress; }
+			get { return MessageImpl.StartAddress.Value; }
 			set { MessageImpl.StartAddress = value; }
 		}
 

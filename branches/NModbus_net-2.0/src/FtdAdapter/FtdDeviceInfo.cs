@@ -12,12 +12,12 @@
 		private readonly uint _locationId;
 		private readonly string _description;
 
-		internal FtdDeviceInfo(uint flags, uint type, uint id, uint locId, string serialNumber, string description)
+		internal FtdDeviceInfo(uint flags, uint type, uint id, uint locationId, string serialNumber, string description)
 		{
 			_flags = flags;
 			_type = type;
 			_id = id;
-			_locationId = locId;
+			_locationId = locationId;
 			_serialNumber = serialNumber;
 			_description = description;
 		}
@@ -93,5 +93,65 @@
 		{
 			get { return (_flags & 0x01) != 0; }
 		}
+
+		/// <summary>
+		/// Implements the operator ==.
+		/// </summary>
+		/// <param name="left">The left.</param>
+		/// <param name="right">The right.</param>
+		/// <returns>The result of the operator.</returns>
+		public static bool operator ==(FtdDeviceInfo left, FtdDeviceInfo right)
+		{
+			return left.Equals(right);
+		}
+
+		/// <summary>
+		/// Implements the operator !=.
+		/// </summary>
+		/// <param name="left">The left.</param>
+		/// <param name="right">The right.</param>
+		/// <returns>The result of the operator.</returns>
+		public static bool operator !=(FtdDeviceInfo left, FtdDeviceInfo right)
+		{
+			return !left.Equals(right);
+		}
+
+		/// <summary>
+		/// Indicates whether this instance and a specified object are equal.
+		/// </summary>
+		/// <param name="obj">Another object to compare to.</param>
+		/// <returns>
+		/// true if <paramref name="obj"/> and this instance are the same type and represent the same value; otherwise, false.
+		/// </returns>
+		public override bool Equals(object obj)
+		{			
+			if (!(obj is FtdDeviceInfo))
+				return false;
+
+			FtdDeviceInfo other = (FtdDeviceInfo) obj;
+
+			return Id == other.Id &&
+				Flags == other.Flags &&
+				SerialNumber == other.SerialNumber &&
+				Type == other.Type &&
+				LocationId == other.LocationId &&
+				Description == other.Description;
+		}
+
+		/// <summary>
+		/// Returns the hash code for this instance.
+		/// </summary>
+		/// <returns>
+		/// A 32-bit signed integer that is the hash code for this instance.
+		/// </returns>
+		public override int GetHashCode()
+		{
+			return Id.GetHashCode() ^
+				Flags.GetHashCode() ^
+				SerialNumber.GetHashCode() ^
+				Type.GetHashCode() ^
+				LocationId.GetHashCode() ^
+				Description.GetHashCode();
+		}		
 	}
 }

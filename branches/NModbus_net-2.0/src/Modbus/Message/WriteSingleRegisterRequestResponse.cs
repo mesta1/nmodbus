@@ -1,9 +1,9 @@
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Net;
 using Modbus.Data;
-using System.Diagnostics;
 
 namespace Modbus.Message
 {
@@ -29,7 +29,7 @@ namespace Modbus.Message
 
 		public ushort StartAddress
 		{
-			get { return MessageImpl.StartAddress; }
+			get { return MessageImpl.StartAddress.Value; }
 			set { MessageImpl.StartAddress = value; }
 		}
 

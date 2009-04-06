@@ -10,6 +10,8 @@
     <RootNamespace>Modbus.UnitTests</RootNamespace>
     <AssemblyName>Modbus.UnitTests</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkSubset>
+    </TargetFrameworkSubset>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -91,6 +93,7 @@
     <Compile Include="IO\ModbusTransportFixture.cs" />
     <Compile Include="IO\UdpClientAdapterFixture.cs" />
     <Compile Include="Message\DiagnosticsRequestResponseFixture.cs" />
+    <Compile Include="Message\MessageUtility.cs" />
     <Compile Include="Message\ModbusMessageFactoryFixture.cs" />
     <Compile Include="Message\ModbusMessageFixture.cs" />
     <Compile Include="Message\ModbusMessageImplFixture.cs" />
@@ -119,6 +122,9 @@
       <Project>{FF96B252-2B24-44A1-A09C-6401B5D7ED23}</Project>
       <Name>Modbus</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

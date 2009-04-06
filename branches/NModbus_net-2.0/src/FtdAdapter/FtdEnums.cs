@@ -1,8 +1,11 @@
-﻿namespace FtdAdapter
+﻿using System.Diagnostics.CodeAnalysis;
+namespace FtdAdapter
 {
 	/// <summary>
 	/// Specifies the number of stop bits used on the UsbPort object.
 	/// </summary>
+	[SuppressMessage("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue")]
+	[SuppressMessage("Microsoft.Naming", "CA1717:OnlyFlagsEnumsShouldHavePluralNames")]
 	public enum FtdStopBits
 	{
 		/// <summary>
@@ -49,7 +52,8 @@
 	///<summary>
 	/// Specifies the flow control used on the UsbPort object.
 	///</summary>
-	public enum FtdFlowControl : ushort
+	[SuppressMessage("Microsoft.Design", "CA1027:MarkEnumsWithFlags")]
+	public enum FtdFlowControl
 	{
 		///<summary>
 		/// No flow control is used

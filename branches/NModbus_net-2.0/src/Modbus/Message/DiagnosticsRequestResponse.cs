@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Net;
 using Modbus.Data;
@@ -27,9 +28,10 @@ namespace Modbus.Message
 			get { return _minimumFrameSize; }
 		}
 
+		[SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "May implement addtional sub function codes in the future.")]
 		public ushort SubFunctionCode
 		{
-			get { return MessageImpl.SubFunctionCode; }
+			get { return MessageImpl.SubFunctionCode.Value; }
 			set { MessageImpl.SubFunctionCode = value; }
 		}
 
