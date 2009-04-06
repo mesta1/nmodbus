@@ -1,8 +1,8 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO.Ports;
 using System.Net.Sockets;
 using Modbus.IO;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Modbus.Device
 {

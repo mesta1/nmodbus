@@ -1,11 +1,11 @@
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Net;
 using Modbus.Data;
 using Unme.Common;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Modbus.Message
 {

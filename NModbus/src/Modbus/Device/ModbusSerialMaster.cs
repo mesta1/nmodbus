@@ -1,10 +1,10 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO.Ports;
 using System.Net.Sockets;
 using Modbus.Data;
 using Modbus.IO;
 using Modbus.Message;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Modbus.Device
 {

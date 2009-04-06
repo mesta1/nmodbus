@@ -84,7 +84,6 @@ namespace Modbus.Utility
 		/// <summary>
 		/// Factory method for creating DiscriminatedUnion with option B set.
 		/// </summary>
-		/// 
 		[SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes", Justification = "Factory method.")]
 		[SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "0#b")]
 		public static DiscriminatedUnion<TA, TB> CreateB(TB b)
