@@ -4,11 +4,6 @@
         <name>Unme.Common</name>
     </assembly>
     <members>
-        <member name="T:Unme.Common.TimedLock">
-            <summary>
-            A lock that will block only for the specified TimeSpan value.
-            </summary>
-        </member>
         <member name="T:Unme.Common.SequenceUtility">
             <summary>
             Provides convenience methods for working with sequences of elements (IEnumerable&lt;T&gt;)/>.
@@ -104,25 +99,6 @@
             <param name="size">The desired slice size.</param>
             <returns>A sequence of arrays containing the elements from the specified sequence.</returns>
         </member>
-        <member name="T:Unme.Common.Reflect`1">
-            <summary>
-            Provides convenience methods for working with Reflection.
-            </summary>
-            <typeparam name="T">The type to reflect on.</typeparam>
-        </member>
-        <member name="M:Unme.Common.Reflect`1.GetPropertyName``1(System.Linq.Expressions.Expression{System.Func{`0,``0}})">
-            <summary>
-            Gets the name of the property.
-            </summary>
-            <typeparam name="TProperty">The type of the property.</typeparam>
-            <param name="propertyAccessExpression">The property access expression.</param>
-            <returns></returns>
-            <remarks>
-            This method is significantly slower than simply using property name strings. But the
-            benefit of refactoring support, outweighs the cost of any single call. DO cache the result
-            of this method for performance.
-            </remarks>
-        </member>
         <member name="T:Unme.Common.Tuple">
             <summary>
             A Pair Tuple.
@@ -217,26 +193,6 @@
             <summary>
             Invokes the action if this is the first call to Dispose.
             Subsequent calls do nothing. This method is thread-safe.
-            </summary>
-        </member>
-        <member name="T:Unme.Common.ReaderWriterLockSlimUtility">
-            <summary>
-            Convenience methods for the ReaderWriterLockSlim type.
-            </summary>
-        </member>
-        <member name="M:Unme.Common.ReaderWriterLockSlimUtility.ScopedEnterWriteLock(System.Threading.ReaderWriterLockSlim)">
-            <summary>
-            Convenience method providing a Scoped write lock.
-            </summary>
-        </member>
-        <member name="M:Unme.Common.ReaderWriterLockSlimUtility.ScopedEnterReadLock(System.Threading.ReaderWriterLockSlim)">
-            <summary>
-            Convenience method providing a Scoped read lock.
-            </summary>
-        </member>
-        <member name="M:Unme.Common.ReaderWriterLockSlimUtility.ScopedEnterUpgradeableReadLock(System.Threading.ReaderWriterLockSlim)">
-            <summary>
-            Convenience method providing a Scoped upgradeable read lock.
             </summary>
         </member>
         <member name="T:Unme.Common.StringUtility">

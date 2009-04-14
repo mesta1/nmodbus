@@ -25,7 +25,7 @@ namespace Modbus.Device
 			: base(unitId, new EmptyTransport())
 		{
 			_server = tcpListener;
-		}		
+		}
 
 		/// <summary>
 		/// Gets the Modbus TCP Masters connected to this Modbus TCP Slave.
@@ -55,7 +55,8 @@ namespace Modbus.Device
 			_logger.Debug("Start Modbus Tcp Server.");
 			_server.Start();
 
-			_server.BeginAcceptTcpClient(AcceptCompleted, this);
+			// use Socket async API for compact framework compat
+			_server.Server.BeginAccept(AcceptCompleted, this);
 		}
 
 		internal void RemoveMaster(string endPoint)
@@ -75,7 +76,9 @@ namespace Modbus.Device
 
 			try
 			{
-				TcpClient client = _server.EndAcceptTcpClient(ar);
+				// use Socket async API for compact framework compat
+				TcpClient client = new TcpClient { Client = _server.Server.EndAccept(ar) };
+
 				var masterConnection = new ModbusMasterTcpConnection(client, slave);
 				masterConnection.ModbusMasterTcpConnectionClosed += (sender, eventArgs) => RemoveMaster(eventArgs.EndPoint);
 
@@ -85,7 +88,8 @@ namespace Modbus.Device
 				_logger.Debug("Accept completed.");
 
 				// Accept another client
-				_server.BeginAcceptTcpClient(AcceptCompleted, slave);
+				// use Socket async API for compact framework compat
+				_server.Server.BeginAccept(AcceptCompleted, slave);
 			}
 			catch (ObjectDisposedException)
 			{

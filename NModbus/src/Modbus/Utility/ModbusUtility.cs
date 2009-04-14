@@ -71,7 +71,7 @@ namespace Modbus.Utility
 		/// <returns>An array of ASCII byte values</returns>
 		public static byte[] GetAsciiBytes(params byte[] numbers)
 		{
-			return Encoding.ASCII.GetBytes(String.Join(String.Empty, Array.ConvertAll<byte, string>(numbers, delegate(byte n) { return n.ToString("X2"); })));
+			return Encoding.ASCII.GetBytes(numbers.SelectMany(n => n.ToString("X2")).ToArray());
 		}
 
 		/// <summary>
@@ -81,7 +81,7 @@ namespace Modbus.Utility
 		/// <returns>An array of ASCII byte values</returns>
 		public static byte[] GetAsciiBytes(params ushort[] numbers)
 		{
-			return Encoding.ASCII.GetBytes(String.Join(String.Empty, Array.ConvertAll<ushort, string>(numbers, delegate(ushort n) { return n.ToString("X4"); })));
+			return Encoding.ASCII.GetBytes(numbers.SelectMany(n => n.ToString("X4")).ToArray());
 		}
 
 		/// <summary>

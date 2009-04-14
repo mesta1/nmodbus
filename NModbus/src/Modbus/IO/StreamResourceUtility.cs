@@ -24,8 +24,10 @@ namespace Modbus.IO
 		/// </summary>
 		internal static void InitializeDefaultTimeouts(IStreamResource streamResource)
 		{
+#if !WindowsCE
 			streamResource.WriteTimeout = streamResource.WriteTimeout == streamResource.InfiniteTimeout ? Modbus.DefaultTimeout : streamResource.WriteTimeout;
 			streamResource.ReadTimeout = streamResource.ReadTimeout == streamResource.InfiniteTimeout ? Modbus.DefaultTimeout : streamResource.ReadTimeout;
+#endif
 		}
 	}
 }

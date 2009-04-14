@@ -159,6 +159,9 @@
   <data name="SlaveExceptionResponseInvalidFunctionCode" xml:space="preserve">
     <value>Invalid function code value for SlaveExceptionResponse.</value>
   </data>
+  <data name="TimeoutNotSupported" xml:space="preserve">
+    <value>The compact framework UDP client does not support timeouts.</value>
+  </data>
   <data name="UdpClientNotConnected" xml:space="preserve">
     <value>UdpClient must be bound to a default remote host. Call the Connect method.</value>
   </data>

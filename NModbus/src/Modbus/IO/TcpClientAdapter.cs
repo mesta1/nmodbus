@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Net.Sockets;
+using System.Threading;
 using Unme.Common;
 
 namespace Modbus.IO
@@ -10,7 +11,6 @@ namespace Modbus.IO
 	/// </summary>
 	internal class TcpClientAdapter : IStreamResource
 	{
-		private const int InfiniteTimeoutValue = 0;
 		private NetworkStream _networkStream;
 
 		public TcpClientAdapter(TcpClient tcpClient)
@@ -22,7 +22,7 @@ namespace Modbus.IO
 
 		public int InfiniteTimeout
 		{
-			get { return InfiniteTimeoutValue; }
+			get { return Timeout.Infinite; }
 		}
 
 		public int ReadTimeout
