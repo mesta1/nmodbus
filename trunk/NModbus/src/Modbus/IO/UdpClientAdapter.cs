@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using Unme.Common;
 
 namespace Modbus.IO
@@ -14,32 +11,52 @@ namespace Modbus.IO
 	/// </summary>
 	internal class UdpClientAdapter : IStreamResource
 	{
-		private const int InfiniteTimeoutValue = 0;
-		private UdpClient _udpClient;
-		private List<byte> _readBuffer;
-
+		// strategy for cross platform r/w 
+		private CrossPlatformUdpClient _udpClient;
+		
 		public UdpClientAdapter(UdpClient udpClient)
-		{			
-			Debug.Assert(udpClient != null, "Argument udpClient cannot be null.");
+		{
+			if (udpClient == null)
+				throw new ArgumentNullException("udpClient");
 
-			_udpClient = udpClient;
+			_udpClient = CrossPlatformUdpClient.Create(udpClient);
+		}
+
+		public CrossPlatformUdpClient Client
+		{
+			get
+			{
+				return _udpClient;
+			}
 		}
 
 		public int InfiniteTimeout
 		{
-			get { return InfiniteTimeoutValue; }
+			get { return Timeout.Infinite; }
 		}
 
 		public int ReadTimeout
 		{
-			get { return _udpClient.Client.ReceiveTimeout; }
-			set { _udpClient.Client.ReceiveTimeout = value; }
+			get 
+			{ 
+				return Client.ReadTimeout; 
+			}
+			set 
+			{ 
+				Client.ReadTimeout = value; 
+			}
 		}
 
 		public int WriteTimeout
 		{
-			get { return _udpClient.Client.SendTimeout; }
-			set { _udpClient.Client.SendTimeout = value; }
+			get 
+			{ 
+				return Client.WriteTimeout; 
+			}
+			set 
+			{ 
+				Client.WriteTimeout = value; 
+			}
 		}
 
 		public void DiscardInBuffer()
@@ -59,18 +76,8 @@ namespace Modbus.IO
 				throw new ArgumentOutOfRangeException("count", "Argument count must be greater than or equal to 0.");
 			if (count > buffer.Length - offset)
 				throw new ArgumentOutOfRangeException("count", "Argument count cannot be greater than the length of buffer minus offset.");
-
-			IPEndPoint remoteIpEndPoint = null;
-			if (_readBuffer == null || _readBuffer.Count() == 0)
-				_readBuffer = Read(ref remoteIpEndPoint).ToList();
-
-			if (_readBuffer.Count() < count)
-				throw new IOException("Not enough bytes in the datagram.");
-
-			_readBuffer.CopyTo(0, buffer, offset, count);
-			_readBuffer.RemoveRange(0, count);
-
-			return count;
+			
+			return Client.Read(buffer, offset, count);
 		}
 
 		public void Write(byte[] buffer, int offset, int count)
@@ -81,28 +88,20 @@ namespace Modbus.IO
 				throw new ArgumentOutOfRangeException("offset", "Argument offset must be greater than or equal to 0.");
 			if (offset > buffer.Length)
 				throw new ArgumentOutOfRangeException("offset", "Argument offset cannot be greater than the length of buffer.");
-
-			_udpClient.Send(buffer.Skip(offset).ToArray(), count);
+			
+			Client.Write(buffer.Skip(offset).ToArray(), count);
 		}
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-		/// <summary>
-		/// This method facilitates unit testing.
-		/// </summary>
-		internal virtual byte[] Read(ref IPEndPoint remoteIpEndPoint)
+		public void Dispose()
 		{
-			return _udpClient.Receive(ref remoteIpEndPoint);
+			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-                DisposableUtility.Dispose(ref _udpClient);
-        }
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+				DisposableUtility.Dispose(ref _udpClient);
+		}
 	}
 }

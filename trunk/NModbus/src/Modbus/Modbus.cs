@@ -48,6 +48,9 @@ namespace Modbus
 
 		// An existing connection was forcibly closed by the remote host
 		public const int ConnectionResetByPeer = 10054;
+		
+		// Existing socket connection is being closed
+		public const int WSACancelBlockingCall = 10004;
 
 		// used by the ASCII tranport to indicate end of message
 		public const string NewLine = "\r\n";

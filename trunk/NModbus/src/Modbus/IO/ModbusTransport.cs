@@ -63,7 +63,37 @@ namespace Modbus.IO
 
 				_waitToRetryMilliseconds = value;
 			}
-		}		
+		}
+
+		/// <summary>
+		/// Gets or sets the number of milliseconds before a timeout occurs when a read operation does not finish.
+		/// </summary>	
+		public int ReadTimeout
+		{
+			get
+			{
+				return StreamResource.ReadTimeout;
+			}
+			set
+			{
+				StreamResource.ReadTimeout = value;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the number of milliseconds before a timeout occurs when a write operation does not finish.
+		/// </summary>
+		public int WriteTimeout
+		{
+			get
+			{
+				return StreamResource.WriteTimeout;
+			}
+			set
+			{
+				StreamResource.WriteTimeout = value;
+			}
+		}
 
 		/// <summary>
 		/// Gets the stream resource.

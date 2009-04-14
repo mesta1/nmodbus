@@ -9,17 +9,17 @@ namespace Modbus.IO
 	public interface IStreamResource : IDisposable
 	{
 		/// <summary>
-		/// Indicates that no time-out should occur.
+		/// Indicates that no timeout should occur.
 		/// </summary>
 		int InfiniteTimeout { get; }
 		
 		/// <summary>
-		/// Gets or sets the number of milliseconds before a time-out occurs when a read operation does not finish.
+		/// Gets or sets the number of milliseconds before a timeout occurs when a read operation does not finish.
 		/// </summary>
 		int ReadTimeout { get; set; }
 
 		/// <summary>
-		/// Gets or sets the number of milliseconds before a time-out occurs when a write operation does not finish.
+		/// Gets or sets the number of milliseconds before a timeout occurs when a write operation does not finish.
 		/// </summary>
 		int WriteTimeout { get; set; }
 

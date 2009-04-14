@@ -14,9 +14,9 @@ using Unme.Common;
 namespace Modbus.Device
 {
 	internal class ModbusMasterTcpConnection : ModbusDevice, IDisposable
-	{		
+	{
 		private readonly ILog _log = LogManager.GetLogger(Assembly.GetCallingAssembly(),
-			String.Format(CultureInfo.InvariantCulture, "{0}.Instance{1}", typeof(ModbusMasterTcpConnection).FullName, Interlocked.Add(ref instanceCounter, 1)));
+			String.Format(CultureInfo.InvariantCulture, "{0}.Instance{1}", typeof(ModbusMasterTcpConnection).FullName, Interlocked.Increment(ref instanceCounter)));
 		private readonly Func<TcpClient, string> _endPointConverter = FunctionalUtility.Memoize<TcpClient, string>(client => client.Client.RemoteEndPoint.ToString());
 		private readonly Func<TcpClient, Stream> _streamConverter = FunctionalUtility.Memoize<TcpClient, Stream>(client => client.GetStream());
 		private static int instanceCounter;
