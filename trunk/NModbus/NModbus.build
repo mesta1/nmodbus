@@ -86,6 +86,8 @@
 	</target>
 
 	<target name="run-integration-tests" depends="build">
+		<loadtasks assembly="${path.mbunit.tasks}"/>
+		
 		<foreach item="Folder" property="foldername">
 			<in>
 				<items basedir="src">
@@ -94,7 +96,8 @@
 				</items>
 			</in>
 			<do>
-				<mbunit report-types ="Xml"
+				<mbunit 
+					report-types ="Xml"
          report-filename-format="${foldername}.IntegrationTests"
          report-output-directory="${path.output}"
          failonerror="true">
