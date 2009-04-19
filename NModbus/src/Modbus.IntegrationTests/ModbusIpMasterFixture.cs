@@ -14,19 +14,16 @@ namespace Modbus.IntegrationTests
 		public void DefaultTimeout()
 		{
 			var listener = new TcpListener(ModbusMasterFixture.TcpHost, ModbusMasterFixture.Port);
-			using (listener.ScopedStart())
+			using (var slave = ModbusTcpSlave.CreateTcp(ModbusMasterFixture.SlaveAddress, listener))
 			{
-				using (var slave = ModbusTcpSlave.CreateTcp(ModbusMasterFixture.SlaveAddress, listener))
-				{
-					var slaveThread = new Thread(slave.Listen);
-					slaveThread.Start();
+				var slaveThread = new Thread(slave.Listen);
+				slaveThread.Start();
 
-					var client = new TcpClient(ModbusMasterFixture.TcpHost.ToString(), ModbusMasterFixture.Port);
-					using (var master = ModbusIpMaster.CreateIp(client))
-					{
-						Assert.AreEqual(DefaultTimeoutValue, client.GetStream().ReadTimeout);
-						Assert.AreEqual(DefaultTimeoutValue, client.GetStream().WriteTimeout);
-					}
+				var client = new TcpClient(ModbusMasterFixture.TcpHost.ToString(), ModbusMasterFixture.Port);
+				using (var master = ModbusIpMaster.CreateIp(client))
+				{
+					Assert.AreEqual(DefaultTimeoutValue, client.GetStream().ReadTimeout);
+					Assert.AreEqual(DefaultTimeoutValue, client.GetStream().WriteTimeout);
 				}
 			}
 		}
@@ -35,21 +32,18 @@ namespace Modbus.IntegrationTests
 		public void OverrideTimeoutOnTcpClient()
 		{
 			var listener = new TcpListener(ModbusMasterFixture.TcpHost, ModbusMasterFixture.Port);
-			using (listener.ScopedStart())
+			using (var slave = ModbusTcpSlave.CreateTcp(ModbusMasterFixture.SlaveAddress, listener))
 			{
-				using (var slave = ModbusTcpSlave.CreateTcp(ModbusMasterFixture.SlaveAddress, listener))
-				{
-					var slaveThread = new Thread(slave.Listen);
-					slaveThread.Start();
+				var slaveThread = new Thread(slave.Listen);
+				slaveThread.Start();
 
-					var client = new TcpClient(ModbusMasterFixture.TcpHost.ToString(), ModbusMasterFixture.Port);
-					client.ReceiveTimeout = 1500;
-					client.SendTimeout = 3000;
-					using (var master = ModbusIpMaster.CreateIp(client))
-					{
-						Assert.AreEqual(1500, client.GetStream().ReadTimeout);
-						Assert.AreEqual(3000, client.GetStream().WriteTimeout);
-					}
+				var client = new TcpClient(ModbusMasterFixture.TcpHost.ToString(), ModbusMasterFixture.Port);
+				client.ReceiveTimeout = 1500;
+				client.SendTimeout = 3000;
+				using (var master = ModbusIpMaster.CreateIp(client))
+				{
+					Assert.AreEqual(1500, client.GetStream().ReadTimeout);
+					Assert.AreEqual(3000, client.GetStream().WriteTimeout);
 				}
 			}
 		}
@@ -58,21 +52,18 @@ namespace Modbus.IntegrationTests
 		public void OverrideTimeoutOnNetworkStream()
 		{
 			var listener = new TcpListener(ModbusMasterFixture.TcpHost, ModbusMasterFixture.Port);
-			using (listener.ScopedStart())
+			using (var slave = ModbusTcpSlave.CreateTcp(ModbusMasterFixture.SlaveAddress, listener))
 			{
-				using (var slave = ModbusTcpSlave.CreateTcp(ModbusMasterFixture.SlaveAddress, listener))
-				{
-					var slaveThread = new Thread(slave.Listen);
-					slaveThread.Start();
+				var slaveThread = new Thread(slave.Listen);
+				slaveThread.Start();
 
-					var client = new TcpClient(ModbusMasterFixture.TcpHost.ToString(), ModbusMasterFixture.Port);
-					client.GetStream().ReadTimeout = 1500;
-					client.GetStream().WriteTimeout = 3000;
-					using (var master = ModbusIpMaster.CreateIp(client))
-					{
-						Assert.AreEqual(1500, client.GetStream().ReadTimeout);
-						Assert.AreEqual(3000, client.GetStream().WriteTimeout);
-					}
+				var client = new TcpClient(ModbusMasterFixture.TcpHost.ToString(), ModbusMasterFixture.Port);
+				client.GetStream().ReadTimeout = 1500;
+				client.GetStream().WriteTimeout = 3000;
+				using (var master = ModbusIpMaster.CreateIp(client))
+				{
+					Assert.AreEqual(1500, client.GetStream().ReadTimeout);
+					Assert.AreEqual(3000, client.GetStream().WriteTimeout);
 				}
 			}
 		}

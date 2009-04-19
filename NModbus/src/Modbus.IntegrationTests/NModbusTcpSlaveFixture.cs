@@ -28,9 +28,8 @@ namespace Modbus.IntegrationTests
 		public void ModbusTcpSlave_ConnectionResetByPeer()
 		{
 			TcpListener slaveListener = new TcpListener(ModbusMasterFixture.TcpHost, ModbusMasterFixture.Port);
-			using (slaveListener.ScopedStart())
+			using (var slave = ModbusTcpSlave.CreateTcp(ModbusMasterFixture.SlaveAddress, slaveListener))
 			{
-				ModbusTcpSlave slave = ModbusTcpSlave.CreateTcp(ModbusMasterFixture.SlaveAddress, slaveListener);
 				Thread slaveThread = new Thread(slave.Listen);
 				slaveThread.IsBackground = true;
 				slaveThread.Start();
@@ -58,9 +57,8 @@ namespace Modbus.IntegrationTests
 		public void ModbusTcpSlave_ConnectionClosesGracefully()
 		{
 			TcpListener slaveListener = new TcpListener(ModbusMasterFixture.TcpHost, ModbusMasterFixture.Port);
-			using (slaveListener.ScopedStart())
+			using (var slave = ModbusTcpSlave.CreateTcp(ModbusMasterFixture.SlaveAddress, slaveListener))
 			{
-				ModbusTcpSlave slave = ModbusTcpSlave.CreateTcp(ModbusMasterFixture.SlaveAddress, slaveListener);
 				Thread slaveThread = new Thread(slave.Listen);
 				slaveThread.IsBackground = true;
 				slaveThread.Start();
@@ -90,9 +88,8 @@ namespace Modbus.IntegrationTests
 		public void ModbusTcpSlave_ConnectionSlowlyClosesGracefully()
 		{
 			TcpListener slaveListener = new TcpListener(ModbusMasterFixture.TcpHost, ModbusMasterFixture.Port);
-			using (slaveListener.ScopedStart())
+			using (var slave = ModbusTcpSlave.CreateTcp(ModbusMasterFixture.SlaveAddress, slaveListener))
 			{
-				ModbusTcpSlave slave = ModbusTcpSlave.CreateTcp(ModbusMasterFixture.SlaveAddress, slaveListener);
 				Thread slaveThread = new Thread(slave.Listen);
 				slaveThread.IsBackground = true;
 				slaveThread.Start();
@@ -115,20 +112,19 @@ namespace Modbus.IntegrationTests
 				Assert.AreEqual(0, slave.Masters.Count);
 			}
 		}
-	
+
 		[Test]
 		public void ModbusTcpSlave_MultiThreaded()
 		{
 			var slaveListener = new TcpListener(ModbusMasterFixture.TcpHost, ModbusMasterFixture.Port);
-			using (slaveListener.ScopedStart())
+			using (var slave = ModbusTcpSlave.CreateTcp(ModbusMasterFixture.SlaveAddress, slaveListener))
 			{
-				ModbusTcpSlave slave = ModbusTcpSlave.CreateTcp(ModbusMasterFixture.SlaveAddress, slaveListener);
 				Thread slaveThread = new Thread(slave.Listen);
 				slaveThread.IsBackground = true;
 				slaveThread.Start();
 
-				var workerThread1 = new Thread(ReadOnOwnThread);
-				var workerThread2 = new Thread(ReadOnOwnThread);
+				var workerThread1 = new Thread(Read);
+				var workerThread2 = new Thread(Read);
 				workerThread1.Start();
 				workerThread2.Start();
 
@@ -137,7 +133,7 @@ namespace Modbus.IntegrationTests
 			}
 		}
 
-		internal static void ReadOnOwnThread(object state)
+		internal static void Read(object state)
 		{
 			using (TcpClient masterClient = new TcpClient(ModbusMasterFixture.TcpHost.ToString(), ModbusMasterFixture.Port))
 			{

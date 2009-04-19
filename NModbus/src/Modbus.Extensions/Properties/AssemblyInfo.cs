@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyProduct("NModbus")]
 [assembly: AssemblyCopyright("Licensed under MIT License.")]
 [assembly: AssemblyDescription("Provides utiltiy extensions for the NModbus library.")]
+
 // required for VBA applications
 [assembly: ComVisible(true)]
 [assembly: CLSCompliant(false)]

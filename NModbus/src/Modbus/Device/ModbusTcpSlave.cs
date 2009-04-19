@@ -18,12 +18,16 @@ namespace Modbus.Device
 	{
 		private readonly object _mastersLock = new object();
 		private readonly ILog _logger = LogManager.GetLogger(typeof(ModbusTcpSlave));
-		private readonly Dictionary<string, ModbusMasterTcpConnection> _masters = new Dictionary<string, ModbusMasterTcpConnection>();
-		private readonly TcpListener _server;
+		private readonly Dictionary<string, ModbusMasterTcpConnection> _masters = new Dictionary<string, ModbusMasterTcpConnection>();		
+		private readonly object _syncObject = new object();
+		private TcpListener _server;
 
 		private ModbusTcpSlave(byte unitId, TcpListener tcpListener)
 			: base(unitId, new EmptyTransport())
 		{
+			if (tcpListener == null)
+				throw new ArgumentNullException("tcpListener");
+			
 			_server = tcpListener;
 		}
 
@@ -36,6 +40,24 @@ namespace Modbus.Device
 			{
 				lock (_mastersLock)
 					return new ReadOnlyCollection<TcpClient>(_masters.Values.Select(mc => mc.TcpClient).ToList());
+			}
+		}
+
+		/// <summary>
+		/// Gets the server.
+		/// </summary>
+		/// <value>The server.</value>
+		/// <remarks>
+		/// This property is not thread safe, it should only be consumed within a lock.
+		/// </remarks>
+		private TcpListener Server
+		{
+			get
+			{
+				if (_server == null)
+					throw new ObjectDisposedException("Server");
+
+				return _server;
 			}
 		}
 
@@ -53,10 +75,14 @@ namespace Modbus.Device
 		public override void Listen()
 		{
 			_logger.Debug("Start Modbus Tcp Server.");
-			_server.Start();
 
-			// use Socket async API for compact framework compat
-			_server.Server.BeginAccept(AcceptCompleted, this);
+			lock (_syncObject)
+			{
+				Server.Start();
+
+				// use Socket async API for compact framework compat
+				Server.Server.BeginAccept(AcceptCompleted, this);
+			}
 		}
 
 		internal void RemoveMaster(string endPoint)
@@ -77,8 +103,11 @@ namespace Modbus.Device
 			try
 			{
 				// use Socket async API for compact framework compat
-				TcpClient client = new TcpClient { Client = _server.Server.EndAccept(ar) };
+				Socket socket = null;
+				lock (_syncObject)
+					socket = Server.Server.EndAccept(ar);
 
+				TcpClient client = new TcpClient { Client = socket };
 				var masterConnection = new ModbusMasterTcpConnection(client, slave);
 				masterConnection.ModbusMasterTcpConnectionClosed += (sender, eventArgs) => RemoveMaster(eventArgs.EndPoint);
 
@@ -89,7 +118,8 @@ namespace Modbus.Device
 
 				// Accept another client
 				// use Socket async API for compact framework compat
-				_server.Server.BeginAccept(AcceptCompleted, slave);
+				lock (_syncObject)
+					Server.Server.BeginAccept(AcceptCompleted, slave);
 			}
 			catch (ObjectDisposedException)
 			{
@@ -106,7 +136,22 @@ namespace Modbus.Device
 			base.Dispose(disposing);
 
 			if (disposing)
+			{
 				_masters.IfNotNull(m => m.Values.ForEach(client => DisposableUtility.Dispose(ref client)));
+
+				// double-check locking
+				if (_server != null)
+				{
+					lock (_syncObject)
+					{
+						if (_server != null)
+						{
+							_server.Stop();
+							_server = null;
+						}
+					}
+				}
+			}
 		}
 	}
 }

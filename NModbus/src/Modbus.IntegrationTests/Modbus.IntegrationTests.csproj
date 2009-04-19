@@ -105,7 +105,6 @@
     <Compile Include="NModbusUsbRtuMasterFixture.cs" />
     <Compile Include="NModbusUsbRtuMasterNModbusSerialRtuSlaveFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TcpListenerUtility.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FtdAdapter\FtdAdapter.csproj">
