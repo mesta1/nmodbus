@@ -120,7 +120,7 @@
     </fxcop>
   </target>
 
-  <target name="dist" depends="clean, setversion, build, build-signed, run-unit-tests">
+  <target name="dist" depends="clean, setversion, build, build-signed, run-unit-tests, docs">
 
     <!-- create scratch directory with the delay signed binaries to distribute -->
     <mkdir dir="${path.dist}" />
@@ -163,7 +163,7 @@
 
     <!-- create scratch directory with root files to distribute -->
     <copy file="README.txt" todir="${path.dist}\scratch\root" />
-    <!--<copy file="${path.docs}\Documentation.chm" tofile="${path.dist}\scratch\root\NModbus_net-3.5.chm" />-->
+    <copy file="${path.docs}\Documentation.chm" tofile="${path.dist}\scratch\root\NModbus_net-3.5.chm" />
 
     <!-- zip source distribution -->
     <zip zipfile="${path.dist}\${product-name}-source.zip">
