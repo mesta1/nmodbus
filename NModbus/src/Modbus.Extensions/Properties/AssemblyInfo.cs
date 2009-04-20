@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -11,5 +11,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(true)]
 [assembly: CLSCompliant(false)]
 [assembly: Guid("A0218720-E559-434d-AB0D-CC03E6D69F46")]
-[assembly: AssemblyVersion("1.9.0.0")]
-[assembly: AssemblyFileVersion("1.9.0.0")]
+[assembly: AssemblyVersion("1.10.0.0")]
+#if !WindowsCE
+[assembly: AssemblyFileVersion("1.10.0.0")]
+#endif
