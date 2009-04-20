@@ -102,25 +102,17 @@ namespace Modbus.IntegrationTests
 		{
 			log.Debug("Clean up after tests.");
 
-			if (MasterSerialPort != null)
-				MasterSerialPort.Dispose();
+			if (Master != null)
+				Master.Dispose();
 
-			if (MasterUsbPort != null)
-				MasterUsbPort.Dispose();
-
-			if (SlaveSerialPort != null)
-				SlaveSerialPort.Dispose();
+			if (Slave != null)
+				Slave.Dispose();
 
 			if (Jamod != null)
-                Jamod.Kill();
-
-			if (MasterUdp != null)
-				MasterUdp.Close();
-
-			if (SlaveUdp != null)
-				SlaveUdp.Close();
-
-			Thread.Sleep(4000);
+			{
+				Jamod.Kill();
+				Thread.Sleep(4000);
+			}
 		}
 
 		[Test]

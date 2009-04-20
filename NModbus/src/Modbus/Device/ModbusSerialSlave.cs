@@ -21,6 +21,18 @@ namespace Modbus.Device
 		{
 		}
 
+		private ModbusSerialTransport SerialTransport
+		{
+			get
+			{
+				var transport = Transport as ModbusSerialTransport;
+				if (transport == null)
+					throw new ObjectDisposedException("SerialTransport");
+
+				return transport;
+			}
+		}
+
 		/// <summary>
 		/// Modbus ASCII slave factory method.
 		/// </summary>
@@ -74,8 +86,6 @@ namespace Modbus.Device
 		/// </summary>
 		public override void Listen()
 		{
-			ModbusSerialTransport serialTransport = (ModbusSerialTransport) Transport;					
-
 			while (true)
 			{
 				try
@@ -83,10 +93,10 @@ namespace Modbus.Device
 					try
 					{
 						// read request and build message
-						byte[] frame = Transport.ReadRequest();
+						byte[] frame = SerialTransport.ReadRequest();
 						IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(frame);
 
-						if (serialTransport.CheckFrame && !serialTransport.ChecksumsMatch(request, frame))
+						if (SerialTransport.CheckFrame && !SerialTransport.ChecksumsMatch(request, frame))
 						{
 							string errorMessage = String.Format(CultureInfo.InvariantCulture, "Checksums failed to match {0} != {1}", request.MessageFrame.Join(", "), frame.Join(", "));
 							_logger.Error(errorMessage);
@@ -104,24 +114,24 @@ namespace Modbus.Device
 						IModbusMessage response = ApplyRequest(request);
 
 						// write response
-						Transport.Write(response);
-					}						
+						SerialTransport.Write(response);
+					}
 					catch (IOException ioe)
 					{
 						_logger.ErrorFormat("IO Exception encountered while listening for requests - {0}", ioe.Message);
-						serialTransport.DiscardInBuffer();
+						SerialTransport.DiscardInBuffer();
 					}
 					catch (TimeoutException te)
 					{
 						_logger.ErrorFormat("Timeout Exception encountered while listening for requests - {0}", te.Message);
-						serialTransport.DiscardInBuffer();
+						SerialTransport.DiscardInBuffer();
 					}
 
 					// TODO better exception handling here, missing FormatException, NotImplemented...
 				}
 				catch (InvalidOperationException)
 				{
-					// when the underlying port is closed
+					// when the underlying transport is disposed
 					break;
 				}
 			}

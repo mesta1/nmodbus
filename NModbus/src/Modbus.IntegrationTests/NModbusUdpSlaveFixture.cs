@@ -20,23 +20,16 @@ namespace Modbus.IntegrationTests
 			log4net.Config.XmlConfigurator.Configure();
 		}
 
-		[TearDown]
-		public void TearDown()
-		{
-			// a little time for resources to become free
-			Thread.Sleep(1000);
-		}
-
 		[Test]
 		public void ModbusUdpSlave_EnsureTheSlaveShutsDownCleanly()
 		{
-			using (UdpClient client = new UdpClient(ModbusMasterFixture.Port))
+			UdpClient client = new UdpClient(ModbusMasterFixture.Port);
+			using (var slave = ModbusUdpSlave.CreateUdp(1, client))
 			{
 				var handle = new AutoResetEvent(false);
 
 				var backgroundThread = new Thread(state =>
 				{
-					ModbusSlave slave = ModbusUdpSlave.CreateUdp(1, client);
 					handle.Set();
 					slave.Listen();
 				});
@@ -155,10 +148,10 @@ namespace Modbus.IntegrationTests
 		{
 			try
 			{
-				using (var masterClient = new UdpClient())
+				var masterClient = new UdpClient();
+				masterClient.Connect(ModbusMasterFixture.DefaultModbusIPEndPoint);
+				using (var master = ModbusIpMaster.CreateIp(masterClient))
 				{
-					masterClient.Connect(ModbusMasterFixture.DefaultModbusIPEndPoint);
-					ModbusIpMaster master = ModbusIpMaster.CreateIp(masterClient);
 					master.Transport.Retries = 0;
 
 					var random = new Random();

@@ -7,7 +7,7 @@ namespace Modbus.Device
 	/// <summary>
 	/// Modbus device.
 	/// </summary>
-	public abstract class ModbusDevice
+	public abstract class ModbusDevice : IDisposable
 	{
 		private ModbusTransport _transport;
 

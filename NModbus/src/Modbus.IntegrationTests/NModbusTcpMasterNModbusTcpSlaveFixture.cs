@@ -21,14 +21,6 @@ namespace Modbus.IntegrationTests
 			Master = ModbusIpMaster.CreateIp(MasterTcp);
 		}
 
-		[TestFixtureTearDown]
-		public void TestFixtureTearDown()
-		{
-			SlaveTcp.Stop();
-			MasterTcp.Close();
-			CleanUp();
-		}
-
 		[Test]
 		public override void ReadCoils()
 		{
