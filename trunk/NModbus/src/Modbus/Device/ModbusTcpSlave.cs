@@ -14,12 +14,12 @@ namespace Modbus.Device
 	/// <summary>
 	/// Modbus TCP slave device.
 	/// </summary>
-	public class ModbusTcpSlave : ModbusSlave, IDisposable
+	public class ModbusTcpSlave : ModbusSlave
 	{
 		private readonly object _mastersLock = new object();
+		private readonly object _serverLock = new object();
 		private readonly ILog _logger = LogManager.GetLogger(typeof(ModbusTcpSlave));
-		private readonly Dictionary<string, ModbusMasterTcpConnection> _masters = new Dictionary<string, ModbusMasterTcpConnection>();		
-		private readonly object _syncObject = new object();
+		private readonly Dictionary<string, ModbusMasterTcpConnection> _masters = new Dictionary<string, ModbusMasterTcpConnection>();
 		private TcpListener _server;
 
 		private ModbusTcpSlave(byte unitId, TcpListener tcpListener)
@@ -27,7 +27,7 @@ namespace Modbus.Device
 		{
 			if (tcpListener == null)
 				throw new ArgumentNullException("tcpListener");
-			
+
 			_server = tcpListener;
 		}
 
@@ -76,12 +76,19 @@ namespace Modbus.Device
 		{
 			_logger.Debug("Start Modbus Tcp Server.");
 
-			lock (_syncObject)
+			lock (_serverLock)
 			{
-				Server.Start();
+				try
+				{
+					Server.Start();
 
-				// use Socket async API for compact framework compat
-				Server.Server.BeginAccept(AcceptCompleted, this);
+					// use Socket async API for compact framework compat
+					Server.Server.BeginAccept(AcceptCompleted, this);
+				}
+				catch (ObjectDisposedException)
+				{
+					// this happens when the server stops
+				}
 			}
 		}
 
@@ -104,7 +111,7 @@ namespace Modbus.Device
 			{
 				// use Socket async API for compact framework compat
 				Socket socket = null;
-				lock (_syncObject)
+				lock (_serverLock)
 					socket = Server.Server.EndAccept(ar);
 
 				TcpClient client = new TcpClient { Client = socket };
@@ -118,7 +125,7 @@ namespace Modbus.Device
 
 				// Accept another client
 				// use Socket async API for compact framework compat
-				lock (_syncObject)
+				lock (_serverLock)
 					Server.Server.BeginAccept(AcceptCompleted, slave);
 			}
 			catch (ObjectDisposedException)
@@ -131,18 +138,15 @@ namespace Modbus.Device
 		/// Releases unmanaged and - optionally - managed resources
 		/// </summary>
 		/// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+		/// <remarks>Dispose is thread-safe.</remarks>
 		protected override void Dispose(bool disposing)
 		{
-			base.Dispose(disposing);
-
 			if (disposing)
 			{
-				_masters.IfNotNull(m => m.Values.ForEach(client => DisposableUtility.Dispose(ref client)));
-
 				// double-check locking
 				if (_server != null)
 				{
-					lock (_syncObject)
+					lock (_serverLock)
 					{
 						if (_server != null)
 						{

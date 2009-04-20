@@ -11,11 +11,9 @@ namespace Modbus.IntegrationTests
 		[Test, ExpectedException(typeof(TimeoutException))]
 		public void NModbusAsciiMaster_ReadTimeout()
 		{
-			using (SerialPort port = ModbusMasterFixture.CreateAndOpenSerialPort(ModbusMasterFixture.DefaultMasterSerialPortName))
-			{
-				IModbusSerialMaster master = ModbusSerialMaster.CreateAscii(port);
+			SerialPort port = ModbusMasterFixture.CreateAndOpenSerialPort(ModbusMasterFixture.DefaultMasterSerialPortName);
+			using (IModbusSerialMaster master = ModbusSerialMaster.CreateAscii(port))
 				master.ReadCoils(100, 1, 1);
-			}
 		}
 	}
 }

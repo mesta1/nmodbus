@@ -12,14 +12,7 @@ namespace Modbus.IntegrationTests
 {
 	[TestFixture]
 	public class NModbusTcpSlaveFixture
-	{
-		[TearDown]
-		public void TearDown()
-		{
-			// a little time for resources to become free
-			Thread.Sleep(1000);
-		}
-
+	{		
 		/// <summary>
 		/// Tests the scenario when a slave is closed unexpectedly, causing a ConnectionResetByPeer SocketException
 		/// We want to handle this gracefully - remove the master from the dictionary
@@ -63,9 +56,9 @@ namespace Modbus.IntegrationTests
 				slaveThread.IsBackground = true;
 				slaveThread.Start();
 
-				using (TcpClient masterClient = new TcpClient(ModbusMasterFixture.TcpHost.ToString(), ModbusMasterFixture.Port))
+				var masterClient = new TcpClient(ModbusMasterFixture.TcpHost.ToString(), ModbusMasterFixture.Port);
+				using (var master = ModbusIpMaster.CreateIp(masterClient))
 				{
-					ModbusIpMaster master = ModbusIpMaster.CreateIp(masterClient);
 					master.Transport.Retries = 0;
 
 					bool[] coils = master.ReadCoils(1, 1);
@@ -94,9 +87,9 @@ namespace Modbus.IntegrationTests
 				slaveThread.IsBackground = true;
 				slaveThread.Start();
 
-				using (TcpClient masterClient = new TcpClient(ModbusMasterFixture.TcpHost.ToString(), ModbusMasterFixture.Port))
+				var masterClient = new TcpClient(ModbusMasterFixture.TcpHost.ToString(), ModbusMasterFixture.Port);
+				using (var master = ModbusIpMaster.CreateIp(masterClient))
 				{
-					ModbusIpMaster master = ModbusIpMaster.CreateIp(masterClient);
 					master.Transport.Retries = 0;
 
 					bool[] coils = master.ReadCoils(1, 1);
@@ -135,9 +128,9 @@ namespace Modbus.IntegrationTests
 
 		internal static void Read(object state)
 		{
-			using (TcpClient masterClient = new TcpClient(ModbusMasterFixture.TcpHost.ToString(), ModbusMasterFixture.Port))
+			var masterClient = new TcpClient(ModbusMasterFixture.TcpHost.ToString(), ModbusMasterFixture.Port);
+			using (var master = ModbusIpMaster.CreateIp(masterClient))
 			{
-				ModbusIpMaster master = ModbusIpMaster.CreateIp(masterClient);
 				master.Transport.Retries = 0;
 
 				var random = new Random();

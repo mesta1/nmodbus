@@ -21,12 +21,12 @@ namespace Modbus.IntegrationTests
 		[Test]
 		public void NModbusSerialRtuSlave_BonusCharacter_VerifyTimeout()
 		{
-			using (SerialPort masterPort = ModbusMasterFixture.CreateAndOpenSerialPort(ModbusMasterFixture.DefaultMasterSerialPortName))
-			using (SerialPort slavePort = ModbusMasterFixture.CreateAndOpenSerialPort(ModbusMasterFixture.DefaultSlaveSerialPortName))
-			{
-				IModbusSerialMaster master = ModbusSerialMaster.CreateRtu(masterPort);
+			SerialPort masterPort = ModbusMasterFixture.CreateAndOpenSerialPort(ModbusMasterFixture.DefaultMasterSerialPortName);
+			SerialPort slavePort = ModbusMasterFixture.CreateAndOpenSerialPort(ModbusMasterFixture.DefaultSlaveSerialPortName);
 
-				ModbusSerialSlave slave = ModbusSerialSlave.CreateRtu(1, slavePort);
+			using (var master = ModbusSerialMaster.CreateRtu(masterPort))
+			using (var slave = ModbusSerialSlave.CreateRtu(1, slavePort))
+			{
 				slave.DataStore = DataStoreFactory.CreateTestDataStore();
 
 				Thread slaveThread = new Thread(slave.Listen);

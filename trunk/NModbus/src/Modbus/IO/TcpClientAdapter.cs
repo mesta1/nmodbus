@@ -11,13 +11,13 @@ namespace Modbus.IO
 	/// </summary>
 	internal class TcpClientAdapter : IStreamResource
 	{
-		private NetworkStream _networkStream;
+		private TcpClient _tcpClient;
 
 		public TcpClientAdapter(TcpClient tcpClient)
 		{
 			Debug.Assert(tcpClient != null, "Argument tcpClient cannot be null.");
 
-			_networkStream = tcpClient.GetStream();
+			_tcpClient = tcpClient;
 		}
 
 		public int InfiniteTimeout
@@ -27,29 +27,29 @@ namespace Modbus.IO
 
 		public int ReadTimeout
 		{
-			get { return _networkStream.ReadTimeout; }
-			set { _networkStream.ReadTimeout = value; }
+			get { return _tcpClient.GetStream().ReadTimeout; }
+			set { _tcpClient.GetStream().ReadTimeout = value; }
 		}
 
 		public int WriteTimeout
 		{
-			get { return _networkStream.WriteTimeout; }
-			set { _networkStream.WriteTimeout = value; }
+			get { return _tcpClient.GetStream().WriteTimeout; }
+			set { _tcpClient.GetStream().WriteTimeout = value; }
 		}
 
 		public void Write(byte[] buffer, int offset, int size)
 		{
-			_networkStream.Write(buffer, offset, size);
+			_tcpClient.GetStream().Write(buffer, offset, size);
 		}
 
 		public int Read(byte[] buffer, int offset, int size)
 		{
-			return _networkStream.Read(buffer, offset, size);
+			return _tcpClient.GetStream().Read(buffer, offset, size);
 		}
 
 		public void DiscardInBuffer()
 		{
-			_networkStream.Flush();
+			_tcpClient.GetStream().Flush();
 		}
 
 		public void Dispose()
@@ -61,7 +61,7 @@ namespace Modbus.IO
 		protected virtual void Dispose(bool disposing)
 		{
 			if (disposing)
-				DisposableUtility.Dispose(ref _networkStream);
+				DisposableUtility.Dispose(ref _tcpClient);
 		}
 	}
 }

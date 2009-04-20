@@ -16,12 +16,13 @@ namespace Modbus.Device
 	internal class ModbusMasterTcpConnection : ModbusDevice, IDisposable
 	{
 		private readonly ILog _log = LogManager.GetLogger(Assembly.GetCallingAssembly(),
-			String.Format(CultureInfo.InvariantCulture, "{0}.Instance{1}", typeof(ModbusMasterTcpConnection).FullName, Interlocked.Increment(ref instanceCounter)));
-		private readonly Func<TcpClient, string> _endPointConverter = FunctionalUtility.Memoize<TcpClient, string>(client => client.Client.RemoteEndPoint.ToString());
-		private readonly Func<TcpClient, Stream> _streamConverter = FunctionalUtility.Memoize<TcpClient, Stream>(client => client.GetStream());
-		private static int instanceCounter;
-		private TcpClient _client;
-		private ModbusTcpSlave _slave;
+			String.Format(CultureInfo.InvariantCulture, "{0}.Instance{1}", typeof(ModbusMasterTcpConnection).FullName, Interlocked.Increment(ref _instanceCounter)));
+
+		private readonly TcpClient _client;		
+		private readonly string _endPoint;
+		private readonly Stream _stream;
+		private readonly ModbusTcpSlave _slave;
+		private static int _instanceCounter;
 		private byte[] _mbapHeader = new byte[6];
 		private byte[] _messageFrame;
 
@@ -34,6 +35,8 @@ namespace Modbus.Device
 				throw new ArgumentException("slave");
 
 			_client = client;
+			_endPoint = client.Client.RemoteEndPoint.ToString();
+			_stream = client.GetStream();
 			_slave = slave;
 			_log.DebugFormat("Creating new Master connection at IP:{0}", EndPoint);
 
@@ -50,7 +53,7 @@ namespace Modbus.Device
 		{
 			get
 			{
-				return _endPointConverter.Invoke(_client);
+				return _endPoint;
 			}
 		}
 
@@ -58,7 +61,7 @@ namespace Modbus.Device
 		{
 			get
 			{
-				return _streamConverter.Invoke(_client);
+				return _stream;
 			}
 		}
 
@@ -163,14 +166,6 @@ namespace Modbus.Device
 				_log.Error("Unexpected exception encountered", e);
 				throw;
 			}
-		}
-
-		protected override void Dispose(bool disposing)
-		{
-			base.Dispose(disposing);
-
-			if (disposing)
-				DisposableUtility.Dispose(ref _client);
 		}
 	}
 }
