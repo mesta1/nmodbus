@@ -8,26 +8,6 @@ namespace Modbus.IntegrationTests
 	[TestFixture]
 	public class ModbusIpMasterFixture
 	{
-		private const int DefaultTimeoutValue = 1000;
-
-		[Test]
-		public void DefaultTimeout()
-		{
-			var listener = new TcpListener(ModbusMasterFixture.TcpHost, ModbusMasterFixture.Port);
-			using (var slave = ModbusTcpSlave.CreateTcp(ModbusMasterFixture.SlaveAddress, listener))
-			{
-				var slaveThread = new Thread(slave.Listen);
-				slaveThread.Start();
-
-				var client = new TcpClient(ModbusMasterFixture.TcpHost.ToString(), ModbusMasterFixture.Port);
-				using (var master = ModbusIpMaster.CreateIp(client))
-				{
-					Assert.AreEqual(DefaultTimeoutValue, client.GetStream().ReadTimeout);
-					Assert.AreEqual(DefaultTimeoutValue, client.GetStream().WriteTimeout);
-				}
-			}
-		}
-
 		[Test]
 		public void OverrideTimeoutOnTcpClient()
 		{
