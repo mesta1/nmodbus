@@ -15,7 +15,7 @@ namespace Modbus.UnitTests.IO
 		{
 			var client = new CompactUdpClient(new UdpClient());
 			Assert.AreEqual(Timeout.Infinite, client.ReadTimeout);
-			AssertUtility.Throws<NotSupportedException>(() => client.ReadTimeout = 1000);
+			AssertUtility.Throws<InvalidOperationException>(() => client.ReadTimeout = 1000);
 		}
 
 		[Test]
@@ -23,7 +23,7 @@ namespace Modbus.UnitTests.IO
 		{
 			var client = new CompactUdpClient(new UdpClient());
 			Assert.AreEqual(Timeout.Infinite, client.WriteTimeout);
-			AssertUtility.Throws<NotSupportedException>(() => client.WriteTimeout = 1000);
+			AssertUtility.Throws<InvalidOperationException>(() => client.WriteTimeout = 1000);
 		}
 	}
 }

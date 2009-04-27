@@ -1,6 +1,6 @@
 ﻿using System;
-using Modbus.Utility;
 using MbUnit.Framework;
+using Modbus.Utility;
 
 namespace Modbus.UnitTests.Utility
 {

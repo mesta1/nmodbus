@@ -1,11 +1,8 @@
-﻿using MbUnit.Framework;
-using Modbus.IO;
+﻿using System;
 using System.Net.Sockets;
-using Rhino.Mocks;
-using System.Net;
+using MbUnit.Framework;
+using Modbus.IO;
 using Unme.MbUnit.Framework.Extensions;
-using System;
-using System.IO;
 
 namespace Modbus.UnitTests.IO
 {

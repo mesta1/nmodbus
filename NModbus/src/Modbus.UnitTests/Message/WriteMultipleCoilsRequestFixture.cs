@@ -1,8 +1,7 @@
 using System;
+using MbUnit.Framework;
 using Modbus.Data;
 using Modbus.Message;
-using Modbus.Utility;
-using MbUnit.Framework;
 
 namespace Modbus.UnitTests.Message
 {

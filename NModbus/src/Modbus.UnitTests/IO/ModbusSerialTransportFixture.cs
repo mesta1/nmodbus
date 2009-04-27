@@ -1,12 +1,12 @@
+using System;
 using System.IO;
+using MbUnit.Framework;
 using Modbus.Data;
 using Modbus.IO;
 using Modbus.Message;
 using Modbus.UnitTests.Message;
 using Modbus.Utility;
-using MbUnit.Framework;
 using Rhino.Mocks;
-using System;
 
 namespace Modbus.UnitTests.IO
 {

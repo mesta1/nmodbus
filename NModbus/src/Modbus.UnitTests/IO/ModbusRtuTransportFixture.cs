@@ -1,11 +1,11 @@
 using System;
 using System.IO;
 using System.Linq;
+using MbUnit.Framework;
 using Modbus.Data;
 using Modbus.IO;
 using Modbus.Message;
 using Modbus.Utility;
-using MbUnit.Framework;
 using Rhino.Mocks;
 using Unme.Common;
 

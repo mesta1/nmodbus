@@ -80,10 +80,8 @@
     <Compile Include="Data\ModbusDataCollectionFixture.cs" />
     <Compile Include="Data\RegisterCollectionFixture.cs" />
     <Compile Include="Device\ModbusMasterFixture.cs" />
-    <Compile Include="Device\ModbusSerialMasterFixture.cs" />
     <Compile Include="Device\ModbusSlaveFixture.cs" />
     <Compile Include="Device\TcpConnectionEventArgsFixture.cs" />
-    <Compile Include="IO\AbstractStreamResourceFixture.cs" />
     <Compile Include="IO\CompactUdpClientFixture.cs" />
     <Compile Include="IO\CrossPlatformUdpClientFixture.cs" />
     <Compile Include="IO\ModbusAsciiTransportFixture.cs" />

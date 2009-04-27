@@ -90,8 +90,6 @@ namespace Modbus.Device
 			if (streamResource == null)
 				throw new ArgumentNullException("streamResource");
 
-			StreamResourceUtility.InitializeDefaultTimeouts(streamResource);
-
 			return new ModbusIpMaster(new ModbusIpTransport(streamResource));
 		}
 
