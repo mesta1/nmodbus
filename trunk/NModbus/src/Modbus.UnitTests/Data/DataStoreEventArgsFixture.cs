@@ -1,7 +1,6 @@
-﻿using System;
-using System.Linq;
-using Modbus.Data;
+﻿using System.Linq;
 using MbUnit.Framework;
+using Modbus.Data;
 
 namespace Modbus.UnitTests.Data
 {

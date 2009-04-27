@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Linq;
 using MbUnit.Framework;
 using Modbus.Device;
 using Modbus.IO;
 using Rhino.Mocks;
 using Unme.MbUnit.Framework.Extensions;
-using System.Linq;
 
 namespace Modbus.UnitTests.Device
 {

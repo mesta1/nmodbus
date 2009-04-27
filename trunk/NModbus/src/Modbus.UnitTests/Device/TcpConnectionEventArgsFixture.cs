@@ -1,6 +1,6 @@
 ﻿using System;
-using Modbus.Device;
 using MbUnit.Framework;
+using Modbus.Device;
 
 namespace Modbus.UnitTests.Device
 {

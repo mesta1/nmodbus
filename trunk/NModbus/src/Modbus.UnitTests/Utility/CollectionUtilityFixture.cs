@@ -5,7 +5,6 @@ using System.Linq;
 using MbUnit.Framework;
 using Modbus.Data;
 using Modbus.UnitTests.Message;
-using Modbus.Utility;
 using Unme.Common;
 
 namespace Modbus.UnitTests.Utility

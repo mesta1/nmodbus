@@ -22,7 +22,7 @@ namespace Modbus.IO
 			}
 			set
 			{
-				throw new NotSupportedException(Resources.TimeoutNotSupported);
+				throw new InvalidOperationException(Resources.TimeoutNotSupported);
 			}
 		}
 
@@ -34,7 +34,7 @@ namespace Modbus.IO
 			}
 			set
 			{
-				throw new NotSupportedException(Resources.TimeoutNotSupported);
+				throw new InvalidOperationException(Resources.TimeoutNotSupported);
 			}
 		}
 	}
