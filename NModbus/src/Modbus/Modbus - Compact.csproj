@@ -48,7 +48,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'SignedRelease|AnyCPU' ">
     <OutputPath>bin\SignedRelease\CompactFramework\</OutputPath>
-    <DefineConstants>TRACE;WindowsCE;SIGNED</DefineConstants>
+    <DefineConstants>TRACE;$(PlatformFamilyName);SIGNED</DefineConstants>
     <DocumentationFile>bin\SignedRelease\CompactFramework\Modbus.XML</DocumentationFile>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>

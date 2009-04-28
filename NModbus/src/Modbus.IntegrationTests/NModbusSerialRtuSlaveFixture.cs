@@ -27,6 +27,7 @@ namespace Modbus.IntegrationTests
 			using (var master = ModbusSerialMaster.CreateRtu(masterPort))
 			using (var slave = ModbusSerialSlave.CreateRtu(1, slavePort))
 			{
+				master.Transport.ReadTimeout = master.Transport.WriteTimeout = 1000;				
 				slave.DataStore = DataStoreFactory.CreateTestDataStore();
 
 				Thread slaveThread = new Thread(slave.Listen);
