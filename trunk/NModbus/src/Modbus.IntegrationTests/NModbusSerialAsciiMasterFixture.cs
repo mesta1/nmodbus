@@ -13,7 +13,10 @@ namespace Modbus.IntegrationTests
 		{
 			SerialPort port = ModbusMasterFixture.CreateAndOpenSerialPort(ModbusMasterFixture.DefaultMasterSerialPortName);
 			using (IModbusSerialMaster master = ModbusSerialMaster.CreateAscii(port))
+			{
+				master.Transport.ReadTimeout = master.Transport.WriteTimeout = 1000;
 				master.ReadCoils(100, 1, 1);
+			}
 		}
 	}
 }
