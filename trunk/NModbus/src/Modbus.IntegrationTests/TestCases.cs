@@ -12,24 +12,25 @@ namespace Modbus.IntegrationTests
 	{
 		public static void Serial()
 		{
-			var masterPort = new SerialPort("COM5");
-			var slavePort = new SerialPort("COM6");
-
-			// configure serial ports
-			masterPort.BaudRate = slavePort.BaudRate = 9600;
-			masterPort.DataBits = slavePort.DataBits = 8;
-			masterPort.Parity = slavePort.Parity = Parity.None;
-			masterPort.StopBits = slavePort.StopBits = StopBits.One;
-			masterPort.Open();
-			slavePort.Open();
-
-			using (var slave = ModbusSerialSlave.CreateRtu(1, slavePort))
+			using (var masterPort = new SerialPort("COM5"))
+			using (var slavePort = new SerialPort("COM1"))
 			{
-				StartSlave(slave);
+				// configure serial ports
+				masterPort.BaudRate = slavePort.BaudRate = 9600;
+				masterPort.DataBits = slavePort.DataBits = 8;
+				masterPort.Parity = slavePort.Parity = Parity.None;
+				masterPort.StopBits = slavePort.StopBits = StopBits.One;
+				masterPort.Open();
+				slavePort.Open();
 
-				// create modbus master
-				using (var master = ModbusSerialMaster.CreateRtu(masterPort))
-					ReadRegisters(master);
+				using (var slave = ModbusSerialSlave.CreateRtu(1, slavePort))
+				{
+					StartSlave(slave);
+
+					// create modbus master
+					using (var master = ModbusSerialMaster.CreateRtu(masterPort))
+						ReadRegisters(master);
+				}
 			}
 		}
 
