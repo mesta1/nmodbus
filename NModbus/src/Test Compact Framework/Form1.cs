@@ -9,22 +9,35 @@ namespace Test_Compact_Framework
 		public Form1()
 		{
 			InitializeComponent();
+		}
 
+		private void serialButton_Click(object sender, EventArgs e)
+		{
+			ExecuteTest(TestCases.Serial);			
+		}
+
+		private void udpButton_Click(object sender, EventArgs e)
+		{
+			ExecuteTest(TestCases.Udp);
+		}
+
+		private void tcpButton_Click(object sender, EventArgs e)
+		{
+			ExecuteTest(TestCases.Tcp);
+		}
+
+		private void ExecuteTest(Action test)
+		{
 			try
 			{
-				//textBox1.Text = "Testing serial...";
-				//TestCases.Serial();
-				textBox1.Text = "Testing TCP...";
-				TestCases.Tcp();
-				textBox1.Text = "Testing UDP...";
-				TestCases.Udp();
-
-				textBox1.Text = "Tests completed successfully.";
+				textBox1.Text = "Executing test...";
+				test.Invoke();
+				textBox1.Text = "Success.";
 			}
 			catch (Exception e)
 			{
 				textBox1.Text = e.ToString();
-			}
-		}
+			}			
+		}		
 	}
 }
