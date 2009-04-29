@@ -14,7 +14,6 @@ namespace FtdAdapter
 	public class FtdUsbPort : IStreamResource, IDisposable
 	{
 		private const byte PurgeRx = 1;
-		private uint _deviceIndex;
 		private uint _deviceHandle;
 		private uint _readTimeout;
 		private uint _writeTimeout;
@@ -28,17 +27,6 @@ namespace FtdAdapter
 		/// </summary>
 		public FtdUsbPort()
 		{
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="FtdUsbPort"/> class.
-		/// The index value provided is used by the default Open method.
-		/// </summary>
-		/// <param name="index">Must be 0 if only one device is attached. For multiple devices 1, 2 etc.</param>
-		[Obsolete("Use the default constructor and an explicit Open method instead.")]
-		public FtdUsbPort(uint index)
-		{
-			_deviceIndex = index;
 		}
 
 		/// <summary>
@@ -214,18 +202,6 @@ namespace FtdAdapter
 			InvokeFtdMethod(() => NativeMethods.FT_GetDeviceInfoDetail(index, ref flags, ref type, ref id, ref locId, serial, description, ref handle));
 
 			return new FtdDeviceInfo(flags, type, id, locId, Encoding.ASCII.GetString(serial).Split('\0')[0], Encoding.ASCII.GetString(description).Split('\0')[0]);
-		}
-
-		/// <summary>
-		/// Opens a new port connection.
-		/// </summary>
-		[Obsolete("Use OpenByIndex instead.")]
-		public void Open()
-		{
-			if (IsOpen)
-				throw new InvalidOperationException(Resources.PortIsAlreadyOpen);
-
-			OpenByIndex(_deviceIndex);
 		}
 
 		/// <summary>
