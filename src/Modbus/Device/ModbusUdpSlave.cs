@@ -45,54 +45,37 @@ namespace Modbus.Device
 		public override void Listen()
 		{
 			_logger.Debug("Start Modbus Udp Server.");
-			_udpClient.BeginReceive(ReceiveRequestCompleted, this);
-		}
-
-		internal void ReceiveRequestCompleted(IAsyncResult ar)
-		{
-			IPEndPoint masterEndPoint = null;
-			byte[] frame;
 
 			try
 			{
-				frame = _udpClient.EndReceive(ar, ref masterEndPoint);
+				while (true)
+				{
+					IPEndPoint masterEndPoint = null;
+					byte[] frame;
+
+					frame = _udpClient.Receive(ref masterEndPoint);
+
+					_logger.DebugFormat("Read Frame completed {0} bytes", frame.Length);
+					_logger.InfoFormat("RX: {0}", StringUtility.Join(", ", frame));
+
+					IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(CollectionUtility.Slice(frame, 6, frame.Length - 6));
+					request.TransactionId = (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 0));
+
+					// perform action and build response
+					IModbusMessage response = ApplyRequest(request);
+					response.TransactionId = request.TransactionId;
+
+					// write response
+					byte[] responseFrame = Transport.BuildMessageFrame(response);
+					_logger.InfoFormat("TX: {0}", StringUtility.Join(", ", responseFrame));
+					_udpClient.Send(responseFrame, responseFrame.Length, masterEndPoint);
+				}
 			}
-			catch (ObjectDisposedException)
+			catch (SocketException se)
 			{
 				// this hapens when slave stops
-				return;
-			}
-
-			ModbusUdpSlave slave = (ModbusUdpSlave) ar.AsyncState;
-
-			_logger.DebugFormat("Read Frame completed {0} bytes", frame.Length);
-			_logger.InfoFormat("RX: {0}", StringUtility.Join(", ", frame));
-
-			IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(CollectionUtility.Slice(frame, 6, frame.Length - 6));
-			request.TransactionId = (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 0));
-
-			// perform action and build response
-			IModbusMessage response = slave.ApplyRequest(request);
-			response.TransactionId = request.TransactionId;
-
-			// write response
-			byte[] responseFrame = Transport.BuildMessageFrame(response);
-            _logger.InfoFormat("TX: {0}", StringUtility.Join(", ", responseFrame));
-			_udpClient.BeginSend(responseFrame, responseFrame.Length, masterEndPoint, WriteResponseCompleted, null);
-		}
-
-		internal void WriteResponseCompleted(IAsyncResult ar)
-		{
-			try
-			{
-				_udpClient.EndSend(ar);
-
-				// Accept another request
-				_udpClient.BeginReceive(ReceiveRequestCompleted, this);
-			}
-			catch (ObjectDisposedException)
-			{
-				// this happens when the slave stops
+				if (se.ErrorCode != Modbus.WSACancelBlockingCall)
+					throw;
 			}
 		}
 	}

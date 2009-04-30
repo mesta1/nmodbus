@@ -16,15 +16,6 @@ namespace Modbus.IO
 			} while (!result.ToString().EndsWith(Modbus.NewLine));
 
 			return result.ToString().Substring(0, result.Length - Modbus.NewLine.Length);
-		}
-
-		/// <summary>
-		/// Initializes stream read write timeouts to default value if they have not been overridden already.
-		/// </summary>
-		internal static void InitializeDefaultTimeouts(IStreamResource streamResource)
-		{
-			streamResource.WriteTimeout = streamResource.WriteTimeout == streamResource.InfiniteTimeout ? Modbus.DefaultTimeout : streamResource.WriteTimeout;
-			streamResource.ReadTimeout = streamResource.ReadTimeout == streamResource.InfiniteTimeout ? Modbus.DefaultTimeout : streamResource.ReadTimeout;
-		}
+		}		
 	}
 }

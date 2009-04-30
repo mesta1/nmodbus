@@ -70,8 +70,6 @@ namespace Modbus.Device
 			if (streamResource == null)
 				throw new ArgumentNullException("streamResource");
 
-			StreamResourceUtility.InitializeDefaultTimeouts(streamResource);
-
 			return new ModbusSerialMaster(new ModbusAsciiTransport(streamResource));
 		}
 
@@ -117,8 +115,6 @@ namespace Modbus.Device
 		{
 			if (streamResource == null)
 				throw new ArgumentNullException("streamResource");
-
-			StreamResourceUtility.InitializeDefaultTimeouts(streamResource);
 
 			return new ModbusSerialMaster(new ModbusRtuTransport(streamResource));
 		}

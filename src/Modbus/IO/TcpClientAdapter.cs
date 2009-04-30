@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace Modbus.IO
 {
@@ -9,64 +10,63 @@ namespace Modbus.IO
 	/// </summary>
 	internal class TcpClientAdapter : IStreamResource
 	{
-		private const int InfiniteTimeoutValue = 0;
-		private NetworkStream _networkStream;
+		private TcpClient _tcpClient;
 
 		public TcpClientAdapter(TcpClient tcpClient)
 		{
 			Debug.Assert(tcpClient != null, "Argument tcpClient cannot be null.");
 
-			_networkStream = tcpClient.GetStream();
+			_tcpClient = tcpClient;
 		}
 
 		public int InfiniteTimeout
 		{
-			get { return InfiniteTimeoutValue; }
+			get { return Timeout.Infinite; }
 		}
 
 		public int ReadTimeout
 		{
-			get { return _networkStream.ReadTimeout; }
-			set { _networkStream.ReadTimeout = value; }
+			get { return _tcpClient.GetStream().ReadTimeout; }
+			set { _tcpClient.GetStream().ReadTimeout = value; }
 		}
 
 		public int WriteTimeout
 		{
-			get { return _networkStream.WriteTimeout; }
-			set { _networkStream.WriteTimeout = value; }
-		}		
+			get { return _tcpClient.GetStream().WriteTimeout; }
+			set { _tcpClient.GetStream().WriteTimeout = value; }
+		}
 
 		public void Write(byte[] buffer, int offset, int size)
 		{
-			_networkStream.Write(buffer, offset, size);
+			_tcpClient.GetStream().Write(buffer, offset, size);
 		}
 
 		public int Read(byte[] buffer, int offset, int size)
 		{
-			return _networkStream.Read(buffer, offset, size);
+			return _tcpClient.GetStream().Read(buffer, offset, size);
 		}
 
 		public void DiscardInBuffer()
 		{
-			_networkStream.Flush();
+			_tcpClient.GetStream().Flush();
 		}
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (_networkStream != null)
-                {
-                    _networkStream.Dispose();
-                    _networkStream = null;
-                }
-            }
-        }
-    }
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				if (_tcpClient != null)
+				{
+					_tcpClient.Close();
+					_tcpClient = null;
+				}
+			}
+		}
+	}
 }

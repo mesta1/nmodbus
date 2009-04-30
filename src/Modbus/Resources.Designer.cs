@@ -187,6 +187,15 @@ namespace Modbus
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The compact framework UDP client does not support timeouts..
+        /// </summary>
+        internal static string TimeoutNotSupported {
+            get {
+                return ResourceManager.GetString("TimeoutNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to UdpClient must be bound to a default remote host. Call the Connect method..
         /// </summary>
         internal static string UdpClientNotConnected {
