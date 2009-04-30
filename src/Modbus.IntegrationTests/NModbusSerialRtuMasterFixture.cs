@@ -11,9 +11,10 @@ namespace Modbus.IntegrationTests
 		[Test, ExpectedException(typeof(TimeoutException))]
 		public void NModbusRtuMaster_ReadTimeout()
 		{
-			using (SerialPort port = ModbusMasterFixture.CreateAndOpenSerialPort(ModbusMasterFixture.DefaultMasterSerialPortName))
+			SerialPort port = ModbusMasterFixture.CreateAndOpenSerialPort(ModbusMasterFixture.DefaultMasterSerialPortName);
+			using (var master = ModbusSerialMaster.CreateRtu(port))
 			{
-				IModbusSerialMaster master = ModbusSerialMaster.CreateRtu(port);
+				master.Transport.ReadTimeout = master.Transport.WriteTimeout = 1000;
 				master.ReadCoils(100, 1, 1);
 			}
 		}

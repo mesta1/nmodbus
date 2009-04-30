@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using MbUnit.Framework;
 using Modbus.Data;
@@ -96,7 +97,7 @@ namespace Modbus.UnitTests.Data
 
 			bool readFromEventFired = false;
 			bool writtenToEventFired = false;
-			
+
 			dataStore.DataStoreReadFrom += (obj, e) =>
 			{
 				readFromEventFired = true;
@@ -171,7 +172,7 @@ namespace Modbus.UnitTests.Data
 				writtenToEventFired = true;
 				Assert.AreEqual(3, e.Data.A.Count);
 				Assert.AreEqual(4, e.StartAddress);
-				Assert.AreEqual(new [] { true, false, true }, e.Data.A.ToArray());
+				Assert.AreEqual(new[] { true, false, true }, e.Data.A.ToArray());
 				Assert.AreEqual(ModbusDataType.Coil, e.ModbusDataType);
 			};
 
@@ -181,7 +182,7 @@ namespace Modbus.UnitTests.Data
 			Assert.IsFalse(readFromEventFired);
 			Assert.IsTrue(writtenToEventFired);
 		}
-	
+
 		[Test]
 		public void DataStoreWrittenToEvent_WriteHoldingRegisters()
 		{

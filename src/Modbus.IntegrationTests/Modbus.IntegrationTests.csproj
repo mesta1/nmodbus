@@ -84,6 +84,7 @@
     <Compile Include="CustomMessages\CustomWriteMultipleRegistersRequest.cs" />
     <Compile Include="CustomMessages\CustomWriteMultipleRegistersResponse.cs" />
     <Compile Include="FtdUsbPortAdapterFixture.cs" />
+    <Compile Include="ModbusIpMasterFixture.cs" />
     <Compile Include="NModbusUdpSlaveFixture.cs" />
     <Compile Include="NModbusSerialAsciiMasterFixture.cs" />
     <Compile Include="NModbusSerialAsciiMasterNModbusSerialAsciiSlaveFixture.cs" />
