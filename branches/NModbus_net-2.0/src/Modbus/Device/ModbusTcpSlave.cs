@@ -9,110 +9,154 @@ using Modbus.Utility;
 
 namespace Modbus.Device
 {
-    /// <summary>
-    /// Modbus TCP slave device.
-    /// </summary>
-    public class ModbusTcpSlave : ModbusSlave, IDisposable
-    {
-        private readonly object _mastersLock = new object();
-        private readonly ILog _logger = LogManager.GetLogger(typeof(ModbusTcpSlave));
-        private readonly Dictionary<string, ModbusMasterTcpConnection> _masters = new Dictionary<string, ModbusMasterTcpConnection>();
-        private readonly TcpListener _server;
+	/// <summary>
+	/// Modbus TCP slave device.
+	/// </summary>
+	public class ModbusTcpSlave : ModbusSlave
+	{
+		private readonly object _mastersLock = new object();
+		private readonly object _serverLock = new object();
+		private readonly ILog _logger = LogManager.GetLogger(typeof(ModbusTcpSlave));
+		private readonly Dictionary<string, ModbusMasterTcpConnection> _masters = new Dictionary<string, ModbusMasterTcpConnection>();
+		private TcpListener _server;
 
-        private ModbusTcpSlave(byte unitId, TcpListener tcpListener)
-            : base(unitId, new EmptyTransport())
-        {
-            _server = tcpListener;
-        }
+		private ModbusTcpSlave(byte unitId, TcpListener tcpListener)
+			: base(unitId, new EmptyTransport())
+		{
+			if (tcpListener == null)
+				throw new ArgumentNullException("tcpListener");
 
-        /// <summary>
-        /// Modbus TCP slave factory method.
-        /// </summary>
-        public static ModbusTcpSlave CreateTcp(byte unitId, TcpListener tcpListener)
-        {
-            return new ModbusTcpSlave(unitId, tcpListener);
-        }
+			_server = tcpListener;
+		}
 
-        /// <summary>
-        /// Gets the Modbus TCP Masters connected to this Modbus TCP Slave.
-        /// </summary>
-        public ReadOnlyCollection<TcpClient> Masters
-        {
-            get
-            {
-                lock (_mastersLock)
-                {
-                    return new ReadOnlyCollection<TcpClient>(
-                        SequenceUtility.ToList(_masters.Values, delegate(ModbusMasterTcpConnection connection) { return connection.TcpClient; }));
-                }
-            }
-        }
+		/// <summary>
+		/// Gets the Modbus TCP Masters connected to this Modbus TCP Slave.
+		/// </summary>
+		public ReadOnlyCollection<TcpClient> Masters
+		{
+			get
+			{
+				lock (_mastersLock)
+				{
+					return new ReadOnlyCollection<TcpClient>(
+						SequenceUtility.ToList(_masters.Values, delegate(ModbusMasterTcpConnection connection) { return connection.TcpClient; }));
+				}
+			}
+		}
 
-        /// <summary>
-        /// Start slave listening for requests.
-        /// </summary>
-        public override void Listen()
-        {
-            _logger.Debug("Start Modbus Tcp Server.");
-            _server.Start();
+		/// <summary>
+		/// Gets the server.
+		/// </summary>
+		/// <value>The server.</value>
+		/// <remarks>
+		/// This property is not thread safe, it should only be consumed within a lock.
+		/// </remarks>
+		private TcpListener Server
+		{
+			get
+			{
+				if (_server == null)
+					throw new ObjectDisposedException("Server");
 
-            _server.BeginAcceptTcpClient(AcceptCompleted, this);
-        }
+				return _server;
+			}
+		}
 
-        internal void RemoveMaster(string endPoint)
-        {
-            lock (_mastersLock)
-            {
-                if (!_masters.Remove(endPoint))
-                    throw new ArgumentException(String.Format(CultureInfo.InvariantCulture, "EndPoint {0} cannot be removed, it does not exist.", endPoint));
-            }
+		/// <summary>
+		/// Modbus TCP slave factory method.
+		/// </summary>
+		public static ModbusTcpSlave CreateTcp(byte unitId, TcpListener tcpListener)
+		{
+			return new ModbusTcpSlave(unitId, tcpListener);
+		}
 
-            _logger.InfoFormat("Removed Master {0}", endPoint);
-        }
+		/// <summary>
+		/// Start slave listening for requests.
+		/// </summary>
+		public override void Listen()
+		{
+			_logger.Debug("Start Modbus Tcp Server.");
 
-        internal void AcceptCompleted(IAsyncResult ar)
-        {
-            ModbusTcpSlave slave = (ModbusTcpSlave) ar.AsyncState;
+			lock (_serverLock)
+			{
+				try
+				{
+					Server.Start();
 
-            try
-            {
-                TcpClient client = _server.EndAcceptTcpClient(ar);
-                ModbusMasterTcpConnection masterConnection = new ModbusMasterTcpConnection(client, slave);
-                masterConnection.ModbusMasterTcpConnectionClosed += (sender, eventArgs) => RemoveMaster(eventArgs.EndPoint);
+					// use Socket async API for compact framework compat
+					Server.Server.BeginAccept(AcceptCompleted, this);
+				}
+				catch (ObjectDisposedException)
+				{
+					// this happens when the server stops
+				}
+			}
+		}
 
-                lock (_mastersLock)
-                    _masters.Add(client.Client.RemoteEndPoint.ToString(), masterConnection);
+		internal void RemoveMaster(string endPoint)
+		{
+			lock (_mastersLock)
+			{
+				if (!_masters.Remove(endPoint))
+					throw new ArgumentException(String.Format(CultureInfo.InvariantCulture, "EndPoint {0} cannot be removed, it does not exist.", endPoint));
+			}
 
-                _logger.Debug("Accept completed.");
+			_logger.InfoFormat("Removed Master {0}", endPoint);
+		}
 
-                // Accept another client
-                _server.BeginAcceptTcpClient(AcceptCompleted, slave);
-            }
-            catch (ObjectDisposedException)
-            {
-                // this happens when the server stops
-            }
-        }
+		internal void AcceptCompleted(IAsyncResult ar)
+		{
+			ModbusTcpSlave slave = (ModbusTcpSlave) ar.AsyncState;
 
-        /// <summary>
-        /// Releases unmanaged and - optionally - managed resources
-        /// </summary>
-        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
+			try
+			{
+				// use Socket async API for compact framework compat
+				Socket socket = null;
+				lock (_serverLock)
+					socket = Server.Server.EndAccept(ar);
 
-            if (disposing)
-            {
-                if (_masters != null)
-                {
-                    foreach (ModbusMasterTcpConnection client in _masters.Values)
-                    {
-                        if (client != null)
-                            client.Dispose();
-                    }
-                }
-            }
-        }
-    }
+				TcpClient client = new TcpClient { Client = socket };
+				var masterConnection = new ModbusMasterTcpConnection(client, slave);
+				masterConnection.ModbusMasterTcpConnectionClosed += (sender, eventArgs) => RemoveMaster(eventArgs.EndPoint);
+
+				lock (_mastersLock)
+					_masters.Add(client.Client.RemoteEndPoint.ToString(), masterConnection);
+
+				_logger.Debug("Accept completed.");
+
+				// Accept another client
+				// use Socket async API for compact framework compat
+				lock (_serverLock)
+					Server.Server.BeginAccept(AcceptCompleted, slave);
+			}
+			catch (ObjectDisposedException)
+			{
+				// this happens when the server stops
+			}
+		}
+
+		/// <summary>
+		/// Releases unmanaged and - optionally - managed resources
+		/// </summary>
+		/// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+		/// <remarks>Dispose is thread-safe.</remarks>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				// double-check locking
+				if (_server != null)
+				{
+					lock (_serverLock)
+					{
+						if (_server != null)
+						{
+							_server.Stop();
+							_server = null;
+						}
+					}
+				}
+			}
+		}
+	}
 }

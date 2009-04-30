@@ -9,7 +9,7 @@ namespace Modbus.Device
 	/// <summary>
 	/// Modbus IP master device.
 	/// </summary>
-	[SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase", Justification = "Would like to fix but would be breaking change.")]
+	[SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase", Justification = "Breaking change.")]
 	public class ModbusIpMaster : ModbusMaster
 	{
 		private ModbusIpMaster(ModbusTransport transport)
@@ -20,19 +20,7 @@ namespace Modbus.Device
 		/// <summary>
 		/// Modbus IP master factory method.
 		/// </summary>
-		[Obsolete("Use CreateIp instead.")]
-		public static ModbusIpMaster CreateTcp(TcpClient tcpClient)
-		{
-			if (tcpClient == null)
-				throw new ArgumentNullException("tcpClient");
-
-			return CreateIp(new TcpClientAdapter(tcpClient));
-		}
-
-		/// <summary>
-		/// Modbus IP master factory method.
-		/// </summary>
-		[SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase", Justification = "Would like to fix but would be breaking change.")]
+		[SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase", Justification = "Breaking change.")]
 		public static ModbusIpMaster CreateIp(TcpClient tcpClient)
 		{
 			if (tcpClient == null)
@@ -44,35 +32,21 @@ namespace Modbus.Device
 		/// <summary>
 		/// Modbus IP master factory method.
 		/// </summary>
-		[Obsolete("Use CreateIp instead.")]
-		public static ModbusIpMaster CreateUdp(UdpClient udpClient)
-		{
-			if (udpClient == null)
-				throw new ArgumentNullException("udpClient");
-			if (!udpClient.Client.Connected)
-				throw new InvalidOperationException(Resources.UdpClientNotConnected);
-
-			return CreateIp(new UdpClientAdapter(udpClient));
-		}
-
-		/// <summary>
-		/// Modbus IP master factory method.
-		/// </summary>
-		[SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase", Justification = "Would like to fix but would be breaking change.")]
+		[SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase", Justification = "Breaking change.")]
 		public static ModbusIpMaster CreateIp(UdpClient udpClient)
 		{
-			if (udpClient == null)
-				throw new ArgumentNullException("udpClient");
-			if (!udpClient.Client.Connected)
-				throw new InvalidOperationException(Resources.UdpClientNotConnected);
+		    if (udpClient == null)
+		        throw new ArgumentNullException("udpClient");
+		    if (!udpClient.Client.Connected)
+		        throw new InvalidOperationException(Resources.UdpClientNotConnected);
 
-			return CreateIp(new UdpClientAdapter(udpClient));
+		    return CreateIp(new UdpClientAdapter(udpClient));
 		}
 
 		/// <summary>
 		/// Modbus IP master factory method.
 		/// </summary>
-		[SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase", Justification = "Would like to fix but would be breaking change.")]
+		[SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase", Justification = "Breaking change.")]
 		public static ModbusIpMaster CreateIp(SerialPort serialPort)
 		{
 			if (serialPort == null)
@@ -84,13 +58,11 @@ namespace Modbus.Device
 		/// <summary>
 		/// Modbus IP master factory method.
 		/// </summary>
-		[SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase", Justification = "Would like to fix but would be breaking change.")]
+		[SuppressMessage("Microsoft.Naming", "CA1706:ShortAcronymsShouldBeUppercase", Justification = "Breaking change.")]
 		public static ModbusIpMaster CreateIp(IStreamResource streamResource)
 		{
 			if (streamResource == null)
 				throw new ArgumentNullException("streamResource");
-
-			StreamResourceUtility.InitializeDefaultTimeouts(streamResource);
 
 			return new ModbusIpMaster(new ModbusIpTransport(streamResource));
 		}

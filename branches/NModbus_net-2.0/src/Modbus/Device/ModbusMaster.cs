@@ -144,21 +144,7 @@ namespace Modbus.Device
 			ReadHoldingInputRegistersResponse response = Transport.UnicastMessage<ReadHoldingInputRegistersResponse>(request);
 
 			return CollectionUtility.ToArray(response.Data);
-		}
-
-		/// <summary>
-		/// Executes the custom message.
-		/// </summary>
-		/// <typeparam name="TResponse">The type of the response.</typeparam>
-		/// <typeparam name="TData">The type of the data.</typeparam>
-		/// <param name="request">The request.</param>
-		/// <returns></returns>
-		[Obsolete("Use other ExecuteCustomMessage overload instead.")]
-		public TData[] ExecuteCustomMessage<TResponse, TData>(IModbusMessage request) where TResponse : IModbusMessageWithData<TData>, new()
-		{
-			TResponse response = Transport.UnicastMessage<TResponse>(request);
-			return response.Data;
-		}
+		}	
 
 		/// <summary>
 		/// Executes the custom message.

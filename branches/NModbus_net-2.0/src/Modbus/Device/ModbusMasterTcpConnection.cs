@@ -12,178 +12,166 @@ using Modbus.Utility;
 
 namespace Modbus.Device
 {
-    internal class ModbusMasterTcpConnection : ModbusDevice, IDisposable
-    {
-        /// <summary>
-        /// Occurs when a Modbus master TCP connection is closed.
-        /// </summary>
-        public event EventHandler<TcpConnectionEventArgs> ModbusMasterTcpConnectionClosed;
+	internal class ModbusMasterTcpConnection : ModbusDevice, IDisposable
+	{
+		private readonly ILog _log = LogManager.GetLogger(Assembly.GetCallingAssembly(),
+			String.Format(CultureInfo.InvariantCulture, "{0}.Instance{1}", typeof(ModbusMasterTcpConnection).FullName, Interlocked.Increment(ref _instanceCounter)));
 
-        private static int instanceCounter;
+		private readonly TcpClient _client;		
+		private readonly string _endPoint;
+		private readonly Stream _stream;
+		private readonly ModbusTcpSlave _slave;
+		private static int _instanceCounter;
+		private byte[] _mbapHeader = new byte[6];
+		private byte[] _messageFrame;
 
-        private readonly ILog _log = LogManager.GetLogger(Assembly.GetCallingAssembly(),
-            String.Format(CultureInfo.InvariantCulture, "{0}.Instance{1}", typeof(ModbusMasterTcpConnection).FullName, Interlocked.Add(ref instanceCounter, 1)));
-        private readonly Func<TcpClient, string> _endPointConverter = FunctionalUtility.Memoize<TcpClient, string>(delegate(TcpClient c) { return c.Client.RemoteEndPoint.ToString(); });
-        private readonly Func<TcpClient, Stream> _streamConverter = FunctionalUtility.Memoize<TcpClient, Stream>(delegate(TcpClient c) { return c.GetStream(); });
-        private TcpClient _client;
-        private ModbusTcpSlave _slave;
-        private byte[] _mbapHeader = new byte[6];
-        private byte[] _messageFrame;
+		public ModbusMasterTcpConnection(TcpClient client, ModbusTcpSlave slave)
+			: base(new ModbusIpTransport(new TcpClientAdapter(client)))
+		{
+			if (client == null)
+				throw new ArgumentNullException("client");
+			if (slave == null)
+				throw new ArgumentException("slave");
 
-        public ModbusMasterTcpConnection(TcpClient client, ModbusTcpSlave slave)
-            : base(new ModbusIpTransport(new TcpClientAdapter(client)))
-        {
-            if (client == null)
-                throw new ArgumentNullException("client");
-            if (slave == null)
-                throw new ArgumentException("slave");
+			_client = client;
+			_endPoint = client.Client.RemoteEndPoint.ToString();
+			_stream = client.GetStream();
+			_slave = slave;
+			_log.DebugFormat("Creating new Master connection at IP:{0}", EndPoint);
 
-            _client = client;
-            _slave = slave;
-            _log.DebugFormat("Creating new Master connection at IP:{0}", EndPoint);
+			_log.Debug("Begin reading header.");
+			Stream.BeginRead(_mbapHeader, 0, 6, ReadHeaderCompleted, null);
+		}
 
-            _log.Debug("Begin reading header.");
-            Stream.BeginRead(_mbapHeader, 0, 6, ReadHeaderCompleted, null);
-        }
+		/// <summary>
+		/// Occurs when a Modbus master TCP connection is closed.
+		/// </summary>
+		public event EventHandler<TcpConnectionEventArgs> ModbusMasterTcpConnectionClosed;
 
-        public string EndPoint
-        {
-            get
-            {
-                return _endPointConverter.Invoke(_client);
-            }
-        }
+		public string EndPoint
+		{
+			get
+			{
+				return _endPoint;
+			}
+		}
 
-        public Stream Stream
-        {
-            get
-            {
-                return _streamConverter.Invoke(_client);
-            }
-        }
+		public Stream Stream
+		{
+			get
+			{
+				return _stream;
+			}
+		}
 
-        public TcpClient TcpClient
-        {
-            get
-            {
-                return _client;
-            }
-        }
+		public TcpClient TcpClient
+		{
+			get
+			{
+				return _client;
+			}
+		}
 
-        internal void ReadHeaderCompleted(IAsyncResult ar)
-        {
-            _log.Debug("Read header completed.");
+		internal void ReadHeaderCompleted(IAsyncResult ar)
+		{
+			_log.Debug("Read header completed.");
 
-            CatchExceptionAndRemoveMasterEndPoint(() =>
-            {
-                // this is the normal way a master closes its connection
-                if (Stream.EndRead(ar) == 0)
-                {
-                    _log.Debug("0 bytes read, Master has closed Socket connection.");
-                    
-                    EventHandler<TcpConnectionEventArgs> handler = ModbusMasterTcpConnectionClosed;
-                    if (handler != null)
-                        handler(this, new TcpConnectionEventArgs(EndPoint));
+			CatchExceptionAndRemoveMasterEndPoint(() =>
+			{
+				// this is the normal way a master closes its connection
+				if (Stream.EndRead(ar) == 0)
+				{
+					_log.Debug("0 bytes read, Master has closed Socket connection.");
 
-                    return;
-                }
+					EventHandler<TcpConnectionEventArgs> handler = ModbusMasterTcpConnectionClosed;
+					if (handler != null)
+						handler(this, new TcpConnectionEventArgs(EndPoint));
 
-                _log.DebugFormat("MBAP header: {0}", StringUtility.Join(", ", _mbapHeader));
-                ushort frameLength = (ushort) (IPAddress.HostToNetworkOrder(BitConverter.ToInt16(_mbapHeader, 4)));
-                _log.DebugFormat("{0} bytes in PDU.", frameLength);
-                _messageFrame = new byte[frameLength];
+					return;
+				}
 
-                Stream.BeginRead(_messageFrame, 0, frameLength, ReadFrameCompleted, null);
-            }, EndPoint);
-        }
+				_log.DebugFormat("MBAP header: {0}", StringUtility.Join(", ", _mbapHeader));
+				ushort frameLength = (ushort) IPAddress.HostToNetworkOrder(BitConverter.ToInt16(_mbapHeader, 4));
+				_log.DebugFormat("{0} bytes in PDU.", frameLength);
+				_messageFrame = new byte[frameLength];
 
-        internal void ReadFrameCompleted(IAsyncResult ar)
-        {
-            CatchExceptionAndRemoveMasterEndPoint(() =>
-            {
-                _log.DebugFormat("Read Frame completed {0} bytes", Stream.EndRead(ar));
-                byte[] frame = CollectionUtility.Concat(_mbapHeader, _messageFrame);
-                _log.InfoFormat("RX: {0}", StringUtility.Join(", ", frame));
+				Stream.BeginRead(_messageFrame, 0, frameLength, ReadFrameCompleted, null);
+			}, EndPoint);
+		}
 
-                IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(CollectionUtility.Slice(frame, 6, frame.Length - 6));
-                request.TransactionId = (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 0));
+		internal void ReadFrameCompleted(IAsyncResult ar)
+		{
+			CatchExceptionAndRemoveMasterEndPoint(() =>
+			{
+				_log.DebugFormat("Read Frame completed {0} bytes", Stream.EndRead(ar));
+				byte[] frame = CollectionUtility.Concat(_mbapHeader, _messageFrame);
+				_log.InfoFormat("RX: {0}", StringUtility.Join(", ", frame));
 
-                // perform action and build response
-                IModbusMessage response = _slave.ApplyRequest(request);
-                response.TransactionId = request.TransactionId;
+				IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(CollectionUtility.Slice(frame, 6, frame.Length - 6));
+				request.TransactionId = (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 0));
 
-                // write response
-                byte[] responseFrame = Transport.BuildMessageFrame(response);
-                _log.InfoFormat("TX: {0}", StringUtility.Join(", ", responseFrame));
-                Stream.BeginWrite(responseFrame, 0, responseFrame.Length, WriteCompleted, null);
-            }, EndPoint);
-        }
+				// perform action and build response
+				IModbusMessage response = _slave.ApplyRequest(request);
+				response.TransactionId = request.TransactionId;
 
-        internal void WriteCompleted(IAsyncResult ar)
-        {
-            _log.Debug("End write.");
+				// write response
+				byte[] responseFrame = Transport.BuildMessageFrame(response);
+				_log.InfoFormat("TX: {0}", StringUtility.Join(", ", responseFrame));
+				Stream.BeginWrite(responseFrame, 0, responseFrame.Length, WriteCompleted, null);
+			}, EndPoint);
+		}
 
-            CatchExceptionAndRemoveMasterEndPoint(() =>
-            {
-                Stream.EndWrite(ar);
-                _log.Debug("Begin reading another request.");
-                Stream.BeginRead(_mbapHeader, 0, 6, ReadHeaderCompleted, null);
-            }, EndPoint);
-        }
+		internal void WriteCompleted(IAsyncResult ar)
+		{
+			_log.Debug("End write.");
 
-        /// <summary>
-        /// Catches all exceptions thrown when action is executed and removes the master end point.
-        /// The exception is ignored when it simply signals a master closing its connection.
-        /// </summary>
-        internal void CatchExceptionAndRemoveMasterEndPoint(Action action, string endPoint)
-        {
-            if (action == null)
-                throw new ArgumentNullException("action");
-            if (endPoint == null)
-                throw new ArgumentNullException("endPoint");
-            if (String.IsNullOrEmpty(endPoint))
-                throw new ArgumentException("Argument endPoint cannot be empty.");
+			CatchExceptionAndRemoveMasterEndPoint(() =>
+			{
+				Stream.EndWrite(ar);
+				_log.Debug("Begin reading another request.");
+				Stream.BeginRead(_mbapHeader, 0, 6, ReadHeaderCompleted, null);
+			}, EndPoint);
+		}
 
-            try
-            {
-                action.Invoke();
-            }
-            catch (IOException ioe)
-            {
-                _log.DebugFormat("IOException encountered in ReadHeaderCompleted - {0}", ioe.Message);
+		/// <summary>
+		/// Catches all exceptions thrown when action is executed and removes the master end point.
+		/// The exception is ignored when it simply signals a master closing its connection.
+		/// </summary>
+		internal void CatchExceptionAndRemoveMasterEndPoint(Action action, string endPoint)
+		{
+			if (action == null)
+				throw new ArgumentNullException("action");
+			if (endPoint == null)
+				throw new ArgumentNullException("endPoint");
+			if (String.IsNullOrEmpty(endPoint))
+				throw new ArgumentException("Argument endPoint cannot be empty.");
 
-                EventHandler<TcpConnectionEventArgs> handler = ModbusMasterTcpConnectionClosed;
-                if (handler != null)
-                    handler(this, new TcpConnectionEventArgs(EndPoint));
+			try
+			{
+				action.Invoke();
+			}
+			catch (IOException ioe)
+			{
+				_log.DebugFormat("IOException encountered in ReadHeaderCompleted - {0}", ioe.Message);
 
-                SocketException socketException = ioe.InnerException as SocketException;
-                if (socketException != null && socketException.ErrorCode == Modbus.ConnectionResetByPeer)
-                {
-                    _log.Debug("Socket Exception ConnectionResetByPeer, Master closed connection.");
-                    return;
-                }
+				EventHandler<TcpConnectionEventArgs> handler = ModbusMasterTcpConnectionClosed;
+				if (handler != null)
+					handler(this, new TcpConnectionEventArgs(EndPoint));
 
-                throw;
-            }
-            catch (Exception e)
-            {
-                _log.Error("Unexpected exception encountered", e);
-                throw;
-            }
-        }
+				SocketException socketException = ioe.InnerException as SocketException;
+				if (socketException != null && socketException.ErrorCode == Modbus.ConnectionResetByPeer)
+				{
+					_log.Debug("Socket Exception ConnectionResetByPeer, Master closed connection.");
+					return;
+				}
 
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-
-            if (disposing)
-            {
-                if (_client != null)
-                {
-                    _client.Close();
-                    _client = null;
-                }
-            }
-        }
-    }
+				throw;
+			}
+			catch (Exception e)
+			{
+				_log.Error("Unexpected exception encountered", e);
+				throw;
+			}
+		}
+	}
 }
