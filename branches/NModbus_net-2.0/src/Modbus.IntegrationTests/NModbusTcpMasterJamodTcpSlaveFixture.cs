@@ -33,6 +33,6 @@ namespace Modbus.IntegrationTests
 		public override void ReadCoils()
 		{
 			base.ReadCoils();
-		}
+		}	
 	}
 }

@@ -5,6 +5,7 @@ using log4net;
 using MbUnit.Framework;
 using Modbus.Data;
 using Modbus.Device;
+using System.Diagnostics;
 
 namespace Modbus.IntegrationTests
 {
@@ -19,20 +20,25 @@ namespace Modbus.IntegrationTests
 			log4net.Config.XmlConfigurator.Configure();
 		}
 
-		[TearDown]
-		public void TearDown()
-		{
-			// a little time for resources to become free
-			Thread.Sleep(1000);
-		}
-
 		[Test]
-		public void ModbusUdpSlave_StartAndStopSlaveBeforeAnyRequests()
+		public void ModbusUdpSlave_EnsureTheSlaveShutsDownCleanly()
 		{
-			using (UdpClient client = new UdpClient(ModbusMasterFixture.Port))
+			UdpClient client = new UdpClient(ModbusMasterFixture.Port);
+			using (var slave = ModbusUdpSlave.CreateUdp(1, client))
 			{
-				ModbusSlave slave = ModbusUdpSlave.CreateUdp(1, client);
-				slave.Listen();
+				var handle = new AutoResetEvent(false);
+
+				var backgroundThread = new Thread(state =>
+				{
+					handle.Set();
+					slave.Listen();
+				});
+
+				backgroundThread.IsBackground = true;
+				backgroundThread.Start();
+
+				handle.WaitOne();
+				Thread.Sleep(100);
 			}
 		}
 
@@ -59,8 +65,8 @@ namespace Modbus.IntegrationTests
 			ModbusIpMaster master2 = ModbusIpMaster.CreateIp(masterClient2);
 
 			UdpClient slaveClient = CreateAndStartUdpSlave(ModbusMasterFixture.Port, DataStoreFactory.CreateTestDataStore());
-			
-			Thread master1Thread = new Thread(delegate() 
+
+			Thread master1Thread = new Thread(delegate()
 			{
 				for (int i = 0; i < 5; i++)
 				{
@@ -95,9 +101,27 @@ namespace Modbus.IntegrationTests
 			masterClient2.Close();
 		}
 
+		[Test]
+		public void ModbusUdpSlave_MultiThreaded()
+		{
+			var dataStore = DataStoreFactory.CreateDefaultDataStore();
+			dataStore.CoilDiscretes.Add(false);
+
+			using (var slave = CreateAndStartUdpSlave(502, dataStore))
+			{
+				var workerThread1 = new Thread(ReadThread);
+				var workerThread2 = new Thread(ReadThread);
+				workerThread1.Start();
+				workerThread2.Start();
+
+				workerThread1.Join();
+				workerThread2.Join();
+			}
+		}
+
 		[Test, Ignore("TODO consider supporting this scenario")]
 		public void ModbusUdpSlave_SingleMasterPollingMultipleSlaves()
-		{			
+		{
 			DataStore slave1DataStore = new DataStore();
 			slave1DataStore.CoilDiscretes.Add(true);
 
@@ -107,7 +131,7 @@ namespace Modbus.IntegrationTests
 			using (UdpClient slave1 = CreateAndStartUdpSlave(502, slave1DataStore))
 			using (UdpClient slave2 = CreateAndStartUdpSlave(503, slave2DataStore))
 			using (UdpClient masterClient = new UdpClient())
-			{			
+			{
 				masterClient.Connect(ModbusMasterFixture.DefaultModbusIPEndPoint);
 				ModbusIpMaster master = ModbusIpMaster.CreateIp(masterClient);
 
@@ -117,6 +141,32 @@ namespace Modbus.IntegrationTests
 					Assert.IsTrue(master.ReadCoils(0, 1)[0]);
 					Assert.IsFalse(master.ReadCoils(1, 1)[0]);
 				}
+			}
+		}
+
+		private static void ReadThread(object state)
+		{
+			try
+			{
+				var masterClient = new UdpClient();
+				masterClient.Connect(ModbusMasterFixture.DefaultModbusIPEndPoint);
+				using (var master = ModbusIpMaster.CreateIp(masterClient))
+				{
+					master.Transport.Retries = 0;
+
+					var random = new Random();
+					for (int i = 0; i < 5; i++)
+					{
+						bool[] coils = master.ReadCoils(1, 1);
+						Assert.AreEqual(1, coils.Length);
+						Debug.WriteLine(String.Format("{0}: Reading coil value", Thread.CurrentThread.ManagedThreadId));
+						Thread.Sleep(random.Next(100));
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				Assert.Fail(e.ToString());
 			}
 		}
 
