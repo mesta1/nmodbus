@@ -215,6 +215,17 @@ namespace Modbus.IntegrationTests
 			Assert.AreEqual(valuesToWrite, writtenValues);
 		}
 
+        [Test]
+        public virtual void ReadWriteMultipleRegisters_WriteOccursBeforeRead()
+        {
+            ushort readWriteAddress = 50;
+            ushort numberOfPointsToRead = 5;
+            ushort[] valuesToWrite = new ushort[] { 10, 20, 30, 40, 50 };
+
+            ushort[] readValues = Master.ReadWriteMultipleRegisters(SlaveAddress, readWriteAddress, numberOfPointsToRead, readWriteAddress, valuesToWrite);
+            Assert.AreEqual(valuesToWrite, readValues);
+        }
+
 		[Test]
 		public virtual void SimpleReadRegistersPerformanceTest()
 		{
