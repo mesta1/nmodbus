@@ -17,10 +17,17 @@ namespace Modbus.IntegrationTests
 		}
 
 		/// <summary>
-		/// Not supported by the DL06
+		/// Not supported
 		/// </summary>
 		public override void ReadWriteMultipleRegisters()
 		{
+		}
+
+		/// <summary>
+		/// Not supported
+		/// </summary>
+		public override void ReadWriteMultipleRegisters_WriteOccursBeforeRead()
+		{		
 		}
 
 		/// <summary>
