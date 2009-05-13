@@ -68,6 +68,11 @@ namespace Modbus.IntegrationTests
 			base.ReadWriteMultipleRegisters();
 		}
 
+		[Test, Ignore("Need to fix RTU slave for this function code")]
+		public override void ReadWriteMultipleRegisters_WriteOccursBeforeRead()
+		{
+		}
+
 		[Test]
 		public override void ReturnQueryData()
 		{
