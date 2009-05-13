@@ -128,9 +128,9 @@ namespace Modbus.Device
 					response = WriteMultipleRegisters((WriteMultipleRegistersRequest) request, DataStore, DataStore.HoldingRegisters);
 					break;
 				case Modbus.ReadWriteMultipleRegisters:
-					ReadWriteMultipleRegistersRequest readWriteRequest = (ReadWriteMultipleRegistersRequest) request;
-					response = ReadRegisters(readWriteRequest.ReadRequest, DataStore, DataStore.HoldingRegisters);
+					ReadWriteMultipleRegistersRequest readWriteRequest = (ReadWriteMultipleRegistersRequest) request;					
 					WriteMultipleRegisters(readWriteRequest.WriteRequest, DataStore, DataStore.HoldingRegisters);
+                    response = ReadRegisters(readWriteRequest.ReadRequest, DataStore, DataStore.HoldingRegisters);
 					break;
 				default:
 					string errorMessage = String.Format(CultureInfo.InvariantCulture, "Unsupported function code {0}", request.FunctionCode);

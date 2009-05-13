@@ -69,6 +69,12 @@ namespace Modbus.IntegrationTests
 			base.ReadWriteMultipleRegisters();
 		}
 
+        [Test]
+        public override void ReadWriteMultipleRegisters_WriteOccursBeforeRead()
+        {
+            base.ReadWriteMultipleRegisters_WriteOccursBeforeRead();
+        }
+
 		[Test]
 		public override void SimpleReadRegistersPerformanceTest()
 		{
