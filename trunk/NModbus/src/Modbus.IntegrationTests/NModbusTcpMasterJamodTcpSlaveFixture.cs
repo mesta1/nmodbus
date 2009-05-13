@@ -23,10 +23,17 @@ namespace Modbus.IntegrationTests
 		}
 
 		/// <summary>
-		/// Not supported by the Jamod Slave
+		/// Not supported
 		/// </summary>
 		public override void ReadWriteMultipleRegisters()
 		{
+		}
+
+		/// <summary>
+		/// Not supported
+		/// </summary>
+		public override void ReadWriteMultipleRegisters_WriteOccursBeforeRead()
+		{		
 		}
 
 		[Test]
