@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Threading;
 using log4net;
+using Modbus.Device;
 using Modbus.Message;
 using Unme.Common;
 using Unme.Common.NullReferenceExtension;
@@ -219,7 +220,7 @@ namespace Modbus.IO
 		/// </summary>
 		internal abstract void OnValidateResponse(IModbusMessage request, IModbusMessage response);
 
-		internal abstract byte[] ReadRequest();
+		internal abstract byte[] ReadRequest(ModbusSlave slave);
 
 		internal abstract IModbusMessage ReadResponse<T>() where T : IModbusMessage, new();
 

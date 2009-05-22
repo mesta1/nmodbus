@@ -5,27 +5,21 @@ using System.Net;
 using Modbus.Data;
 using Modbus.Message;
 using Unme.Common;
+using System.Globalization;
 
 namespace Modbus.IntegrationTests.CustomMessages
 {
 	public class CustomWriteMultipleRegistersRequest : IModbusMessage
 	{
-		private byte _functionCode;
-		private byte _slaveAddress;
-		private byte _byteCount;
-		private ushort _startAddress;
-		private ushort _numberOfPoints;
-		private ushort _transactionId;
-		private RegisterCollection _data;
+		private const byte WriteMultipleRegistersFunctionCode = 16;
 
-		public CustomWriteMultipleRegistersRequest(byte functionCode, byte slaveAddress, ushort startAddress, RegisterCollection data)
+		public CustomWriteMultipleRegistersRequest(byte slaveAddress, ushort startAddress, RegisterCollection data)
 		{
-			_functionCode = functionCode;
-			_slaveAddress = slaveAddress;
-			_startAddress = startAddress;
-			_numberOfPoints = (ushort) data.Count;
-			_byteCount = data.ByteCount;
-			_data = data;
+			SlaveAddress = slaveAddress;
+			StartAddress = startAddress;
+			NumberOfPoints = (ushort) data.Count;
+			ByteCount = data.ByteCount;
+			Data = data;
 		}
 
 		public byte[] MessageFrame
@@ -56,47 +50,35 @@ namespace Modbus.IntegrationTests.CustomMessages
 			}
 		}
 
-		public ushort TransactionId
-		{
-			get { return _transactionId; }
-			set { _transactionId = value; }
-		}
+		public ushort TransactionId { get; set; }
 
 		public byte FunctionCode
 		{
-			get { return _functionCode; }
-			set { _functionCode = value; }
+			get
+			{
+				return WriteMultipleRegistersFunctionCode;
+			}
+			set
+			{
+				if (value != WriteMultipleRegistersFunctionCode)
+				{
+					throw new ArgumentException(
+						String.Format(CultureInfo.InvariantCulture, "Invalid function code in message frame, expected: {0}; actual: {1}",
+						WriteMultipleRegistersFunctionCode,
+						value));
+				}
+			}
 		}
 
-		public byte SlaveAddress
-		{
-			get { return _slaveAddress; }
-			set { _slaveAddress = value; }
-		}
+		public byte SlaveAddress { get; set; }
 
-		public ushort StartAddress
-		{
-			get { return _startAddress; }
-			set { _startAddress = value; }
-		}
+		public ushort StartAddress { get; set; }
 
-		public ushort NumberOfPoints
-		{
-			get { return _numberOfPoints; }
-			set { _numberOfPoints = value; }
-		}
+		public ushort NumberOfPoints { get; set; }
 
-		public byte ByteCount
-		{
-			get { return _byteCount; }
-			set { _byteCount = value; }
-		}
+		public byte ByteCount { get; set; }
 
-		public RegisterCollection Data
-		{
-			get { return _data; }
-			set { _data = value; }
-		}
+		public RegisterCollection Data { get; set; }
 
 		public void Initialize(byte[] frame)
 		{

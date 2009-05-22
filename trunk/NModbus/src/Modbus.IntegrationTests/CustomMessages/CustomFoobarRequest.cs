@@ -1,14 +1,25 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Net;
 using Modbus.Message;
-using System.Globalization;
 
 namespace Modbus.IntegrationTests.CustomMessages
 {
-	public class CustomWriteMultipleRegistersResponse : IModbusMessage
+	public class CustomFoobarRequest : IModbusMessageRtu
 	{
-		private const byte WriteMultipleRegistersFunctionCode = 16;
+		internal	 const byte FoobarFunctionCode = 100;
+
+		public CustomFoobarRequest()
+		{
+		}
+
+		public CustomFoobarRequest(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
+		{
+			SlaveAddress = slaveAddress;
+			StartAddress = startAddress;
+			NumberOfPoints = numberOfPoints;
+		}
 
 		public byte[] MessageFrame
 		{
@@ -42,33 +53,49 @@ namespace Modbus.IntegrationTests.CustomMessages
 		{
 			get
 			{
-				return WriteMultipleRegistersFunctionCode;
+				return FoobarFunctionCode;
 			}
 			set
 			{
-				if (value != WriteMultipleRegistersFunctionCode)
+				if (value != FoobarFunctionCode)
 				{
 					throw new ArgumentException(
 						String.Format(CultureInfo.InvariantCulture, "Invalid function code in message frame, expected: {0}; actual: {1}",
-						WriteMultipleRegistersFunctionCode,
+						FoobarFunctionCode,
 						value));
 				}
 			}
 		}
-
+		
 		public byte SlaveAddress { get; set; }
-
+		
 		public ushort StartAddress { get; set; }
-
+		
 		public ushort NumberOfPoints { get; set; }
 
+		public Func<byte[], int> RtuResponseBytesRemaining
+		{
+			get
+			{
+				return frameStart => frameStart[2] + 1;
+			}
+		}
+
+		public Func<byte[], int> RtuRequestBytesRemaining
+		{
+			get
+			{
+				return frameStart => 1;
+			}
+		}
+		
 		public void Initialize(byte[] frame)
 		{
 			if (frame == null)
 				throw new ArgumentNullException("frame");
 
-			if (frame.Length < 6)
-				throw new FormatException("Message frame does not contain enough bytes.");
+			if (frame.Length != 6)
+				throw new ArgumentException("Invalid frame.", "frame");
 
 			SlaveAddress = frame[0];
 			FunctionCode = frame[1];

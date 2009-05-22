@@ -57,6 +57,14 @@ namespace Modbus.Device
 			}
 		}
 
+		public ModbusSlave Slave
+		{
+			get
+			{
+				return _slave;
+			}
+		}
+
 		public Stream Stream
 		{
 			get
@@ -104,11 +112,11 @@ namespace Modbus.Device
 				byte[] frame = _mbapHeader.Concat(_messageFrame).ToArray();
 				_log.InfoFormat("RX: {0}", frame.Join(", "));
 
-				IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(frame.Slice(6, frame.Length - 6).ToArray());
+				IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(Slave, frame.Slice(6, frame.Length - 6).ToArray());
 				request.TransactionId = (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 0));
 
 				// perform action and build response
-				IModbusMessage response = _slave.ApplyRequest(request);
+				IModbusMessage response = Slave.ApplyRequest(request);
 				response.TransactionId = request.TransactionId;
 
 				// write response

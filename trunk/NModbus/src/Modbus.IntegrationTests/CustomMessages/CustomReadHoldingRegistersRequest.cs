@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Net;
 using Modbus.Message;
 
@@ -7,18 +8,14 @@ namespace Modbus.IntegrationTests.CustomMessages
 {
 	public class CustomReadHoldingRegistersRequest : IModbusMessage
 	{
-		private byte _functionCode;
-		private byte _slaveAddress;
-		private ushort _startAddress;
-		private ushort _numberOfPoints;
-		private ushort _transactionId;
+		private const byte ReadHoldingRegistersFunctionCode = 3;
 
-		public CustomReadHoldingRegistersRequest(byte functionCode, byte slaveAddress, ushort startAddress, ushort numberOfPoints)
+		public CustomReadHoldingRegistersRequest(byte slaveAddress, ushort startAddress, ushort numberOfPoints)
 		{
-			_functionCode = functionCode;
-			_slaveAddress = slaveAddress;
-			_startAddress = startAddress;
-			_numberOfPoints = numberOfPoints;
+			FunctionCode = ReadHoldingRegistersFunctionCode;
+			SlaveAddress = slaveAddress;
+			StartAddress = startAddress;
+			NumberOfPoints = numberOfPoints;
 		}
 
 		public byte[] MessageFrame
@@ -47,35 +44,31 @@ namespace Modbus.IntegrationTests.CustomMessages
 			}
 		}
 
-		public ushort TransactionId
-		{
-			get { return _transactionId; }
-			set { _transactionId = value; }
-		}
+		public ushort TransactionId { get; set; }
 
 		public byte FunctionCode
 		{
-			get { return _functionCode; }
-			set { _functionCode = value; }
+			get
+			{
+				return ReadHoldingRegistersFunctionCode;
+			}
+			set
+			{
+				if (value != ReadHoldingRegistersFunctionCode)
+				{
+					throw new ArgumentException(
+						String.Format(CultureInfo.InvariantCulture, "Invalid function code in message frame, expected: {0}; actual: {1}",
+						ReadHoldingRegistersFunctionCode,
+						value));
+				}
+			}
 		}
 
-		public byte SlaveAddress
-		{
-			get { return _slaveAddress; }
-			set { _slaveAddress = value; }
-		}
+		public byte SlaveAddress { get; set; }
 
-		public ushort StartAddress
-		{
-			get { return _startAddress; }
-			set { _startAddress = value; }
-		}
+		public ushort StartAddress { get; set; }
 
-		public ushort NumberOfPoints
-		{
-			get { return _numberOfPoints; }
-			set { _numberOfPoints = value; }
-		}
+		public ushort NumberOfPoints { get; set; }
 
 		public void Initialize(byte[] frame)
 		{

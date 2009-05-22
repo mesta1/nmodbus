@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using log4net;
 using Modbus.Data;
 using Modbus.IO;
@@ -14,8 +16,9 @@ namespace Modbus.Device
 	/// Modbus slave device.
 	/// </summary>
 	public abstract class ModbusSlave : ModbusDevice
-	{		
+	{	
 		private static readonly ILog _logger = LogManager.GetLogger(typeof(ModbusSlave));
+		private readonly Dictionary<byte, CustomMessageInfo> _customMessages = new Dictionary<byte, CustomMessageInfo>();
 
 		internal ModbusSlave(byte unitId, ModbusTransport transport)
 			: base(transport)
@@ -33,17 +36,59 @@ namespace Modbus.Device
 		/// Gets or sets the data store.
 		/// </summary>
 		public DataStore DataStore { get; set; }
-	
+
 		/// <summary>
 		/// Gets or sets the unit ID.
 		/// </summary>
 		public byte UnitId { get; set; }
 
+		internal Dictionary<byte, CustomMessageInfo> CustomMessages
+		{
+			get
+			{
+				return _customMessages;
+			}
+		}
+
 		/// <summary>
 		/// Start slave listening for requests.
 		/// </summary>
 		public abstract void Listen();
-		
+
+		/// <summary>
+		/// Registers specified custom function.
+		/// </summary>
+		/// <typeparam name="TRequest">The type of the modbus request message.</typeparam>
+		/// <param name="functionCode">The function code to provide the implementation for.</param>
+		/// <param name="applyRequest">The delegate to apply the request to the DataStore and return the appropriate response.</param>
+		/// <exception cref="ArgumentException">Custom function registration already exists.</exception>
+		public void RegisterCustomFunction<TRequest>(byte functionCode, Func<TRequest, DataStore, IModbusMessage> applyRequest)
+			where TRequest : IModbusMessage, new()
+		{
+			if (applyRequest == null)
+				throw new ArgumentNullException("applyRequest");
+			if (_customMessages.ContainsKey(functionCode))
+				throw new ArgumentException("A custom function already exists with the specified function code. You must unregister it first.", "functionCode");
+
+			// CONSIDER only allowing true user-defined function codes, Modbus defines 65-101 as user-defined function codes.
+
+			// wrap in proper delegate type
+			Func<IModbusMessage, DataStore, IModbusMessage> wrapper = (message, dataStore) => applyRequest((TRequest) message, dataStore);
+
+			CustomMessages[functionCode] = new CustomMessageInfo(typeof(TRequest), wrapper);
+		}
+
+		/// <summary>
+		/// Unregisters specified custom function.
+		/// </summary>
+		/// <param name="functionCode">The function code.</param>
+		/// <exception cref="KeyNotFoundException">The specified function code is not registered.</exception>
+		public void UnregisterCustomFunction(byte functionCode)
+		{
+			if (!CustomMessages.Remove(functionCode))
+				throw new KeyNotFoundException(String.Format(CultureInfo.InvariantCulture, "Specified function code {0} is not registered.", functionCode));
+		}		
+
 		internal static ReadCoilsInputsResponse ReadDiscretes(ReadCoilsInputsRequest request, DataStore dataStore, ModbusDataCollection<bool> dataSource)
 		{
 			DiscreteCollection data = DataStore.ReadData<DiscreteCollection, bool>(dataStore, dataSource, request.StartAddress, request.NumberOfPoints, dataStore.SyncRoot);
@@ -63,7 +108,7 @@ namespace Modbus.Device
 		internal static WriteSingleCoilRequestResponse WriteSingleCoil(WriteSingleCoilRequestResponse request, DataStore dataStore, ModbusDataCollection<bool> dataSource)
 		{
 			DataStore.WriteData(dataStore, new DiscreteCollection(request.Data[0] == Modbus.CoilOn), dataSource, request.StartAddress, dataStore.SyncRoot);
-		
+
 			return request;
 		}
 
@@ -78,7 +123,7 @@ namespace Modbus.Device
 		internal static WriteSingleRegisterRequestResponse WriteSingleRegister(WriteSingleRegisterRequestResponse request, DataStore dataStore, ModbusDataCollection<ushort> dataSource)
 		{
 			DataStore.WriteData(dataStore, request.Data, dataSource, request.StartAddress, dataStore.SyncRoot);
-			
+
 			return request;
 		}
 
@@ -90,52 +135,97 @@ namespace Modbus.Device
 			return response;
 		}
 
+		internal bool TryApplyCustomMessage(IModbusMessage request, DataStore dataStore, out IModbusMessage response)
+		{
+			bool requestApplied = false;
+			response = null;
+
+			CustomMessageInfo messageInfo;
+			if (_customMessages.TryGetValue(request.FunctionCode, out messageInfo))
+			{
+				response = messageInfo.ApplyRequest(request, dataStore);
+				requestApplied = true;
+			}
+
+			return requestApplied;
+		}
+
+		internal bool TryCreateModbusMessageRequest(byte functionCode, byte[] frame, out IModbusMessage request)
+		{
+			if (frame == null)
+				throw new ArgumentNullException("frame");
+
+			bool messageCreated = false;
+			request = null;
+
+			CustomMessageInfo messageInfo;
+			if (_customMessages.TryGetValue(functionCode, out messageInfo))
+			{
+				// CONSIDER using a reflection emit version of this creation... this could be really slow 
+				MethodInfo method = typeof(ModbusMessageFactory).GetMethod("CreateModbusMessage");
+				MethodInfo generic = method.MakeGenericMethod(messageInfo.Type);
+				request = (IModbusMessage) generic.Invoke(null, new object[] { frame });
+
+				messageCreated = true;
+			}
+
+			return messageCreated;
+		}
+
 		[SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily", Justification = "Cast is not unneccessary.")]
 		internal IModbusMessage ApplyRequest(IModbusMessage request)
-		{			
+		{
+			if (request == null)
+				throw new ArgumentNullException("request");
+
 			_logger.Info(request.ToString());
 			ModbusSlaveRequestReceived.Raise(this, new ModbusSlaveRequestEventArgs(request));
-
 			IModbusMessage response;
-			switch (request.FunctionCode)
+
+			// allow custom function override
+			if (!TryApplyCustomMessage(request, DataStore, out response))
 			{
-				case Modbus.ReadCoils:
-					response = ReadDiscretes((ReadCoilsInputsRequest) request, DataStore, DataStore.CoilDiscretes);
-					break;
-				case Modbus.ReadInputs:
-					response = ReadDiscretes((ReadCoilsInputsRequest) request, DataStore, DataStore.InputDiscretes);
-					break;
-				case Modbus.ReadHoldingRegisters:
-					response = ReadRegisters((ReadHoldingInputRegistersRequest) request, DataStore, DataStore.HoldingRegisters);
-					break;
-				case Modbus.ReadInputRegisters:
-					response = ReadRegisters((ReadHoldingInputRegistersRequest) request, DataStore, DataStore.InputRegisters);
-					break;
-				case Modbus.Diagnostics:
-					response = request;
-					break;
-				case Modbus.WriteSingleCoil:
-					response = WriteSingleCoil((WriteSingleCoilRequestResponse) request, DataStore, DataStore.CoilDiscretes);
-					break;
-				case Modbus.WriteSingleRegister:
-					response = WriteSingleRegister((WriteSingleRegisterRequestResponse) request, DataStore, DataStore.HoldingRegisters);
-					break;
-				case Modbus.WriteMultipleCoils:
-					response = WriteMultipleCoils((WriteMultipleCoilsRequest) request, DataStore, DataStore.CoilDiscretes);
-					break;
-				case Modbus.WriteMultipleRegisters:
-					response = WriteMultipleRegisters((WriteMultipleRegistersRequest) request, DataStore, DataStore.HoldingRegisters);
-					break;
-				case Modbus.ReadWriteMultipleRegisters:
-					ReadWriteMultipleRegistersRequest readWriteRequest = (ReadWriteMultipleRegistersRequest) request;					
-					WriteMultipleRegisters(readWriteRequest.WriteRequest, DataStore, DataStore.HoldingRegisters);
-                    response = ReadRegisters(readWriteRequest.ReadRequest, DataStore, DataStore.HoldingRegisters);
-					break;
-				default:
-					string errorMessage = String.Format(CultureInfo.InvariantCulture, "Unsupported function code {0}", request.FunctionCode);
-					_logger.Error(errorMessage);
-					throw new ArgumentException(errorMessage, "request");
-			}			
+				// default implementation
+				switch (request.FunctionCode)
+				{
+					case Modbus.ReadCoils:
+						response = ReadDiscretes((ReadCoilsInputsRequest) request, DataStore, DataStore.CoilDiscretes);
+						break;
+					case Modbus.ReadInputs:
+						response = ReadDiscretes((ReadCoilsInputsRequest) request, DataStore, DataStore.InputDiscretes);
+						break;
+					case Modbus.ReadHoldingRegisters:
+						response = ReadRegisters((ReadHoldingInputRegistersRequest) request, DataStore, DataStore.HoldingRegisters);
+						break;
+					case Modbus.ReadInputRegisters:
+						response = ReadRegisters((ReadHoldingInputRegistersRequest) request, DataStore, DataStore.InputRegisters);
+						break;
+					case Modbus.Diagnostics:
+						response = request;
+						break;
+					case Modbus.WriteSingleCoil:
+						response = WriteSingleCoil((WriteSingleCoilRequestResponse) request, DataStore, DataStore.CoilDiscretes);
+						break;
+					case Modbus.WriteSingleRegister:
+						response = WriteSingleRegister((WriteSingleRegisterRequestResponse) request, DataStore, DataStore.HoldingRegisters);
+						break;
+					case Modbus.WriteMultipleCoils:
+						response = WriteMultipleCoils((WriteMultipleCoilsRequest) request, DataStore, DataStore.CoilDiscretes);
+						break;
+					case Modbus.WriteMultipleRegisters:
+						response = WriteMultipleRegisters((WriteMultipleRegistersRequest) request, DataStore, DataStore.HoldingRegisters);
+						break;
+					case Modbus.ReadWriteMultipleRegisters:
+						ReadWriteMultipleRegistersRequest readWriteRequest = (ReadWriteMultipleRegistersRequest) request;
+						WriteMultipleRegisters(readWriteRequest.WriteRequest, DataStore, DataStore.HoldingRegisters);
+						response = ReadRegisters(readWriteRequest.ReadRequest, DataStore, DataStore.HoldingRegisters);
+						break;
+					default:
+						string errorMessage = String.Format(CultureInfo.InvariantCulture, "Unsupported function code {0}", request.FunctionCode);
+						_logger.Error(errorMessage);
+						throw new ArgumentException(errorMessage, "request");
+				}
+			}
 
 			return response;
 		}

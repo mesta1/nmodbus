@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{FF96B252-2B24-44A1-A09C-6401B5D7ED23}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -93,6 +93,8 @@
     <Compile Include="IO\CompactUdpClient.cs" />
     <Compile Include="IO\CrossPlatformUdpClient.cs" />
     <Compile Include="IO\FullUdpClient.cs" />
+    <Compile Include="Message\CustomMessageInfo.cs" />
+    <Compile Include="Message\IModbusMessageRtu.cs" />
     <Compile Include="IO\StreamResourceUtility.cs" />
     <Compile Include="IO\IStreamResource.cs" />
     <Compile Include="IO\ModbusAsciiTransport.cs" />

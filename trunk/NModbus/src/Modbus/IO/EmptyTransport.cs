@@ -1,4 +1,5 @@
 ﻿using System;
+using Modbus.Device;
 using Modbus.Message;
 
 namespace Modbus.IO
@@ -8,7 +9,7 @@ namespace Modbus.IO
 	/// </summary>
 	public class EmptyTransport : ModbusTransport
 	{
-		internal override byte[] ReadRequest()
+		internal override byte[] ReadRequest(ModbusSlave slave)
 		{
 			throw new NotImplementedException();
 		}

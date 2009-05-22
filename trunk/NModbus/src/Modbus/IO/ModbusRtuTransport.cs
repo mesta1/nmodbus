@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using log4net;
+using Modbus.Device;
 using Modbus.Message;
 using Modbus.Utility;
 using Unme.Common;
@@ -20,15 +21,25 @@ namespace Modbus.IO
 
 		private static readonly ILog _logger = LogManager.GetLogger(typeof(ModbusRtuTransport));
 
+		private Func<Type, IModbusMessageRtu> _instanceCache = FunctionalUtility.Memoize((Type type) => (IModbusMessageRtu) Activator.CreateInstance(type));
+
 		internal ModbusRtuTransport(IStreamResource streamResource)
 			: base(streamResource)
 		{
 			Debug.Assert(streamResource != null, "Argument streamResource cannot be null.");
 		}
 
-		public static int RequestBytesToRead(byte[] frameStart)
+		/// <summary>
+		/// workaround for non-realtime implementation of the RTU protocol
+		/// </summary>
+		public static int RequestBytesToRead(byte[] frameStart, ModbusSlave slave)
 		{
 			byte functionCode = frameStart[1];
+			
+			// allow a custom function registered with the slave to provide the number of bytes left to read
+			if (slave.CustomMessages.ContainsKey(functionCode))
+				return slave.CustomMessages[functionCode].Instance.RtuRequestBytesRemaining(frameStart);
+			
 			int numBytes;
 
 			switch (functionCode)
@@ -56,8 +67,15 @@ namespace Modbus.IO
 			return numBytes;
 		}
 
-		public static int ResponseBytesToRead(byte[] frameStart)
+		/// <summary>
+		/// workaround for non-realtime implementation of the RTU protocol
+		/// </summary>
+		public static int ResponseBytesToRead<T>(byte[] frameStart, Func<Type, IModbusMessageRtu> instanceCache)
 		{
+			// allow a custom message to provide the number of bytes left to read
+			if (typeof(IModbusMessageRtu).IsAssignableFrom(typeof(T)))
+				return instanceCache.Invoke(typeof(T)).RtuResponseBytesRemaining(frameStart);
+
 			byte functionCode = frameStart[1];
 
 			// exception response
@@ -118,17 +136,17 @@ namespace Modbus.IO
 		internal override IModbusMessage ReadResponse<T>()
 		{
 			byte[] frameStart = Read(ResponseFrameStartLength);
-			byte[] frameEnd = Read(ResponseBytesToRead(frameStart));
+			byte[] frameEnd = Read(ResponseBytesToRead<T>(frameStart, _instanceCache));
 			byte[] frame = frameStart.Concat(frameEnd).ToArray();
 			_logger.InfoFormat("RX: {0}", frame.Join(", "));
 
 			return CreateResponse<T>(frame);
 		}
 
-		internal override byte[] ReadRequest()
+		internal override byte[] ReadRequest(ModbusSlave slave)
 		{
 			byte[] frameStart = Read(RequestFrameStartLength);
-			byte[] frameEnd = Read(RequestBytesToRead(frameStart));
+			byte[] frameEnd = Read(RequestBytesToRead(frameStart, slave));
 			byte[] frame = frameStart.Concat(frameEnd).ToArray();
 			_logger.InfoFormat("RX: {0}", frame.Join(", "));
 

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using log4net;
+using Modbus.Device;
 using Modbus.Message;
 using Modbus.Utility;
 using Unme.Common;
@@ -39,7 +40,7 @@ namespace Modbus.IO
 			return ModbusUtility.CalculateLrc(message.MessageFrame) == messageFrame[messageFrame.Length - 1];
 		}
 
-		internal override byte[] ReadRequest()
+		internal override byte[] ReadRequest(ModbusSlave slave)
 		{
 			return ReadRequestResponse();
 		}
