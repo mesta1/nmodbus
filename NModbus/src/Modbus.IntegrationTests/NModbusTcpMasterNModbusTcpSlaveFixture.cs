@@ -1,6 +1,9 @@
+using System.Linq;
 using System.Net.Sockets;
-using Modbus.Device;
 using MbUnit.Framework;
+using Modbus.Device;
+using Modbus.IntegrationTests.CustomMessages;
+using Unme.Common;
 
 namespace Modbus.IntegrationTests
 {
@@ -19,6 +22,7 @@ namespace Modbus.IntegrationTests
 
 			MasterTcp = new TcpClient(TcpHost.ToString(), Port);
 			Master = ModbusIpMaster.CreateIp(MasterTcp);
+			Master.Transport.ReadTimeout = Master.Transport.WriteTimeout = 1000;
 		}
 
 		[Test]
@@ -91,6 +95,12 @@ namespace Modbus.IntegrationTests
 		public override void ExecuteCustomMessage_WriteMultipleRegisters()
 		{
 			base.ExecuteCustomMessage_WriteMultipleRegisters();
+		}
+
+		[Test]
+		public override void ExecuteCustomMessage_Foobar()
+		{
+			base.ExecuteCustomMessage_Foobar();
 		}
 	}
 }

@@ -26,6 +26,7 @@ namespace Modbus.Device
 			get
 			{
 				var transport = Transport as ModbusSerialTransport;
+
 				if (transport == null)
 					throw new ObjectDisposedException("SerialTransport");
 
@@ -89,8 +90,8 @@ namespace Modbus.Device
 					try
 					{
 						// read request and build message
-						byte[] frame = SerialTransport.ReadRequest();
-						IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(frame);
+						byte[] frame = SerialTransport.ReadRequest(this);
+						IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(this, frame);
 
 						if (SerialTransport.CheckFrame && !SerialTransport.ChecksumsMatch(request, frame))
 						{

@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using log4net;
+using Modbus.Device;
 using Modbus.Message;
 using Unme.Common;
 
@@ -110,7 +111,7 @@ namespace Modbus.IO
 			StreamResource.Write(frame, 0, frame.Length);
 		}
 
-		internal override byte[] ReadRequest()
+		internal override byte[] ReadRequest(ModbusSlave slave)
 		{
 			return ReadRequestResponse(StreamResource);
 		}

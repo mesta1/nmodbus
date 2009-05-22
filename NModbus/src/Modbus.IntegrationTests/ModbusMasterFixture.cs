@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.IO.Ports;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
@@ -13,6 +14,8 @@ using MbUnit.Framework;
 using Modbus.Data;
 using Modbus.Device;
 using Modbus.IntegrationTests.CustomMessages;
+using Unme.Common;
+using Unme.MbUnit.Framework.Extensions;
 
 namespace Modbus.IntegrationTests
 {
@@ -41,7 +44,7 @@ namespace Modbus.IntegrationTests
 
 		protected static readonly ILog log = LogManager.GetLogger(typeof(ModbusMasterFixture));
 
-		public virtual double AverageReadTime 
+		public virtual double AverageReadTime
 		{
 			get { return 150; }
 		}
@@ -134,7 +137,7 @@ namespace Modbus.IntegrationTests
 		{
 			ushort[] registers = Master.ReadHoldingRegisters(SlaveAddress, 104, 2);
 			Assert.AreEqual(new ushort[] { 0, 0 }, registers);
-		}	
+		}
 
 		[Test]
 		public virtual void ReadInputRegisters()
@@ -142,7 +145,7 @@ namespace Modbus.IntegrationTests
 			ushort[] registers = Master.ReadInputRegisters(SlaveAddress, 104, 2);
 			Assert.AreEqual(new ushort[] { 0, 0 }, registers);
 		}
-		
+
 		[Test]
 		public virtual void WriteSingleCoil()
 		{
@@ -215,16 +218,16 @@ namespace Modbus.IntegrationTests
 			Assert.AreEqual(valuesToWrite, writtenValues);
 		}
 
-        [Test]
-        public virtual void ReadWriteMultipleRegisters_WriteOccursBeforeRead()
-        {
-            ushort readWriteAddress = 50;
-            ushort numberOfPointsToRead = 5;
-            ushort[] valuesToWrite = new ushort[] { 10, 20, 30, 40, 50 };
+		[Test]
+		public virtual void ReadWriteMultipleRegisters_WriteOccursBeforeRead()
+		{
+			ushort readWriteAddress = 50;
+			ushort numberOfPointsToRead = 5;
+			ushort[] valuesToWrite = new ushort[] { 10, 20, 30, 40, 50 };
 
-            ushort[] readValues = Master.ReadWriteMultipleRegisters(SlaveAddress, readWriteAddress, numberOfPointsToRead, readWriteAddress, valuesToWrite);
-            Assert.AreEqual(valuesToWrite, readValues);
-        }
+			ushort[] readValues = Master.ReadWriteMultipleRegisters(SlaveAddress, readWriteAddress, numberOfPointsToRead, readWriteAddress, valuesToWrite);
+			Assert.AreEqual(valuesToWrite, readValues);
+		}
 
 		[Test]
 		public virtual void SimpleReadRegistersPerformanceTest()
@@ -240,9 +243,41 @@ namespace Modbus.IntegrationTests
 		[Test]
 		public virtual void ExecuteCustomMessage_ReadHoldingRegisters()
 		{
-			CustomReadHoldingRegistersRequest request = new CustomReadHoldingRegistersRequest(3, SlaveAddress, 104, 2);
+			CustomReadHoldingRegistersRequest request = new CustomReadHoldingRegistersRequest(SlaveAddress, 104, 2);
 			CustomReadHoldingRegistersResponse response = Master.ExecuteCustomMessage<CustomReadHoldingRegistersResponse>(request);
 			Assert.AreEqual(new ushort[] { 0, 0 }, response.Data);
+		}
+
+		[Test]
+		public virtual void ExecuteCustomMessage_Foobar()
+		{
+			try
+			{
+				bool delegateExectuted = false;
+
+				Slave.RegisterCustomFunction<CustomFoobarRequest>(CustomFoobarRequest.FoobarFunctionCode,
+					(request, dataStore) =>
+					{
+						delegateExectuted = true;
+						
+						return new CustomFoobarResponse 
+						{ 
+							SlaveAddress = request.SlaveAddress, 
+							ByteCount = 4, 
+							Data = dataStore.HoldingRegisters.Slice(request.StartAddress, request.NumberOfPoints).ToArray() 
+						};
+					});				
+
+				var foobarRequest = new CustomFoobarRequest(SlaveAddress, 104, 2);
+				var foobarResponse = Master.ExecuteCustomMessage<CustomFoobarResponse>(foobarRequest);
+
+				Assert.IsTrue(delegateExectuted);
+				Assert.AreEqual(new ushort[] { 0, 0 }, foobarResponse.Data);
+			}
+			finally
+			{
+				Slave.UnregisterCustomFunction(CustomFoobarRequest.FoobarFunctionCode);
+			}
 		}
 
 		[Test]
@@ -250,8 +285,8 @@ namespace Modbus.IntegrationTests
 		{
 			ushort testAddress = 120;
 			ushort[] testValues = new ushort[] { 10, 20, 30, 40, 50 };
-			CustomReadHoldingRegistersRequest readRequest = new CustomReadHoldingRegistersRequest(3, SlaveAddress, testAddress, (ushort) testValues.Length);
-			CustomWriteMultipleRegistersRequest writeRequest = new CustomWriteMultipleRegistersRequest(16, SlaveAddress, testAddress, new RegisterCollection(testValues));
+			CustomReadHoldingRegistersRequest readRequest = new CustomReadHoldingRegistersRequest(SlaveAddress, testAddress, (ushort) testValues.Length);
+			CustomWriteMultipleRegistersRequest writeRequest = new CustomWriteMultipleRegistersRequest(SlaveAddress, testAddress, new RegisterCollection(testValues));
 
 			var response = Master.ExecuteCustomMessage<CustomReadHoldingRegistersResponse>(readRequest);
 			ushort[] originalValues = response.Data;
@@ -259,9 +294,9 @@ namespace Modbus.IntegrationTests
 			response = Master.ExecuteCustomMessage<CustomReadHoldingRegistersResponse>(readRequest);
 			ushort[] newValues = response.Data;
 			Assert.AreEqual(testValues, newValues);
-			writeRequest = new CustomWriteMultipleRegistersRequest(16, SlaveAddress, testAddress, new RegisterCollection(originalValues));
+			writeRequest = new CustomWriteMultipleRegistersRequest(SlaveAddress, testAddress, new RegisterCollection(originalValues));
 			Master.ExecuteCustomMessage<CustomWriteMultipleRegistersResponse>(writeRequest);
-		}		
+		}
 
 		/// <summary>
 		/// Perform read registers command 
@@ -287,7 +322,7 @@ namespace Modbus.IntegrationTests
 				master.ReadHoldingRegisters(SlaveAddress, startAddress, numRegisters);
 				stopwatch.Stop();
 				log.DebugFormat("CalculateAverage read {0}", i + 1);
-				
+
 				checked
 				{
 					sum += stopwatch.ElapsedMilliseconds;

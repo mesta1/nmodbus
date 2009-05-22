@@ -59,7 +59,7 @@ namespace Modbus.Device
 					_logger.DebugFormat("Read Frame completed {0} bytes", frame.Length);
 					_logger.InfoFormat("RX: {0}", frame.Join(", "));
 
-					IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(frame.Slice(6, frame.Length - 6).ToArray());
+					IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(this, frame.Slice(6, frame.Length - 6).ToArray());
 					request.TransactionId = (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 0));
 
 					// perform action and build response

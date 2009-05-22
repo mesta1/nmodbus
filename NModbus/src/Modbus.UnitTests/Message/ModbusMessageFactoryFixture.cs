@@ -4,6 +4,9 @@ using MbUnit.Framework;
 using Modbus.Data;
 using Modbus.Message;
 using Unme.Common;
+using Modbus.Device;
+using Rhino.Mocks;
+using Modbus.IO;
 
 namespace Modbus.UnitTests.Message
 {
@@ -260,30 +263,42 @@ namespace Modbus.UnitTests.Message
 		[Test, ExpectedException(typeof(FormatException))]
 		public void CreateModbusRequestWithInvalidMessageFrame()
 		{
-			ModbusMessageFactory.CreateModbusRequest(new byte[] { 0, 1 });
+			MockRepository mocks = new MockRepository();
+			var mockSlave = mocks.PartialMock<ModbusSlave>((byte) 1, new EmptyTransport());
+
+			ModbusMessageFactory.CreateModbusRequest(mockSlave, new byte[] { 0, 1 });
 			Assert.Fail();
 		}
 
 		[Test, ExpectedArgumentException]
 		public void CreateModbusRequestWithInvalidFunctionCode()
 		{
-			ModbusMessageFactory.CreateModbusRequest(new byte[] { 1, 99, 0, 0, 0, 1, 23 });
+			MockRepository mocks = new MockRepository();
+			var mockSlave = mocks.PartialMock<ModbusSlave>((byte) 1, new EmptyTransport());
+
+			ModbusMessageFactory.CreateModbusRequest(mockSlave, new byte[] { 1, 99, 0, 0, 0, 1, 23 });
 			Assert.Fail();
 		}
 
 		[Test]
 		public void CreateModbusRequestForReadCoils()
 		{
+			MockRepository mocks = new MockRepository();
+			var mockSlave = mocks.PartialMock<ModbusSlave>((byte) 1, new EmptyTransport());
+
 			ReadCoilsInputsRequest req = new ReadCoilsInputsRequest(1, 2, 1, 10);
-			IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(req.MessageFrame);
+			IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(mockSlave, req.MessageFrame);
 			Assert.AreEqual(typeof(ReadCoilsInputsRequest), request.GetType());
 		}
 
 		[Test]
 		public void CreateModbusRequestForDiagnostics()
 		{
+			MockRepository mocks = new MockRepository();
+			var mockSlave = mocks.PartialMock<ModbusSlave>((byte) 1, new EmptyTransport());
+
 			DiagnosticsRequestResponse diagnosticsRequest = new DiagnosticsRequestResponse(0, 2, new RegisterCollection(45));
-			IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(diagnosticsRequest.MessageFrame);
+			IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(mockSlave, diagnosticsRequest.MessageFrame);
 			Assert.AreEqual(typeof(DiagnosticsRequestResponse), request.GetType());
 		}
 	}

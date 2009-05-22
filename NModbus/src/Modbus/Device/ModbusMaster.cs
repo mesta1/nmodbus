@@ -156,6 +156,33 @@ namespace Modbus.Device
 		[SuppressMessage("Microsoft.Usage", "CA2223:MembersShouldDifferByMoreThanReturnType")]
 		public TResponse ExecuteCustomMessage<TResponse>(IModbusMessage request) where TResponse : IModbusMessage, new()
 		{
+			if (Transport is ModbusRtuTransport)
+			{
+				string errorMessageFormat = "In order to use the RTU protocol your custom {0} type {1} needs to implement the {2} interface.";
+
+				if (!(request is IModbusMessageRtu))
+				{
+					throw new ArgumentException(
+						String.Format(CultureInfo.InvariantCulture, 
+						errorMessageFormat,
+						"request",
+						request.GetType().Name, 
+						typeof(IModbusMessageRtu).Name),
+						"request");
+				}
+
+				if (!typeof(IModbusMessageRtu).IsAssignableFrom(typeof(TResponse)))
+				{
+					throw new ArgumentException(
+						String.Format(CultureInfo.InvariantCulture,
+						errorMessageFormat,
+						"response",
+						request.GetType().Name,
+						typeof(IModbusMessageRtu).Name),
+						"TResponse");
+				}
+			}
+
 			return Transport.UnicastMessage<TResponse>(request);
 		}
 
