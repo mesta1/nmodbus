@@ -95,7 +95,6 @@ namespace Modbus.IntegrationTests.CustomMessages
 		{
 			if (frame == null)
 				throw new ArgumentNullException("frame");
-
 			if (frame.Length < 3 || frame.Length < 3 + frame[2])
 				throw new ArgumentException("Message frame does not contain enough bytes.", "frame");
 

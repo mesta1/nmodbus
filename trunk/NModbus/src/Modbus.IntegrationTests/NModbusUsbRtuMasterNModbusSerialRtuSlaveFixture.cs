@@ -1,5 +1,7 @@
 using Modbus.Device;
 using MbUnit.Framework;
+using Unme.MbUnit.Framework.Extensions;
+using System;
 
 namespace Modbus.IntegrationTests
 {
@@ -31,6 +33,18 @@ namespace Modbus.IntegrationTests
 		/// </summary>
 		public override void ReadWriteMultipleRegisters_WriteOccursBeforeRead()
 		{
+		}
+
+		[Test]
+		public override void ExecuteCustomMessage_ReadHoldingRegisters()
+		{
+			AssertUtility.Throws<ArgumentException>(() => base.ExecuteCustomMessage_ReadHoldingRegisters());
+		}
+
+		[Test]
+		public override void ExecuteCustomMessage_WriteMultipleRegisters()
+		{
+			AssertUtility.Throws<ArgumentException>(() => base.ExecuteCustomMessage_WriteMultipleRegisters());
 		}
 
 		[Test]

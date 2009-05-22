@@ -78,5 +78,11 @@ namespace Modbus.IntegrationTests
 		{
 			base.ReturnQueryData();
 		}
+
+		[Test]
+		public override void ExecuteCustomMessage_Foobar()
+		{
+			base.ExecuteCustomMessage_Foobar();
+		} 
 	}
 }

@@ -74,8 +74,7 @@ namespace Modbus.IntegrationTests.CustomMessages
 		{
 			if (frame == null)
 				throw new ArgumentNullException("frame");
-
-			if (frame.Length != 6)
+			if (frame.Length < 6)
 				throw new ArgumentException("Invalid frame.", "frame");
 
 			SlaveAddress = frame[0];

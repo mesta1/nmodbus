@@ -42,5 +42,25 @@ namespace Modbus.IntegrationTests
 		{
 			base.ReadCoils();
 		}
-	}
+
+		/// <summary>
+		/// Not supported by the DL06
+		/// </summary>
+		public override void ExecuteCustomMessage_Foobar()
+		{
+		}
+		
+		/// <summary>
+		/// Does not implement IModbusMessageRtu
+		/// </summary>
+		public override void ExecuteCustomMessage_ReadHoldingRegisters()
+		{
+		}
+
+		/// <summary>
+		/// Does not implement IModbusMessageRtu
+		/// </summary>
+		public override void ExecuteCustomMessage_WriteMultipleRegisters()
+		{
+		}	}
 }

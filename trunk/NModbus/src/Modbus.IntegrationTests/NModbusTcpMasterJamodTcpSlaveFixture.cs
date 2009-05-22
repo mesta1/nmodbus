@@ -36,6 +36,13 @@ namespace Modbus.IntegrationTests
 		{		
 		}
 
+		/// <summary>
+		/// Not supported
+		/// </summary>
+		public override void ExecuteCustomMessage_Foobar()
+		{
+		}
+
 		[Test]
 		public override void ReadCoils()
 		{
