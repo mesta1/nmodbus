@@ -1,11 +1,17 @@
+using System;
+using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
 using MbUnit.Framework;
 using Modbus.Data;
 using Modbus.Device;
+using Modbus.IO;
 using Modbus.Message;
 using Modbus.UnitTests.Message;
+using Rhino.Mocks;
 using Unme.Common;
+using Unme.MbUnit.Framework.Extensions;
+using System.Diagnostics;
 
 namespace Modbus.UnitTests.Device
 {
@@ -123,6 +129,149 @@ namespace Modbus.UnitTests.Device
 			ModbusSlave.WriteMultipleCoils(request, dataStore, dataStore.CoilDiscretes);
 
 			Assert.AreEqual(dataStore.CoilDiscretes.Slice(1, 8).ToArray(), new [] { true, true, false, false, false, false, false, false });
+		}
+
+		[Test]
+		public void RegisterCustomFunction_NullDelegate()
+		{
+			MockRepository mocks = new MockRepository();
+			var slave = mocks.PartialMock<ModbusSlave>((byte) 1, new EmptyTransport());
+			
+			AssertUtility.Throws<ArgumentNullException>(() => slave.RegisterCustomFunction<TestMessage>(100, null));
+		}
+
+		[Test]
+		public void RegisterCustomFunction_FunctionAlreadyExists()
+		{
+			MockRepository mocks = new MockRepository();
+			var slave = mocks.PartialMock<ModbusSlave>((byte) 1, new EmptyTransport());
+
+			slave.RegisterCustomFunction<TestMessage>(100, (request, dataStore) => { throw new NotImplementedException(); });
+			AssertUtility.Throws<ArgumentException>(() => slave.RegisterCustomFunction<TestMessage>(100, (request, dataStore) => { throw new NotImplementedException(); }));
+		}
+
+		[Test]
+		public void UnregisterCustomFunction()
+		{
+			MockRepository mocks = new MockRepository();
+			var slave = mocks.PartialMock<ModbusSlave>((byte) 1, new EmptyTransport());
+
+			slave.RegisterCustomFunction<TestMessage>(100, (request, dataStore) => { throw new NotImplementedException(); });
+			slave.UnregisterCustomFunction(100);
+
+			AssertUtility.Throws<KeyNotFoundException>(() => slave.UnregisterCustomFunction(100));
+		}
+
+		[Test]
+		public void UnregisterCustomFunction_DoesNotExist()
+		{
+			MockRepository mocks = new MockRepository();
+			var slave = mocks.PartialMock<ModbusSlave>((byte) 1, new EmptyTransport());
+
+			AssertUtility.Throws<KeyNotFoundException>(() => slave.UnregisterCustomFunction(100));
+		}
+
+		[Test]
+		public void TryApplyCustomMessage_ValidateArgs()
+		{
+			MockRepository mocks = new MockRepository();
+			var slave = mocks.PartialMock<ModbusSlave>((byte) 1, new EmptyTransport());
+
+			IModbusMessage message;
+
+			AssertUtility.Throws<ArgumentNullException>(() => slave.TryApplyCustomMessage(null, new DataStore(), out message));
+			AssertUtility.Throws<ArgumentNullException>(() => slave.TryApplyCustomMessage(new ReadCoilsInputsRequest(), null, out message));
+		}
+
+		[Test]
+		public void TryApplyCustomMessage()
+		{
+			MockRepository mocks = new MockRepository();
+			var slave = mocks.PartialMock<ModbusSlave>((byte) 1, new EmptyTransport());
+
+			IModbusMessage response;
+			bool applyRequestDelegateExecuted = false;
+			slave.RegisterCustomFunction<ReadCoilsInputsRequest>(Modbus.ReadCoils, (request, dataStore) => { applyRequestDelegateExecuted = true; return new ReadCoilsInputsResponse(); });
+			Assert.IsTrue(slave.TryApplyCustomMessage(new ReadCoilsInputsRequest(Modbus.ReadCoils, 1, 0, 1), new DataStore(), out response));
+			Assert.IsTrue(applyRequestDelegateExecuted);
+		}
+
+		[Test]
+		public void TryApplyCustomMessage_DoesNotExist()
+		{
+			MockRepository mocks = new MockRepository();
+			var slave = mocks.PartialMock<ModbusSlave>((byte) 1, new EmptyTransport());
+
+			IModbusMessage response;
+			Assert.IsFalse(slave.TryApplyCustomMessage(new ReadCoilsInputsRequest(), new DataStore(), out response));
+		}
+
+		[Test]
+		public void TryCreateModbusMessageRequest()
+		{
+			MockRepository mocks = new MockRepository();
+			var slave = mocks.PartialMock<ModbusSlave>((byte) 1, new EmptyTransport());
+
+			slave.RegisterCustomFunction<ReadCoilsInputsRequest>(Modbus.ReadCoils, (r, dataStore) => { throw new NotImplementedException(); });
+
+			IModbusMessage request;
+			Assert.IsTrue(slave.TryCreateModbusMessageRequest(Modbus.ReadCoils, new byte[] { 11, Modbus.ReadCoils, 0, 19, 0, 37 }, out request));
+
+			Assert.IsNotNull(request);
+		}
+
+		class TestMessage : IModbusMessage
+		{
+			public byte FunctionCode
+			{
+				get
+				{
+					throw new NotImplementedException();
+				}
+				set
+				{
+					throw new NotImplementedException();
+				}
+			}
+
+			public byte SlaveAddress
+			{
+				get
+				{
+					throw new NotImplementedException();
+				}
+				set
+				{
+					throw new NotImplementedException();
+				}
+			}
+
+			public byte[] MessageFrame
+			{
+				get { throw new NotImplementedException(); }
+			}
+
+			public byte[] ProtocolDataUnit
+			{
+				get { throw new NotImplementedException(); }
+			}
+
+			public ushort TransactionId
+			{
+				get
+				{
+					throw new NotImplementedException();
+				}
+				set
+				{
+					throw new NotImplementedException();
+				}
+			}
+
+			public void Initialize(byte[] frame)
+			{
+				throw new NotImplementedException();
+			}
 		}
 	}
 }

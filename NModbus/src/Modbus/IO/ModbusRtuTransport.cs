@@ -37,8 +37,9 @@ namespace Modbus.IO
 			byte functionCode = frameStart[1];
 			
 			// allow a custom function registered with the slave to provide the number of bytes left to read
-			if (slave.CustomMessages.ContainsKey(functionCode))
-				return slave.CustomMessages[functionCode].Instance.RtuRequestBytesRemaining(frameStart);
+			CustomMessageInfo messageInfo;
+			if (slave.TryGetCustomMessageInfo(functionCode, out messageInfo))
+				return messageInfo.Instance.RtuRequestBytesRemaining(frameStart);
 			
 			int numBytes;
 
