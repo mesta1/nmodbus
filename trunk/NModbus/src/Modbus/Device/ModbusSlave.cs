@@ -20,6 +20,12 @@ namespace Modbus.Device
 		private static readonly ILog _logger = LogManager.GetLogger(typeof(ModbusSlave));
 		private readonly Dictionary<byte, CustomMessageInfo> _customMessages = new Dictionary<byte, CustomMessageInfo>();
 
+		private Func<Type, MethodInfo> _createModbusMessageCache = FunctionalUtility.Memoize((Type type) =>
+		{
+			MethodInfo method = typeof(ModbusMessageFactory).GetMethod("CreateModbusMessage");
+			return method.MakeGenericMethod(type);
+		});
+
 		internal ModbusSlave(byte unitId, ModbusTransport transport)
 			: base(transport)
 		{
@@ -41,14 +47,6 @@ namespace Modbus.Device
 		/// Gets or sets the unit ID.
 		/// </summary>
 		public byte UnitId { get; set; }
-
-		internal Dictionary<byte, CustomMessageInfo> CustomMessages
-		{
-			get
-			{
-				return _customMessages;
-			}
-		}
 
 		/// <summary>
 		/// Start slave listening for requests.
@@ -72,10 +70,10 @@ namespace Modbus.Device
 
 			// CONSIDER only allowing true user-defined function codes, Modbus defines 65-101 as user-defined function codes.
 
-			// wrap in proper delegate type
+			// wrap in more generic delegate type
 			Func<IModbusMessage, DataStore, IModbusMessage> wrapper = (message, dataStore) => applyRequest((TRequest) message, dataStore);
 
-			CustomMessages[functionCode] = new CustomMessageInfo(typeof(TRequest), wrapper);
+			_customMessages[functionCode] = new CustomMessageInfo(typeof(TRequest), wrapper);
 		}
 
 		/// <summary>
@@ -85,7 +83,7 @@ namespace Modbus.Device
 		/// <exception cref="KeyNotFoundException">The specified function code is not registered.</exception>
 		public void UnregisterCustomFunction(byte functionCode)
 		{
-			if (!CustomMessages.Remove(functionCode))
+			if (!_customMessages.Remove(functionCode))
 				throw new KeyNotFoundException(String.Format(CultureInfo.InvariantCulture, "Specified function code {0} is not registered.", functionCode));
 		}		
 
@@ -137,11 +135,17 @@ namespace Modbus.Device
 
 		internal bool TryApplyCustomMessage(IModbusMessage request, DataStore dataStore, out IModbusMessage response)
 		{
+			if (request == null)
+				throw new ArgumentNullException("request");
+			if (dataStore == null)
+				throw new ArgumentNullException("dataStore");
+
+
 			bool requestApplied = false;
 			response = null;
 
 			CustomMessageInfo messageInfo;
-			if (_customMessages.TryGetValue(request.FunctionCode, out messageInfo))
+			if (TryGetCustomMessageInfo(request.FunctionCode, out messageInfo))
 			{
 				response = messageInfo.ApplyRequest(request, dataStore);
 				requestApplied = true;
@@ -149,7 +153,7 @@ namespace Modbus.Device
 
 			return requestApplied;
 		}
-
+		
 		internal bool TryCreateModbusMessageRequest(byte functionCode, byte[] frame, out IModbusMessage request)
 		{
 			if (frame == null)
@@ -159,17 +163,19 @@ namespace Modbus.Device
 			request = null;
 
 			CustomMessageInfo messageInfo;
-			if (_customMessages.TryGetValue(functionCode, out messageInfo))
+			if (TryGetCustomMessageInfo(functionCode, out messageInfo))
 			{
-				// CONSIDER using a reflection emit version of this creation... this could be really slow 
-				MethodInfo method = typeof(ModbusMessageFactory).GetMethod("CreateModbusMessage");
-				MethodInfo generic = method.MakeGenericMethod(messageInfo.Type);
-				request = (IModbusMessage) generic.Invoke(null, new object[] { frame });
+				request = (IModbusMessage) _createModbusMessageCache(messageInfo.Type).Invoke(null, new object[] { frame });
 
 				messageCreated = true;
 			}
 
 			return messageCreated;
+		}
+
+		internal bool TryGetCustomMessageInfo(byte functionCode, out CustomMessageInfo messageInfo)
+		{
+			return _customMessages.TryGetValue(functionCode, out messageInfo);
 		}
 
 		[SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily", Justification = "Cast is not unneccessary.")]
