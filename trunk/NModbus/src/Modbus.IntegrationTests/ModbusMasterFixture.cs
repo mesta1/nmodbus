@@ -260,11 +260,16 @@ namespace Modbus.IntegrationTests
 					{
 						delegateExectuted = true;
 						
+						// get data from data store, make sure to access within a lock to respect multi threaded access
+						ushort[] data;
+						lock (dataStore.SyncRoot)
+							data = dataStore.HoldingRegisters.Slice(request.StartAddress, request.NumberOfPoints).ToArray();
+
 						return new CustomFoobarResponse 
 						{ 
 							SlaveAddress = request.SlaveAddress, 
 							ByteCount = 4, 
-							Data = dataStore.HoldingRegisters.Slice(request.StartAddress, request.NumberOfPoints).ToArray() 
+							Data = data
 						};
 					});				
 
