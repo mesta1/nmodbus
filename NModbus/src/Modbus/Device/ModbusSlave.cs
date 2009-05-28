@@ -68,7 +68,7 @@ namespace Modbus.Device
 			if (_customMessages.ContainsKey(functionCode))
 				throw new ArgumentException("A custom function already exists with the specified function code. You must unregister it first.", "functionCode");
 
-			// CONSIDER only allowing true user-defined function codes, Modbus defines 65-101 as user-defined function codes.
+			// CONSIDER only allowing true user-defined function codes, Modbus defines 65-72 and 100-110 as user-defined function codes.
 
 			// wrap in more generic delegate type
 			Func<IModbusMessage, DataStore, IModbusMessage> wrapper = (message, dataStore) => applyRequest((TRequest) message, dataStore);

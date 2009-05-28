@@ -8,13 +8,8 @@ namespace Modbus.Message
 	public interface IModbusMessageRtu : IModbusMessage
 	{
 		/// <summary>
-		/// Gets the remaining length of the response given the specified frame start.
+		/// Gets the remaining length of the message given the specified frame start.
 		/// </summary>
-		Func<byte[], int> RtuResponseBytesRemaining { get; }
-
-		/// <summary>
-		/// Gets the remaining length of the request given the specified frame start.
-		/// </summary>
-		Func<byte[], int> RtuRequestBytesRemaining { get; }
+		Func<byte[], int> RtuBytesRemaining { get; }
 	}
 }
