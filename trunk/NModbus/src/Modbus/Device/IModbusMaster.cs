@@ -1,5 +1,6 @@
 using System;
 using Modbus.IO;
+using Modbus.Message;
 
 namespace Modbus.Device
 {
@@ -91,5 +92,12 @@ namespace Modbus.Device
 		/// <param name="startWriteAddress">Address to begin writing (Holding registers are addressed starting at 0).</param>
 		/// <param name="writeData">Register values to write.</param>
 		ushort[] ReadWriteMultipleRegisters(byte slaveAddress, ushort startReadAddress, ushort numberOfPointsToRead, ushort startWriteAddress, ushort[] writeData);
+
+		/// <summary>
+		/// Executes the custom message.
+		/// </summary>
+		/// <typeparam name="TResponse">The type of the response.</typeparam>
+		/// <param name="request">The request.</param>
+		TResponse ExecuteCustomMessage<TResponse>(IModbusMessage request) where TResponse : IModbusMessage, new();
 	}
 }

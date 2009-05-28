@@ -39,7 +39,7 @@ namespace Modbus.IO
 			// allow a custom function registered with the slave to provide the number of bytes left to read
 			CustomMessageInfo messageInfo;
 			if (slave.TryGetCustomMessageInfo(functionCode, out messageInfo))
-				return messageInfo.Instance.RtuRequestBytesRemaining(frameStart);
+				return messageInfo.Instance.RtuBytesRemaining(frameStart);
 			
 			int numBytes;
 
@@ -75,7 +75,7 @@ namespace Modbus.IO
 		{
 			// allow a custom message to provide the number of bytes left to read
 			if (typeof(IModbusMessageRtu).IsAssignableFrom(typeof(T)))
-				return instanceCache.Invoke(typeof(T)).RtuResponseBytesRemaining(frameStart);
+				return instanceCache.Invoke(typeof(T)).RtuBytesRemaining(frameStart);
 
 			byte functionCode = frameStart[1];
 
