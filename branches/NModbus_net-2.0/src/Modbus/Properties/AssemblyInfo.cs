@@ -12,9 +12,9 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(true)]
 [assembly: CLSCompliant(false)]
 [assembly: Guid("a2ec5378-e1b7-4bb0-b696-1c657407eeb9")]
-[assembly: AssemblyVersion("1.9.0.0")]
+[assembly: AssemblyVersion("1.11.0.0")]
 #if !WindowsCE
-[assembly: AssemblyFileVersion("1.9.0.0")]
+[assembly: AssemblyFileVersion("1.11.0.0")]
 #endif
 
 #if SIGNED
