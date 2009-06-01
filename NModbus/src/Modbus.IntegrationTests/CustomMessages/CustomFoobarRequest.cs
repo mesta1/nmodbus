@@ -73,15 +73,7 @@ namespace Modbus.IntegrationTests.CustomMessages
 		
 		public ushort NumberOfPoints { get; set; }
 
-		public Func<byte[], int> RtuResponseBytesRemaining
-		{
-			get
-			{
-				return frameStart => frameStart[2] + 1;
-			}
-		}
-
-		public Func<byte[], int> RtuRequestBytesRemaining
+		public Func<byte[], int> RtuBytesRemaining
 		{
 			get
 			{

@@ -75,19 +75,11 @@ namespace Modbus.IntegrationTests.CustomMessages
 
 		public byte ByteCount { get; set; }
 
-		public Func<byte[], int> RtuResponseBytesRemaining
+		public Func<byte[], int> RtuBytesRemaining
 		{
 			get
 			{
 				return frameStart => frameStart[2] + 1;
-			}
-		}
-
-		public Func<byte[], int> RtuRequestBytesRemaining
-		{
-			get
-			{
-				return frameStart => 1;
 			}
 		}
 
