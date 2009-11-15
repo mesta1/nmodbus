@@ -1,3 +1,4 @@
+using System;
 namespace Modbus
 {	
 	/// <summary>
@@ -35,7 +36,8 @@ namespace Modbus
 		public const int DefaultWaitToRetryMilliseconds = 250;
 
 		// default setting for IO timeouts in milliseconds
-		public const int DefaultTimeout = 1000;
+		[Obsolete("Default timeout for read write operations is infinite.")]
+        public const int DefaultTimeout = 1000;
 
 		// smallest supported message frame size (sans checksum)
 		public const int MinimumFrameSize = 2;
