@@ -14,14 +14,30 @@ namespace Modbus.Device
 		/// </summary>
 		ModbusTransport Transport { get; }
 
+        /// <summary>
+        ///     Read a single coil status
+        /// </summary>
+        /// <param name="slaveAddress">Address of device from which to read value.</param>
+        /// <param name="coilAddress">Address of the coil to read</param>
+        /// <returns></returns>
+        bool ReadCoil(byte slaveAddress, ushort coilAddress);
+
 		/// <summary>
 		/// Read from 1 to 2000 contiguous coils status.
 		/// </summary>
-		/// <param name="slaveAddress">Address of device to read values from.</param>
+		/// <param name="slaveAddress">Address of device from which to read values.</param>
 		/// <param name="startAddress">Address to begin reading.</param>
 		/// <param name="numberOfPoints">Number of coils to read.</param>
 		/// <returns>Coils status</returns>
 		bool[] ReadCoils(byte slaveAddress, ushort startAddress, ushort numberOfPoints);
+
+        /// <summary>
+        /// Read a single discrete input status
+        /// </summary>
+        /// <param name="slaveAddress">Address of device to read value from</param>
+        /// <param name="inputAddress">Address of the input status</param>
+        /// <returns></returns>
+        bool ReadInput(byte slaveAddress, ushort inputAddress);
 
 		/// <summary>
 		/// Read from 1 to 2000 contiguous discrete input status.
@@ -32,6 +48,9 @@ namespace Modbus.Device
 		/// <returns>Discrete inputs status</returns>
 		bool[] ReadInputs(byte slaveAddress, ushort startAddress, ushort numberOfPoints);
 
+
+        ushort ReadHoldingRegister(byte slaveAddress, ushort registerAddress);
+
 		/// <summary>
 		/// Read contiguous block of holding registers.
 		/// </summary>
@@ -41,6 +60,8 @@ namespace Modbus.Device
 		/// <returns>Holding registers status</returns>
 		ushort[] ReadHoldingRegisters(byte slaveAddress, ushort startAddress, ushort numberOfPoints);
 
+
+        ushort ReadInputRegister(byte slaveAddress, ushort registerAddress);
 		/// <summary>
 		/// Read contiguous block of input registers.
 		/// </summary>
@@ -49,6 +70,14 @@ namespace Modbus.Device
 		/// <param name="numberOfPoints">Number of holding registers to read.</param>
 		/// <returns>Input registers status</returns>
 		ushort[] ReadInputRegisters(byte slaveAddress, ushort startAddress, ushort numberOfPoints);
+
+        /// <summary>
+        /// Read a single 32-bit IEEE 754 floating point number from register starting at <c>startAddress</c>
+        /// </summary>
+        /// <param name="slaveAddress">Address of device from which to read values</param>
+        /// <param name="startAddress">Address at which to begin reading</param>
+        /// <returns></returns>
+        float ReadFloatRegister(byte slaveAddress, ushort startAddress);
 
 		/// <summary>
 		/// Write a single coil value.
@@ -65,6 +94,7 @@ namespace Modbus.Device
 		/// <param name="registerAddress">Address to write.</param>
 		/// <param name="value">Value to write.</param>
 		void WriteSingleRegister(byte slaveAddress, ushort registerAddress, ushort value);
+        void WriteSingleRegister(byte slaveAddress, ushort registerAddress, float value);
 
 		/// <summary>
 		/// Write a block of 1 to 123 contiguous registers.
