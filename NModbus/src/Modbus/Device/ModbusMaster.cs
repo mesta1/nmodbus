@@ -19,6 +19,11 @@ namespace Modbus.Device
 		{
 		}
 
+        public bool ReadCoil(byte slaveAddress, ushort coilAddress) 
+        {
+            return ReadDiscretes(Modbus.ReadCoils, slaveAddress, coilAddress, 1)[0];
+        }
+
 		/// <summary>
 		/// Read from 1 to 2000 contiguous coils status.
 		/// </summary>
@@ -33,6 +38,11 @@ namespace Modbus.Device
 			return ReadDiscretes(Modbus.ReadCoils, slaveAddress, startAddress, numberOfPoints);
 		}
 
+        public bool ReadInput(byte slaveAddress, ushort inputAddress) 
+        {
+            return ReadDiscretes(Modbus.ReadInputs, slaveAddress, inputAddress, 1)[0];
+        }
+
 		/// <summary>
 		/// Read from 1 to 2000 contiguous discrete input status.
 		/// </summary>
@@ -45,8 +55,12 @@ namespace Modbus.Device
 			ValidateNumberOfPoints("numberOfPoints", numberOfPoints, 2000);
 
 			return ReadDiscretes(Modbus.ReadInputs, slaveAddress, startAddress, numberOfPoints);
-		}		
+		}
 
+        public ushort ReadHoldingRegister(byte slaveAddress, ushort registerAddress) 
+        {
+            return ReadRegisters(Modbus.ReadInputRegisters, slaveAddress, registerAddress, 1)[0];
+        }
 		/// <summary>
 		/// Read contiguous block of 16 bit holding registers.
 		/// </summary>
@@ -61,6 +75,11 @@ namespace Modbus.Device
 			return ReadRegisters(Modbus.ReadHoldingRegisters, slaveAddress, startAddress, numberOfPoints);
 		}
 
+        public ushort ReadInputRegister(byte slaveAddress, ushort registerAddress) 
+        {
+            return ReadRegisters(Modbus.ReadInputRegisters, slaveAddress, registerAddress, 1)[0];
+        }
+
 		/// <summary>
 		/// Read contiguous block of 16 bit input registers.
 		/// </summary>
@@ -74,6 +93,23 @@ namespace Modbus.Device
 
 			return ReadRegisters(Modbus.ReadInputRegisters, slaveAddress, startAddress, numberOfPoints);
 		}
+
+        public float ReadFloatRegister(byte slaveAddress, ushort startAddress) 
+        {
+            byte[] bytes;
+
+            bytes = ReadRegistersRaw(Modbus.ReadInputRegisters, slaveAddress, startAddress, 2);
+            // need to swap the bytes of each word
+            byte temp = bytes[0];
+            bytes[0] = bytes[1];
+            bytes[1] = temp;
+
+            temp = bytes[2];
+            bytes[2] = bytes[3];
+            bytes[3] = temp;
+
+            return BitConverter.ToSingle(bytes, 0);
+        }
 
 		/// <summary>
 		/// Write a single coil value.
@@ -98,6 +134,30 @@ namespace Modbus.Device
 			WriteSingleRegisterRequestResponse request = new WriteSingleRegisterRequestResponse(slaveAddress, registerAddress, value);
 			Transport.UnicastMessage<WriteSingleRegisterRequestResponse>(request);
 		}
+
+        /// <summary>
+        /// Write a floating point value at the specified holding register.
+        /// </summary>
+        /// <param name="slaveAddress">Address of the device to which the value should be written</param>
+        /// <param name="registerAddress">Address of the starting register to which the floating point value should be written</param>
+        /// <param name="value">Value to write</param>
+        /// TODO: make generic
+        public void WriteSingleRegister(byte slaveAddress, ushort registerAddress, float value) 
+        {
+            byte[] valueBytes = BitConverter.GetBytes(value);
+            byte temp = valueBytes[0];
+            valueBytes[0] = valueBytes[1];
+            valueBytes[1] = temp;
+
+            temp = valueBytes[2];
+            valueBytes[2] = valueBytes[3];
+            valueBytes[3] = temp;
+
+            // Need to swap the order of the bytes in the words
+
+            WriteMultipleRegistersRequest request = new WriteMultipleRegistersRequest(slaveAddress, registerAddress, new RegisterCollection(valueBytes));
+            Transport.UnicastMessage<WriteMultipleRegistersResponse>(request);
+        }
 
 		/// <summary>
 		/// Write a block of 1 to 123 contiguous 16 bit holding registers.
@@ -226,5 +286,14 @@ namespace Modbus.Device
 
 			return response.Data.Slice(0, request.NumberOfPoints).ToArray();
 		}
+
+        internal byte[] ReadRegistersRaw(byte functionCode, byte slaveAddress, ushort startAddress, ushort numberOfPoints) 
+        {
+            ReadHoldingInputRegistersRequest request = new ReadHoldingInputRegistersRequest(functionCode, slaveAddress, startAddress, numberOfPoints);
+            ReadHoldingInputRegistersResponse response = Transport.UnicastMessage<ReadHoldingInputRegistersResponse>(request);
+
+            return response.Data.NetworkBytes;
+        }
+
 	}
 }
