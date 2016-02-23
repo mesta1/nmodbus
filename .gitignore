@@ -1,0 +1,14 @@
+S7.Net/bin
+S7.Net/obj
+S7.Net.UnitTest/bin
+S7.Net.UnitTest/obj
+*.DotSettings
+*.v11
+*.user
+*.suo
+*.ncrunchproject
+*.nupkg
+.vs
+*.lock.json
+obj/
+bin/
